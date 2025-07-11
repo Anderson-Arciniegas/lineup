@@ -8,20 +8,33 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/lineup",
         "browser": "apps/lineup/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [
+          "zone.js"
+        ],
         "tsConfig": "apps/lineup/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
             "input": "apps/lineup/public"
-          }
+          },
+          {
+            "input": "libs/shared/assets/src/lib/fonts",
+            "output": "assets/fonts",
+            "glob": "**/*"
+          },
+          "apps/lineup/src/assets"
         ],
-        "styles": ["apps/lineup/src/styles.scss"],
+        "styles": [
+          "libs/shared/ui/src/styles/_styles.scss",
+          "apps/lineup/src/styles.scss"
+        ],
         "server": "apps/lineup/src/main.server.ts",
         "ssr": {
           "entry": "apps/lineup/src/server.ts"
@@ -76,7 +89,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/lineup/jest.config.ts"
       }
