@@ -1,0 +1,17 @@
+<div class="
+    w-full
+    grid
+    grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8
+    gap-1 sm:gap-3
+    px-1 sm:px-14
+    mt-4
+    mb-4
+">
+    @if (myBusiness) {
+        <lib-category-item [myBusiness]="myBusiness"></lib-category-item>
+    }
+
+    @for (category of categories; track category.id) {
+        <lib-category-item [category]="category"></lib-category-item>
+    }
+</div>
