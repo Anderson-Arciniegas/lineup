@@ -1,6 +1,6 @@
 <p-button *ngIf="!link"
           class="inline-block"
-          [ngClass]="width"
+          [style.width]="width"
           [label]="label"
           [icon]="icon ? icon : null"
           [loading]="loading"
@@ -15,7 +15,7 @@
 <a *ngIf="link"
    [routerLink]="link">
     <p-button class="inline-block"
-              [ngClass]="width"
+              [style.width]="width"
               [label]="label"
               [icon]="icon ? icon : null"
               [loading]="loading"
