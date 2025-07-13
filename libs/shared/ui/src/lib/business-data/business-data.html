@@ -1,47 +1,55 @@
-<div class="
-    flex 
-    flex-col sm:flex-row flex-wrap
-    items-start sm:items-center
-    justify-center
-    gap-4 sm:gap-10
-">
-    <div class="w-60">
-        <img src="assets/images/shop-icon.png" alt="Shop Icon">
-    </div>
-    <div class="
-            flex
-            flex-col
-            items-start
-            justify-start
-            gap-2">
-        <p-tag class="text-xl" severity="secondary" value="Anderson Lamar"/>
-        <div class="flex flex-col gap-1">
-            <div class="flex flex-row items-center content-center gap-1">
-                <i class="pi pi-instagram" style="font-size: 1.4rem"></i>
-                <p-tag severity="secondary" value="@iamomarjr"/>
+<div
+    style="
+        border-radius: 12px;
+        box-sizing: border-box;
+        padding: 1.5rem;
+    "
+    class="
+        flex 
+        flex-col sm:flex-row flex-wrap
+        items-start
+        justify-center
+        gap-4 sm:gap-10
+        w-full
+    ">
+    <p-card [style]="{ 
+            padding: '.6rem',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+        }"
+        class="business-data">
+        <ng-template #footer>
+            <div class="w-full flex flex-row flex-wrap items-start gap-10">
+                <div class="flex flex-col items-center justify-center">
+                    <h3 class="text-lg font-semibold">Business Name</h3>
+                    <img src="assets/images/business-virtual.jpg" alt="Shop Icon">
+                </div>
+                <div class="flex flex-col items-start gap-4">
+                    <div class="flex flex-col items-start gap-1">
+                        <span>Redes</span>
+                        <div class="flex flex-row flex-wrap items-center content-center gap-3 text-left">
+                            <p-tag icon="pi pi-envelope" iconSize="1.5rem"  value="mail@mail.com"/>
+                            <p-tag icon="pi pi-instagram" iconSize="1.6rem"  value="iamomarjr"/>
+                            <p-tag icon="pi pi-whatsapp" iconSize="1.4rem"  value="+584120000000"/>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-start gap-1">
+                        <span>Ubicaciones</span>
+                        <div class="flex flex-row items-center content-center gap-3 text-left">
+                            <p-tag  value="Tinaquillo, Cojedes"/>
+                            <p-tag  value="Valencia, Carabobo"/>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-start gap-1">
+                        <span>Envio</span>
+                        <div class="flex flex-row items-center content-center gap-3 text-left">
+                            <p-tag  value="MRW"/>
+                            <p-tag  value="ZOOM"/>
+                            <p-tag  value="DHL"/>
+                            <p-tag  value="Delivery"/>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="flex flex-col gap-1">
-            <div class="flex flex-row items-center content-center gap-1">
-                <i class="pi pi-whatsapp" style="font-size: 1.4rem"></i>
-                <p-tag severity="secondary" value="+58123456789"/>
-            </div>
-        </div>
-        <div class="flex flex-col gap-1">
-            <div class="flex flex-row items-center content-center gap-1 text-left">
-                <i class="pi pi-envelope" style="font-size: 1.4rem"></i>
-                <p-tag severity="secondary" value="mail@mail.com"/>
-            </div>
-        </div>
-        <div class="flex flex-row items-center content-center gap-4">
-            <div class="flex flex-row items-center content-center gap-2">
-                <i class="pi pi-heart-fill" style="font-size: 1.5rem"></i>
-                <p-tag severity="secondary" value="1000"/>
-            </div>
-            <div class="flex flex-row items-center content-center gap-2">
-                <i class="pi pi-bookmark-fill" style="font-size: 1.5rem"></i>
-                <p-tag severity="secondary" value="1000"/>
-            </div>
-        </div>
-    </div>
+        </ng-template>
+    </p-card>
 </div>

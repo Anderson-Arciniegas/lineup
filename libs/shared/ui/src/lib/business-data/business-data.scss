@@ -1,5 +1,28 @@
 img {
-    max-width: 100%;
-    object-fit: contain;
-    border-radius: 8px;
+    width: 200px !important;
+    border-radius: 25px;
+}
+
+.radius {
+    border-radius: 100% !important;
+}
+
+.background {
+    background-color: var(--p-neutral-400);
+}
+
+.border {
+    border: 1px solid var(--p-neutral-800);
+    --p-ripple-background: var(--p-neutral-800);
+}
+
+span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.business-data {
+    width: auto;
+    padding: 0.6rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
