@@ -1,18 +1,23 @@
 .item-list {
     width: auto;
     min-width: 100px;
-    min-height: 55px;
-    border: 1px solid #b7b7b7;
+    height: 50px;
+    border: 2px solid var(--p-primary-800);
     border-radius: 3px;
     box-sizing: border-box;
     padding: 0px 4px;
     span {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 600;
+
+        @media screen and (max-width: 640px) {
+            font-size: 12px;
+        }
     }
 }
 
 .add {
+    border: none;
     background: var(--p-primary-800);
     color: white;
 }
