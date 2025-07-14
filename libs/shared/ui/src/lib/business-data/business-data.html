@@ -1,55 +1,63 @@
-<div
-    style="
-        border-radius: 12px;
-        box-sizing: border-box;
-        padding: 1.5rem;
-    "
-    class="
+<div class="
         flex 
-        flex-col sm:flex-row flex-wrap
-        items-start
+        flex-col md:flex-row flex-wrap
+        items-center
         justify-center
-        gap-4 sm:gap-10
+        gap-6
+        py-8
         w-full
+        bg-primary-50
     ">
-    <p-card [style]="{ 
-            padding: '.6rem',
-            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-        }"
-        class="business-data">
-        <ng-template #footer>
-            <div class="w-full flex flex-row flex-wrap items-start gap-10">
-                <div class="flex flex-col items-center justify-center">
-                    <h3 class="text-lg font-semibold">Business Name</h3>
-                    <img src="assets/images/business-virtual.jpg" alt="Shop Icon">
-                </div>
-                <div class="flex flex-col items-start gap-4">
-                    <div class="flex flex-col items-start gap-1">
-                        <span>Redes</span>
-                        <div class="flex flex-row flex-wrap items-center content-center gap-3 text-left">
-                            <p-tag icon="pi pi-envelope" iconSize="1.5rem"  value="mail@mail.com"/>
-                            <p-tag icon="pi pi-instagram" iconSize="1.6rem"  value="iamomarjr"/>
-                            <p-tag icon="pi pi-whatsapp" iconSize="1.4rem"  value="+584120000000"/>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-start gap-1">
-                        <span>Ubicaciones</span>
-                        <div class="flex flex-row items-center content-center gap-3 text-left">
-                            <p-tag  value="Tinaquillo, Cojedes"/>
-                            <p-tag  value="Valencia, Carabobo"/>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-start gap-1">
-                        <span>Envio</span>
-                        <div class="flex flex-row items-center content-center gap-3 text-left">
-                            <p-tag  value="MRW"/>
-                            <p-tag  value="ZOOM"/>
-                            <p-tag  value="DHL"/>
-                            <p-tag  value="Delivery"/>
-                        </div>
-                    </div>
-                </div>
+    <div class="flex flex-col items-center justify-center img-box">
+        <img src="assets/images/vShop.jpg" alt="Shop Icon">
+    </div> 
+    <div class="flex flex-col items-center md:items-start justify-center gap-5 sm:gap-2">
+        <div class="flex flex-row items-center justify-center gap-4">
+            <h3 class="text-3xl font-semibold">Tu Punto vShop</h3>
+            <div class="flex items-center justify-center">
+                <i class="pi pi-share-alt" style="font-size: 1.5rem"></i>
             </div>
-        </ng-template>
-    </p-card>
+        </div>
+        <div class="flex flex-row items-center justify-center gap-4">
+            <div class="flex items-center justify-center gap-2">
+                <i class="pi pi-user" style="font-size: 1rem"></i>
+                <span>1000</span>
+            </div>
+            <lib-button label="Seguir" icon="pi pi-plus" [size]="'small'" type="rounded" color="secondary"></lib-button>
+        </div>
+
+        <div class="flex flex-col md:flex-row sm:flex-wrap items-center content-center gap-2 sm:gap-0 px-4 md:px-0">
+            <div class="flex flex-row items-center justify-center gap-2">
+                <i class="pi pi-map-marker" style="font-size: 1rem"></i>
+                <span class="font-medium font-semibold text-left">
+                    Valencia, Carabobo
+                </span>
+            </div>
+            <hr class="hidden md:block h-6 border-l border-gray-300 mx-2">
+            <div class="flex flex-row items-center justify-center gap-2">
+                <i class="pi pi-map-marker" style="font-size: 1rem"></i>
+                <span class="font-medium font-semibold text-left">
+                    Tinaquillo, Cojedes
+                </span>
+            </div>
+            <hr class="hidden md:block h-6 border-l border-gray-300 mx-2">
+            <div class="flex flex-row items-center justify-center gap-2">
+                <i class="pi pi-map-marker" style="font-size: 1rem"></i>
+                <span class="font-medium font-semibold text-left">
+                    Negocio Virtual
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row items-center content-center justify-center gap-3">
+            <div class="img-social-media">
+                <img src="assets/images/gmail.png" alt="Gmail Icon" title="gmail icon">
+            </div>
+            <div class="img-social-media">
+                <img src="assets/images/instagram.png" alt="Instagram Icon" title="instagram icon">
+            </div>
+            <div class="img-social-media">
+                <img src="assets/images/whatsapp.png" alt="Whatsapp Icon" title="whatsapp icon">
+            </div>
+        </div>
+    </div>
 </div>
