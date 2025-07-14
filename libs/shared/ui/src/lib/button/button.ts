@@ -21,6 +21,7 @@ export class Button {
   @Input() variant: 'text' | 'outlined';
   @Input() badge: string; 
   @Input() size: 'small' | 'large';
-  @Input() width: string;
+  @Input() fontSize = 'text-base';
+  @Input() width = 'w-auto';
   @Output() action = new EventEmitter<any>(); //eslint-disable-line 
 }

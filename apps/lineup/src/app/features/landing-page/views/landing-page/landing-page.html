@@ -1,17 +1,132 @@
-<section class="flex flex-row items-center justify-center flex home">
-    <div class="flex flex-col items-center justify-start h-5/10 w-5/10 gap-6">
-        <h2 class="text-center text-5xl font-medium leading-8 leading-18">Tu espacio para construir un<br>
-            <span class="font-bold text-6xl">e-Showroom.</span></h2>
-        <h4 class="text-xl text-center ">El futuro de tu exhibición, donde <br> tu marca brilla sin límites</h4>
-        <div class="w-8/10 flex flex-row items-center justify-center">
-            <lib-button label="Unete"
-                        [width]="'w-40'"></lib-button>
+<section class="flex flex-col lg:flex-row gap-10 lg:gap-0 items-center justify-center home p-5 md:p-15">
+    <div class="flex flex-col items-center justify-start w-10/10 lg:w-5/10 gap-6">
+        <h2 class="text-center text-4xl lg:text-5xl font-medium leading-12 sm:leading:14 lg:leading-18">{{'landingPage.yourSpaceToBuildA' | translate}}<br>
+            <span class="font-bold text-4xl sm:text-5xl  lg:text-6xl">{{'landingPage.digitalShowroom' | translate}}.</span></h2>
+        <h4 class="text-xl text-center">{{'landingPage.theFutureOfDisplayWhereYourBrandShinesWithoutLimits' | translate}}</h4>
+        <div class="w-8/10 flex flex-row items-center justify-center mt-5">
+            <lib-button label="{{'landingPage.join' | translate}}"
+                        [width]="'w-60'"></lib-button>
         </div>
 
     </div>
-    <div class="w-3/10">
+    <div class="w-10/10 sm:w-8/10 md:w-6/10 lg:w-4/10 xl:w-3/10 max-w-lg">
         <img src="assets/images/home-image.png"
              alt="">
+    </div>
+
+</section>
+<section class="flex flex-row items-center justify-center bg-primary-50 p-5 md:p-15">
+    <div class="flex flex-col items-center justify-center gap-10 w-9/10 sm:w-8/10 lg:w-6/10">
+        <h3 class="text-center text-4xl font-semibold">
+            {{'landingPage.aboutUs' | translate}}
+        </h3>
+
+        <p class="text-lg md:text-2xl text-left md:text-justify">{{'landingPage.aboutUsDescription' | translate}}.</p>
+
+        <p class="italic text-2xl md:text-3xl text-primary-300 text-center">
+            <q>{{'landingPage.exploreConnectAndShopSimplifyingYourExperience' | translate}}</q>
+        </p>
+
+        <div class="w-8/10 flex flex-row items-center justify-center mt-5">
+            <lib-button label="{{'landingPage.explore' | translate}}"
+                        [width]="'w-60'"></lib-button>
+        </div>
+    </div>
+</section>
+<section class="flex flex-row items-start justify-center p-5 lg:p-15">
+    <div class="flex flex-col items-center justify-start gap-10 w-9/10 sm:w-8/10 xl:w-6/10">
+        <h3 class="text-center text-4xl font-semibold">
+            {{'landingPage.ourServices' | translate}}
+        </h3>
+
+        <div class="flex flex-col items-start justify-center gap-8">
+            <div class="flex flex-col items-start justify-center gap-6">
+                <h4 class="text-3xl font-medium">{{'landingPage.forCompanies' | translate}}</h4>
+                <div class="flex flex-col lg:flex-row items-center justify-center gap-6 pt-10 sm:pt-0">
+                    <div class="flex flex-col items-start justify-start lg:pl-5 gap-5">
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-objects-column"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">{{'landingPage.createYourDigitalCatalog' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.digitalCatalogDescription' | translate}}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-users"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">
+                                    {{'landingPage.connectWithPotentialClients' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.potentialClientsDescription' | translate}}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-chart-line"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">{{'landingPage.boostYourSales' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.boostYourSalesDescription' | translate}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <img class="services-image"
+                         src="https://picsum.photos/200"
+                         alt="">
+                </div>
+            </div>
+            <div class="flex flex-col items-start justify-center gap-6">
+                <h4 class="text-3xl font-medium">{{'landingPage.forUsers' | translate}}</h4>
+                <div class="flex  flex-col lg:flex-row items-center justify-center gap-6 pt-10 sm:pt-0">
+                    <div class="flex flex-col items-start justify-start pl-5 gap-5">
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-shop"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">{{'landingPage.discoverBusiness' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.discoverBusinessDescription' | translate}}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-eye"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">{{'landingPage.exploreCatalogs' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.exploreCatalogsDescription' | translate}}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-start gap-6">
+                            <i class="pi pi-whatsapp"
+                               style="font-size: 2.5rem"></i>
+                            <div class="flex flex-col items-start justify-center gap-2">
+                                <h5 class="text-xl font-medium">{{'landingPage.connectDirectly' | translate}}</h5>
+                                <p class="font-medium ">{{'landingPage.connectDirectlyDescription' | translate}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <img class="services-image"
+                         src="https://picsum.photos/200"
+                         alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<section class="flex flex-row items-start justify-center bg-primary-50 p-5 md:p-15">
+    <div class="flex flex-col items-center justify-start gap-10 w-8/10 lg:w-6/10">
+        <p class="italic text-3xl md:text-5xl text-primary-300 text-center"><q>{{'landingPage.withLineUpYouCanCreateYourDigitalShowroom' | translate}}</q></p>
+
+        <h3 class="text-center text-4xl font-semibold mt-10 md:mt-20">
+            {{'landingPage.contactUs' | translate}}
+        </h3>
+
+        <p class="text-lg md:text-2xl text-left md:text-justif">{{'landingPage.contactUsDescription' | translate}}</p>
+
+        <div class="w-8/10 flex flex-row items-center justify-center mt-5">
+            <lib-button label="info@elineup.com"
+                        [width]="'w-60'"></lib-button>
+        </div>
     </div>
 
 </section>

@@ -1,3 +1,9 @@
 .home{
-    height: calc(100vh - 85px);
+    min-height: calc(100vh - 85px);
+}
+
+.services-image{
+    width: 200px;
+    height: 200px;
+    border-radius: 8px;
 }
