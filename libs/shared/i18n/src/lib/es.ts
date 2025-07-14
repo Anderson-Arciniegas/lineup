@@ -1,6 +1,35 @@
 export const es = {
     general: {
-       welcome: 'Bienvenido',
-       addCategory: 'Agregar Categoría',
+        welcome: 'Bienvenido',
+        addCategory: 'Agregar Categoría',
+
     },
+    landingPage: {
+        yourSpaceToBuildA: 'Tu espacio para construir un',
+        digitalShowroom: 'Showroom digital',
+        theFutureOfDisplayWhereYourBrandShinesWithoutLimits: 'El futuro de la exhibición, donde tu marca brilla sin límites',
+        join: 'Unirse',
+        aboutUs: 'Sobre nosotros',
+        aboutUsDescription: 'LineUp es tu nueva plataforma para explorar, conectar y potenciar negocios a través de catálogos visuales. Somos el destino ideal donde encontrar productos y servicios, simplificando la búsqueda y conectando directamente con sus marcas favoritas. Tambien, ofrecemos una forma efectiva y atractiva de exhibir sus ofertas, alcanzar a nuevos clientes y gestionar su presencia en línea, todo en un solo lugar.',
+        exploreConnectAndShopSimplifyingYourExperience: 'Explora, conéctate y compra, simplifica tu experiencia.',
+        ourServices: 'Nuestros servicios',
+        explore: 'Explorar',
+        forCompanies: 'Para empresas',
+        createYourDigitalCatalog: 'Crea tu catálogo digital',
+        digitalCatalogDescription: 'Diseña y publica catálogos atractivos para tus productos de manera sencilla. Brinda a tus clientes un lugar donde ver todo lo que ofreces y actuliza tus ofertas y disponibilidad en tiempo real.',
+        connectWithPotentialClients: 'Conecta con potenciales clientes',
+        potentialClientsDescription: 'Llega a una audiencia más amplia y relevante. Nuestra plataforma te ayuda a ser descubierto por usuarios que buscan activamente lo que ofreces.',
+        boostYourSales: 'Impulsa tus ventas',
+        boostYourSalesDescription: 'Facilita el proceso de compra. Conecta directamente con tus clientes, responde a sus consultas y cierra ventas de forma más eficiente.',
+        forUsers: 'Para Usuarios',
+        discoverBusiness: 'Descubre negocios',
+        discoverBusinessDescription: 'Encuentra una gran variedad de empresas, desde tu cafetería favorita hasta tiendas especializadas, todas con sus catálogos detallados.',
+        exploreCatalogs: 'Explora catálogos',
+        exploreCatalogsDescription: 'Navega por catalogos virtuales de alta de productos. Inspírate y encuentra exactamente lo que necesitas o algo nuevo que te encantará.',
+        connectDirectly: 'Conecta directamente',
+        connectDirectlyDescription: 'Ponte en contacto con los negocios de forma instantánea para hacer preguntas, pedir presupuestos o programar citas.',
+        withLineUpYouCanCreateYourDigitalShowroom: 'Con LineUp puedes crear tu Showroom digital.',
+        contactUs: 'Contactanos',
+        contactUsDescription: 'Ponte en contacto con nuestro equipo. Solo se responderán las consultas relacionadas con nuestros servicios y solicitudes de ingresos.',
+    }
 };

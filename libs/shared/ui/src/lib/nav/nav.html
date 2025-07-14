@@ -1,14 +1,28 @@
-<nav class="nav flex flex-row justify-between pt-5 pb-5 pr-10 pl-10">
-    <a [routerLink]="['/']" class="flex flex-row items-center">
+<nav class="nav flex flex-row justify-between py-10 px-5 sm:px-10 bg-primary-50">
+    <a [routerLink]="['/']"
+       class="flex flex-row items-center">
         <h1 class="text-3xl font-semibold">LineUp</h1>
     </a>
 
-    <div class="flex-row justify-end">
+    <div class="flex flex-row items-center justify-end gap-5 sm:gap-15">
+        <ul class="hidden sm:flex  flex-row gap-8 items-center justify-center">
+            <li class="flexitems-center justify-center">
+                <a class="font-medium"
+                   [routerLink]="'/'">Explorar</a>
+            </li>
+            <li class="flex items-center justify-center">
+                <a class="font-medium"
+                   [routerLink]="'/'">Informacion</a>
+            </li>
+        </ul>
         <div>
-
+            <lib-button label="Login"
+                        width="w-25"></lib-button>
         </div>
-        <div>
-            <lib-button label="Login" width="100px"></lib-button>
+        <div class="block sm:hidden">
+            <lib-button [icon]="'pi pi-bars'"
+                        [color]="'secondary'"
+                        width="w-10"></lib-button>
         </div>
     </div>
 </nav>
