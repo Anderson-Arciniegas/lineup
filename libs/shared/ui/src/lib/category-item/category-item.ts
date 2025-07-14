@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { I18nModule } from '@lineup/i18n';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'lib-category-item',
-  imports: [CommonModule, I18nModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './category-item.html',
   styleUrl: './category-item.scss',
 })
