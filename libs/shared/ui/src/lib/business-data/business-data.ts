@@ -1,13 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { DividerModule } from 'primeng/divider';
-import { RippleModule } from 'primeng/ripple';
+import { ChipModule } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
+import { Button } from '../button/button';
 
 @Component({
   selector: 'lib-business-data',
-  imports: [CommonModule, TagModule, RippleModule, CardModule, DividerModule],
+  imports: [
+    CommonModule,
+    TagModule,
+    ChipModule,
+    Button,
+  ],
   templateUrl: './business-data.html',
   styleUrl: './business-data.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
