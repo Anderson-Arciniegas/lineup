@@ -1,9 +1,9 @@
 @if (myBusiness) {
-<div class="item-list flex items-center justify-center add text-center">
+<div class="item-list flex items-center justify-center add text-center bg-primary-50">
     <span>{{ 'general.addCategory' | translate }}</span>
 </div>
 } @else {
-<div class="item-list flex items-center justify-center text-center">
+<div class="item-list flex items-center justify-center text-center bg-primary-50">
     <span>{{category ? category.name : 'Category' }}</span>
 </div>
 }

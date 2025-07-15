@@ -1,11 +1,15 @@
 <div class="
     w-full
     grid
-    grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8
-    gap-1 sm:gap-3
-    px-1 sm:px-14
-    mt-4
-    mb-4
+    [grid-template-columns:repeat(2,140px)]
+    sm:[grid-template-columns:repeat(3,150px)]
+    md:[grid-template-columns:repeat(4,150px)]
+    lg:[grid-template-columns:repeat(5,150px)]
+    xl:[grid-template-columns:repeat(7,150px)]
+    justify-center
+    gap-2 sm:gap-3
+    px-1 sm:px-15
+    my-4
 ">
     @if (myBusiness) {
         <lib-category-item [myBusiness]="myBusiness"></lib-category-item>
