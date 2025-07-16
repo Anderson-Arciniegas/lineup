@@ -1,6 +1,36 @@
 
-<div class="flex flex-col mb-20">
+<div class="flex flex-col items-center justify-center mt-20 gap-4">
     <lib-business-data></lib-business-data>
+    <div class="flex bg-primary-50 search items-center justify-center px-7 gap-6">
+        <p-iconfield class="w-full max-width">
+            <p-inputicon class="pi pi-search" />
+            <input type="text" class="w-full" pInputText placeholder="Search" />
+        </p-iconfield>
+        <lib-button label="Buscar" icon="pi pi-search"></lib-button>
+    </div>
     <lib-categories-list [categories]="categories" [myBusiness]="true"></lib-categories-list>
+    <div class="
+        w-full
+        grid
+        [grid-template-columns:repeat(2,140px)]
+        sm:[grid-template-columns:repeat(3,200px)]
+        md:[grid-template-columns:repeat(4,200px)]
+        lg:[grid-template-columns:repeat(5,200px)]
+        xl:[grid-template-columns:repeat(6,200px)]
+        justify-center
+        gap-1
+        px-1 sm:px-15
+        mb-10
+    ">
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+        <p-skeleton width="200px" height="200px" />
+    </div>
 </div>
 
