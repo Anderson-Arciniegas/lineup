@@ -34,7 +34,12 @@
         "styles": [
           "libs/shared/ui/src/styles/_styles.scss",
           "apps/lineup/src/styles.scss"
-        ]
+        ],
+        "server": "apps/lineup/src/main.server.ts",
+        "ssr": {
+          "entry": "apps/lineup/src/server.ts"
+        },
+        "outputMode": "server"
       },
       "configurations": {
         "production": {

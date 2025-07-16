@@ -7,7 +7,8 @@
     "start:dev:lineup": "nx serve lineup --host=0.0.0.0 --port=4200",
     "build:prod:lineup": "nx build lineup --configuration=production",
     "start:prod:lineup": "npm run build:prod:lineup && npx http-server dist/apps/lineup -p 4200",
-    "start:prod:admin": "npm run build:prod:admin && npx http-server dist/apps/admin -p 4201"
+    "start:prod:admin": "npm run build:prod:admin && npx http-server dist/apps/admin -p 4201",
+    "test:all": "nx affected -t lint test build e2e"
   },
   "private": true,
   "dependencies": {
