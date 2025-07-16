@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-product-page',
   imports: [CommonModule],
-  templateUrl: './home.html',
-  styleUrl: './home.scss',
+  templateUrl: './product-page.html',
+  styleUrl: './product-page.scss',
 })
-export class Home {}
+export class ProductPage {}
