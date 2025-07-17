@@ -1,1 +1,36 @@
-<p>product-page works!</p>
+<div class="
+    w-full 
+    px-4 sm:py-10 
+    px-2 sm:px-10 
+    gap-8
+    flex flex-col
+">
+    <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+    <div class="
+        w-full
+        flex flex-col
+        gap-6
+    ">
+        <div class="w-full flex flex-row gap-6 items-center justify-center">
+            <p-skeleton width="340px"
+                height="340px" />
+            <p-skeleton width="340px"
+                height="340px" />
+            <p-skeleton width="340px"
+                height="340px" />
+            <p-skeleton width="340px"
+                height="340px" />
+        </div>
+        <div class="w-full flex flex-row gap-3 items-center justify-center">
+            <p-skeleton width="50px"
+                height="50px" />
+            <p-skeleton width="50px"
+                height="50px" />
+            <p-skeleton width="50px"
+                height="50px" />
+            <p-skeleton width="50px"
+                height="50px" />
+        </div>
+    </div>
+    <lib-product-info></lib-product-info>
+</div>

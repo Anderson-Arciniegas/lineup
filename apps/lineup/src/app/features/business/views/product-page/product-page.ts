@@ -1,10 +1,19 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ProductBreadcrumb, ProductInfo } from '@lineup/ui';
 
 @Component({
   selector: 'app-product-page',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    SkeletonModule,
+    ProductBreadcrumb,
+    ProductInfo
+  ],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss',
 })
-export class ProductPage {}
+export class ProductPage {
+  business = { name: 'Tu Punto vShop', image: 'assets/images/vShop.jpg' };
+}
