@@ -23,14 +23,14 @@ export const layoutRoutes: Routes = [
         ]
     },
     {
-        path: '',
-        component: HomeLayout,
-        loadChildren: () => import('../features/business/business.routes').then(m => m.businessRoutes)
-    },
-    {
-        path: '',
+        path: 'home',
         component: HomeLayout,
         loadChildren: () => import('../features/home/home.routes').then(m => m.homeRoutes)
+    },
+    {
+        path: ':business',
+        component: HomeLayout,
+        loadChildren: () => import('../features/business/business.routes').then(m => m.businessRoutes)
     },
     {
         path: '**',
