@@ -8,19 +8,16 @@ import {
 import {
   HomeLayout
 } from './components/home-layout/home-layout';
-export const layoutRoutes: Routes = [
-    {
+export const layoutRoutes: Routes = [{
         path: '',
         component: HomeLayout,
-        children: [
-            {
-              path: '',
-              component: LandingPage,
-              data: {
-                  title: 'general.landingPage',
-              }
-            },
-        ]
+        children: [{
+            path: '',
+            component: LandingPage,
+            data: {
+                title: 'general.landingPage',
+            }
+        }, ]
     },
     {
         path: 'home',
@@ -30,7 +27,17 @@ export const layoutRoutes: Routes = [
     {
         path: ':business',
         component: HomeLayout,
-        loadChildren: () => import('../features/business/business.routes').then(m => m.businessRoutes)
+        loadChildren: () => import('../features/business/business.routes').then(m => m.businessRoutes),
+        data: {
+            prerender: true,
+            getPrerenderParams: () => [{
+                    business: 'business-1'
+                },
+                {
+                    business: 'business-2'
+                }
+            ]
+        }
     },
     {
         path: '**',

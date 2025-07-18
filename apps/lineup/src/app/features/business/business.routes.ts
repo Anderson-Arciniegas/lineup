@@ -4,18 +4,27 @@ import {
 import {
     BusinessPage
 } from './views/business-page/business-page';
-import {
-    ProductPage
-} from './views/product-page/product-page';
 
-export const businessRoutes: Routes = [
-    {
+export const businessRoutes: Routes = [{
         path: '',
         component: BusinessPage,
     },
     {
-        path: ':product',
-        component: ProductPage,
+        path: 'product/:id',
+        loadComponent: () =>
+        import('./views/product-page/product-page').then(m => m.ProductPage),
+        data: {
+            prerender: true,
+            getPrerenderParams: () => [{
+                    business: 'business-1',
+                    product: 'product-a'
+                },
+                {
+                    business: 'business-2',
+                    product: 'product-b'
+                }
+            ]
+        }
     },
     {
         path: '**',
