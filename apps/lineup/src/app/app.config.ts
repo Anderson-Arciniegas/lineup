@@ -14,7 +14,9 @@ import {
 import {
   provideRouter
 } from '@angular/router';
-import { I18nModule } from '@lineup/i18n';
+import {
+  I18nModule
+} from '@lineup/i18n';
 import {
   definePreset
 } from '@primeuix/themes';
@@ -80,6 +82,11 @@ export const appConfig: ApplicationConfig = {
                 options: {
 
                     darkModeSelector: '.my-app-dark',
+
+                    cssLayer: {
+                        name: 'primeng',
+                        order: 'theme, base, primeng'
+                    }
                 }
             },
         })

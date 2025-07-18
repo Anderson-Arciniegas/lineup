@@ -1,10 +1,11 @@
 <section class="flex flex-col lg:flex-row gap-10 lg:gap-0 items-center justify-center home p-5 md:p-15">
     <div class="flex flex-col items-center justify-start w-10/10 lg:w-5/10 gap-6">
         <h2 class="text-center text-4xl lg:text-5xl font-medium leading-12 sm:leading:14 lg:leading-18">{{'landingPage.yourSpaceToBuildA' | translate}}<br>
-            <span class="font-bold text-4xl sm:text-5xl  lg:text-6xl">{{'landingPage.digitalShowroom' | translate}}.</span></h2>
+            <span class="font-bold text-4xl sm:text-5xl  lg:text-6xl">{{'landingPage.digitalShowroom' | translate}}</span></h2>
         <h4 class="text-xl text-center">{{'landingPage.theFutureOfDisplayWhereYourBrandShinesWithoutLimits' | translate}}</h4>
         <div class="w-8/10 flex flex-row items-center justify-center mt-5">
             <lib-button label="{{'landingPage.join' | translate}}"
+                        [type]="'rounded'"
                         [width]="'w-60'"></lib-button>
         </div>
 
@@ -29,6 +30,7 @@
 
         <div class="w-8/10 flex flex-row items-center justify-center mt-5">
             <lib-button label="{{'landingPage.explore' | translate}}"
+                        [type]="'rounded'"
                         [width]="'w-60'"></lib-button>
         </div>
     </div>
@@ -125,6 +127,7 @@
 
         <div class="w-8/10 flex flex-row items-center justify-center mt-5">
             <lib-button label="info@elineup.com"
+                        [type]="'rounded'"
                         [width]="'w-60'"></lib-button>
         </div>
     </div>

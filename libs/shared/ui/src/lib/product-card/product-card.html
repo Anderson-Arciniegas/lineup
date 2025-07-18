@@ -1,0 +1,35 @@
+<section ngSkipHydrations
+         id="product-flip-{{index}}"
+         class="product-card flex flex-col content-between justify-between p-3 cursor-pointer"
+         [style]="{overflow: 'hidden', backgroundImage: 'url(https://picsum.photos/500/800)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center' }"
+         [ngClass]="[width, height]">
+    <div class="">
+
+
+        <lib-button class="card-like-button"
+                    [icon]="'pi pi-heart'"
+                    [width]="'w-12'"
+                    [size]="'large'"
+                    [type]="'rounded'"></lib-button>
+    </div>
+
+
+
+    <div class="flip-box">
+        <div class="flip-inner h-12">
+            <div class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-center items-center">
+                <h2 class=" text-gray-50 text-xs text-center font-medium">Televisor 65″ Samsung Neo QLED 4K QN90B</h2>
+
+            </div>
+
+            <div class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center">
+                <h2 class="text-gray-50 text-xs text-center font-medium">TuPuntoShop</h2>
+                <h2 class="text-gray-50 text-base text-center font-medium">200$</h2>
+
+            </div>
+
+        </div>
+    </div>
+</section>
