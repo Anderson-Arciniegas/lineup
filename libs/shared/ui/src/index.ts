@@ -6,3 +6,7 @@ export * from './lib/category-item/category-item';
 export * from './lib/business-data/business-data';
 export * from './lib/product-breadcrumb/product-breadcrumb';
 export * from './lib/product-info/product-info';
+export * from './lib/product-description/product-description';
+export * from './lib/product-details/product-details';
+export * from './lib/product-variations/product-variations';
+export * from './lib/product-tags/product-tags';
