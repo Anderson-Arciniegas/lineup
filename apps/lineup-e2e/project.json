@@ -15,6 +15,10 @@
       }
     },
     "e2e": {
+      "executor": "@nx/playwright:e2e",
+      "options": {
+        "config": "apps/lineup-e2e/playwright.config.ts"
+      },
       "dependsOn": [
         {
           "projects": "lineup",
