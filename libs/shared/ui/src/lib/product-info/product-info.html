@@ -1,51 +1,23 @@
 <div class="
         w-full 
-        flex flex-row
+        flex flex-row flex-wrap
         items-start justify-between
         px-50
-        gap-3 
+        gap-4
     ">
-    <div class="
-        flex flex-col
-        gap-2
-    ">
-        <div>
-            <h3 class="text-3xl font-light">Baltimore Ravens Jerseys</h3>
-        </div>
-        <div>
-            <span class="text-2xl font-medium">350$</span>
-        </div>
-        <div class="
-            flex flex-col 
-            md:flex-row sm:flex-wrap 
-            items-center content-center 
-            gap-2 sm:gap-0 
-            px-4 md:px-0
-            max-w-lg
+    <lib-product-description class="
+            w-3/5
+            flex flex-col
+            items-start justify-between
+            gap-2
         ">
-            <i class="pi pi-map-marker mr-2" style="font-size: 1rem"></i>
-            <div class="flex flex-row items-center justify-center gap-2">
-                <span class="font-medium font-medium text-left">
-                    Valencia, Carabobo
-                </span>
-            </div>
-            <hr class="hidden md:block h-6 border-l border-gray-300 mx-2">
-            <div class="flex flex-row items-center justify-center gap-2">
-                <span class="font-medium font-medium text-left">
-                    Tinaquillo, Cojedes
-                </span>
-            </div>
-            <hr class="hidden md:block h-6 border-l border-gray-300 mx-2">
-            <div class="flex flex-row items-center justify-center gap-2">
-                <span class="font-medium font-medium text-left">
-                    Negocio Virtual
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="flex flex-row gap-3 items-center justify-center">
-        <p-skeleton shape="circle" size="3rem"/>
-        <p-skeleton shape="circle" size="3rem"/>
-        <p-skeleton shape="circle" size="3rem"/>
-    </div>
+    </lib-product-description>
+    <lib-product-details class="
+            w-2/6
+            flex flex-col
+            items-start justify-between
+            gap-4
+            py-1
+        ">
+    </lib-product-details>
 </div>
