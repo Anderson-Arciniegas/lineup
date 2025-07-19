@@ -5,7 +5,7 @@ import { HomePage } from './views/home-page/home-page';
 
 export const homeRoutes: Routes = [
     {
-        path: 'explore',
+        path: '',
         component: HomePage,
         data: {
             title: 'general.home',

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SkeletonModule } from 'primeng/skeleton';
+import { Component } from '@angular/core';
 import { ProductBreadcrumb, ProductInfo } from '@lineup/ui';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-product-page',
