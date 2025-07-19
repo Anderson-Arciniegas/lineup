@@ -18,6 +18,10 @@
   font-display: swap; 
 }
 
+:root{
+  --border-radius: 30px;
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     color: var(--p-primary-800);

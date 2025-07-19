@@ -1,25 +1,30 @@
 import {
     Routes
 } from '@angular/router';
-import { BusinessPage } from './views/business-page/business-page';
-import { ProductPage } from './views/product-page/product-page';
+import {
+    BusinessPage
+} from './views/business-page/business-page';
 
-export const businessRoutes: Routes = [
+export const businessRoutes: Routes = [{
+        path: '',
+        component: BusinessPage,
+    },
     {
-        path: ':business',
+        path: 'product/:id',
+        loadComponent: () =>
+        import('./views/product-page/product-page').then(m => m.ProductPage),
         data: {
-            title: 'general.home',
-        },
-        children: [
-            {
-                path: '',
-                component: BusinessPage,
-            },
-            {
-                path: ':product',
-                component: ProductPage,
-            },
-        ],
+            prerender: true,
+            getPrerenderParams: () => [{
+                    business: 'business-1',
+                    product: 'product-a'
+                },
+                {
+                    business: 'business-2',
+                    product: 'product-b'
+                }
+            ]
+        }
     },
     {
         path: '**',

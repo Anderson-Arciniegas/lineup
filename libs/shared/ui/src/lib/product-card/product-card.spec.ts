@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BusinessPage } from './business-page';
+import { ProductCard } from './product-card';
 
-describe('BusinessPage', () => {
-  let component: BusinessPage;
-  let fixture: ComponentFixture<BusinessPage>;
+describe('ProductCard', () => {
+  let component: ProductCard;
+  let fixture: ComponentFixture<ProductCard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BusinessPage],
+      imports: [ProductCard],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BusinessPage);
+    fixture = TestBed.createComponent(ProductCard);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -18,7 +18,4 @@ describe('BusinessPage', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  
-  
-  
 });
