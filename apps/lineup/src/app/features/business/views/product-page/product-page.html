@@ -13,23 +13,23 @@
     ">
         <div class="w-full flex flex-row gap-6 items-center justify-center">
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
         </div>
         <div class="w-full flex flex-row gap-3 items-center justify-center">
             <p-skeleton width="50px"
-                height="50px" />
+                        height="50px" />
             <p-skeleton width="50px"
-                height="50px" />
+                        height="50px" />
             <p-skeleton width="50px"
-                height="50px" />
+                        height="50px" />
             <p-skeleton width="50px"
-                height="50px" />
+                        height="50px" />
         </div>
     </div>
     <lib-product-info></lib-product-info>
@@ -38,15 +38,27 @@
         flex flex-col
         gap-6
     ">
-        <div class="w-full flex flex-row gap-6 items-center justify-center">
+        <div class="w-full flex flex-row gap-6 items-center justify-center mt-10">
+            <!-- <p-skeleton width="340px"
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" />
             <p-skeleton width="340px"
-                height="340px" />
-            <p-skeleton width="340px"
-                height="340px" />
+                        height="340px" /> -->
+            <lib-product-card [index]="0"
+                              [width]="'w-80'"
+                              [height]="'h-80'"></lib-product-card>
+            <lib-product-card [index]="1"
+                              [width]="'w-80'"
+                              [height]="'h-80'"></lib-product-card>
+            <lib-product-card [index]="2"
+                              [width]="'w-80'"
+                              [height]="'h-80'"></lib-product-card>
+            <lib-product-card [index]="3"
+                              [width]="'w-80'"
+                              [height]="'h-80'"></lib-product-card>
         </div>
     </div>
 </div>
