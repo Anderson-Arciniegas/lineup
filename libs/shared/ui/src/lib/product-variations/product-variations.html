@@ -8,10 +8,17 @@
         gap-2
     ">
     @for (item of variations; track $index) {
-        @if (item.primary) {
-          <lib-button [label]="item.name" [width]="'w-auto'" size="small" type="rounded"></lib-button>
-        } @else {
-          <lib-button [label]="item.name" [width]="'w-auto'" size="small" color="secondary" type="rounded"></lib-button>
-        }
+    @if (item.primary) {
+    <lib-button [label]="item.name"
+                [width]="'w-15'"
+                size="small"
+                type="rounded"></lib-button>
+    } @else {
+    <lib-button [label]="item.name"
+                [width]="'w-15'"
+                size="small"
+                color="secondary"
+                type="rounded"></lib-button>
+    }
     }
 </div>
