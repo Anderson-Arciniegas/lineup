@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProductBreadcrumb, ProductInfo } from '@lineup/ui';
+import { ProductBreadcrumb, ProductCard, ProductInfo } from '@lineup/ui';
 import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
@@ -9,8 +9,9 @@ import { SkeletonModule } from 'primeng/skeleton';
     CommonModule,
     SkeletonModule,
     ProductBreadcrumb,
-    ProductInfo
-  ],
+    ProductInfo,
+    ProductCard
+],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss',
 })
