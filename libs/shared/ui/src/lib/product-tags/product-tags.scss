@@ -1,0 +1,9 @@
+::ng-deep {
+  .p-tag {
+    border: 2px solid var(--p-neutral-300);
+    background-color: var(--p-neutral-100);
+    color: var(--b-primary-900);
+    cursor: pointer;
+    font-size: 12px;
+  }
+}
