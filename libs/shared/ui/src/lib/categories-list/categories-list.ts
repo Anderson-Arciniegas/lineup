@@ -10,5 +10,5 @@ import { CategoryItem } from '../category-item/category-item';
 })
 export class CategoriesList {
   @Input() categories: { id: number; name: string }[];
-  @Input() myBusiness: boolean = false;
+  @Input() myBusiness = false;
 }
