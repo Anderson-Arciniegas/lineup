@@ -8,19 +8,13 @@
   ],
   "// targets": "to see all targets run: nx show project lineup-e2e --web",
   "targets": {
-    "serve": {
-      "executor": "@nrwl/angular:webpack-server",
-      "options": {
-        "port": 4200
-      }
-    },
     "e2e": {
-      "executor": "@nx/playwright:e2e",
+      "executor": "@nx/playwright:playwright",
       "outputs": [
         "{workspaceRoot}/dist/apps/lineup-e2e"
       ],
       "options": {
-        "playwrightConfig": "apps/lineup-e2e/playwright.config.ts"
+        "config": "apps/lineup-e2e/playwright.config.ts"
       }
     }
   }

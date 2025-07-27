@@ -32,10 +32,19 @@ export class ProductDetails {
     { name: 'M', primary: false },
     { name: 'L', primary: true },
     { name: 'XL', primary: false }
-  ]
+  ];
+
+  shipping = [
+    { name: 'Delivery', primary: false },
+    { name: 'MRW', primary: false },
+    { name: 'Zoom', primary: true },
+  ];
+
   variations = [
     { title: 'Color', variations: this.colors }, 
-    { title: 'Size', variations: this.sizes }
+    { title: 'Size', variations: this.sizes },
+    { title: 'Shipping', variations: this.shipping }
   ];
+
   tags = ['New', 'NFL', 'Shirt', 'Futbol Americano', 'Ravens', 'Nike'];
 }
