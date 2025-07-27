@@ -11,7 +11,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     ProductBreadcrumb,
     ProductInfo,
     ProductCard
-],
+  ],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss',
 })
