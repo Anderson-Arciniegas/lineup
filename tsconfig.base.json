@@ -23,7 +23,9 @@
       "@lineup/assets": ["libs/shared/assets/src/index.ts"],
       "@lineup/core": ["libs/shared/core/src/index.ts"],
       "@lineup/i18n": ["libs/shared/i18n/src/index.ts"],
-      "@lineup/ui": ["libs/shared/ui/src/index.ts"]
+      "@lineup/ui": ["libs/shared/ui/src/index.ts"],
+      "@lineup/lineup": ["apps/lineup/src/*"],
+      
     }
   },
   "exclude": ["node_modules", "tmp"]
