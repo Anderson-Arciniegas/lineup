@@ -12,8 +12,12 @@ describe('ProductBreadcrumb', () => {
 
     fixture = TestBed.createComponent(ProductBreadcrumb);
     component = fixture.componentInstance;
+    
+    component.business = { name: 'Tu Punto vShop', image: 'assets/images/vShop.jpg' };
     fixture.detectChanges();
   });
+  
+  
 
   it('should create', () => {
     expect(component).toBeTruthy();
