@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BusinessData, Button, CategoriesList } from '@lineup/ui';
+import { BusinessData, CatalogCard } from '@lineup/ui';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -11,14 +11,13 @@ import { SkeletonModule } from 'primeng/skeleton';
   selector: 'app-business-page',
   imports: [
     CommonModule,
-    CategoriesList,
     BusinessData,
     FormsModule,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    Button,
-    SkeletonModule
+    SkeletonModule,
+    CatalogCard
   ],
   templateUrl: './business-page.html',
   styleUrl: './business-page.scss',
