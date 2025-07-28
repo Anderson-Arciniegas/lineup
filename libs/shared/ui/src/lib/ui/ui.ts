@@ -5,22 +5,16 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import { BusinessData } from '../business-data/business-data';
-import { Button } from '../button/button';
-import { CategoriesList } from '../categories-list/categories-list';
 import { ProductCard } from "../product-card/product-card";
 
 @Component({
   selector: 'lib-ui',
   imports: [
     CommonModule,
-    CategoriesList,
-    BusinessData,
     FormsModule,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    Button,
     SkeletonModule,
     ProductCard
 ],
