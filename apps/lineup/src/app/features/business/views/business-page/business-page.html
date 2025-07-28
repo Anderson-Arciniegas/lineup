@@ -3,77 +3,36 @@
             container
             flex flex-col
             items-center justify-center
-            gap-4 sm:gap-8 
-            px-5
+            gap-4 sm:gap-8
             w-full 
         ">
         <lib-business-data></lib-business-data>
-        <div class="
-            flex 
-            items-center justify-center 
-            bg-primary-50 search 
-            gap-2 sm:gap-6
-            px-3 sm:px-7 
-        ">
-            <p-iconfield class="w-full max-width">
-                <p-inputicon class="pi pi-search" />
-                <input type="text"
-                       class="w-full input"
-                       pInputText
-                       placeholder="Search" />
-            </p-iconfield>
-            <lib-button
-                label="Buscar"
-                icon="pi pi-search"
-                type="rounded"
-                class="hidden sm:block">
-            </lib-button>
-            <lib-button
-                width="w-10 h-10"
-                icon="pi pi-search"
-                type="rounded"
-                class="block sm:hidden">
-            </lib-button>
-        </div>
-        <lib-categories-list [categories]="categories"
-                             [myBusiness]="true"></lib-categories-list>
-        <div class="
-            w-full
-            grid
-            [grid-template-columns:repeat(1,200px)]
-            sm:[grid-template-columns:repeat(2,200px)]
-            md:[grid-template-columns:repeat(3,200px)]
-            lg:[grid-template-columns:repeat(5,200px)]
-            xl:[grid-template-columns:repeat(6,200px)]
-            justify-center
-            gap-1
-            px-1 sm:px-15
-            mb-10
-        ">
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
-            <p-skeleton width="100%"
-                        height="200px" />
+        <div class="w-full flex flex-col items-center justify-center gap-4">
+            <div class="w-full px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46">
+                <h2 class="text-5xl font-semibold text-center sm:text-left">LineUp</h2>
+            </div>
+            <div class="
+                w-full
+                grid
+                [grid-template-columns:repeat(1,auto)]
+                sm:[grid-template-columns:repeat(2,auto)]
+                md:[grid-template-columns:repeat(2,auto)]
+                lg:[grid-template-columns:repeat(3,auto)]
+                xl:[grid-template-columns:repeat(4,auto)]
+                justify-center
+                gap-3
+                px-1 sm:px-4 md:px-15
+                mb-10
+            ">
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+                <lib-catalog-card></lib-catalog-card>
+            </div>
         </div>
     </div>
 

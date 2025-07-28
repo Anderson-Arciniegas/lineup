@@ -1,0 +1,30 @@
+::ng-deep .p-card-body {
+    padding: 8px 8px 0px 8px;
+
+    &:hover {
+        .image {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.border-radius {
+    border-radius: var(--border-radius-catalog-card);
+
+    &:hover {
+        .image {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.image-container {
+    overflow: hidden;
+    border-radius: var(--border-radius-img);
+}
+
+.image {
+    border-radius: var(--border-radius-img);
+    height: 272px;
+    transition: transform 0.3s ease-in-out;
+}
