@@ -1,0 +1,69 @@
+<section class="login flex flex-col gap-6 sm:gap-8 items-center justify-start px-0 lg:px-5 w-10/10">
+
+    <h2 class="text-center text-4xl lg:text-5xl font-medium">{{'general.lineUp' | translate}}</h2>
+
+    <form [formGroup]="registerUserForm"
+          class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-3">
+        <h4 class="text-center text-2xl lg:text-3xl font-medium">{{'general.userRegister' | translate}}</h4>
+        <p-floatlabel class="w-10/10 max-w-xs">
+            <input pInputText
+                   class="w-10/10 font-medium"
+                   formControlName="username"
+                   id="username"
+                   [pSize]="'small'"
+                   autocomplete="off" />
+            <label for="username"
+                   class="font-medium">{{'general.username' | translate}}</label>
+        </p-floatlabel>
+        <p-floatlabel class="w-10/10 max-w-xs">
+            <input pInputText
+                   class="w-10/10 font-medium"
+                   formControlName="email"
+                   id="email"
+                   [pSize]="'small'"
+                   autocomplete="off" />
+            <label for="email"
+                   class="font-medium">{{'general.email' | translate}}</label>
+        </p-floatlabel>
+
+        <p-floatlabel class="w-10/10 max-w-xs">
+            <p-password [feedback]="false"
+                        class="w-10/10 font-medium"
+                        formControlName="password"
+                        [fluid]="true"
+                        [size]="'small'"
+                        [toggleMask]="true"
+                        inputId="password" />
+            <label for="password"
+                   class="font-medium">{{'general.password' | translate}}</label>
+        </p-floatlabel>
+
+        <p-floatlabel class="w-10/10 max-w-xs">
+            <p-password [feedback]="false"
+                        class="w-10/10 font-medium"
+                        formControlName="confirmPassword"
+                        [fluid]="true"
+                        [size]="'small'"
+                        [toggleMask]="true"
+                        inputId="confirmPassword" />
+            <label for="confirmPassword"
+                   class="font-medium">{{'general.confirmPassword' | translate}}</label>
+        </p-floatlabel>
+
+
+        <div class="w-8/10 flex flex-col items-center justify-center mt-3 gap-5">
+            <lib-button label="{{'general.register' | translate}}"
+                        [type]="'rounded'"
+                        [size]="'small'"
+                        [width]="'w-60'"></lib-button>
+
+            <lib-button label="{{'general.login' | translate}}"
+                        [link]="'/login'"
+                        [type]="'rounded'"
+                        [color]="'secondary'"
+                        [size]="'small'"
+                        [width]="'w-60'"></lib-button>
+        </div>
+    </form>
+
+</section>

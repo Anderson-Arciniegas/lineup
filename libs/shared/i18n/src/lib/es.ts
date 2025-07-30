@@ -2,7 +2,21 @@ export const es = {
     general: {
         welcome: 'Bienvenido',
         addCategory: 'Agregar Categoría',
-
+        enter: 'Entrar',
+        register: 'Crea tu cuenta',
+        lineUp: 'LineUp',
+        login: 'Iniciar sesión',
+        logout: 'Cerrar sesión',
+        usernameOrEmail: 'Usuario o correo',
+        password: 'Contraseña',
+        confirmPassword: 'Confirmar contraseña',
+        howDoYouWantToBePartOfLineUp: '¿Cómo deseas formar parte de LineUp?',
+        user: 'Usuario',
+        business: 'Negocio',
+        userRegister: 'Registro de Usuario',
+        businessRegister: 'Registro de Negocio',
+        email: 'Correo electrónico',
+        username: 'Usuario',
     },
     landingPage: {
         yourSpaceToBuildA: 'Tu espacio para construir un',
@@ -28,7 +42,7 @@ export const es = {
         exploreCatalogsDescription: 'Navega por catalogos virtuales de alta de productos. Inspírate y encuentra exactamente lo que necesitas o algo nuevo que te encantará.',
         connectDirectly: 'Conecta directamente',
         connectDirectlyDescription: 'Ponte en contacto con los negocios de forma instantánea para hacer preguntas, pedir presupuestos o programar citas.',
-        withLineUpYouCanCreateYourDigitalShowroom: 'Con LineUp puedes crear tu Showroom digital.',
+        withLineUpYouCanCreateYourDigitalShowroom: 'Con LineUp puedes crear tu Showroom digital',
         contactUs: 'Contactanos',
         contactUsDescription: 'Ponte en contacto con nuestro equipo. Solo se responderán las consultas relacionadas con nuestros servicios y solicitudes de ingresos.',
     }

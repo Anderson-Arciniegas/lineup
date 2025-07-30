@@ -1,4 +1,4 @@
-<nav class="nav flex flex-row justify-between py-10 px-5 sm:px-10 bg-primary-50 shadow-sm">
+<nav class="nav flex flex-row justify-between py-3 px-5 sm:px-10 bg-primary-50 shadow-sm">
     <a [routerLink]="['/']"
        class="flex flex-row items-center">
         <h1 class="text-3xl font-semibold">LineUp</h1>
@@ -17,6 +17,7 @@
         </ul>
         <div>
             <lib-button label="Login"
+                        [link]="'/login'"
                         [type]="'rounded'"
                         width="w-25"></lib-button>
         </div>

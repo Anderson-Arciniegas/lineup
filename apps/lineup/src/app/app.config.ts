@@ -20,7 +20,8 @@ import {
 import {
   definePreset
 } from '@primeuix/themes';
-import Nora from '@primeuix/themes/nora';
+import Lara from '@primeuix/themes/lara';
+
 import {
   providePrimeNG,
 } from 'primeng/config';
@@ -29,7 +30,7 @@ import {
 } from './app.routes';
 
 
-const MyPreset = definePreset(Nora, {
+const MyPreset = definePreset(Lara, {
     semantic: {
         primary: {
             50: '#F6F6F6',
