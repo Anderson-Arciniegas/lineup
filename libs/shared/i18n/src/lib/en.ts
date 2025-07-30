@@ -1,7 +1,18 @@
 export const en = {
     general: {
-       welcome: 'Welcome',
-       addCategory: 'Add Category',
+        welcome: 'Welcome',
+        addCategory: 'Add Category',
+        enter: 'Enter',
+        register: 'Create account',
+        lineUp: 'LineUp',
+        login: 'Login',
+        logout: 'Logout',
+        usernameOrEmail: 'Username or email',
+        password: 'Password',
+        confirmPassword: 'Confirm password',
+        howDoYouWantToBePartOfLineUp: 'How do you want to be part of LineUp?',
+        user: 'User',
+        business: 'Business',
     },
     landingPage: {
         yourSpaceToBuildA: 'Your space to build a',
@@ -26,7 +37,7 @@ export const en = {
         exploreCatalogsDescription: 'Browse online product catalogs. Get inspired and find exactly what you need or something new you\'ll love.',
         connectDirectly: 'Connect directly',
         connectDirectlyDescription: 'Contact businesses instantly to ask questions, request quotes, or schedule appointments.',
-        withLineUpYouCanCreateYourDigitalShowroom: 'With LineUp you can create your digital Showroom.',
+        withLineUpYouCanCreateYourDigitalShowroom: 'With LineUp you can create your digital Showroom',
         contactUs: 'Contact us',
         contactUsDescription: 'Contact our team. Only questions related to our services and income requests will be answered.',
     }
