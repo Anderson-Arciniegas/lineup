@@ -1,12 +1,23 @@
 import {
-  Routes
+    Routes
 } from '@angular/router';
 
 import {
-  LandingPage
+    AccountTypePage
+} from '../features/auth/views/account-type-page/account-type-page';
+import {
+    LoginPage
+} from '../features/auth/views/login-page/login-page';
+import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
+import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
+import {
+    LandingPage
 } from '../features/landing-page/views/landing-page/landing-page';
 import {
-  HomeLayout
+    AuthLayout
+} from './components/auth-layout/auth-layout';
+import {
+    HomeLayout
 } from './components/home-layout/home-layout';
 export const layoutRoutes: Routes = [{
         path: '',
@@ -18,6 +29,31 @@ export const layoutRoutes: Routes = [{
                 title: 'general.landingPage',
             }
         }, ]
+    },
+    {
+        path: 'login',
+        component: AuthLayout,
+        children: [{
+            path: '',
+            component: LoginPage
+        }]
+    },
+    {
+        path: 'register',
+        component: AuthLayout,
+        children: [{
+                path: '',
+                component: AccountTypePage
+            },
+            {
+                path: 'user',
+                component: RegisterUserPage
+            },
+            {
+                path: 'business',
+                component: RegisterBusinessPage
+            }
+        ]
     },
     {
         path: 'home',
