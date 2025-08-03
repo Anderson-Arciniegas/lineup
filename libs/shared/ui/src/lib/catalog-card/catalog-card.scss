@@ -27,4 +27,5 @@
     border-radius: var(--border-radius-img);
     height: 272px;
     transition: transform 0.3s ease-in-out;
+    object-fit: cover;
 }

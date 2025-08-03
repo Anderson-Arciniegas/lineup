@@ -10,22 +10,60 @@ export const businessRoutes: Routes = [{
         component: BusinessPage,
     },
     {
-        path: 'product/:id',
-        loadComponent: () =>
-        import('./views/product-page/product-page').then(m => m.ProductPage),
+        path: 'lineup/:name',
         data: {
             prerender: true,
             getPrerenderParams: () => [{
                     business: 'business-1',
-                    product: 'product-a'
+                    name: '1-catalog'
                 },
                 {
                     business: 'business-2',
-                    product: 'product-b'
+                    name: '2-catalog'
                 }
             ]
-        }
+        },
+        children: [{
+                path: '',
+                loadComponent: () => import('./views/catalog-page/catalog-page').then(m => m.CatalogPage),
+            },
+            {
+                path: ':idProduct',
+                loadComponent: () => import('./views/product-page/product-page').then(m => m.ProductPage),
+                data: {
+                    prerender: true,
+                    getPrerenderParams: () => [{
+                            business: 'business-1',
+                            name: '1-catalog',
+                            idProduct: '1'
+                        },
+                        {
+                            business: 'business-2',
+                            name: '2-catalog',
+                            idProduct: '2'
+                        }
+                    ]
+                },
+            },
+        ]
     },
+    // {
+    //     path: 'product/:id',
+    //     loadComponent: () =>
+    //         import('./views/product-page/product-page').then(m => m.ProductPage),
+    //     data: {
+    //         prerender: true,
+    //         getPrerenderParams: () => [{
+    //                 business: 'business-1',
+    //                 product: 'product-a'
+    //             },
+    //             {
+    //                 business: 'business-2',
+    //                 product: 'product-b'
+    //             }
+    //         ]
+    //     }
+    // },
     {
         path: '**',
         redirectTo: '/',

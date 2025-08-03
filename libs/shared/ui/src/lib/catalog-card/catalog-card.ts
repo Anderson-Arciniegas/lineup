@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
 
 @Component({
@@ -7,6 +8,7 @@ import { CardModule } from 'primeng/card';
   imports: [
     CommonModule,
     CardModule,
+    RouterLink
   ],
   templateUrl: './catalog-card.html',
   styleUrl: './catalog-card.scss',
