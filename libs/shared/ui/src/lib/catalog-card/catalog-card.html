@@ -1,16 +1,20 @@
-<p-card class="border-radius p-2 shadow-sm cursor-pointer"
-    [ngClass]="[width]">
-    <ng-template #header>
-        <div class="w-full image-container">
-            <img alt="Card" class="image" src="https://picsum.photos/400/300" />
+<a [routerLink]="'lineup/1-catalog'">
+    <p-card class="border-radius p-2 shadow-lg cursor-pointer bg-primary-50"
+            [ngClass]="[width]">
+        <ng-template #header>
+            <div class="w-full image-container">
+                <img alt="Card"
+                     class="image"
+                     src="https://picsum.photos/400/300" />
+            </div>
+        </ng-template>
+        <div class="w-full text-center flex flex-rows items-center justify-between">
+            <div class="flex items-center justify-center">
+                <span class="font-medium text-md">Catalog Title</span>
+            </div>
+            <div class="flex items-center justify-center">
+                <i class="pi pi-angle-right text-xl"></i>
+            </div>
         </div>
-    </ng-template>
-    <div class="w-full text-center flex flex-rows items-center justify-between">
-        <div class="flex items-center justify-center">
-            <span class="font-medium text-md">Catalog Title</span>
-        </div>
-        <div class="flex items-center justify-center">
-            <i class="pi pi-angle-right text-xl"></i>
-        </div>
-    </div>
-</p-card>
+    </p-card>
+</a>
