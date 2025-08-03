@@ -1,0 +1,14 @@
+<div class="carousel-container">
+    <div class="carousel">
+        <img *ngFor="let img of images"
+             class="carousel-item"
+             [src]="img"
+             crossorigin="anonymous"
+             alt="Product image" />
+    </div>
+</div>
+
+<div class="controls">
+    <button (click)="rotateLeft()">⟲</button>
+    <button (click)="rotateRight()">⟳</button>
+</div>
