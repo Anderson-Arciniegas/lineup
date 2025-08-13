@@ -1,29 +1,19 @@
-::ng-deep{ 
-    
-    .title-content {
-    padding: 8px 8px 0px 8px;
+::ng-deep .p-card-body {
+    padding: 0px;
 
     &:hover {
         .image {
             transform: scale(1.05);
         }
     }
-    
-    }
-    
-    .p-card-body {
-        padding: 0px !important;
-    }
-
-
 }
 
-.catalog-data-content {
+.business-data-content {
     position: relative;
 }
 
-.catalog-data-left{
-    background-color: rgba($color: #D1D1D1, $alpha: 0.6);
+.business-data-left{
+    background-color: rgba($color: #262626, $alpha: 0.4);
     border-radius: 15px;
     top: 8px;
     position: absolute;
@@ -31,15 +21,14 @@
     left: 8px;
 }
 
-.catalog-data-right{
-    background-color: rgba($color: #D1D1D1, $alpha: 0.6);
+.business-data-right{
+    background-color: rgba($color: #262626, $alpha: 0.4);
     border-radius: 15px;
     top: 8px;
     position: absolute;
     z-index: 10;
     right: 8px;
 }
-
 
 .border-radius {
     border-radius: var(--border-radius-catalog-card);
@@ -58,7 +47,7 @@
 
 .image {
     border-radius: var(--border-radius-img);
-    max-height: 272px;
+
     transition: transform 0.3s ease-in-out;
     object-fit: cover;
 }

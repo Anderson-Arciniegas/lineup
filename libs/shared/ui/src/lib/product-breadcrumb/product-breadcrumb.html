@@ -7,9 +7,20 @@
             flex flex-row
             items-center justify-start
             ">
-        <i class="pi pi-arrow-left arrow"></i>
+
+        <div class="flex flex-row items-center justify-center">
+            <lib-button [icon]="'pi pi-arrow-left'"
+                        [width]="'w-17'"
+                        [color]="'secondary'"
+                        [variant]="'text'"
+                        [size]="'large'"
+                        [fontSize]="'text-2xl'"
+                        [type]="'rounded'"
+                        (action)="goBack()"></lib-button>
+        </div>
     </div>
-    <div class="
+    <div *ngIf="business"
+         class="
         flex flex-row
         items-center justify-center
         gap-3

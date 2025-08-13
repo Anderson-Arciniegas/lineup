@@ -1,0 +1,35 @@
+ <div class="
+        flex flex-col
+        items-start justify-center
+        w-10/10
+        max-h-screen
+      ">
+     <div class="card w-10/10 max-h-screen">
+         <p-carousel class="max-h-screen"
+                     [value]="products"
+                     [numVisible]="1"
+                     [numScroll]="1"
+                     [showIndicators]="false"
+                     [circular]="true"
+                     [responsiveOptions]="responsiveOptions"
+                     (onPage)="onPage($event)"
+                     autoplayInterval="100000">
+             <ng-template let-product
+                          #item>
+                 <section class="flex flex-col-reverse lg:flex-row items-center justify-center w-10/10 py-4 px-1 sm:px-4 lg:px-15 gap-5 md:gap-10">
+                     <div class="flex flex-col items-start justify-start gap-2 sm:gap-4 w-10/10 sm:w-8/10 lg:w-4/10 h-max max-w-3xl">
+                         <h4 class="font-bold text-xl md:text-4xl">{{ product.name }}</h4>
+                         <p class="text-sm md:text-lg text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quae accusantium sequi, eligendi, accusamus dicta aliquam beatae tenetur provident error facere cum expedita tempora. Quidem omnis nemo animi sequi quas!</p>
+                         <span class="font-bold text-xl md:text-4xl">{{ product.price | currency }}</span>
+                     </div>
+
+                     <img [id]="product.id"
+                          class="carousel-image max-h-64 md:max-h-80 lg:max-h-screen w-10/10 sm:w-8/10 lg:w-4/10"
+                          src="https://picsum.photos/700/700"
+                          alt="">
+                 </section>
+
+             </ng-template>
+         </p-carousel>
+     </div>
+ </div>
