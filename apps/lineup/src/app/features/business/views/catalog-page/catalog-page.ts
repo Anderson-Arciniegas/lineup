@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Button, ProductBreadcrumb, ProductCard, ProductCarousel } from "@lineup/ui";
+import { Button, CatalogCarousel, ProductBreadcrumb, ProductCard } from "@lineup/ui";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [CommonModule, ProductBreadcrumb, ProductCard, Button, IconField, InputIcon, ProductCarousel],
+  imports: [CommonModule, ProductBreadcrumb, ProductCard, Button, IconField, InputIcon, CatalogCarousel],
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.scss',
 })
