@@ -1,3 +1,183 @@
-<section class="p-12">
-    <lib-ui></lib-ui>
+<section class="p-12 flex flex-col gap-8  items-center justify-start">
+    <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
+        <div class="
+        w-full
+        flex flex-row
+        items-center justify-center
+        ">
+            <div class="
+                    flex
+                    items-center
+                    justify-center
+                    bg-primary-50
+                    search
+                    gap-2
+                    sm:gap-5
+                    px-3
+                    sm:px-8 ">
+                <p-iconfield class="
+                    w-full
+                    max-width">
+                    <p-inputicon class="pi pi-search" />
+                    <input type="text"
+                           class="w-full input font-medium"
+                           pInputText
+                           placeholder="Search" />
+                </p-iconfield>
+                <lib-button label="Buscar"
+                            icon="pi pi-search"
+                            type="rounded"
+                            class="hidden sm:block">
+                </lib-button>
+                <lib-button width="w-10 h-10"
+                            icon="pi pi-search"
+                            type="rounded"
+                            class="block sm:hidden">
+                </lib-button>
+            </div>
+        </div>
+        <div class="
+        w-full
+        flex flex-row
+        items-center justify-center
+    
+        ">
+            <div class="
+         flex
+         flex-row
+         items-center
+         justify-center
+         categories
+         gap-2
+         sm:gap-6
+         px-3
+         sm:px-7
+         w-9/10">
+                <div class="flex
+         flex-wrap
+         justify-around w-10/10">
+                    <lib-button [color]="'secondary'"
+                                label="Todo"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Accesorios"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Tecnología"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Tecnología"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Zapatos"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Hogar"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Hogar"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+                    <lib-button [color]="'secondary'"
+                                label="Gaming"
+                                type="rounded"
+                                [width]="'w-30'"
+                                [size]="'small'">
+                    </lib-button>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="
+        flex flex-col
+        items-start justify-center
+        gap-5
+        w-10/10">
+        <h3 class="font-medium text-3xl pl-10">Negocios destacados</h3>
+        <div class="card w-10/10">
+            <p-carousel [value]="products"
+                        [numVisible]="5"
+                        [numScroll]="1"
+                        [circular]="true"
+                        [responsiveOptions]="responsiveOptions"
+                        autoplayInterval="3000">
+                <ng-template let-product
+                             #item>
+                    <lib-business-card class="cursor-pointer w-60"
+                                       [width]="'w-60'"
+                                       [height]="'h-40'"></lib-business-card>
+
+                </ng-template>
+            </p-carousel>
+        </div>
+    </div>
+
+    <div class="
+        flex flex-col
+        items-start justify-center
+        gap-5
+        w-10/10">
+        <h3 class="font-medium text-3xl pl-10">Catalogos destacados</h3>
+        <div class="card w-10/10">
+            <p-carousel [value]="products"
+                        [numVisible]="5"
+                        [numScroll]="1"
+                        [circular]="true"
+                        [responsiveOptions]="responsiveOptions"
+                        autoplayInterval="3000">
+                <ng-template let-product
+                             #item>
+                    <lib-catalog-card class="cursor-pointer w-60"
+                                      [width]="'w-60'"
+                                      [height]="'h-40'"></lib-catalog-card>
+
+                </ng-template>
+            </p-carousel>
+        </div>
+    </div>
+
+    <div class="
+        flex flex-col
+        items-start justify-center
+        gap-5
+        w-10/10">
+        <h3 class="font-medium text-3xl pl-10">Productos destacados</h3>
+        <div class="card w-10/10">
+            <p-carousel [value]="products"
+                        [numVisible]="5"
+                        [numScroll]="1"
+                        [circular]="true"
+                        [responsiveOptions]="responsiveOptions"
+                        autoplayInterval="3000">
+                <ng-template let-product
+                             #item>
+                    <lib-product-card [index]="product.id"></lib-product-card>
+                </ng-template>
+            </p-carousel>
+        </div>
+    </div>
+
+
 </section>

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BusinessData, CatalogCard } from '@lineup/ui';
+import { BusinessData, CatalogCard, ProductBreadcrumb } from '@lineup/ui';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,8 +17,9 @@ import { SkeletonModule } from 'primeng/skeleton';
     InputIconModule,
     InputTextModule,
     SkeletonModule,
-    CatalogCard
-  ],
+    CatalogCard,
+    ProductBreadcrumb
+],
   templateUrl: './business-page.html',
   styleUrl: './business-page.scss',
 })
@@ -33,4 +34,5 @@ export class BusinessPage {
     { id: 7, name: 'Ropa Interior' },
   ];
   value: '';
+business: any;
 }
