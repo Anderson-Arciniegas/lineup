@@ -11,16 +11,16 @@ import {
   TranslateStore
 } from '@ngx-translate/core';
 import {
-  HomePage
-} from './home-page';
+  BusinessCard
+} from './business-card';
 
-describe('HomePage', () => {
-    let component: HomePage;
-    let fixture: ComponentFixture < HomePage > ;
+describe('BusinessCard', () => {
+    let component: BusinessCard;
+    let fixture: ComponentFixture < BusinessCard > ;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HomePage, TranslateModule.forRoot(), ],
+            imports: [BusinessCard, TranslateModule.forRoot(), ],
             providers: [{
                     provide: ActivatedRoute,
                     useValue: {}
@@ -30,7 +30,7 @@ describe('HomePage', () => {
             ],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(HomePage);
+        fixture = TestBed.createComponent(BusinessCard);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

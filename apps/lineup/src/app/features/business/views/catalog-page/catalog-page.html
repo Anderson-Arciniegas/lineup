@@ -54,46 +54,36 @@
         flex flex-col
          items-center 
         mt-4
-        gap-8
+        gap-20
     ">
-        <div class="grid grid-flow-col grid-rows-2 gap-4 w-8/10">
-            <lib-product-card class="row-span-2 col-span-2"
-                              [index]="1"
-                              [width]="'w-10/10'"
-                              [height]="'h-10/10'"></lib-product-card>
-            <lib-product-card [index]="2"
-                              [width]="'w-10/10'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="3"
-                              [width]="'w-10/10'"
-                              [height]="'h-70'"></lib-product-card>
+        <div class="flex flex-row items-center justify-center w-10/10 ">
+            <lib-catalog-carousel class="w-10/10">
+            </lib-catalog-carousel>
         </div>
-        <div class="w-full flex flex-row gap-8 items-center justify-center w-8/10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl">
             <lib-product-card [index]="1"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="2"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="3"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="4"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
-        </div>
-        <div class="w-full flex flex-row gap-8 items-center justify-center w-8/10">
             <lib-product-card [index]="1"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="2"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="3"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
             <lib-product-card [index]="4"
-                              [width]="'w-70'"
+                              [width]="'w-full'"
                               [height]="'h-70'"></lib-product-card>
         </div>
     </div>
