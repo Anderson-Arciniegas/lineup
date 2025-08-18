@@ -16,10 +16,10 @@
 
     .carousel-image {
         cursor: pointer;
-        max-width: 900px;
+        width: 500px;
+        height: 500px;
         border: 15px solid var(--p-primary-50);
-        border-radius: 30px;
-        height: auto;
+        border-radius: 50px;
         /* esquinas suaves */
         object-fit: cover;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);

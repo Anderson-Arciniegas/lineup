@@ -1,4 +1,4 @@
-<section class="p-12 flex flex-col gap-8  items-center justify-start">
+<section class="p-5 lg:p-12 flex flex-col gap-8  items-center justify-start">
     <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
         <div class="
         w-full
@@ -56,49 +56,57 @@
                 <div class="flex
          flex-wrap
          justify-around w-10/10">
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Todo"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Accesorios"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Tecnología"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Tecnología"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Zapatos"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Hogar"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Hogar"
                                 type="rounded"
                                 [width]="'w-30'"
                                 [size]="'small'">
                     </lib-button>
-                    <lib-button [color]="'secondary'"
+                    <lib-button class="mb-2"
+                                [color]="'secondary'"
                                 label="Gaming"
                                 type="rounded"
                                 [width]="'w-30'"
@@ -125,9 +133,9 @@
                         autoplayInterval="3000">
                 <ng-template let-product
                              #item>
-                    <lib-business-card class="cursor-pointer w-60"
+                    <lib-business-card class="cursor-pointer w-60 my-3"
                                        [width]="'w-60'"
-                                       [height]="'h-40'"></lib-business-card>
+                                       [height]="'h-66'"></lib-business-card>
 
                 </ng-template>
             </p-carousel>
@@ -149,9 +157,9 @@
                         autoplayInterval="3000">
                 <ng-template let-product
                              #item>
-                    <lib-catalog-card class="cursor-pointer w-60"
+                    <lib-catalog-card class="cursor-pointer w-60 my-3"
                                       [width]="'w-60'"
-                                      [height]="'h-40'"></lib-catalog-card>
+                                      [height]="'h-66'"></lib-catalog-card>
 
                 </ng-template>
             </p-carousel>
@@ -173,7 +181,9 @@
                         autoplayInterval="3000">
                 <ng-template let-product
                              #item>
-                    <lib-product-card [index]="product.id"></lib-product-card>
+                    <lib-product-card class="my-3"
+                                      [width]="'w-60'"
+                                      [index]="product.id"></lib-product-card>
                 </ng-template>
             </p-carousel>
         </div>

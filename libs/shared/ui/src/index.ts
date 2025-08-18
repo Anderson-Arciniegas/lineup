@@ -2,6 +2,7 @@ export * from './lib/business-card/business-card';
 export * from './lib/business-data/business-data';
 export * from './lib/button/button';
 export * from './lib/catalog-card/catalog-card';
+export * from './lib/catalog-carousel-item/catalog-carousel-item';
 export * from './lib/catalog-carousel/catalog-carousel';
 export * from './lib/categories-list/categories-list';
 export * from './lib/category-item/category-item';
@@ -15,4 +16,5 @@ export * from './lib/product-info/product-info';
 export * from './lib/product-tags/product-tags';
 export * from './lib/product-variations/product-variations';
 export * from './lib/ui/ui';
+
 

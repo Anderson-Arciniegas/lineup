@@ -1,5 +1,5 @@
-<p-button *ngIf="!link"
-          class="inline-block"
+@if(!link) {
+<p-button class="inline-block"
           [ngClass]="[width, fontSize]"
           [label]="label"
           [icon]="icon ? icon : null"
@@ -11,9 +11,8 @@
           [variant]="variant"
           [size]="size"
           (click)="action.emit($event)" />
-
-<a *ngIf="link"
-   [routerLink]="link">
+} @else {
+<a [routerLink]="link">
     <p-button class="inline-block"
               [ngClass]="[width, fontSize]"
               [label]="label"
@@ -27,3 +26,4 @@
               [variant]="variant"
               [size]="size" />
 </a>
+}

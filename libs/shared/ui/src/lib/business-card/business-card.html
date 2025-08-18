@@ -1,6 +1,6 @@
 <a [routerLink]="'/business-1'">
-    <p-card class="border-radius p-2 shadow-lg cursor-pointer flex flex-col bg-primary-900"
-            [ngClass]="[width]">
+    <p-card class="border-radius p-2 shadow-lg cursor-pointer flex flex-col justify-end bg-primary-900"
+            [ngClass]="[width, height]">
 
         <div class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs">
             <div class="business-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-1">
@@ -15,10 +15,10 @@
             </div> -->
         </div>
 
-        <div class="w-full image-container mb-1">
+        <div class="image-container mb-1">
             <img alt="Card"
                  class="image"
-                 src="https://picsum.photos/400/300" />
+                 [src]="image" />
         </div>
         <div>
             <p class="text-center font-medium text-white text-sm">TuPuntoShopVe</p>

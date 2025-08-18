@@ -1,6 +1,6 @@
 <a [routerLink]="'/business-1/lineup/catalog-1'">
-    <p-card class="border-radius p-2 shadow-lg cursor-pointer bg-primary-100"
-            [ngClass]="[width]">
+    <div class="border-radius p-2 shadow-lg cursor-pointer bg-primary-100 flex flex-col justify-end"
+         [ngClass]="[width, height]">
         <div class="catalog-data-content flex flex-row items-center justify-between gap-3 w-10/10 font-medium text-xs">
             <div class="catalog-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-1">
                 <i class="pi pi-objects-column"
@@ -13,10 +13,10 @@
                 <span>99+</span>
             </div> -->
         </div>
-        <div class="w-full image-container">
+        <div class="h-full image-container">
             <img alt="Card"
-                 class="image"
-                 src="https://picsum.photos/400/300" />
+                 class="image h-full w-full"
+                 [src]="image" />
         </div>
         <div class="w-full text-center flex flex-rows items-center justify-between title-content">
             <div class="flex flex-row items-center justify-start">
@@ -26,5 +26,5 @@
                 <i class="pi pi-angle-right text-xl"></i>
             </div>
         </div>
-    </p-card>
+    </div>
 </a>
