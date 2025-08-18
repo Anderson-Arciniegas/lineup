@@ -1,5 +1,6 @@
 ::ng-deep {
-      .p-carousel-next-button {
+
+    .p-carousel-next-button {
         width: 35px;
         height: 35px;
     }
@@ -15,7 +16,7 @@
 
     .carousel-image {
         cursor: pointer;
-        width: 100%;
+        width: 500px;
         height: 500px;
         border: 15px solid var(--p-primary-50);
         border-radius: 50px;
@@ -32,13 +33,13 @@
             filter: brightness(1) contrast(1.1) saturate(1.2);
         }
     }
-
-    @media screen and (max-width: 450px) {
-        .carousel-image {
-            height: 300px;
-            border: 5px solid var(--p-primary-50);
-        }
+    
+    .carousel-image-skeleton{
+        width: 500px;
+        height: 500px;
+        border: 15px solid var(--p-primary-50);
+        background: var(--p-gray-200);
+        border-radius: 50px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-    
-    
 }

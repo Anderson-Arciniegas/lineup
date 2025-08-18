@@ -12,5 +12,14 @@ import { InputIcon } from "primeng/inputicon";
 })
 export class CatalogPage {
   business = { name: 'Tu Punto vShop', image: 'assets/images/vShop.jpg' };
-  
+  bgColor: string | undefined;
+
+  setColor($event: string) {
+    console.log('Color emitido:', $event);
+
+    const color1 = $event;
+    const color2 = 'rgba(255, 255, 255, 0.5)'; // Color de fondo
+
+    this.bgColor = `linear-gradient(to bottom, ${color1}, ${color2})`;
+  }
 }

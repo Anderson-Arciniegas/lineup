@@ -62,7 +62,7 @@ export const layoutRoutes: Routes = [{
     },
     {
         path: ':business',
-        component: HomeLayout,
+        // component: HomeLayout,
         loadChildren: () => import('../features/business/business.routes').then(m => m.businessRoutes),
         data: {
             prerender: true,
