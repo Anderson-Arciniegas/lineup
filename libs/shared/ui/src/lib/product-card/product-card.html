@@ -1,19 +1,24 @@
 <section ngSkipHydrations
+         [routerLink]="'/business-1/lineup/catalog-1/123'"
          id="product-flip-{{index}}"
-         class="product-card flex flex-col content-between justify-between p-3 cursor-pointer"
-         [style]="{overflow: 'hidden', backgroundImage: 'url(https://picsum.photos/800/800)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center' }"
+         class="product-card flex flex-col content-between justify-between cursor-pointer"
          [ngClass]="[width, height]">
 
-    <div class="flex flex-row w-full justify-start">
+    <img class="product-image"
+         [ngClass]="[width, height]"
+         [src]="image"
+         alt="">
+
+    <div [ngClass]="[width]"
+         class="button-content flex flex-row w-full justify-start">
         <lib-button class="card-like-button"
                     [icon]="'pi pi-heart'"
                     [width]="'w-11'"
                     [type]="'rounded'"></lib-button>
     </div>
 
-    <div class="flip-box">
+    <div [ngClass]="[width]"
+         class="flip-box">
         <div class="flip-inner h-12">
             <div class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-center items-center">
                 <h2 class="text-white text-xs text-center font-medium">Televisor 65″ Samsung Neo QLED 4K QN90B</h2>
