@@ -1,13 +1,5 @@
-<lib-product-tags 
-    class="
-        w-full
-        flex flex-row flex-wrap 
-        gap-1 
-        items-center justify-start
-    " 
-    [tags]="tags">
-</lib-product-tags>
-<p-panel [toggleable]="true" class="w-full">
+<p-panel [toggleable]="true"
+         class="w-full">
     <ng-template #header>
         <div class="flex items-center gap-2">
             <span class="font-bold">Detalles</span>
@@ -20,20 +12,25 @@
             items-start justify-start
     ">
         @for (item of variations; track $index) {
-            <lib-product-variations 
-                class="
+        <lib-product-variations class="
                     w-full
                     flex flex-col
                     gap-1
                     items-start justify-start
                 "
-                [title]="item.title" 
-                [variations]="item.variations">
-            </lib-product-variations>
+                                [title]="item.title"
+                                [variations]="item.variations">
+        </lib-product-variations>
         }
     </div>
 </p-panel>
-<div class="w-full flex flex-row mt-1 gap-1">
-    <lib-button icon="pi pi-whatsapp" label="Contactanos" [width]="'w-50'" size="large" type="rounded"></lib-button>
-    <lib-button icon="pi pi-heart" size="large" type="rounded" color="secondary"></lib-button>
+<div class="w-full flex flex-row mt-1 gap-3">
+    <lib-button icon="pi pi-whatsapp"
+                label="Contactanos"
+                [width]="'w-50'"
+                type="rounded"></lib-button>
+    <lib-button icon="pi pi-heart"
+                [width]="'w-12'"
+                type="rounded"
+                color="secondary"></lib-button>
 </div>

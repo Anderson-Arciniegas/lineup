@@ -2,6 +2,7 @@
     border-radius: var(--border-radius);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     position: relative;
+    overflow: hidden;
 }
 
 
@@ -12,6 +13,29 @@
 
 // }
 
+
+
+.button-content {
+    position: absolute;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.flip-box {
+    position: absolute;
+    box-sizing: border-box;
+    
+    width: 100%;
+    padding: 15px;
+    bottom: 0px;
+}
+
+.product-image {
+    border-radius: var(--border-radius);
+    object-fit: cover;
+
+    filter: brightness(1) contrast(1.1) saturate(1.2);
+}
 
 .flip-inner {
     width: 100%;
@@ -29,7 +53,8 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 4px solid rgba(255, 255, 255, 0.6);
+    
 }
 
 .back {
