@@ -40,6 +40,10 @@ export class CreateCatalogCard {
       this.visible = true;
     }
 
+    enterCreateCatalog() {
+      return;
+    }
+
     onFileSelected(event: Event) {
       const input = event.target as HTMLInputElement;
       if (input.files && input.files.length > 0) {
