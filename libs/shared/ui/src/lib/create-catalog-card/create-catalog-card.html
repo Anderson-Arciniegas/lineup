@@ -1,4 +1,5 @@
-<div tabindex="0"
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+ <div tabindex="0"
     (click)="createCatalog()"
     (keyup.enter)="enterCreateCatalog()">
     <div class="
@@ -54,6 +55,7 @@
                     flex 
                     items-center justify-center
                 "
+                tabindex="0"
                 (click)="fileInput.click()"
                 (dragover)="onDragOver($event)"
                 (dragleave)="onDragLeave($event)"
