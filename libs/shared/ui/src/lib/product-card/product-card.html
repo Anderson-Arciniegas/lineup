@@ -4,10 +4,24 @@
          class="product-card flex flex-col content-between justify-between cursor-pointer"
          [ngClass]="[width, height]">
 
-    <img class="product-image"
-         [ngClass]="[width, height]"
-         [src]="image"
-         alt="">
+    <div [ngClass]="[width, height]">
+        <img class="product-image"
+             (load)="imageLoaded = true"
+             [hidden]="!imageLoaded"
+             [ngClass]="[width, height]"
+             [src]="image"
+             alt="">
+
+        <div [hidden]="imageLoaded"
+             [ngClass]="[width, height]"
+             class="flex flex-row items-center justify-center">
+            <p-progress-spinner strokeWidth="8"
+                                fill="transparent"
+                                animationDuration=".5s"
+                                [style]="{ width: '50px', height: '50px' }" />
+        </div>
+    </div>
+
 
     <div [ngClass]="[width]"
          class="button-content flex flex-row w-full justify-start">
