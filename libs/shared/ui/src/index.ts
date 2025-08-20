@@ -6,6 +6,7 @@ export * from './lib/catalog-carousel-item/catalog-carousel-item';
 export * from './lib/catalog-carousel/catalog-carousel';
 export * from './lib/categories-list/categories-list';
 export * from './lib/category-item/category-item';
+export * from './lib/control-panel-nav/control-panel-nav';
 export * from './lib/nav/nav';
 export * from './lib/product-breadcrumb/product-breadcrumb';
 export * from './lib/product-card/product-card';
