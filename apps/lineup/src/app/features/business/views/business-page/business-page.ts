@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BusinessData, CatalogCard, ProductBreadcrumb } from '@lineup/ui';
+import { BusinessData, CatalogCard, CreateCatalogCard, ProductBreadcrumb } from '@lineup/ui';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +18,8 @@ import { SkeletonModule } from 'primeng/skeleton';
     InputTextModule,
     SkeletonModule,
     CatalogCard,
-    ProductBreadcrumb
+    ProductBreadcrumb,
+    CreateCatalogCard,
 ],
   templateUrl: './business-page.html',
   styleUrl: './business-page.scss',

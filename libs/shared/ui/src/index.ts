@@ -17,4 +17,4 @@ export * from './lib/product-info/product-info';
 export * from './lib/product-tags/product-tags';
 export * from './lib/product-variations/product-variations';
 export * from './lib/ui/ui';
-
+export * from './lib/create-catalog-card/create-catalog-card';
