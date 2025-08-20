@@ -17,6 +17,11 @@ export const es = {
         businessRegister: 'Registro de Negocio',
         email: 'Correo electrónico',
         username: 'Usuario',
+        createCatalog: 'Crear Catálogo',
+        catalogName: 'Nombre del Catálogo',
+        catalogNamePlaceholder: 'Ingrese el nombre del catálogo',
+        imageUpload: 'Cargar Imagen',
+        imageUploadPlaceholder: 'Haz click o arrastra tu archivo aquí'
     },
     landingPage: {
         yourSpaceToBuildA: 'Tu espacio para construir un',
