@@ -2,6 +2,7 @@ import { LanguageEnum } from '@lineup/core';
 
 export const appRoutes: AppRoutes = {
     home: '/',
+    controlPanel: 'control-panel',
 };
 
 
@@ -32,4 +33,5 @@ export interface Language {
 
 export interface AppRoutes {
     home: string;
+    controlPanel: string;
 }

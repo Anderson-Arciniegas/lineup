@@ -32,6 +32,11 @@ body {
     --p-button-padding-x: 20px;
     --p-button-lg-font-size: 2rem;
     --p-button-transition-duration: 0.4s;
+    --p-progressspinner-color-one: var(--p-primary-500);
+    --p-progressspinner-color-two: var(--p-primary-400);
+    --p-progressspinner-color-three: var(--p-primary-300);
+    --p-progressspinner-color-four: var(--p-primary-200);
+
 }
 
 
@@ -72,4 +77,8 @@ body {
 
 .radius{
     border-radius: var(--border-radius) !important;
+}
+
+.container{
+  margin: auto;
 }
