@@ -20,13 +20,14 @@ import {
 import {
   CardModule
 } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import {
   Button
 } from '../button/button';
 
 @Component({
     selector: 'lib-product-card',
-    imports: [CommonModule, Button, CardModule, ButtonModule, RouterLink],
+    imports: [CommonModule, Button, CardModule, ButtonModule, RouterLink, ProgressSpinnerModule],
     templateUrl: './product-card.html',
     styleUrl: './product-card.scss',
 })
@@ -35,6 +36,7 @@ export class ProductCard implements AfterViewInit, OnInit{
     @Input() width = 'w-65';
     @Input() height = 'h-100';
     image: string;
+    imageLoaded: boolean;
     images: string[] = [
       'assets/images/products/headphones-min.webp',
       'assets/images/products/makeup.webp',

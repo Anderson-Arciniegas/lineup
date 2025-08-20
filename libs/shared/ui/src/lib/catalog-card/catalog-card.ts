@@ -12,13 +12,15 @@ import {
 import {
   CardModule
 } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'lib-catalog-card',
     imports: [
         CommonModule,
         CardModule,
-        RouterLink
+        RouterLink,
+        ProgressSpinnerModule
     ],
     templateUrl: './catalog-card.html',
     styleUrl: './catalog-card.scss',
@@ -27,6 +29,7 @@ export class CatalogCard implements OnInit {
     @Input() width = 'w-72';
     @Input() height = 'h-96';
     image: string;
+    imageLoaded: boolean;
     images: string[] = [
         'assets/images/products/headphones-min.webp',
         'assets/images/products/makeup.webp',

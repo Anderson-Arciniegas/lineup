@@ -15,8 +15,18 @@
         </div>
         <div class="h-full image-container">
             <img alt="Card"
+                 (load)="imageLoaded = true"
+                 [hidden]="!imageLoaded"
                  class="image h-full w-full"
                  [src]="image" />
+            <div [hidden]="imageLoaded"
+                 class="h-full w-full flex flex-row items-center justify-center">
+                <p-progress-spinner strokeWidth="8"
+                                    fill="transparent"
+                                    animationDuration=".5s"
+                                    [style]="{ width: '50px', height: '50px' }" />
+            </div>
+
         </div>
         <div class="w-full text-center flex flex-rows items-center justify-between title-content">
             <div class="flex flex-row items-center justify-start">

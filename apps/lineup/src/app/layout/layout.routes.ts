@@ -2,6 +2,7 @@ import {
     Routes
 } from '@angular/router';
 
+import { AppConfigService } from '../config/services/app-config.service';
 import {
     AccountTypePage
 } from '../features/auth/views/account-type-page/account-type-page';
@@ -10,12 +11,14 @@ import {
 } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
+import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
 import {
     LandingPage
 } from '../features/landing-page/views/landing-page/landing-page';
 import {
     AuthLayout
 } from './components/auth-layout/auth-layout';
+import { ControlPanelLayout } from './components/control-panel-layout/control-panel-layout';
 import {
     HomeLayout
 } from './components/home-layout/home-layout';
@@ -59,6 +62,16 @@ export const layoutRoutes: Routes = [{
         path: 'home',
         component: HomeLayout,
         loadChildren: () => import('../features/home/home.routes').then(m => m.homeRoutes)
+    },
+    {
+        path: AppConfigService.config.routes.controlPanel,
+        component: ControlPanelLayout,
+        children: [
+            {
+                path: '',
+                component: ControlPanelPage
+            }
+        ]
     },
     {
         path: ':business',
