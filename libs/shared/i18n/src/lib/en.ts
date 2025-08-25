@@ -13,6 +13,7 @@ export const en = {
         howDoYouWantToBePartOfLineUp: 'How do you want to be part of LineUp?',
         user: 'User',
         business: 'Business',
+        searchResults: 'Search results',
         createCatalog: 'Create Catalog',
         catalogName: 'Catalog Name',
         catalogNamePlaceholder: 'Enter the catalog name',
