@@ -1,0 +1,38 @@
+<section class="search-filter-component pb-5">
+    <p-tree [value]="files"
+            class="w-full"
+            selectionMode="multiple"
+            [highlightOnSelect]="true"
+            (onNodeExpand)="onNodeExpand($event)"
+            [(selection)]="selectedFile" />
+
+    <div class="w-10/10 flex flex-col items-start justify-center gap-3 px-4 pl-8">
+        <h3 class="font-medium text-xl">Precio</h3>
+        <div class="flex flex-col w-10/10 gap-3 pl-4 price-filter">
+            <div class="flex-auto w-5/10">
+                <label for="integeronly">Minimo</label>
+                <p-inputnumber size="small"
+                               class="w-full"
+                               locale="es-ES"
+                               inputId="integeronly" />
+            </div>
+
+            <div class="flex-auto w-5/10">
+                <label for="integeronly">Maximo</label>
+                <p-inputnumber size="small"
+                               class="w-full"
+                               locale="es-ES"
+                               inputId="integeronly" />
+            </div>
+        </div>
+
+    </div>
+
+    <div class="w-full flex flex-row justify-center align-center mt-8">
+        <lib-button label="Filtrar"
+                    type="rounded"
+                    class="w-8/10"
+                    [width]="'w-10/10'">
+        </lib-button>
+    </div>
+</section>

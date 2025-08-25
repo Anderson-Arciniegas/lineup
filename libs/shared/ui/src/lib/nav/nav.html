@@ -1,18 +1,27 @@
 <nav class="nav flex flex-row justify-between py-3 px-5 sm:px-10 bg-primary-50 shadow-sm">
-    <a [routerLink]="['/']"
-       class="flex flex-row items-center">
-        <h1 class="text-3xl font-semibold">LineUp</h1>
-    </a>
+
+    <div class="flex flex-row items-center gap-3 sm:gap-5">
+        <div class="block sm:hidden">
+            <lib-button [icon]="'pi pi-bars'"
+                        [color]="'secondary'"
+                        [type]="'rounded'"
+                        width="w-11"></lib-button>
+        </div>
+        <a [routerLink]="['/']"
+           class="flex flex-row items-center">
+            <h1 class="text-3xl font-semibold">LineUp</h1>
+        </a>
+    </div>
 
     <div class="flex flex-row items-center justify-end gap-5 sm:gap-15">
         <ul class="hidden sm:flex  flex-row gap-8 items-center justify-center">
             <li class="flexitems-center justify-center">
                 <a class="font-medium"
-                   [routerLink]="'/home'">Explorar</a>
+                   [routerLink]="'/'">Explorar</a>
             </li>
             <li class="flex items-center justify-center">
                 <a class="font-medium"
-                   [routerLink]="'/'">Informacion</a>
+                   [routerLink]="'/info'">Informacion</a>
             </li>
         </ul>
         <div>
@@ -20,11 +29,6 @@
                         [link]="'/login'"
                         [type]="'rounded'"
                         width="w-25"></lib-button>
-        </div>
-        <div class="block sm:hidden">
-            <lib-button [icon]="'pi pi-bars'"
-                        [color]="'secondary'"
-                        width="w-10"></lib-button>
         </div>
     </div>
 </nav>

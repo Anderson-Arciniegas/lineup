@@ -16,5 +16,6 @@ export * from './lib/product-details/product-details';
 export * from './lib/product-info/product-info';
 export * from './lib/product-tags/product-tags';
 export * from './lib/product-variations/product-variations';
+export * from './lib/search-filters/search-filters';
 export * from './lib/ui/ui';
 

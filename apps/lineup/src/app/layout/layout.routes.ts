@@ -2,28 +2,40 @@ import {
     Routes
 } from '@angular/router';
 
-import { AppConfigService } from '../config/services/app-config.service';
+import {
+    AppConfigService
+} from '../config/services/app-config.service';
 import {
     AccountTypePage
 } from '../features/auth/views/account-type-page/account-type-page';
 import {
     LoginPage
 } from '../features/auth/views/login-page/login-page';
-import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
-import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
-import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
+import {
+    RegisterBusinessPage
+} from '../features/auth/views/register-business-page/register-business-page';
+import {
+    RegisterUserPage
+} from '../features/auth/views/register-user-page/register-user-page';
+import {
+    ControlPanelPage
+} from '../features/control-panel/views/control-panel-page/control-panel-page';
+import { HomePage } from '../features/home/views/home-page/home-page';
+import { SearchPage } from '../features/home/views/search-page/search-page';
 import {
     LandingPage
 } from '../features/landing-page/views/landing-page/landing-page';
 import {
     AuthLayout
 } from './components/auth-layout/auth-layout';
-import { ControlPanelLayout } from './components/control-panel-layout/control-panel-layout';
+import {
+    ControlPanelLayout
+} from './components/control-panel-layout/control-panel-layout';
 import {
     HomeLayout
 } from './components/home-layout/home-layout';
 export const layoutRoutes: Routes = [{
-        path: '',
+        path: 'info',
         component: HomeLayout,
         children: [{
             path: '',
@@ -59,18 +71,32 @@ export const layoutRoutes: Routes = [{
         ]
     },
     {
-        path: 'home',
-        component: HomeLayout,
-        loadChildren: () => import('../features/home/home.routes').then(m => m.homeRoutes)
-    },
-    {
         path: AppConfigService.config.routes.controlPanel,
         component: ControlPanelLayout,
-        children: [
-            {
+        children: [{
+            path: '',
+            component: ControlPanelPage
+        }]
+    },
+    {
+        path: '',
+        component: HomeLayout,
+        children: [{
                 path: '',
-                component: ControlPanelPage
-            }
+                component: HomePage,
+                data: {
+                    title: 'general.home',
+                    breadcrumb: 'home',
+                }
+            },
+            {
+                path: 'search',
+                component: SearchPage,
+                data: {
+                    title: 'general.search',
+                    breadcrumb: 'search',
+                }
+            },
         ]
     },
     {
@@ -88,6 +114,7 @@ export const layoutRoutes: Routes = [{
             ]
         }
     },
+
     {
         path: '**',
         redirectTo: '/',

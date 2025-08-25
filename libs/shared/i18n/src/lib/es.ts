@@ -17,6 +17,7 @@ export const es = {
         businessRegister: 'Registro de Negocio',
         email: 'Correo electrónico',
         username: 'Usuario',
+        searchResults: 'Resultados de búsqueda',
     },
     landingPage: {
         yourSpaceToBuildA: 'Tu espacio para construir un',

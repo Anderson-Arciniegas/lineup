@@ -2,6 +2,7 @@ import {
     Routes
 } from '@angular/router';
 import { HomePage } from './views/home-page/home-page';
+import { SearchPage } from './views/search-page/search-page';
 
 export const homeRoutes: Routes = [
     {
@@ -10,6 +11,14 @@ export const homeRoutes: Routes = [
         data: {
             title: 'general.home',
             breadcrumb: 'home',
+        }
+    },
+    {
+        path: 'search',
+        component: SearchPage,
+        data: {
+            title: 'general.search',
+            breadcrumb: 'search',
         }
     },
     {
