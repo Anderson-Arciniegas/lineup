@@ -13,6 +13,7 @@ export const en = {
         howDoYouWantToBePartOfLineUp: 'How do you want to be part of LineUp?',
         user: 'User',
         business: 'Business',
+        searchResults: 'Search results',
     },
     landingPage: {
         yourSpaceToBuildA: 'Your space to build a',
