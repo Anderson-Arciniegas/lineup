@@ -14,8 +14,10 @@
     .p-card-body {
         padding: 0px !important;
     }
+}
 
-
+.catalog-card{
+    border-radius: var(--border-radius);
 }
 
 .catalog-data-content {
@@ -53,11 +55,11 @@
 
 .image-container {
     overflow: hidden;
-    border-radius: var(--border-radius-img);
+    border-radius: 25px;
 }
 
 .image {
-    border-radius: var(--border-radius-img);
+    border-radius: 25px;
     transition: transform 0.3s ease-in-out;
     object-fit: cover;
 }

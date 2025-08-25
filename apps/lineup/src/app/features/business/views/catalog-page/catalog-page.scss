@@ -3,12 +3,12 @@
         max-width: 760px;
     }
 
-    .search {
+     .search {
         width: 100%;
         max-width: 770px;
         height: 100px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: var(--border-radius);
+        border-radius: 50px;
 
         @media screen and (max-width: 640px) {
             max-width: 400px;

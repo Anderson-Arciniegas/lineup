@@ -1,22 +1,20 @@
 import {
-    CommonModule,
-    isPlatformBrowser
+    CommonModule
 } from '@angular/common';
 
 import {
-    AfterViewInit,
     Component,
-    Inject,
-    OnInit,
-    PLATFORM_ID
+    OnInit
 } from '@angular/core';
 import {
     BusinessCard,
     Button,
     CatalogCard,
     ProductCard,
+    SearchFilters,
     Ui
 } from "@lineup/ui";
+import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
 import {
@@ -25,6 +23,7 @@ import {
 import {
     Carousel
 } from 'primeng/carousel';
+import { DialogModule } from 'primeng/dialog';
 import {
     IconField
 } from "primeng/iconfield";
@@ -34,16 +33,15 @@ import {
 import {
     Tag
 } from 'primeng/tag';
-// gsap.registerPlugin(ScrollTrigger);
+  
 @Component({
-    selector: 'app-home-page',
-    imports: [CommonModule, Ui, Button, InputIcon, IconField, BusinessCard, ProductCard, CatalogCard, Carousel, ButtonModule, Tag],
-    templateUrl: './home-page.html',
-    styleUrl: './home-page.scss',
+    selector: 'app-search-page',
+    imports: [CommonModule, Ui, Button, InputIcon, IconField, BusinessCard, ProductCard, CatalogCard, Carousel, ButtonModule, Tag, SearchFilters, DialogModule, TranslateModule],
+    templateUrl: './search-page.html',
+    styleUrl: './search-page.scss',
 })
-export class HomePage implements OnInit, AfterViewInit {
-    responsiveOptions: any[] | undefined;
-
+export class SearchPage implements OnInit {
+    visible: boolean;
     products: any[] | undefined = [{
             id: 1,
             name: 'Product 1',
@@ -110,41 +108,26 @@ export class HomePage implements OnInit, AfterViewInit {
 
     ];
 
-    constructor(
-        @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
-    ) {}
+    ngOnInit(): void {
+        window.addEventListener('scroll', function() {
+            const searchBar = document.querySelector('.search');
+            const filters = document.querySelector('.filters-container');
 
-    ngOnInit() {
-        this.responsiveOptions = [{
-                breakpoint: '1536px',
-                numVisible: 4,
-                numScroll: 1
-            },
-            {
-                breakpoint: '1280px',
-                numVisible: 4,
-                numScroll: 1
-            },
-            {
-                breakpoint: '1024px',
-                numVisible: 3,
-                numScroll: 1
-            },
-            {
-                breakpoint: '768px',
-                numVisible: 2,
-                numScroll: 1
-            },
-             {
-                breakpoint: '640px',
-                numVisible: 1,
-                numScroll: 1
+            if (window.scrollY > 100) {
+                searchBar.classList.add('shrink');
+            } else {
+                searchBar.classList.remove('shrink');
             }
-        ]
+
+            if (window.scrollY > 280) {
+                filters.classList.add('filters-shrink');
+            } else {
+                filters.classList.remove('filters-shrink');
+            }
+        });
     }
 
-    ngAfterViewInit() {
-        if (!isPlatformBrowser(this.platformId)) return;
-      
+    showDialog() {
+        this.visible = true;
     }
 }

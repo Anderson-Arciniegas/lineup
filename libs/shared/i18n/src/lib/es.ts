@@ -17,6 +17,7 @@ export const es = {
         businessRegister: 'Registro de Negocio',
         email: 'Correo electrónico',
         username: 'Usuario',
+        searchResults: 'Resultados de búsqueda',
         createCatalog: 'Crear Catálogo',
         catalogName: 'Nombre del Catálogo',
         catalogNamePlaceholder: 'Ingrese el nombre del catálogo',

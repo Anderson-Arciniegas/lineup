@@ -8,6 +8,10 @@
     }
 }
 
+.business-card{
+    border-radius: var(--border-radius);
+}
+
 .business-data-content {
     position: relative;
 }
@@ -42,7 +46,7 @@
 
 .image-container {
     overflow: hidden;
-    border-radius: var(--border-radius-img);
+    border-radius: 25px;
 }
 
 .image {
