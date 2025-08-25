@@ -14,6 +14,11 @@ export const en = {
         user: 'User',
         business: 'Business',
         searchResults: 'Search results',
+        createCatalog: 'Create Catalog',
+        catalogName: 'Catalog Name',
+        catalogNamePlaceholder: 'Enter the catalog name',
+        imageUpload: 'Image Upload',
+        imageUploadPlaceholder: 'Click or drag your file here'
     },
     landingPage: {
         yourSpaceToBuildA: 'Your space to build a',

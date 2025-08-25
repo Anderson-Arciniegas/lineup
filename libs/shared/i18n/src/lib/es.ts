@@ -18,6 +18,11 @@ export const es = {
         email: 'Correo electrónico',
         username: 'Usuario',
         searchResults: 'Resultados de búsqueda',
+        createCatalog: 'Crear Catálogo',
+        catalogName: 'Nombre del Catálogo',
+        catalogNamePlaceholder: 'Ingrese el nombre del catálogo',
+        imageUpload: 'Cargar Imagen',
+        imageUploadPlaceholder: 'Haz click o arrastra tu archivo aquí'
     },
     landingPage: {
         yourSpaceToBuildA: 'Tu espacio para construir un',
