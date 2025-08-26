@@ -35,7 +35,7 @@ import {
     HomeLayout
 } from './components/home-layout/home-layout';
 export const layoutRoutes: Routes = [{
-        path: 'info',
+        path: AppConfigService.config.routes.info,
         component: HomeLayout,
         children: [{
             path: '',
@@ -46,7 +46,7 @@ export const layoutRoutes: Routes = [{
         }, ]
     },
     {
-        path: 'login',
+        path: AppConfigService.config.routes.login,
         component: AuthLayout,
         children: [{
             path: '',
@@ -54,7 +54,7 @@ export const layoutRoutes: Routes = [{
         }]
     },
     {
-        path: 'register',
+        path: AppConfigService.config.routes.register,
         component: AuthLayout,
         children: [{
                 path: '',
@@ -90,7 +90,7 @@ export const layoutRoutes: Routes = [{
                 }
             },
             {
-                path: 'search',
+                path: AppConfigService.config.routes.search,
                 component: SearchPage,
                 data: {
                     title: 'general.search',
