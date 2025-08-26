@@ -19,3 +19,4 @@ export * from './lib/product-variations/product-variations';
 export * from './lib/search-filters/search-filters';
 export * from './lib/ui/ui';
 export * from './lib/create-catalog-card/create-catalog-card';
+export * from './lib/create-product-card/create-product-card';
