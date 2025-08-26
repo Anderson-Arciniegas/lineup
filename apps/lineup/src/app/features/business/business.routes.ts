@@ -1,11 +1,14 @@
 import {
     Routes
 } from '@angular/router';
+import { AppConfigService } from '../../config/services/app-config.service';
 import {
     BusinessPage
 } from './views/business-page/business-page';
+import { CreateProductPage } from './views/create-product-page/create-product-page';
 
-export const businessRoutes: Routes = [{
+export const businessRoutes: Routes = [
+    {
         path: '',
         component: BusinessPage,
     },
@@ -26,6 +29,10 @@ export const businessRoutes: Routes = [{
         children: [{
                 path: '',
                 loadComponent: () => import('./views/catalog-page/catalog-page').then(m => m.CatalogPage),
+            },
+            {
+                path: AppConfigService.config.routes.createProduct,
+                component: CreateProductPage
             },
             {
                 path: ':idProduct',
