@@ -18,7 +18,8 @@ export const en = {
         catalogName: 'Catalog Name',
         catalogNamePlaceholder: 'Enter the catalog name',
         imageUpload: 'Image Upload',
-        imageUploadPlaceholder: 'Click or drag your file here'
+        imageUploadPlaceholder: 'Click or drag your file here',
+        createProduct: 'Create Product',
     },
     landingPage: {
         yourSpaceToBuildA: 'Your space to build a',
