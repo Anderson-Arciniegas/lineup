@@ -1,0 +1,32 @@
+::ng-deep{ 
+    .title-content {
+        padding: 8px 8px 0px 8px;
+    }
+    .p-card-body {
+        padding: 0px !important;
+    }
+}
+
+.border-radius {
+    border-radius: var(--border-radius-catalog-card);
+}
+
+.input {
+    border: black 1px solid;
+    padding: 0px 6px;
+    color: #222;
+    font-size: 15px;
+}
+
+.button {
+    height: 51px;
+}
+
+.white {
+    color: white;
+}
+
+.file-upload:hover {
+    border-color: var(--primary); /* amarillo por defecto */
+    background-color: #efefef;
+}
