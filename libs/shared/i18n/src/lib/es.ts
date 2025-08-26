@@ -22,7 +22,8 @@ export const es = {
         catalogName: 'Nombre del Catálogo',
         catalogNamePlaceholder: 'Ingrese el nombre del catálogo',
         imageUpload: 'Cargar Imagen',
-        imageUploadPlaceholder: 'Haz click o arrastra tu archivo aquí'
+        imageUploadPlaceholder: 'Haz click o arrastra tu archivo aquí',
+        createProduct: 'Crear Producto',
     },
     landingPage: {
         yourSpaceToBuildA: 'Tu espacio para construir un',
