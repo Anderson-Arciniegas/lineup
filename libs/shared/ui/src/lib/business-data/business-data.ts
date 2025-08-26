@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ChipModule } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
 import { Button } from '../button/button';
 
@@ -9,7 +8,6 @@ import { Button } from '../button/button';
   imports: [
     CommonModule,
     TagModule,
-    ChipModule,
     Button,
   ],
   templateUrl: './business-data.html',

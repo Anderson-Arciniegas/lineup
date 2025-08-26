@@ -3,6 +3,14 @@ import { LanguageEnum } from '@lineup/core';
 export const appRoutes: AppRoutes = {
     home: '/',
     controlPanel: 'control-panel',
+    create: 'create',
+    info: 'info',
+    login: 'login',
+    register: 'register',
+    user: 'user',
+    business: 'business',
+    search: 'search',
+    createProduct: 'create-product',
 };
 
 
@@ -34,4 +42,12 @@ export interface Language {
 export interface AppRoutes {
     home: string;
     controlPanel: string;
+    create: string;
+    info: string; 
+    login: string; 
+    register: string; 
+    user: string;
+    business: string;
+    search: string; 
+    createProduct: string;
 }
