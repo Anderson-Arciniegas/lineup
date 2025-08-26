@@ -1,0 +1,21 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+ <a routerLink="create-product">
+    <div class="
+            border-radius shadow-xl bg-primary-950
+            cursor-pointer 
+            p-2 
+            flex flex-col 
+            justify-center
+            gap-2
+        "
+         [ngClass]="[width, height]">
+        <div class="flex flex-row items-center justify-center">
+            <div>
+                <i class="pi pi-folder-plus white" style="font-size: 5.0rem;"></i>
+            </div>
+        </div>
+        <div class="w-full text-center flex flex-row items-center justify-center title-content">
+            <div><span class="font-medium text-2xl white">{{ 'general.createProduct' | translate }}</span></div>
+        </div>
+    </div>
+</a>

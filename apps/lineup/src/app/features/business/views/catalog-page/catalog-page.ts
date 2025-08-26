@@ -1,12 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Button, CatalogCarousel, ProductBreadcrumb, ProductCard } from "@lineup/ui";
+import { Button, CatalogCarousel, CreateProductCard, ProductBreadcrumb, ProductCard } from "@lineup/ui";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [CommonModule, ProductBreadcrumb, ProductCard, Button, IconField, InputIcon, CatalogCarousel],
+  imports: [
+    CommonModule,
+    ProductBreadcrumb,
+    ProductCard,
+    Button,
+    IconField,
+    InputIcon,
+    CatalogCarousel,
+    CreateProductCard,
+  ],
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.scss',
 })
@@ -15,8 +24,6 @@ export class CatalogPage {
   bgColor: string | undefined;
 
   setColor($event: string) {
-    console.log('Color emitido:', $event);
-
     const color1 = $event;
     const color2 = 'rgba(255, 255, 255, 0.5)'; // Color de fondo
 
