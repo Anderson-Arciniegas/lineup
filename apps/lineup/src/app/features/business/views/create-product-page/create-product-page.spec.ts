@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateProductPage } from './create-product-page';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
 
 describe('CreateProductPage', () => {
   let component: CreateProductPage;
@@ -7,7 +9,15 @@ describe('CreateProductPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateProductPage],
+      imports: [
+        CreateProductPage,
+        TranslateModule.forRoot()
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: {} },
+        TranslateService,
+        TranslateStore
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateProductPage);
