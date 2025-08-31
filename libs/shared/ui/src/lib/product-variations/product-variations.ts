@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Button } from '../button/button';
-import { ButtonSeverity } from 'primeng/button';
 
 @Component({
   selector: 'lib-product-variations',

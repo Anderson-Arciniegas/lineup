@@ -21,18 +21,11 @@ import {
 import {
   ImageModule
 } from 'primeng/image';
-import {
-  BusinessCard
-} from "../business-card/business-card";
-import { Button } from "../button/button";
 import { CatalogCarouselItem } from "../catalog-carousel-item/catalog-carousel-item";
-import {
-  ProductCard
-} from "../product-card/product-card";
 
 @Component({
     selector: 'lib-catalog-carousel',
-    imports: [CommonModule, Carousel, BusinessCard, ProductCard, ImageModule, Button, CatalogCarouselItem],
+    imports: [CommonModule, Carousel, ImageModule, CatalogCarouselItem],
     templateUrl: './catalog-carousel.html',
     styleUrl: './catalog-carousel.scss',
 })
@@ -80,19 +73,13 @@ export class CatalogCarousel implements OnInit, AfterViewInit {
         ]
 
         this.products = generateRandomProducts(10);
-        
-        
         this.products.forEach((product, index) => {
-
           product.image = this.images[index % this.images.length];
         });
-        console.log(this.products);
     }
     
     ngAfterViewInit(): void {
-       this.onPage({
-            page: 0
-        });
+       this.onPage({ page: 0 });
     }
 
     onPage($event: any) {
