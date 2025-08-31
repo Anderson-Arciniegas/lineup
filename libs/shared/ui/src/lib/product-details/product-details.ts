@@ -4,7 +4,6 @@ import { Button } from '../button/button';
 import { PanelModule } from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import { ProductVariations } from '../product-variations/product-variations';
-import { ProductTags } from '../product-tags/product-tags';
 
 @Component({
   selector: 'lib-product-details',
@@ -14,7 +13,6 @@ import { ProductTags } from '../product-tags/product-tags';
     PanelModule,
     MenuModule,
     ProductVariations,
-    ProductTags
   ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',
