@@ -1,1 +1,222 @@
-<p>create-product-page works!</p>
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<div class="
+    w-full 
+    py-4 sm:py-5
+    px-2 sm:px-10 
+    gap-8
+    flex flex-col
+    items-center
+">
+    <lib-product-breadcrumb [business]="business" class="w-full"></lib-product-breadcrumb>
+    <div class="
+            w-11/12 sm:w-9/12
+            flex flex-col
+            gap-5
+            py-4 sm:py-12
+            px-4 sm:px-10 md:px-18
+            rounded-lg
+            border-grey
+    ">
+        <div class="flex flex-row items-center justify-between">
+            <h1 class="text-3xl font-medium">{{ 'general.createProduct' | translate }}</h1>
+        </div>
+        <div class="w-full flex flex-col gap-2">
+            <div class="flex flex-row items-end justify-start gap-2">
+                <label for="title" class="font-semibold text-lg">{{ 'general.title' | translate }}:</label>
+            </div>
+            <input pInputText id="title" aria-describedby="title-help" [(ngModel)]="value" />
+        </div>
+        <div class="w-full flex flex-col items-center justify-center gap-2">
+            <div class="w-full flex flex-row flex-wrap items-end justify-start">
+                <label for="image" class="font-semibold text-lg">
+                    {{'general.imageUpload' | translate}}:
+                </label>
+            </div>
+            <div class="w-full flex flex-row flex-wrap items-center justify-start gap-2">
+                <!-- Área de subir imagen -->
+                <div class="
+                        flex flex-col
+                        items-start justify-center
+                        gap-1
+                        min-w-full sm:min-w-[270px]
+                ">
+                    <div
+                        class="
+                            file-upload
+                            border-2 border-dashed
+                            border-gray-400
+                            rounded-lg
+                            p-2
+                            text-center
+                            cursor-pointer transition-colors duration-300 
+                            h-48 
+                            flex 
+                            w-full
+                            items-center justify-center
+                        "
+                        tabindex="0"
+                        (click)="fileInput.click()"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (drop)="onDrop($event)"
+                        [ngClass]="{ 'border-blue-500 bg-blue-50': isDragging }"
+                    >
+                        <div class="flex flex-col items-center text-gray-600">
+                            <i class="pi pi-image text-5xl mb-2" style="color: black;"></i>
+                            <p class="text-sm">{{ 'general.imageUploadPlaceholder' | translate }}</p>
+                        </div>
+                        <input
+                            type="file"
+                            #fileInput
+                            accept="image/*"
+                            (change)="onFileSelected($event)"
+                            hidden
+                        />
+                    </div>
+                </div>
+
+                <!-- Preview de la imagen -->
+                @for (item of urls; track $index) {
+                    <div class="flex flex-row items-center justify-center w-auto relative">
+                        <img
+                            [src]="item"
+                            alt="{{ 'general.imageUploaded' | translate }}"
+                            class="max-h-48 max-w-full object-contain rounded-lg"
+                        />
+
+                        <button class="
+                                    absolute top-1 right-1
+                                    bg-red-100 rounded-full 
+                                    p-1 
+                                    shadow
+                                    text-xl
+                                    p-carousel-next-button
+                                    cursor-pointer
+                                    flex items-center justify-center
+                                "
+                                (click)="removeImage($index)">
+                            <i class="pi pi-times" style="color: #ff3535; font-size: 0.8rem;"></i>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-1">
+            <label for="price" class="font-semibold text-lg">{{ 'general.price' | translate }}:</label>
+            <div class="
+                    flex
+                    flex-col sm:flex-row
+                    gap-2
+                    w-full
+            ">
+                <p-select [options]="prices"
+                            [(ngModel)]="selectedPrice"
+                            optionLabel="name"
+                            placeholder="Select a currency"
+                            class="w-full md:w-52"
+                >
+                    <ng-template #selectedItem let-selectedOption>
+                        @if (selectedOption) {
+                            <div class="flex items-center gap-2">
+                                <i [class]="selectedOption.icon" style="font-size: 1rem"></i>
+                                <div>{{ selectedOption.label | translate }}</div>
+                            </div>
+                        }
+                    </ng-template>
+                    <ng-template let-currency #item>
+                        <div class="flex items-center gap-2">
+                            <i [class]="currency.icon" style="font-size: 1rem"></i>  
+                            <div>{{ currency.label | translate }}</div>
+                        </div>
+                    </ng-template>
+                </p-select>
+                <p-inputnumber [(ngModel)]="price" 
+                                inputId="minmaxfraction" 
+                                mode="decimal"
+                                [minFractionDigits]="2"
+                                [disabled]="selectedPrice.value === 1"/>
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-3">
+            <div class="flex flex-row items-center justify-between">
+                <label for="title" class="font-semibold text-lg">{{ 'general.variations' | translate }}:</label>
+            </div>
+            <div class="
+                    w-full
+                    flex flex-col
+                    gap-3
+                    items-start justify-start
+            ">
+                @if (variations.length > 0) {
+                    @for (item of variations; track $index) {
+                        <div class="w-full flex flex-col background rounded-lg p-4 shadow gap-3">
+                            <div class="w-full flex flex-col gap-2">
+                                <div class="w-full flex flex-row items-center justify-between">
+                                    <label for="title" class="font-semibold text-lg">Nombre:</label>
+                                    <button class="
+                                                bg-red-100 rounded-full 
+                                                p-1 
+                                                shadow
+                                                text-xl
+                                                p-carousel-prev-button
+                                                cursor-pointer
+                                            "
+                                            (click)="removeVariation($index)">
+                                        <i class="pi pi-times" style="color: #ff3535"></i>
+                                    </button>
+                                </div>
+                                <input pInputText id="variationName" aria-describedby="title-help" [(ngModel)]="variationName" placeholder="Nombre"/>
+                            </div>
+                            <div class="flex flex-row flex-wrap items-end justify-start gap-2 w-full">
+                                <div class="w-36 flex flex-col gap-2">
+                                    <label for="title" class="font-semibold text-lg">Valor:</label>
+                                    <input pInputText 
+                                           id="variationValue"
+                                           aria-describedby="title-help"
+                                           [(ngModel)]="variationValue"
+                                           placeholder="Valor"
+                                    />
+                                </div>
+                                @for (value of item.variations; track $index) {
+                                    <p-chip 
+                                        [label]="value.name" 
+                                        [removable]="true" 
+                                        (onRemove)="removeVariationValue(item.variations, $index)">
+                                    </p-chip>
+                                }
+                                <lib-button 
+                                    [width]="'w-10'"
+                                    size="small"
+                                    icon="pi pi-plus"
+                                    type="rounded"
+                                    (action)="addVariationValue(item)">
+                                </lib-button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="flex flex-row items-center justify-between">
+                <lib-button label="{{'general.add' | translate}}"
+                            [icon]="'pi pi-plus'"
+                            [width]="'w-auto'"
+                            size="small"
+                            type="rounded"
+                            (action)="addVariation()">
+                </lib-button>
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-1">
+            <div class="flex flex-col gap-2 w-full">
+                <label for="description" class="font-semibold text-lg">{{ 'general.description' | translate }}:</label>
+                <p-editor [(ngModel)]="value" [style]="{ height: '320px' }" />
+            </div>
+        </div>
+        <div class="w-full flex flex-row item-center justify-center">
+            <lib-button icon="pi pi-plus"
+                        label="{{ 'general.createProduct' | translate }}"
+                        [width]="'w-50'"
+                        type="rounded"></lib-button>
+        </div>
+    </div>
+</div>
