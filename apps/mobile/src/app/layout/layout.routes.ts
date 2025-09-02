@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './features/home/views/home-page/home-page';
 
-export const appRoutes: Routes = [
+import { HomePage } from '../features/home/views/home-page/home-page';
+export const layoutRoutes: Routes = [
   {
     path: '',
     component: HomePage,

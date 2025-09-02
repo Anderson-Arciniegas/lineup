@@ -2,22 +2,18 @@
   "name": "mobile",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "prefix": "app",
   "sourceRoot": "apps/mobile/src",
+  "prefix": "app",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@angular/build:application",
+      "executor": "@nx/angular:application",
       "outputs": [
         "{options.outputPath}"
       ],
       "options": {
         "outputPath": "dist/apps/mobile",
         "index": "apps/mobile/src/index.html",
-        "main": "apps/mobile/src/main.ts",
-        "polyfills": [
-          "zone.js"
-        ],
         "tsConfig": "apps/mobile/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -54,19 +50,14 @@
           "outputHashing": "all"
         },
         "development": {
-          "buildOptimizer": false,
-          "optimization": false,
-          "vendorChunk": true,
-          "extractLicenses": false,
-          "sourceMap": true,
-          "namedChunks": true
+          "sourceMap": true
         }
       },
       "defaultConfiguration": "production"
     },
     "serve": {
       "continuous": true,
-      "executor": "@angular/build:dev-server",
+      "executor": "@nx/angular:dev-server",
       "configurations": {
         "production": {
           "buildTarget": "mobile:build:production"
@@ -78,7 +69,7 @@
       "defaultConfiguration": "development"
     },
     "extract-i18n": {
-      "executor": "@angular/build:extract-i18n",
+      "executor": "@nx/angular:extract-i18n",
       "options": {
         "buildTarget": "mobile:build"
       }
@@ -96,7 +87,6 @@
       }
     },
     "serve-static": {
-      "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "mobile:build",

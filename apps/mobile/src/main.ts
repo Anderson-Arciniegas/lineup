@@ -1,13 +1,5 @@
-import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import 'zone.js';
 import { App } from './app/app';
-import { appRoutes } from './app/app.routes';
-
-bootstrapApplication(App, {
-  providers: [
-    provideRouter(appRoutes),
-    importProvidersFrom(IonicModule.forRoot()), // habilita Ionic
-  ],
-}).catch(err => console.error(err));
+import { appConfig } from './app/app.config';
+bootstrapApplication(App, appConfig).catch((err) => console.error(err));
