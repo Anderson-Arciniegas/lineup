@@ -17,11 +17,9 @@
                      [responsiveOptions]="responsiveOptions"
                      (onPage)="onPage($event)"
                      autoplayInterval="8000">
-             <ng-template let-product
-                          #item>
-                 <lib-catalog-carousel-item [product]="product"></lib-catalog-carousel-item>
-
-             </ng-template>
+            <ng-template let-product #item>
+                <lib-catalog-carousel-item [product]="product"></lib-catalog-carousel-item>
+            </ng-template>
          </p-carousel>
      </div>
      }
