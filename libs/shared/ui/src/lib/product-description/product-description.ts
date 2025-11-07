@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ProductTags } from "../product-tags/product-tags";
+import { ProductTags, ProductTag } from "../product-tags/product-tags";
 
 @Component({
   selector: 'lib-product-description',
@@ -9,6 +9,13 @@ import { ProductTags } from "../product-tags/product-tags";
   styleUrl: './product-description.scss',
 })
 export class ProductDescription {
-  tags = ['New', 'NFL', 'Shirt', 'Futbol Americano', 'Ravens', 'Nike'];
+  tags: ProductTag[] = [
+    { value: 'New', severity: 'success' },
+    { value: 'NFL', severity: 'info' },
+    { value: 'Shirt', severity: 'secondary' },
+    { value: 'Futbol Americano', severity: 'warning' },
+    { value: 'Ravens', severity: 'danger' },
+    { value: 'Nike', severity: 'contrast' }
+  ];
   
 }

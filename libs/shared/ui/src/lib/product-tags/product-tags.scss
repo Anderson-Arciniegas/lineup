@@ -1,10 +1,45 @@
 ::ng-deep {
   .p-tag {
-    border: 2px solid var(--p-neutral-300);
-    background-color: var(--p-neutral-100);
-    color: var(--b-primary-900);
     cursor: pointer;
     font-size: 12px;
     border-radius: 30px;
+    border: 2px solid;
+  }
+  
+  // Permitir que PrimeNG aplique los colores según el severity
+  .p-tag.p-tag-success {
+    border-color: var(--p-green-500);
+    background-color: var(--p-green-100);
+    color: var(--p-green-900);
+  }
+  
+  .p-tag.p-tag-info {
+    border-color: var(--p-blue-500);
+    background-color: var(--p-blue-100);
+    color: var(--p-blue-900);
+  }
+  
+  .p-tag.p-tag-warning {
+    border-color: var(--p-orange-500);
+    background-color: var(--p-orange-100);
+    color: var(--p-orange-900);
+  }
+  
+  .p-tag.p-tag-danger {
+    border-color: var(--p-red-500);
+    background-color: var(--p-red-100);
+    color: var(--p-red-900);
+  }
+  
+  .p-tag.p-tag-secondary {
+    border-color: var(--p-neutral-400);
+    background-color: var(--p-neutral-100);
+    color: var(--p-neutral-900);
+  }
+  
+  .p-tag.p-tag-contrast {
+    border-color: var(--p-neutral-900);
+    background-color: var(--p-neutral-800);
+    color: var(--p-neutral-50);
   }
 }
