@@ -1,3 +1,9 @@
 @for (item of tags; track $index) {
-    <p-tag [value]="item" rounded></p-tag>
+    @let tag = asProductTag(item);
+    <p-tag 
+        [value]="tag.label" 
+        rounded
+        [style.background-color]="tag.color"
+        [style.color]="tag.textColor">
+    </p-tag>
 }
