@@ -46,7 +46,6 @@ import {
 })
 export class HomePage implements OnInit, AfterViewInit {
     private platformId = inject(PLATFORM_ID);
-    private businessesService = inject(BusinessesService);
     responsiveOptions: any[] | undefined;
 
     products: any[] | undefined = [{
@@ -147,11 +146,5 @@ export class HomePage implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         if (!isPlatformBrowser(this.platformId)) return;
-
-        this.businessesService.findOneBusiness(4)
-            .subscribe({
-                next: (res) => console.log('Created business id:', res.id),
-                error: (err) => console.error('createBusiness error', err)
-            });
     }
 }
