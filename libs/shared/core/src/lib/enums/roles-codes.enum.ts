@@ -1,0 +1,7 @@
+export enum RolesCodesEnum {
+  ADMIN = 'ADMIN',
+  BUSINESS = 'BUSINESS',
+  BUSINESS_ADMIN = 'BUSINESS_ADMIN',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}

@@ -6,7 +6,7 @@ import {
 import {
     AfterViewInit,
     Component,
-    Inject,
+    inject,
     OnInit,
     PLATFORM_ID
 } from '@angular/core';
@@ -42,6 +42,7 @@ import {
     styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, AfterViewInit {
+    private platformId = inject(PLATFORM_ID);
     responsiveOptions: any[] | undefined;
 
     products: any[] | undefined = [{
@@ -110,12 +111,9 @@ export class HomePage implements OnInit, AfterViewInit {
 
     ];
 
-    constructor(
-        @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
-    ) {}
-
     ngOnInit() {
-        this.responsiveOptions = [{
+        this.responsiveOptions = [
+            {
                 breakpoint: '1536px',
                 numVisible: 4,
                 numScroll: 1
@@ -135,7 +133,7 @@ export class HomePage implements OnInit, AfterViewInit {
                 numVisible: 2,
                 numScroll: 1
             },
-             {
+            {
                 breakpoint: '640px',
                 numVisible: 1,
                 numScroll: 1
@@ -145,6 +143,5 @@ export class HomePage implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         if (!isPlatformBrowser(this.platformId)) return;
-      
     }
 }
