@@ -64,6 +64,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "proxyConfig": "libs/shared/environments/proxy.conf.json"
+      },
       "configurations": {
         "production": {
           "buildTarget": "lineup:build:production"
