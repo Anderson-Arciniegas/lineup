@@ -7,12 +7,9 @@ import {
     AfterViewInit,
     Component,
     inject,
-    Inject,
     OnInit,
     PLATFORM_ID
 } from '@angular/core';
-import { BusinessesService, CreateBusinessInput } from '@libs/graphql';
-import { RolesCodesEnum } from '@lineup/core';
 import {
     BusinessCard,
     Button,
