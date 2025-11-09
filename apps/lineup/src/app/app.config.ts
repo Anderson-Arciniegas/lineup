@@ -4,6 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {
   provideClientHydration,
   withEventReplay,
@@ -76,6 +77,7 @@ export const appConfig: ApplicationConfig = {
         }),
         provideRouter(appRoutes),
         importProvidersFrom(I18nModule),
+        provideHttpClient(withInterceptorsFromDi()),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
