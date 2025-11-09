@@ -1,0 +1,23 @@
+{
+  "/business": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/business": "/graphql" },
+    "logLevel": "debug"
+  },
+  "/admin": {
+    "target": "http://localhost:3001",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/admin": "/graphql" },
+    "logLevel": "debug"
+  },
+  "/user": {
+    "target": "http://localhost:3000",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/user": "/graphql" },
+    "logLevel": "debug"
+  }
+}
