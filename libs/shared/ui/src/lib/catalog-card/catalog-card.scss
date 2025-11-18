@@ -1,65 +1,60 @@
-::ng-deep{ 
-    
-    .title-content {
+::ng-deep {
+  .title-content {
     padding: 8px 8px 0px 8px;
 
     &:hover {
-        .image {
-            transform: scale(1.05);
-        }
+      .image {
+        transform: scale(1.05);
+      }
     }
-    
-    }
-    
-    .p-card-body {
-        padding: 0px !important;
-    }
+  }
+
+  .p-card-body {
+    padding: 0px !important;
+  }
 }
 
-.catalog-card{
-    border-radius: var(--border-radius);
+.catalog-card {
+  border-radius: var(--border-radius);
 }
 
 .catalog-data-content {
-    position: relative;
+  position: relative;
 }
 
-.catalog-data-left{
-    background-color: rgba($color: #D1D1D1, $alpha: 0.6);
-    border-radius: 15px;
-    top: 8px;
-    position: absolute;
-    z-index: 10;
-    left: 8px;
+.catalog-data-left {
+  background-color: var(--p-primary-50);
+  border-radius: 15px;
+  top: 8px;
+  position: absolute;
+  z-index: 10;
+  left: 8px;
 }
 
-.catalog-data-right{
-    background-color: rgba($color: #D1D1D1, $alpha: 0.6);
-    border-radius: 15px;
-    top: 8px;
-    position: absolute;
-    z-index: 10;
-    right: 8px;
+.catalog-data-right {
+  top: 8px;
+  position: absolute;
+  z-index: 10;
+  right: 8px;
 }
-
 
 .border-radius {
-    border-radius: var(--border-radius-catalog-card);
+  border-radius: var(--border-radius-catalog-card);
 
-    &:hover {
-        .image {
-            transform: scale(1.05);
-        }
+  &:hover {
+    .image {
+      transform: scale(1.05);
     }
+  }
 }
 
 .image-container {
-    overflow: hidden;
-    border-radius: 25px;
+  overflow: hidden;
+  border-radius: 25px;
 }
 
 .image {
-    border-radius: 25px;
-    transition: transform 0.3s ease-in-out;
-    object-fit: cover;
+  border-radius: 25px;
+  transition: transform 0.3s ease-in-out;
+  object-fit: cover;
 }

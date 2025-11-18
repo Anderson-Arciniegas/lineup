@@ -1,0 +1,39 @@
+<section class="h-100vh-calc w-full px-1 sm:px-2 py-5 lg:ps-4 xl:ps-7 lg:px-5">
+  <div class="flex flex-col justify-between gap-3 layout">
+    <div class="flex flex-col gap-3 layout">
+      @for (item of items.slice(0, items.length - 1); track $index) {
+      <a
+        [routerLink]="item.url"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        #rla="routerLinkActive"
+        [class.bg-primary-100]="rla.isActive"
+        class="w-full flex flex-row gap-3 justify-center lg:justify-start items-center cursor-pointer lg:p-3 xl:py-3 xl:px-4 rounded-full min-w-11 h-11 md:h-12"
+      >
+        <i class="{{ item.icon }}" style="font-size: 1.5rem"></i>
+        <span class="hidden lg:block font-medium"
+          >{{ item.label | translate }}</span
+        >
+      </a>
+      }
+    </div>
+    <div class="flex flex-col gap-3">
+      @for (item of items.slice( items.length - 1, items.length); track $index)
+      {
+      <div
+        (click)="item.command(null)"
+        (keyup.enter)="item.command(null)"
+        [tabIndex]="0"
+        tabindex="0"
+        role="button"
+        class="w-full flex flex-row gap-3 justify-center lg:justify-start items-center cursor-pointer p-3"
+      >
+        <i class="{{ item.icon }}" style="font-size: 1.5rem"></i>
+        <span class="hidden lg:block font-medium"
+          >{{ item.label | translate }}</span
+        >
+      </div>
+      }
+    </div>
+  </div>
+</section>

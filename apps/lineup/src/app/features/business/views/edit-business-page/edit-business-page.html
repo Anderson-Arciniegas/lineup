@@ -1,0 +1,28 @@
+<section
+  class="flex flex-col items-center justify-center w-full px-4 sm:py-10 px-2 sm:px-10"
+>
+  <lib-product-breadcrumb class="w-10/10"></lib-product-breadcrumb>
+  <div
+    class="container flex flex-col items-center justify-center gap-4 sm:gap-8 w-full"
+  >
+    <lib-business-data [editMode]="true"></lib-business-data>
+    <div class="w-full flex flex-col items-center justify-center gap-6">
+      <div class="w-full px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46">
+        <h2 class="text-4xl font-semibold text-center sm:text-left">LineUps</h2>
+      </div>
+      <div
+        class="w-full grid [grid-template-columns:repeat(1,auto)] sm:[grid-template-columns:repeat(2,auto)] md:[grid-template-columns:repeat(2,auto)] lg:[grid-template-columns:repeat(3,auto)] xl:[grid-template-columns:repeat(4,auto)] justify-center gap-6 px-1 sm:px-4 md:px-15 mb-10"
+      >
+        <lib-create-catalog-card></lib-create-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+        <lib-catalog-card [editMode]="true"></lib-catalog-card>
+      </div>
+    </div>
+  </div>
+</section>

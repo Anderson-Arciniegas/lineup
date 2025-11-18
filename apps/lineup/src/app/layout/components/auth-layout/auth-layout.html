@@ -1,15 +1,16 @@
 <section class="h-screen">
-    <nav class="nav flex flex-row justify-between py-3 px-5 sm:px-10">
-        <div class="flex flex-row items-center justify-center">
-            <lib-button [icon]="'pi pi-arrow-left'"
-                        [width]="'w-17'"
-                        [color]="'secondary'"
-                        [variant]="'text'"
-                        [size]="'large'"
-                        [fontSize]="'text-2xl'"
-                        [type]="'rounded'"
-                        (action)="goBack()"></lib-button>
-        </div>
-    </nav>
-    <router-outlet></router-outlet>
+  <nav class="nav flex flex-row justify-between py-3 px-5 sm:px-10">
+    <div class="flex flex-row items-center justify-center">
+      <lib-button
+        [icon]="'pi pi-arrow-left'"
+        [width]="'w-13'"
+        [variant]="'text'"
+        [size]="'large'"
+        [fontSize]="'text-2xl'"
+        [type]="'rounded'"
+        (action)="goBack()"
+      ></lib-button>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
 </section>

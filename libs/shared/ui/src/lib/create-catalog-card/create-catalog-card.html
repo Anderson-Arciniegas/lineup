@@ -1,95 +1,99 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
- <div tabindex="0"
-    (click)="createCatalog()"
-    (keyup.enter)="enterCreateCatalog()">
-    <div class="
-            border-radius shadow-xl bg-primary-950
-            cursor-pointer 
-            p-2 
-            flex flex-col 
-            justify-center
-            gap-2
-        "
-         [ngClass]="[width, height]">
-        <div class="flex flex-row items-center justify-center">
-            <div>
-                <i class="pi pi-folder-plus white" style="font-size: 5.0rem;"></i>
-            </div>
-        </div>
-        <div class="w-full text-center flex flex-row items-center justify-center title-content">
-            <div><span class="font-medium text-2xl white">{{ 'general.createCatalog' | translate }}</span></div>
-        </div>
+<div
+  tabindex="0"
+  (click)="createCatalog()"
+  (keyup.enter)="enterCreateCatalog()"
+>
+  <div
+    class="border-radius shadow-xl bg-primary-950 cursor-pointer p-2 flex flex-col justify-center gap-2"
+    [ngClass]="[width, height]"
+  >
+    <div class="flex flex-row items-center justify-center">
+      <div>
+        <i class="pi pi-folder-plus white" style="font-size: 5rem"></i>
+      </div>
     </div>
+    <div
+      class="w-full text-center flex flex-row items-center justify-center title-content"
+    >
+      <div>
+        <span class="font-medium text-2xl white"
+          >{{ 'general.createCatalog' | translate }}</span
+        >
+      </div>
+    </div>
+  </div>
 </div>
 
-<p-dialog 
-    header="Crear Catalogo"
-    [(visible)]="visible"
-    [modal]="true"
-    [style]="{ width: '350px' }"
-    [breakpoints]="{ '400px': '300px' }"
+<p-dialog
+  header="Crear Catalogo"
+  [(visible)]="visible"
+  [draggable]="false"
+  [resizable]="false"
+  [modal]="true"
+  [style]="{ width: '350px' }"
+  [breakpoints]="{ '400px': '300px' }"
 >
-    <div class="flex flex-col items-start justify-center gap-3 w-full">
-        <div class="flex flex-col items-start justify-center gap-1 w-full">
-            <label for="name" class="font-semibold">{{'general.catalogName' | translate}}:</label>
-            <input
-                type="text"
-                id="name"
-                [(ngModel)]="catalogName"
-                class="input w-full h-11 rounded"
-                placeholder="{{'general.catalogNamePlaceholder' | translate}}"
-            />
-        </div>
-        <div class="flex flex-col items-start justify-center gap-1 w-full">
-            <label for="image" class="font-semibold">{{'general.imageUpload' | translate}}:</label>
-            <div
-                class="
-                    file-upload 
-                    w-full 
-                    border-2 border-dashed border-gray-400 
-                    rounded-lg p-2
-                    text-center
-                    cursor-pointer
-                    transition-colors duration-300 
-                    h-48 
-                    flex 
-                    items-center justify-center
-                "
-                tabindex="0"
-                (click)="fileInput.click()"
-                (dragover)="onDragOver($event)"
-                (dragleave)="onDragLeave($event)"
-                (drop)="onDrop($event)"
-                [ngClass]="{ 'border-blue-500 bg-blue-50': isDragging }"
-            >
-                @if (!previewUrl) {
-                    <div class="flex flex-col items-center text-gray-600">
-                        <i class="pi pi-image text-5xl mb-2" style="color: black;"></i>
-                        <p class="text-sm">{{ 'general.imageUploadPlaceholder' | translate }}</p>
-                    </div>
-                } @else {
-                    <div class="h-full w-full flex items-center justify-center">
-                        <img
-                        [src]="previewUrl"
-                        alt="Imagen seleccionada"
-                        class="max-h-full max-w-full object-contain rounded-lg"
-                        />
-                    </div>
-                }
-    
-                <input
-                    type="file"
-                    #fileInput
-                    accept="image/*"
-                    (change)="onFileSelected($event)"
-                    hidden
-                />
-            </div>
-        </div>
+  <div class="flex flex-col items-start justify-center gap-3 w-full">
+    <div class="flex flex-col items-start justify-center gap-1 w-full">
+      <label for="name" class="font-semibold"
+        >{{'general.catalogName' | translate}}:</label
+      >
+      <input
+        type="text"
+        id="name"
+        [(ngModel)]="catalogName"
+        class="input w-full h-11 rounded"
+        placeholder="{{'general.catalogNamePlaceholder' | translate}}"
+      />
     </div>
-    <ng-template #footer>
-        <div class="w-full">
-            <lib-button [label]="'Guardar'" [width]="'w-full'" (click)="visible = false"></lib-button>
+    <div class="flex flex-col items-start justify-center gap-1 w-full">
+      <label for="image" class="font-semibold"
+        >{{'general.imageUpload' | translate}}:</label
+      >
+      <div
+        class="file-upload w-full border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 h-48 flex items-center justify-center"
+        tabindex="0"
+        (click)="fileInput.click()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        [ngClass]="{ 'border-blue-500 bg-blue-50': isDragging }"
+      >
+        @if (!previewUrl) {
+        <div class="flex flex-col items-center text-gray-600">
+          <i class="pi pi-image text-5xl mb-2" style="color: black"></i>
+          <p class="text-sm">
+            {{ 'general.imageUploadPlaceholder' | translate }}
+          </p>
         </div>
-    </ng-template>
+        } @else {
+        <div class="h-full w-full flex items-center justify-center">
+          <img
+            [src]="previewUrl"
+            alt="Imagen seleccionada"
+            class="max-h-full max-w-full object-contain rounded-lg"
+          />
+        </div>
+        }
+
+        <input
+          type="file"
+          #fileInput
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          hidden
+        />
+      </div>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="w-full">
+      <lib-button
+        [label]="'Guardar'"
+        [width]="'w-full'"
+        (click)="visible = false"
+      ></lib-button>
+    </div>
+  </ng-template>
 </p-dialog>
