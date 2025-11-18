@@ -1,19 +1,31 @@
-<section class="page flex flex-col gap-5 sm:gap-15 items-center justify-start p-0 lg:p-5 w-10/10">
+<section
+  class="h-100vh-calc flex flex-col gap-5 sm:gap-15 items-center justify-start p-0 lg:p-5 w-10/10"
+>
+  <h2 class="text-center text-3xl lg:text-5xl font-medium w-8/10">
+    {{'general.howDoYouWantToBePartOfLineUp' | translate}}
+  </h2>
 
-    <h2 class="text-center text-3xl lg:text-5xl font-medium w-8/10">{{'general.howDoYouWantToBePartOfLineUp' | translate}}</h2>
+  <section
+    class="flex flex-col md:flex-row gap-5 md:gap-10 items-center justify-center w-10/10 p-10"
+  >
+    <a
+      [routerLink]="'user'"
+      class="flex flex-col gap-5 items-center justify-start w-8/10 md:w-3/10 bg-primary-50 radius shadow-lg p-10 cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-primary-900 hover:text-white hover:-translate-y-1"
+    >
+      <i class="pi pi-user text-6xl md:text-9xl"></i>
+      <h4 class="text-center text-3xl lg:text-4xl font-medium">
+        {{'general.user' | translate}}
+      </h4>
+    </a>
 
-    <section class="flex flex-col md:flex-row gap-5 md:gap-10 items-center justify-center w-10/10 p-10">
-        <a [routerLink]="'user'"
-           class="flex flex-col gap-5 items-center justify-start w-8/10 md:w-3/10 bg-primary-50 radius shadow-lg p-10 cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-primary-900 hover:text-white hover:-translate-y-1">
-            <i class="pi pi-user text-6xl md:text-9xl"></i>
-            <h4 class="text-center text-3xl lg:text-4xl font-medium">{{'general.user' | translate}}</h4>
-        </a>
-
-        <a [routerLink]="'business'"
-           class="flex flex-col gap-5 items-center justify-start w-8/10 md:w-3/10 bg-primary-50 radius shadow-lg p-10 cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-primary-900 hover:text-white hover:-translate-y-1">
-            <i class="pi pi-shop text-6xl md:text-9xl"></i>
-            <h4 class="text-center text-3xl lg:text-4xl font-medium">{{'general.business' | translate}}</h4>
-        </a>
-    </section>
-
+    <a
+      [routerLink]="'business'"
+      class="flex flex-col gap-5 items-center justify-start w-8/10 md:w-3/10 bg-primary-50 radius shadow-lg p-10 cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-primary-900 hover:text-white hover:-translate-y-1"
+    >
+      <i class="pi pi-shop text-6xl md:text-9xl"></i>
+      <h4 class="text-center text-3xl lg:text-4xl font-medium">
+        {{'general.business' | translate}}
+      </h4>
+    </a>
+  </section>
 </section>

@@ -1,34 +1,43 @@
 ::ng-deep {
-    .p-carousel-next-button {
-        width: 25px;
-        height: 25px;
-    }
+  .p-carousel-indicator-button {
+    border-radius: 50% !important;
+  }
 
-    .p-carousel-prev-button {
-        width: 35px;
-        height: 35px;
-    }
+  .p-togglebutton-checked {
+    background-color: darken(#272727, 5%);
+    color: #fff;
+    border-color: darken(#272727, 5%);
+  }
 
-    .p-carousel-indicator-button {
-        border-radius: 50% !important;
-    }
-
-    .p-togglebutton-checked {
-        background-color: darken(#272727, 5%);
-        color: #fff;
-        border-color: darken(#272727, 5%);
-    }
-}
-
-.file-upload:hover {
+  .file-upload:hover {
     border-color: var(--primary);
     background-color: #efefef;
-}
+  }
 
-.border-grey {
+  .border-grey {
     border: 1px solid #cbd5e1 !important;
-}
+  }
 
-.background {
+  .background {
     background-color: #fffafa;
+  }
+
+  // .p-listbox-list {
+  //   list-style-type: none;
+  //   margin: 0;
+  //   padding: var(--p-listbox-list-padding);
+  //   outline: 0 none;
+  //   display: flex;
+  //   flex-direction: row !important;
+  //   gap: var(--p-listbox-list-gap);
+  // }
+
+  .p-orderlist-controls {
+    max-height: 14rem;
+  }
+
+  .delete-button {
+    width: 30px;
+    height: 30px;
+  }
 }

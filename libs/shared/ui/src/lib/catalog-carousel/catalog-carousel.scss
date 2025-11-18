@@ -1,36 +1,27 @@
 ::ng-deep {
+  .p-carousel-indicator-button {
+    border-radius: 50% !important;
+  }
 
-    .p-carousel-next-button {
-        width: 35px;
-        height: 35px;
+  .carousel-image {
+    cursor: pointer;
+    width: 500px;
+    height: 500px;
+    border: 15px solid var(--p-primary-50);
+    border-radius: 50px;
+    /* esquinas suaves */
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* sombra sutil */
+    transition:
+      transform 0.25s ease,
+      filter 0.25s ease;
+    filter: brightness(0.98) contrast(1.05) saturate(1.1);
+
+    &:hover {
+      transform: scale(1.03);
+      /* pequeño zoom */
+      filter: brightness(1) contrast(1.1) saturate(1.2);
     }
-
-    .p-carousel-prev-button {
-        width: 35px;
-        height: 35px;
-    }
-
-    .p-carousel-indicator-button {
-        border-radius: 50% !important;
-    }
-
-    .carousel-image {
-        cursor: pointer;
-        width: 500px;
-        height: 500px;
-        border: 15px solid var(--p-primary-50);
-        border-radius: 50px;
-        /* esquinas suaves */
-        object-fit: cover;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        /* sombra sutil */
-        transition: transform 0.25s ease, filter 0.25s ease;
-        filter: brightness(0.98) contrast(1.05) saturate(1.1);
-
-        &:hover {
-            transform: scale(1.03);
-            /* pequeño zoom */
-            filter: brightness(1) contrast(1.1) saturate(1.2);
-        }
-    }
+  }
 }

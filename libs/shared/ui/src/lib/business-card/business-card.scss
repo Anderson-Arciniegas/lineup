@@ -1,57 +1,57 @@
 ::ng-deep .p-card-body {
-    padding: 0px;
+  padding: 0px;
 
-    &:hover {
-        .image {
-            transform: scale(1.05);
-        }
+  &:hover {
+    .image {
+      transform: scale(1.05);
     }
+  }
 }
 
-.business-card{
-    border-radius: var(--border-radius);
+.business-card {
+  border-radius: var(--border-radius);
 }
 
 .business-data-content {
-    position: relative;
+  position: relative;
 }
 
-.business-data-left{
-    background-color: rgba($color: #262626, $alpha: 0.4);
-    border-radius: 15px;
-    top: 8px;
-    position: absolute;
-    z-index: 10;
-    left: 8px;
+.business-data-left {
+  background-color: var(--p-primary-900);
+  border-radius: 15px;
+  top: 8px;
+  position: absolute;
+  z-index: 10;
+  left: 8px;
 }
 
-.business-data-right{
-    background-color: rgba($color: #262626, $alpha: 0.4);
-    border-radius: 15px;
-    top: 8px;
-    position: absolute;
-    z-index: 10;
-    right: 8px;
+.business-data-right {
+  background-color: rgba($color: #262626, $alpha: 0.4);
+  border-radius: 15px;
+  top: 8px;
+  position: absolute;
+  z-index: 10;
+  right: 8px;
 }
 
 .border-radius {
-    border-radius: var(--border-radius-catalog-card);
+  border-radius: var(--border-radius-catalog-card);
 
-    &:hover {
-        .image {
-            transform: scale(1.05);
-        }
+  &:hover {
+    .image {
+      transform: scale(1.05);
     }
+  }
 }
 
 .image-container {
-    overflow: hidden;
-    border-radius: 25px;
+  overflow: hidden;
+  border-radius: 25px;
 }
 
 .image {
-    border-radius: var(--border-radius-img);
+  border-radius: var(--border-radius-img);
 
-    transition: transform 0.3s ease-in-out;
-    object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+  object-fit: cover;
 }

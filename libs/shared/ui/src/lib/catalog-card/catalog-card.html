@@ -1,40 +1,61 @@
 <a [routerLink]="'/business-1/lineup/catalog-1'">
-    <div class="catalog-card p-2 shadow-lg cursor-pointer bg-primary-50 flex flex-col justify-end"
-         [ngClass]="[width, height]">
-        <div class="catalog-data-content flex flex-row items-center justify-between gap-3 w-10/10 font-medium text-xs">
-            <div class="catalog-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-1">
-                <i class="pi pi-objects-column"
-                   style="font-size: 0.8rem"></i>
-                <span>999+</span>
-            </div>
-            <!-- <div class="catalog-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
-                <i class="pi pi-objects-column"
-                   style="font-size: 0.8rem"></i>
-                <span>99+</span>
-            </div> -->
-        </div>
-        <div class="h-full image-container">
-            <img alt="Card"
-                 (load)="imageLoaded = true"
-                 [hidden]="!imageLoaded"
-                 class="image h-full w-full"
-                 [src]="image" />
-            <div [hidden]="imageLoaded"
-                 class="h-full w-full flex flex-row items-center justify-center">
-                <p-progress-spinner strokeWidth="8"
-                                    fill="transparent"
-                                    animationDuration=".5s"
-                                    [style]="{ width: '50px', height: '50px' }" />
-            </div>
+  <div
+    class="catalog-card p-2 shadow-lg cursor-pointer bg-primary-50 flex flex-col justify-end"
+    [ngClass]="[width, height]"
+  >
+    <div
+      class="catalog-data-content flex flex-row items-center justify-between gap-3 w-10/10 font-medium text-xs"
+    >
+      <div
+        class="catalog-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-2"
+      >
+        <i class="pi pi-th-large" style="font-size: 0.8rem"></i>
+        <span class="font-semibold">99+</span>
+      </div>
 
-        </div>
-        <div class="w-full text-center flex flex-rows items-center justify-between title-content">
-            <div class="flex flex-row items-center justify-start pl-2">
-                <span class="font-medium text-sm">Catalog Title</span>
-            </div>
-            <div class="flex items-center justify-center">
-                <i class="pi pi-angle-right text-xl"></i>
-            </div>
-        </div>
+      @if (editMode) {
+      <div
+        class="catalog-data-right flex flex-row items-center justify-end w-fit"
+      >
+        <lib-button
+          [icon]="'pi pi-pencil'"
+          [width]="'w-11'"
+          [color]="'secondary'"
+          [type]="'rounded'"
+          (action)="editMode = !editMode"
+        ></lib-button>
+      </div>
+      }
     </div>
+    <div class="h-full image-container">
+      <img
+        alt="Card"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="image h-full w-full"
+        [src]="image"
+      />
+      <div
+        [hidden]="imageLoaded"
+        class="h-full w-full flex flex-row items-center justify-center"
+      >
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+    </div>
+    <div
+      class="w-full text-center flex flex-rows items-center justify-between title-content"
+    >
+      <div class="flex flex-row items-center justify-start pl-2">
+        <span class="font-medium text-sm">Catalog Title</span>
+      </div>
+      <div class="flex items-center justify-center">
+        <i class="pi pi-angle-right text-xl"></i>
+      </div>
+    </div>
+  </div>
 </a>

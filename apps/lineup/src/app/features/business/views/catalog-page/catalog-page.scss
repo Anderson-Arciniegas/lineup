@@ -1,29 +1,26 @@
 ::ng-deep {
-    .max-width {
-        max-width: 760px;
+  .max-width {
+    max-width: 760px;
+  }
+
+  .search {
+    width: 100%;
+    max-width: 770px;
+    height: 100px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+
+    @media screen and (max-width: 640px) {
+      max-width: 400px;
+      height: 70px;
     }
+  }
 
-     .search {
-        width: 100%;
-        max-width: 770px;
-        height: 100px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 50px;
-
-        @media screen and (max-width: 640px) {
-            max-width: 400px;
-            height: 70px;
-        }
-
-    }
-
-    .input {
-        border-radius: var(--border-radius);
-        border: 1px solid var(--p-primary-200);
-        height: 40px;
-        outline: none;
-        padding: 0 40px;
-    }
-    
-    
+  .input {
+    border-radius: var(--border-radius);
+    border: 1px solid var(--p-primary-200);
+    height: 40px;
+    outline: none;
+    padding: 0 40px;
+  }
 }

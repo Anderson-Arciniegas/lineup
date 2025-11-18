@@ -15,13 +15,22 @@ export class Button {
   @Input() loading = false;
   @Input() disabled = false;
   @Input() link: string;
-  @Input() linkType = false; 
-  @Input() color: 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast';
+  @Input() href: string;
+  @Input() linkType = false;
+  @Input() color:
+    | 'secondary'
+    | 'success'
+    | 'info'
+    | 'warn'
+    | 'help'
+    | 'danger'
+    | 'contrast';
   @Input() type: 'raised' | 'rounded';
   @Input() variant: 'text' | 'outlined';
-  @Input() badge: string; 
+  @Input() badge: string;
   @Input() size: 'small' | 'large';
   @Input() fontSize = 'text-base';
   @Input() width = 'w-auto';
-  @Output() action = new EventEmitter<any>(); //eslint-disable-line 
+  @Input() target: '_self' | '_blank' | null = null;
+  @Output() action = new EventEmitter<any>(); //eslint-disable-line
 }
