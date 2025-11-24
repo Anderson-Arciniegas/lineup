@@ -1,29 +1,53 @@
-@if(!link) {
-<p-button class="inline-block"
-          [ngClass]="[width, fontSize]"
-          [label]="label"
-          [icon]="icon ? icon : null"
-          [loading]="loading"
-          [severity]="color"
-          [raised]="type === 'raised'"
-          [rounded]="type === 'rounded'"
-          [badge]="badge"
-          [variant]="variant"
-          [size]="size"
-          (click)="action.emit($event)" />
-} @else {
-<a [routerLink]="link">
-    <p-button class="inline-block"
-              [ngClass]="[width, fontSize]"
-              [label]="label"
-              [icon]="icon ? icon : null"
-              [loading]="loading"
-              [link]="linkType"
-              [severity]="color"
-              [raised]="type === 'raised'"
-              [rounded]="type === 'rounded'"
-              [badge]="badge"
-              [variant]="variant"
-              [size]="size" />
+@if(!link && !href) {
+<p-button
+  class="inline-block"
+  [ngClass]="[width, fontSize]"
+  [label]="label"
+  [icon]="icon ? icon : null"
+  [loading]="loading"
+  [severity]="color"
+  [raised]="type === 'raised'"
+  [rounded]="type === 'rounded'"
+  [badge]="badge"
+  [variant]="variant"
+  [size]="size"
+  (click)="action.emit($event)"
+  [type]="buttonType"
+/>
+} @else if (link && !href) {
+<a [routerLink]="link" [target]="target">
+  <p-button
+    class="inline-block"
+    [ngClass]="[width, fontSize]"
+    [label]="label"
+    [icon]="icon ? icon : null"
+    [loading]="loading"
+    [link]="linkType"
+    [severity]="color"
+    [raised]="type === 'raised'"
+    [rounded]="type === 'rounded'"
+    [badge]="badge"
+    [variant]="variant"
+    [size]="size"
+    [type]="buttonType"
+  />
+</a>
+} @else{
+<a [href]="href" [target]="target">
+  <p-button
+    class="inline-block"
+    [ngClass]="[width, fontSize]"
+    [label]="label"
+    [icon]="icon ? icon : null"
+    [loading]="loading"
+    [link]="linkType"
+    [severity]="color"
+    [raised]="type === 'raised'"
+    [rounded]="type === 'rounded'"
+    [badge]="badge"
+    [variant]="variant"
+    [size]="size"
+    [type]="buttonType"
+  />
 </a>
 }

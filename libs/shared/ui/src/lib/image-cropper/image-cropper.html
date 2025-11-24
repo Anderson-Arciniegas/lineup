@@ -1,0 +1,116 @@
+<div class="image-cropper flex flex-col items-center justify-center gap-5">
+  <!-- file input puede estar fuera del modal o dentro; se deja visible para disparar el modal -->
+  @if (!imageChangedEvent) {
+  <div
+    class="file-upload border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 h-60 flex w-full items-center justify-center"
+    tabindex="0"
+    (click)="fileInput.click()"
+    (keyup.enter)="fileInput.click()"
+  >
+    <div class="flex flex-col items-center text-gray-600">
+      <i class="pi pi-image text-5xl mb-2" style="color: black"></i>
+      <p class="text-sm">{{ 'general.imageUploadPlaceholder' | translate }}</p>
+    </div>
+    <input
+      type="file"
+      #fileInput
+      accept="image/*"
+      (change)="fileChangeEvent($event)"
+      hidden
+    />
+  </div>
+  } @else if (imageChangedEvent) {
+  <div class="cropper-modal">
+    <div class="cropper-area">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="1 / 1"
+        format="webp"
+        [resizeToWidth]="1000"
+        [resizeToHeight]="1000"
+        [cropperMinWidth]="300"
+        [onlyScaleDown]="true"
+        [roundCropper]="false"
+        [canvasRotation]="canvasRotation"
+        [transform]="transform"
+        [containWithinAspectRatio]="containWithinAspectRatio"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded($event)"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+    </div>
+  </div>
+  <div class="flex flex-row justify-center items-center gap-4">
+    <lib-button
+      [icon]="'pi pi-plus'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-10'"
+      (action)="zoomIn()"
+    ></lib-button>
+
+    <lib-button
+      [icon]="'pi pi-minus'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-10'"
+      (action)="zoomOut()"
+    ></lib-button>
+
+    <lib-button
+      [icon]="'pi pi-sync'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-10'"
+      (action)="rotateRight()"
+    ></lib-button>
+    <lib-button
+      [icon]="'pi pi-arrows-h'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-10'"
+      (action)="flipHorizontal()"
+    ></lib-button>
+    <lib-button
+      [icon]="'pi pi-arrows-v'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-10'"
+      (action)="flipVertical()"
+    ></lib-button>
+  </div>
+  } @if (croppedImage) {
+  <div class="preview flex flex-col gap-5">
+    <h4 class="font-semibold">Previsualización</h4>
+    <img [src]="croppedImage" alt="Cropped image preview" />
+  </div>
+
+  <div
+    class="actions flex flex-col sm:flex-row justify-center items-center gap-5 mt-4"
+  >
+    <lib-button
+      label="{{'general.cancel' | translate}}"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-40'"
+      (action)="onCancel()"
+    ></lib-button>
+
+    <lib-button
+      label="{{'general.save' | translate}}"
+      [type]="'rounded'"
+      [size]="'small'"
+      [width]="'w-40'"
+      (action)="saveCrop()"
+    ></lib-button>
+  </div>
+  }
+</div>

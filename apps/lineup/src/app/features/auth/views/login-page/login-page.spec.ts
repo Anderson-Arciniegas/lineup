@@ -1,6 +1,9 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { provideStore } from '@ngrx/store';
+import { appReducers } from '@lineup/core';
 import { LoginPage } from './login-page';
 
 describe('LoginPage', () => {
@@ -9,11 +12,12 @@ describe('LoginPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginPage, TranslateModule.forRoot()],
+      imports: [LoginPage, TranslateModule.forRoot(), HttpClientTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
         TranslateService,
-        TranslateStore
+        TranslateStore,
+        provideStore(appReducers),
       ],
     }).compileComponents();
 
