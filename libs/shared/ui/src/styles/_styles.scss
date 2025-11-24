@@ -1,45 +1,47 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+@import 'primeicons/primeicons.css';
 
 @font-face {
   font-family: 'Montserrat';
-  src: url('../../../assets/src/lib/fonts/Montserrat-VariableFont_wght.ttf') format('truetype');
+  src: url('../../../assets/src/lib/fonts/Montserrat-VariableFont_wght.ttf')
+    format('truetype');
   font-weight: 100 900;
   font-stretch: 75% 125%;
-  font-display: swap; 
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Montserrat-Italic';
-  src: url('../../../assets/src/lib/fonts/Montserrat-Italic-VariableFont_wght.ttf') format('truetype');
+  src: url('../../../assets/src/lib/fonts/Montserrat-Italic-VariableFont_wght.ttf')
+    format('truetype');
   font-weight: 100 900;
   font-stretch: 75% 125%;
-  font-display: swap; 
+  font-display: swap;
 }
 
-:root{
+:root {
   --border-radius: 30px;
   --border-radius-catalog-card: 20px;
   --border-radius-img: 15px;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--p-primary-800);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--p-primary-800);
 
-    --p-button-label-font-weight: 500;
-    --p-button-padding-x: 20px;
-    --p-button-lg-font-size: 2rem;
-    --p-button-transition-duration: 0.4s;
-    --p-progressspinner-color-one: var(--p-primary-500);
-    --p-progressspinner-color-two: var(--p-primary-400);
-    --p-progressspinner-color-three: var(--p-primary-300);
-    --p-progressspinner-color-four: var(--p-primary-200);
-    --p-tree-node-selected-background: var(--p-primary-100);
-
+  --p-button-label-font-weight: 500;
+  --p-button-padding-x: 20px;
+  --p-button-lg-font-size: 2rem;
+  --p-button-transition-duration: 0.4s;
+  --p-progressspinner-color-one: var(--p-primary-500);
+  --p-progressspinner-color-two: var(--p-primary-400);
+  --p-progressspinner-color-three: var(--p-primary-300);
+  --p-progressspinner-color-four: var(--p-primary-200);
+  --p-tree-node-selected-background: var(--p-primary-100);
+  --p-listbox-option-selected-focus-background: var(--p-primary-600);
+  --p-listbox-option-selected-background: var(--p-primary-600);
 }
-
 
 // h1{
 //   font-size: 2.25rem;
@@ -70,16 +72,62 @@ body {
 //   font-weight: 500;
 // }
 
-
-.p-button{
-    width: 100% !important;
-    height: 100%;
+.p-button {
+  width: 100% !important;
 }
 
-.radius{
-    border-radius: var(--border-radius) !important;
+.radius {
+  border-radius: var(--border-radius) !important;
 }
 
-.container{
+.container {
   margin: auto;
+}
+
+.p-dialog-header-actions {
+  .p-button {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+.p-button-icon-only {
+  width: var(--p-button-icon-only-width);
+  padding-inline-start: 10px !important;
+  padding-inline-end: 10px !important;
+  gap: 0;
+}
+
+.p-listbox-list-container {
+  max-height: 55rem !important;
+}
+
+.p-carousel-next-button {
+  width: 44px;
+  height: 44px;
+
+  .p-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+.p-carousel-prev-button {
+  width: 44px;
+  height: 44px;
+
+  .p-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+.h-100vh-calc {
+  height: calc(100vh - 80px);
+}
+
+@media screen and (max-width: 639px) {
+  .h-100vh-calc {
+    height: calc(100vh - 72px);
+  }
 }

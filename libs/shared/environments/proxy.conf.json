@@ -1,23 +1,29 @@
 {
   "/business": {
-    "target": "http://localhost:3002",
+    "target": "https://190.9.40.168/api3/",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": { "^/business": "/graphql" },
+    "pathRewrite": {
+      "^/business": "/graphql"
+    },
     "logLevel": "debug"
   },
   "/admin": {
-    "target": "http://localhost:3001",
+    "target": "https://190.9.40.168/api2/",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": { "^/admin": "/graphql" },
+    "pathRewrite": {
+      "^/admin": "/graphql"
+    },
     "logLevel": "debug"
   },
   "/user": {
-    "target": "http://localhost:3000",
+    "target": "https://190.9.40.168/api1/",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": { "^/user": "/graphql" },
+    "pathRewrite": {
+      "^/user": "/graphql"
+    },
     "logLevel": "debug"
   }
 }

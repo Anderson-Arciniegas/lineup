@@ -1,0 +1,25 @@
+.image-cropper {
+  .file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  .cropper-area {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .preview img {
+    max-width: 400px;
+    width: 100%;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    filter: brightness(1) contrast(1.1) saturate(1.2);
+  }
+}

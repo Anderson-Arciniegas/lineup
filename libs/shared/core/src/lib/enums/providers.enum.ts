@@ -1,8 +1,8 @@
 export enum ProvidersEnum {
   APPLE = 'APPLE',
   GOOGLE = 'GOOGLE',
-  LineUp = 'LineUp',
-  LineUp_ADMIN = 'LineUp_ADMIN',
-  LineUp_APP = 'LineUp_APP',
+  LINEUP = 'LINEUP',
+  LINEUP_ADMIN = 'LINEUP_ADMIN',
+  LINEUP_APP = 'LINEUP_APP',
   META = 'META',
 }

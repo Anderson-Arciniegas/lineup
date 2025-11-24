@@ -1,36 +1,52 @@
 <a [routerLink]="'/business-1'">
-    <div class="business-card p-2 shadow-lg cursor-pointer flex flex-col justify-end bg-primary-900"
-         [ngClass]="[width, height]">
-
-        <div class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs">
-            <div class="business-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-1">
-                <i class="pi pi-heart-fill"
-                   style="font-size: 0.8rem"></i>
-                <span>999+</span>
-            </div>
-            <!-- <div class="business-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
+  <div
+    class="business-card p-2 shadow-lg cursor-pointer flex flex-col justify-end bg-primary-900"
+    [ngClass]="[width, height]"
+  >
+    <div
+      class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs"
+    >
+      @if (!favoritesMode) {
+      <div
+        class="business-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-2"
+      >
+        <i class="pi pi-heart-fill" style="font-size: 0.8rem"></i>
+        <span class="font-semibold">1 m</span>
+      </div>
+      }
+      <!-- <div class="business-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
                 <i class="pi pi-objects-column"
                    style="font-size: 0.8rem"></i>
                 <span>99+</span>
             </div> -->
-        </div>
-
-        <div class="h-full image-container mb-1">
-            <img alt="Card"
-                 (load)="imageLoaded = true"
-                 [hidden]="!imageLoaded"
-                 class="image h-full w-full"
-                 [src]="image" />
-            <div [hidden]="imageLoaded"
-                 class="h-full w-full flex flex-row items-center justify-center">
-                <p-progress-spinner strokeWidth="8"
-                                    fill="transparent"
-                                    animationDuration=".5s"
-                                    [style]="{ width: '50px', height: '50px' }" />
-            </div>
-        </div>
-        <div>
-            <p class="text-center font-medium text-white text-sm">TuPuntoShopVe</p>
-        </div>
     </div>
+
+    <div class="h-full image-container mb-1">
+      <img
+        alt="Card"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="image h-full w-full"
+        [src]="image"
+      />
+      <div
+        [hidden]="imageLoaded"
+        class="h-full w-full flex flex-row items-center justify-center"
+      >
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+    </div>
+    <div>
+      <p
+        class="text-center font-medium text-white text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden"
+      >
+        TuPuntoShopVe
+      </p>
+    </div>
+  </div>
 </a>
