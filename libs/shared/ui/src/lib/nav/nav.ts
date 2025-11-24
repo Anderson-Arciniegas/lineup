@@ -13,7 +13,7 @@ import { Button } from '../button/button';
 })
 export class Nav {
   @Input() navItems: any[];
-  logged = true;
+  logged = false;
   businessMode = false;
   visible = false;
 }

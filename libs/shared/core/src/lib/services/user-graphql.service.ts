@@ -2,21 +2,22 @@ import { inject, Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CreateUserInput, CreateUserResponse, UserSchema } from '../models';
+import { CreateUserInput, CreateUserResponse } from '../models';
+import { UserSchema } from '../schemas';
 
 const CREATE_USER_MUTATION = gql`
   mutation CreateUser($data: CreateUserInput!) {
     createUser(data: $data) {
+      id
       email
       firstName
       lastName
       username
       provider
       status
+      emailValidated
       creationDate
       creationIp
-      modificationDate
-      modificationIp
     }
   }
 `;
@@ -45,6 +46,7 @@ export class UserGraphqlService {
 
   createUser(data: CreateUserInput): Observable<any> {
     return this.apollo
+      .use('userAPI')
       .mutate<CreateUserResponse>({
         mutation: CREATE_USER_MUTATION,
         variables: { data },
@@ -54,6 +56,7 @@ export class UserGraphqlService {
 
   getUser(id: number): Observable<any> {
     return this.apollo
+      .use('userAPI')
       .watchQuery<{ user: UserSchema }>({
         query: GET_USER_QUERY,
         variables: { id },

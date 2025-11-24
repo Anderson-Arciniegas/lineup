@@ -10,6 +10,7 @@ import {
   TranslateService,
   TranslateStore
 } from '@ngx-translate/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   HomePage
 } from './home-page';
@@ -19,8 +20,8 @@ describe('HomePage', () => {
     let fixture: ComponentFixture < HomePage > ;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [HomePage, TranslateModule.forRoot(), ],
+    await TestBed.configureTestingModule({
+      imports: [HomePage, TranslateModule.forRoot(), HttpClientTestingModule],
             providers: [{
                     provide: ActivatedRoute,
                     useValue: {}

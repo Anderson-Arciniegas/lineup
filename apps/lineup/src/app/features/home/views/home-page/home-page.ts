@@ -3,7 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   Component,
-  Inject,
+  inject,
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
@@ -35,6 +35,7 @@ import { Tag } from 'primeng/tag';
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, AfterViewInit {
+  private platformId = inject(PLATFORM_ID);
   responsiveOptions: any[] | undefined;
 
   products: any[] | undefined = [
@@ -102,10 +103,6 @@ export class HomePage implements OnInit, AfterViewInit {
       inventoryStatus: 'low-stock',
     },
   ];
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
-  ) {}
 
   ngOnInit() {
     this.responsiveOptions = [
