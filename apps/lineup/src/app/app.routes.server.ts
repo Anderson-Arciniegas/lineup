@@ -8,6 +8,17 @@ export const serverRoutes: ServerRoute[] = [{
         renderMode: RenderMode.Server,
     },
     {
+        path: ':business/edit',
+        renderMode: RenderMode.Prerender,
+        getPrerenderParams: async () => [{
+                business: 'business-1'
+            },
+            {
+                business: 'business-2'
+            }
+        ],
+    },
+    {
         path: ':business/lineup/:name',
         renderMode: RenderMode.Prerender,
         getPrerenderParams: async () => [{
