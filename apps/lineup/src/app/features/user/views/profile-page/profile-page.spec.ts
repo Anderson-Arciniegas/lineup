@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { ProfilePage } from './profile-page';
 
 describe('ProfilePage', () => {
@@ -7,7 +9,12 @@ describe('ProfilePage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfilePage],
+      imports: [ProfilePage, TranslateModule.forRoot()],
+      providers: [
+        { provide: ActivatedRoute, useValue: {} },
+        TranslateService,
+        TranslateStore
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfilePage);

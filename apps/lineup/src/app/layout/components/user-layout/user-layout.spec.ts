@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { UserLayout } from './user-layout';
 
 describe('UserLayout', () => {
@@ -7,7 +9,12 @@ describe('UserLayout', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserLayout],
+      imports: [UserLayout, TranslateModule.forRoot()],
+      providers: [
+        { provide: ActivatedRoute, useValue: {} },
+        TranslateService,
+        TranslateStore
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserLayout);

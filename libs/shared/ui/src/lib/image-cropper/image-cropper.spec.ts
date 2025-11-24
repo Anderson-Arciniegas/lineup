@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { ImageCropper } from './image-cropper';
 
 describe('ImageCropper', () => {
@@ -7,7 +9,12 @@ describe('ImageCropper', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageCropper],
+      imports: [ImageCropper, TranslateModule.forRoot()],
+      providers: [
+        { provide: ActivatedRoute, useValue: {} },
+        TranslateService,
+        TranslateStore
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImageCropper);
