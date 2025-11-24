@@ -12,6 +12,7 @@
   [variant]="variant"
   [size]="size"
   (click)="action.emit($event)"
+  [type]="buttonType"
 />
 } @else if (link && !href) {
 <a [routerLink]="link" [target]="target">
@@ -28,6 +29,7 @@
     [badge]="badge"
     [variant]="variant"
     [size]="size"
+    [type]="buttonType"
   />
 </a>
 } @else{
@@ -45,6 +47,7 @@
     [badge]="badge"
     [variant]="variant"
     [size]="size"
+    [type]="buttonType"
   />
 </a>
 }

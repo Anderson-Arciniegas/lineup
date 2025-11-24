@@ -28,6 +28,7 @@ export class Button {
   @Input() type: 'raised' | 'rounded';
   @Input() variant: 'text' | 'outlined';
   @Input() badge: string;
+  @Input() buttonType: 'submit' | 'button' | 'reset';
   @Input() size: 'small' | 'large';
   @Input() fontSize = 'text-base';
   @Input() width = 'w-auto';

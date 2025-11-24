@@ -5,6 +5,7 @@ import {
   inject,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
+  isDevMode,
 } from '@angular/core';
 import {
   provideClientHydration,
@@ -18,9 +19,13 @@ import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/lara';
 import { provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { providePrimeNG } from 'primeng/config';
 import { environment } from '../environment/environment';
 import { appRoutes } from './app.routes';
+import { appReducers } from '@lineup/core';
 
 const MyPreset = definePreset(Lara, {
   semantic: {
@@ -67,6 +72,15 @@ export const appConfig: ApplicationConfig = {
       eventCoalescing: true,
     }),
     provideRouter(appRoutes),
+    provideStore(appReducers),
+    provideEffects(),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+      autoPause: true,
+      trace: false,
+      traceLimit: 75,
+    }),
     importProvidersFrom(I18nModule),
     provideAnimationsAsync(),
     providePrimeNG({
