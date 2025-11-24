@@ -11,7 +11,7 @@ export const authReducer = createReducer(
   })),
   on(UnsetUser, (state) => ({
     ...state,
-    user: null,
+    user: null as AuthState['user'],
     isAuthenticated: false,
   })),
   on(SetTokens, (state, { tokens }) => ({
@@ -20,7 +20,7 @@ export const authReducer = createReducer(
   })),
   on(ClearTokens, (state) => ({
     ...state,
-    tokens: null,
+    tokens: null as AuthState['tokens'],
   }))
 );
 
