@@ -41,6 +41,21 @@ body {
   --p-tree-node-selected-background: var(--p-primary-100);
   --p-listbox-option-selected-focus-background: var(--p-primary-600);
   --p-listbox-option-selected-background: var(--p-primary-600);
+
+    --p-button-secondary-background: #ffffff;
+    --p-button-secondary-hover-background: var(--p-primary-200);
+    --p-button-secondary-active-background: var(--p-primary-200);
+    --p-button-secondary-border-color: var(--p-primary-200);
+    --p-button-secondary-hover-border-color: var(--p-primary-200);
+    --p-button-secondary-active-border-color: var(--p-primary-200);
+    --p-button-secondary-color: var(--p-primary-800);
+    --p-button-secondary-hover-color: var(--p-primary-800);
+    --p-button-secondary-active-color: var(--p-primary-800);
+    --p-button-text-secondary-hover-background: var(--p-primary-200);
+    --p-button-text-secondary-active-background: var(--p-primary-200);
+    --p-button-text-secondary-color: var(--p-primary-800);
+    //--p-button-secondary-focus-ring-color: transparent;
+    //--p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
 }
 
 // h1{

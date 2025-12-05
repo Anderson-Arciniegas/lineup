@@ -47,6 +47,7 @@ export const en = {
     state: 'State',
     country: 'Country',
     changePassword: 'Change password',
+    signIn: 'Sign In',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',
@@ -86,4 +87,8 @@ export const en = {
     contactUsDescription:
       'Contact our team. Only questions related to our services and income requests will be answered.',
   },
+  searchPage: {
+    discoverLocalBusinessesAndCuratedCatalogs: 'Discover local businesses, curated catalogs, and find the products you love, fast and easy.',
+    findTheProductsYouLoveFastAndEasy: 'Find the products you love, fast and easy.',
+  }
 };

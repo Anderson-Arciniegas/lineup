@@ -29,10 +29,11 @@ import { appReducers } from '@lineup/core';
 
 const MyPreset = definePreset(Lara, {
   semantic: {
+    // palette principal (primary) y la secundaria que quieres usar
     primary: {
-      50: '#F6F6F6',
-      100: '#E7E7E7',
-      200: '#D1D1D1',
+      50: '#FFFFFF',
+      100: '#FCFCFC',
+      200: '#F0F0F0',
       300: '#888888',
       400: '#6D6D6D',
       500: '#5D5D5D',
@@ -42,27 +43,28 @@ const MyPreset = definePreset(Lara, {
       900: '#262626',
       950: '#1A1A1A',
     },
+    // colorScheme opcional para light / dark (refieren tokens anteriores)
     colorScheme: {
       light: {
         primary: {
-          color: '{primary.800}', // Aquí es donde especificas que el color principal en el esquema 'light' sea el 800
-          inverseColor: '#ffffff', // Color de texto para contraste
-          hoverColor: '{primary.900}', // Color al pasar el ratón
-          activeColor: '{primary.700}', // Color al hacer click/activo
+          color: '{primary.800}',
+          inverseColor: '#ffffff',
+          hoverColor: '{primary.900}',
+          activeColor: '{primary.700}',
         },
-        // Si tienes un esquema dark, también lo configuras aquí
       },
       dark: {
         primary: {
-          color: '{primary.50}', // Por ejemplo, un color más claro para el modo oscuro
+          color: '{primary.50}',
           inverseColor: '{zinc.950}',
           hoverColor: '{primary.100}',
           activeColor: '{primary.50}',
         },
-      },
-    },
-  },
+      }
+    }
+  }
 });
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -108,7 +110,7 @@ export const appConfig: ApplicationConfig = {
           }),
           cache: new InMemoryCache(),
         },
-        // Secondary named client
+        // info named client
         businessAPI: {
           link: httpLink.create({
             uri: environment.businessApi,
