@@ -7,20 +7,20 @@ import {
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { BusinessCard, Button, CatalogCard, ProductCard, Ui } from '@lineup/ui';
+import { BusinessCard, Button, CatalogCard, ProductCard } from '@lineup/ui';
+import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
-import { Tag } from 'primeng/tag';
+
 // gsap.registerPlugin(ScrollTrigger);
 @Component({
   selector: 'app-home-page',
   imports: [
     CommonModule,
-    Ui,
     Button,
     InputIcon,
     IconField,
@@ -29,14 +29,25 @@ import { Tag } from 'primeng/tag';
     CatalogCard,
     Carousel,
     ButtonModule,
-    Tag,
-  ],
+    TranslateModule
+],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   responsiveOptions: any[] | undefined;
+
+  tags = [
+    'Accessories',
+    'Technology',
+    'Clothes',
+    'Shoes',
+    'Home',
+    'Beauty',
+    'Sports',
+    'Gaming',
+  ]
 
   products: any[] | undefined = [
     {
@@ -108,7 +119,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.responsiveOptions = [
       {
         breakpoint: '1536px',
-        numVisible: 5,
+        numVisible: 6,
         numScroll: 1,
       },
       {

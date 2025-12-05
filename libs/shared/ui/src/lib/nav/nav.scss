@@ -1,3 +1,8 @@
-.nav {
-  background-color: #fff;
+::ng-deep {
+  .input {
+    /*border-radius: var(--border-radius);
+    background-color: var(--p-primary-200);*/
+    outline: none;
+    padding: 0 40px;
+  }
 }

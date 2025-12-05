@@ -51,6 +51,7 @@ export const es = {
     state: 'Estado',
     country: 'País',
     changePassword: 'Cambiar contraseña',
+    signIn: 'Iniciar sesión',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',
@@ -91,4 +92,8 @@ export const es = {
     contactUsDescription:
       'Ponte en contacto con nuestro equipo. Solo se responderán las consultas relacionadas con nuestros servicios y solicitudes de ingresos.',
   },
+  searchPage: {
+    discoverLocalBusinessesAndCuratedCatalogs: 'Descubre negocios locales, catálogos seleccionados',
+    findTheProductsYouLoveFastAndEasy: 'Encuentra los productos que te encantan, rápido y fácil.',
+  }
 };

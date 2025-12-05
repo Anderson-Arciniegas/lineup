@@ -4,12 +4,6 @@
   }
 
   .search {
-    width: 100%;
-    max-width: 770px;
-    height: 100px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 50px;
-
     @media screen and (max-width: 640px) {
       max-width: 400px;
       height: 70px;
@@ -25,13 +19,18 @@
 
   .input {
     border-radius: var(--border-radius);
-    border: 1px solid var(--p-primary-200);
-    height: 40px;
+    height: 45.6px;
     outline: none;
     padding: 0 40px;
+    background-color: #fff !important;
+    border: 1px solid var(--p-primary-300);
   }
 
   .p-carousel-indicator-button {
     border-radius: 50% !important;
+  }
+
+  .p-carousel-item {
+    max-height: 220px !important;
   }
 }
