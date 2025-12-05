@@ -1,5 +1,5 @@
 <nav
-  class="nav flex flex-row justify-between py-3 px-3 md:px-10 bg-primary-50 shadow-sm h-18 sm:h-20"
+  class="nav flex flex-row justify-between py-3 px-3 md:px-10 bg-primary-50 shadow h-18 sm:h-20"
 >
   <div class="flex flex-row items-center gap-3 sm:gap-5">
     <div class="block md:hidden">
@@ -12,65 +12,95 @@
         (action)="visible = !visible"
       ></lib-button>
     </div>
-    <a [routerLink]="['/']" class="flex flex-row items-center">
-      <h1 class="text-3xl font-semibold">{{'general.lineUp' | translate}}</h1>
+    <a [routerLink]="['/']" class="flex flex-row items-center gap-3">
+      <img 
+        src="assets/images/logo-2.png"
+        alt="Lineup logo"
+        class="h-11 sm:h-13 object-contain cursor-pointer"
+      />
     </a>
   </div>
 
+  <!--<div class="
+        flex flex-row 
+        items-center
+        w-5/12
+      ">
+    <p-iconfield class="w-full h-full flex items-center justify-center">
+      <p-inputicon class="pi pi-search" />
+      <input
+        type="text"
+        class="w-full h-full input font-medium"
+        pInputText
+        placeholder="Search"
+      />
+    </p-iconfield>
+  </div>-->
+
   @if(!logged){
-  <div class="flex flex-row items-center justify-end gap-5 md:gap-15">
-    <ul class="hidden md:flex flex-row gap-8 items-center justify-center">
-      <li class="flexitems-center justify-center">
-        <a class="font-medium" [routerLink]="'/'"
-          >{{'general.explore' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <a class="font-medium" [routerLink]="'/info'"
-          >{{'general.information' | translate}}</a
-        >
-      </li>
-    </ul>
+  <div class="flex flex-row items-center justify-end gap-5 md:gap-5">
+    <div class="hidden md:flex flex-row gap-2 items-center justify-center">
+      <lib-button
+        [link]="'/'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-globe"
+        [label]="'general.explore' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/info'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-info-circle"
+        [label]="'general.information' | translate"
+      ></lib-button>
+    </div>
     <div>
       <lib-button
-        [label]="'general.login' | translate"
         [link]="'/login'"
         [type]="'rounded'"
-        width="w-50"
+        color="secondary"
+        icon="pi pi-user"
+        width="w-11"
       ></lib-button>
     </div>
   </div>
   }@else if (logged && !businessMode) {
-  <div class="flex flex-row items-center justify-end gap-5 md:gap-15">
-    <ul class="hidden md:flex flex-row gap-8 items-center justify-center">
-      <li class="flexitems-center justify-center">
-        <a class="font-medium" [routerLink]="'/'"
-          >{{'general.explore' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <a class="font-medium" [routerLink]="'/info'"
-          >{{'general.information' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <lib-button
+  <div class="flex flex-row items-center justify-end gap-5 md:gap-9">
+    <div class="hidden md:flex flex-row gap-2 items-center justify-center">
+      <lib-button
+        [link]="'/'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-globe"
+        [label]="'general.explore' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/info'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-info-circle"
+        [label]="'general.information' | translate"
+      ></lib-button>
+      <lib-button
           [icon]="'pi pi-heart'"
           [link]="'/user/favorites'"
           [type]="'rounded'"
-          [label]="'Favoritos'"
+          [label]="'general.favorites' | translate"
           variant="text"
-        ></lib-button>
-      </li>
-    </ul>
+      ></lib-button>
+    </div>
     <div>
       <lib-button
-        [icon]="'pi pi-user'"
-        [link]="'/user'"
+        [link]="'/login'"
         [type]="'rounded'"
-        [size]="'large'"
-        variant="text"
-        width="w-13"
+        color="secondary"
+        icon="pi pi-user"
+        width="w-11"
       ></lib-button>
     </div>
   </div>
@@ -81,50 +111,67 @@
 <p-drawer [(visible)]="visible" header="Lineup">
   @if(!logged){
   <div class="flex flex-col items-center justify-end gap-5">
-    <ul class="flex flex-col gap-8 items-center justify-center">
-      <li class="flexitems-center justify-center">
-        <a class="font-medium" [routerLink]="'/'"
-          >{{'general.explore' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <a class="font-medium" [routerLink]="'/info'"
-          >{{'general.information' | translate }}</a
-        >
-      </li>
-    </ul>
-    <div>
+    <div class="flex flex-col gap-4 items-start justify-center w-full">
       <lib-button
-        [label]="'general.signIn' | translate"
         [link]="'/login'"
         [type]="'rounded'"
-        width="w-25"
+        variant="text"
+        color="secondary"
+        icon="pi pi-user"
+        [width]="'w-full'"
+        [label]="'general.signIn' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-globe"
+        [width]="'w-full'"
+        [label]="'general.explore' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/info'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-info-circle"
+        [width]="'w-full'"
+        [label]="'general.information' | translate"
       ></lib-button>
     </div>
   </div>
   }@else if (logged && !businessMode) {
   <div class="flex flex-col items-center justify-end gap-5">
-    <ul class="flex flex-col gap-8 items-center justify-center">
-      <li class="flexitems-center justify-center">
-        <a class="font-medium" [routerLink]="'/'"
-          >{{'general.explore' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <a class="font-medium" [routerLink]="'/info'"
-          >{{'general.information' | translate}}</a
-        >
-      </li>
-      <li class="flex items-center justify-center">
-        <lib-button
-          [icon]="'pi pi-heart'"
+    <div class="flex flex-col gap-8 items-center justify-center">
+      <lib-button
+        [link]="'/'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-globe"
+        [width]="'w-full'"
+        [label]="'general.explore' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/info'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-info-circle"
+        [width]="'w-full'"
+        [label]="'general.information' | translate"
+      ></lib-button>
+      <lib-button
           [link]="'/user/favorites'"
           [type]="'rounded'"
-          [label]="'general.favorites' | translate"
           variant="text"
-        ></lib-button>
-      </li>
-    </ul>
+          color="secondary"
+          [icon]="'pi pi-heart'"
+          [width]="'w-full'"
+          [label]="'general.favorites' | translate"
+      ></lib-button>
+    </div>
     <div>
       <lib-button
         [icon]="'pi pi-user'"
