@@ -5,6 +5,31 @@ import { map } from 'rxjs/operators';
 import { CreateUserInput, CreateUserResponse } from '../models';
 import { UserSchema } from '../schemas';
 
+const LOGIN = gql`
+  mutation Login($login: LoginDto!) {
+    login(login: $login) {
+      code
+      status
+      user {
+        id
+        email
+        username
+        firstName
+        lastName
+        userRoles {
+          idRole
+          idUser
+          role {
+            id
+            code
+            description
+          }
+        }
+      }
+    }
+  }
+`;
+
 const CREATE_USER_MUTATION = gql`
   mutation CreateUser($data: CreateUserInput!) {
     createUser(data: $data) {
@@ -43,6 +68,16 @@ const GET_USER_QUERY = gql`
 })
 export class UserGraphqlService {
   private apollo = inject(Apollo);
+
+  login(email: string, password: string): Observable<any> {
+    return this.apollo
+      .use('userAPI')
+      .mutate<any>({
+        mutation: LOGIN,
+        variables: { login: { email, password } },
+      })
+      .pipe(map((result) => result.data!.login));
+  }
 
   createUser(data: CreateUserInput): Observable<any> {
     return this.apollo

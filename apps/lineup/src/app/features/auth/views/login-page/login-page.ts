@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { UserGraphqlService } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -32,6 +33,7 @@ export class LoginPage implements OnInit {
   attempt = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
+  private _users = inject(UserGraphqlService);
 
   ngOnInit(): void {
     this.loginForm = this._createForm();
@@ -42,16 +44,18 @@ export class LoginPage implements OnInit {
       return;
     }
     this.attempt = true;
-    this._authService.login(this.loginForm.value).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.attempt = false;
-      },
-      error: (error) => {
-        console.error(error);
-        this.attempt = false;
-      },
-    });
+    this._users
+      .login(this.loginForm.value.email, this.loginForm.value.password)
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this.attempt = false;
+        },
+        error: (error) => {
+          console.error(error);
+          this.attempt = false;
+        },
+      });
   }
 
   private _createForm(): FormGroup {
