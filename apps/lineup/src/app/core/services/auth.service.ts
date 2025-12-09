@@ -1,7 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
 import {
   ApiService,
@@ -35,9 +34,9 @@ export class AuthService {
     }
   }
 
-  login(data: any): Observable<any> {
-    return this._api.post('auth/login', data);
-  }
+  // login(data: any): Observable<any> {
+  //   return this._api.post('auth/login', data);
+  // }
 
   // loginWithGoogle(credentials: SocialAuth): Observable<AuthResponse> {
   //   return this._api.post(app, 'auth/google/login', credentials);
@@ -47,9 +46,9 @@ export class AuthService {
   //   return this._api.post(app, 'auth/google/register', credentials);
   // }
 
-  logOut() {
-    return this._api.post('auth/logout');
-  }
+  // logOut() {
+  //   return this._api.post('auth/logout');
+  // }
 
   //   sendEmailCode(
   //     email: string,
