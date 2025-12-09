@@ -29,8 +29,8 @@ import { InputIcon } from 'primeng/inputicon';
     CatalogCard,
     Carousel,
     ButtonModule,
-    TranslateModule
-],
+    TranslateModule,
+  ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -47,7 +47,7 @@ export class HomePage implements OnInit, AfterViewInit {
     'Beauty',
     'Sports',
     'Gaming',
-  ]
+  ];
 
   products: any[] | undefined = [
     {
@@ -117,6 +117,11 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.responsiveOptions = [
+      {
+        breakpoint: '1920px',
+        numVisible: 6,
+        numScroll: 1,
+      },
       {
         breakpoint: '1536px',
         numVisible: 6,
