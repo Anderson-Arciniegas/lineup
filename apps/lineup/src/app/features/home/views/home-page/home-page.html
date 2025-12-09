@@ -1,27 +1,15 @@
-<section class="
-  py-8 sm:py-14
-  px-5 2xl:px-15 
-  flex flex-col 
-  gap-8 sm:gap-10
-  items-center justify-start container
-  w-full
-">
-  <section class="
-    w-full
-    flex flex-col
-    gap-14
-    items-center justify-start
-  ">
-    <div class="
-      w-full
-      flex flex-col
-      items-center justify-center
-      gap-2 sm:gap-6
-    ">
+<section
+  class="py-8 sm:py-14 px-5 2xl:px-15 flex flex-col gap-8 sm:gap-10 items-center justify-start container w-full"
+>
+  <section class="w-full flex flex-col gap-14 items-center justify-start">
+    <div
+      class="w-full flex flex-col items-center justify-center gap-2 sm:gap-6"
+    >
       <div class="w-full flex flex-col gap-2 px-2 md:px-12 lg:px-18">
         <div>
           <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
-            {{ 'searchPage.discoverLocalBusinessesAndCuratedCatalogs' | translate}}
+            {{ 'searchPage.discoverLocalBusinessesAndCuratedCatalogs' |
+            translate}}
           </h2>
         </div>
         <div>
@@ -30,47 +18,32 @@
           </h3>
         </div>
       </div>
-      <div
-        class="
-          flex flex-col
-          items-center justify-center
-          w-full
-          gap-6
-        "
-      >
+      <div class="flex flex-col items-center justify-center w-full gap-6">
         <div class="w-full hidden sm:flex">
-          <div class="
-            flex flex-wrap
-            gap-2
-            w-full
-            items-center justify-center
-          ">
-              @for (tag of tags; track $index) {
-                <lib-button
-                  class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12 h-full"
-                  [label]="tag"
-                  color="secondary"
-                  type="rounded"
-                  [width]="'w-full'"
-                  [size]="'small'">
-                </lib-button>
-              }
+          <div class="flex flex-wrap gap-2 w-full items-center justify-center">
+            @for (tag of tags; track $index) {
+            <lib-button
+              class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12 h-full"
+              [label]="tag"
+              color="secondary"
+              type="rounded"
+              [width]="'w-full'"
+              [size]="'small'"
+            >
+            </lib-button>
+            }
           </div>
         </div>
-        <div class="
-            flex items-center justify-center
-            search
-            w-full
-            gap-2 sm:gap-3
-          ">
-          <lib-button
-            icon="pi pi-map-marker"
-            type="rounded"
-            width="w-11"
-          >
+        <div
+          class="flex items-center justify-center search w-full gap-2 sm:gap-3"
+        >
+          <lib-button icon="pi pi-map-marker" type="rounded" width="w-11">
           </lib-button>
           <p-iconfield class="w-full max-width">
-            <p-inputicon class="pi pi-search" style="color: var(--p-button-secondary-color)"/>
+            <p-inputicon
+              class="pi pi-search"
+              style="color: var(--p-button-secondary-color)"
+            />
             <input
               type="text"
               class="w-full input font-medium"
@@ -98,42 +71,50 @@
   </section>
 
   <div class="flex flex-col items-start justify-center w-10/10">
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">Negocios destacados</h3>
+    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+      Negocios destacados
+    </h3>
     <div class="card w-10/10">
       <p-carousel
         [value]="products"
         [circular]="true"
+        [numVisible]="6"
+        [numScroll]="1"
         [responsiveOptions]="responsiveOptions"
         autoplayInterval="3000"
         showIndicators="false"
       >
         <ng-template let-product #item>
           <lib-business-card
-              class="cursor-pointer my-8 w-full"
-              [width]="'w-92'"
-              [height]="'h-48'"
-            ></lib-business-card>
+            class="cursor-pointer my-8 w-full"
+            [width]="'w-40'"
+            [height]="'h-48'"
+          ></lib-business-card>
         </ng-template>
       </p-carousel>
     </div>
   </div>
   <div class="flex flex-col items-start justify-center w-10/10">
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">Catalogos destacados</h3>
+    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+      Catalogos destacados
+    </h3>
     <div class="card w-10/10">
       <p-carousel
         [value]="products"
+        [numVisible]="6"
+        [numScroll]="1"
         [circular]="true"
         [responsiveOptions]="responsiveOptions"
-        autoplayInterval="300000"
+        autoplayInterval="3000"
         showIndicators="false"
       >
         <ng-template let-product #item>
           <div class="w-full flex flex-col justify-center items-center">
             <lib-catalog-card
-                class="cursor-pointer my-8 w-full"
-                [width]="'w-92'"
-                [height]="'h-48'"
-              ></lib-catalog-card>
+              class="cursor-pointer my-8 w-full"
+              [width]="'w-40'"
+              [height]="'h-48'"
+            ></lib-catalog-card>
           </div>
         </ng-template>
       </p-carousel>
@@ -141,7 +122,9 @@
   </div>
 
   <div class="flex flex-col items-start justify-center gap-5 w-10/10">
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">Productos destacados</h3>
+    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+      Productos destacados
+    </h3>
     <div
       class="w-full grid [grid-template-columns:repeat(1,auto)] sm:[grid-template-columns:repeat(2,auto)] md:[grid-template-columns:repeat(2,auto)] lg:[grid-template-columns:repeat(3,auto)] xl:[grid-template-columns:repeat(4,auto)] justify-center sm:justify-between gap-2 sm:gap-6 px-1 sm:px-4 md:px-15 mb-10"
     >
