@@ -22,8 +22,8 @@ export const PROD: EnvironmentsConfig = {
   production: true,
   // In production you may want to point directly to the full URLs or use env replacement
   apiBusiness: 'http://localhost:3002/graphql', //'https://190.9.40.168/api3/graphql'
-  apiAdmin: 'http://localhost:3002/graphql', //'https://190.9.40.168/api2/graphql'
-  apiUser: 'http://localhost:3002/graphql', // //'https://190.9.40.168/api1/graphql'
+  apiAdmin: 'http://localhost:3001/graphql', //'https://190.9.40.168/api2/graphql'
+  apiUser: 'http://localhost:3000/graphql', // //'https://190.9.40.168/api1/graphql'
 };
 
 // Default export for convenience
