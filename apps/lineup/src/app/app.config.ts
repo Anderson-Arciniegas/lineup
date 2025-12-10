@@ -107,6 +107,7 @@ export const appConfig: ApplicationConfig = {
         userAPI: {
           link: httpLink.create({
             uri: environment.userApi,
+            withCredentials: true,
           }),
           cache: new InMemoryCache(),
         },
@@ -114,6 +115,7 @@ export const appConfig: ApplicationConfig = {
         businessAPI: {
           link: httpLink.create({
             uri: environment.businessApi,
+            withCredentials: true,
           }),
           cache: new InMemoryCache(),
         },
