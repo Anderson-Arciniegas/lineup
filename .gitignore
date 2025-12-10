@@ -74,3 +74,4 @@ Thumbs.db
 .angular
 
 apps/lineup/proxy.conf.json
+libs/shared/environments/proxy.conf.json
