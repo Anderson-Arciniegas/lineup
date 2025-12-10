@@ -33,16 +33,20 @@ const LOGIN = gql`
 const CREATE_USER_MUTATION = gql`
   mutation CreateUser($data: CreateUserInput!) {
     createUser(data: $data) {
-      id
-      email
-      firstName
-      lastName
-      username
-      provider
+      code
       status
-      emailValidated
-      creationDate
-      creationIp
+      user {
+        id
+        email
+        firstName
+        lastName
+        username
+        provider
+        status
+        emailValidated
+        creationDate
+        creationIp
+      }
     }
   }
 `;
@@ -76,7 +80,7 @@ export class UserGraphqlService {
         mutation: LOGIN,
         variables: { login: { email, password } },
       })
-      .pipe(map((result) => result.data!.login));
+      .pipe(map((result) => result.data!.login.user ));
   }
 
   createUser(data: CreateUserInput): Observable<any> {
@@ -86,7 +90,7 @@ export class UserGraphqlService {
         mutation: CREATE_USER_MUTATION,
         variables: { data },
       })
-      .pipe(map((result) => result.data!.createUser));
+      .pipe(map((result) => result.data!.createUser.user));
   }
 
   getUser(id: number): Observable<any> {

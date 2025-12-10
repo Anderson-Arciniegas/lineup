@@ -12,5 +12,10 @@ export interface CreateUserInput {
 }
 
 export interface CreateUserResponse {
-  createUser: UserSchema;
+  // The server returns a LoginResponse-like object for createUser
+  createUser: {
+    code?: string;
+    status?: string;
+    user: UserSchema;
+  };
 }
