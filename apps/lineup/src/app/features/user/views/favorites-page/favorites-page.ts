@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { BusinessCard, ProductCard } from '@lineup/ui';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-favorites-page',
-  imports: [CommonModule, ProductCard, BusinessCard],
+  imports: [CommonModule, ProductCard, BusinessCard, TranslateModule],
   templateUrl: './favorites-page.html',
   styleUrl: './favorites-page.scss',
 })

@@ -47,8 +47,11 @@ export class LoginPage implements OnInit {
     this._users
       .login(this.loginForm.value.email, this.loginForm.value.password)
       .subscribe({
-        next: (response) => {
-          console.log(response);
+        next: (user) => {
+          console.log(user);
+          if (user) {
+            this._authService.handleSuccessLogin(user);
+          }
           this.attempt = false;
         },
         error: (error) => {
