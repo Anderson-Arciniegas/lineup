@@ -18,22 +18,22 @@ export class UserLayout implements OnInit {
       {
         label: 'general.profile',
         icon: 'pi pi-user',
-        url: '/user',
+        url: '/profile',
       },
       {
         label: 'general.favorites',
         icon: 'pi pi-heart',
-        url: '/user/favorites',
+        url: '/profile/favorites',
       },
       {
         label: 'general.settings',
         icon: 'pi pi-cog',
-        url: '/user/settings',
+        url: '/profile/settings',
       },
       {
         label: 'general.signOut',
         icon: 'pi pi-sign-out',
-        url: '/user/sign-out',
+        url: '/profile/sign-out',
         command: () => {
           this.signOut();
         },

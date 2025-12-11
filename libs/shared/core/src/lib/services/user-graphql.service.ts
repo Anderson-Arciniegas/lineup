@@ -53,7 +53,7 @@ const CREATE_USER_MUTATION = gql`
 
 const GET_USER_QUERY = gql`
   query GetUser($id: Int!) {
-    user(id: $id) {
+    userById(id: $id) {
       id
       email
       emailValidated
@@ -63,6 +63,66 @@ const GET_USER_QUERY = gql`
       provider
       status
       creationDate
+      userRoles {
+        idRole
+        idUser
+        role {
+          id
+          code
+          description
+        }
+      }
+    }
+  }
+`;
+
+const GET_ME = gql`
+  query Me {
+    me {
+      id
+      email
+      emailValidated
+      firstName
+      lastName
+      username
+      provider
+      status
+      creationDate
+      creationIp
+      modificationDate
+      modificationIp
+      creationCoordinate {
+        latitude
+        longitude
+      }
+      modificationCoordinate {
+        latitude
+        longitude
+      }
+      userRoles {
+        idRole
+        idUser
+        idCreationUser
+        status
+        creationDate
+        creationIp
+        modificationDate
+        modificationIp
+        creationCoordinate {
+          latitude
+          longitude
+        }
+        modificationCoordinate {
+          latitude
+          longitude
+        }
+        role {
+          id
+          code
+          description
+          status
+        }
+      }
     }
   }
 `;
@@ -79,8 +139,24 @@ export class UserGraphqlService {
       .mutate<any>({
         mutation: LOGIN,
         variables: { login: { email, password } },
+        context: {
+          withCredentials: true,
+        },
       })
-      .pipe(map((result) => result.data!.login.user ));
+      .pipe(map((result) => result.data!.login.user));
+  }
+
+  getMe(): Observable<any> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ me: UserSchema }>({
+        query: GET_ME,
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.me));
   }
 
   createUser(data: CreateUserInput): Observable<any> {
@@ -89,6 +165,9 @@ export class UserGraphqlService {
       .mutate<CreateUserResponse>({
         mutation: CREATE_USER_MUTATION,
         variables: { data },
+        context: {
+          withCredentials: true,
+        },
       })
       .pipe(map((result) => result.data!.createUser.user));
   }
@@ -96,11 +175,15 @@ export class UserGraphqlService {
   getUser(id: number): Observable<any> {
     return this.apollo
       .use('userAPI')
-      .watchQuery<{ user: UserSchema }>({
+      .query<{ user: UserSchema }>({
         query: GET_USER_QUERY,
         variables: { id },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
       })
-      .valueChanges.pipe(map((result) => result.data.user));
+      .pipe(map((result) => result.data.user));
   }
 
   // Si usas una API secundaria, especifica el cliente:

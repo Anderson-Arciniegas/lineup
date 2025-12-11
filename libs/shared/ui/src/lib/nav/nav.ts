@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AppState, selectUser } from '@lineup/core';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { DrawerModule } from 'primeng/drawer';
-import { Button } from '../button/button';
-import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { Subscription } from 'rxjs';
+import { Button } from '../button/button';
 
 @Component({
   selector: 'lib-nav',
@@ -16,14 +19,25 @@ import { IconField } from 'primeng/iconfield';
     DrawerModule,
     TranslateModule,
     InputIcon,
-    IconField
+    IconField,
   ],
   templateUrl: './nav.html',
   styleUrl: './nav.scss',
 })
-export class Nav {
+export class Nav implements OnInit {
   @Input() navItems: any[];
   logged = false;
   businessMode = false;
   visible = false;
+
+  private _store = inject(Store<AppState>);
+  private _subscription: Subscription = new Subscription();
+
+  ngOnInit(): void {
+    this._subscription.add(
+      this._store.select(selectUser).subscribe((user) => {
+        this.logged = user ? true : false;
+      }),
+    );
+  }
 }

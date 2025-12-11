@@ -119,7 +119,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.responsiveOptions = [
       {
         breakpoint: '1920px',
-        numVisible: 6,
+        numVisible: 7,
         numScroll: 1,
       },
       {

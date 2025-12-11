@@ -1,11 +1,11 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import {
   ApplicationConfig,
   importProvidersFrom,
   inject,
+  isDevMode,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
-  isDevMode,
 } from '@angular/core';
 import {
   provideClientHydration,
@@ -14,18 +14,18 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { InMemoryCache } from '@apollo/client/core';
+import { appReducers } from '@lineup/core';
 import { I18nModule } from '@lineup/i18n';
+import { provideEffects } from '@ngrx/effects';
+import { provideStore } from '@ngrx/store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/lara';
 import { provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
-import { provideStore } from '@ngrx/store';
-import { provideEffects } from '@ngrx/effects';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { providePrimeNG } from 'primeng/config';
 import { environment } from '../environment/environment';
 import { appRoutes } from './app.routes';
-import { appReducers } from '@lineup/core';
 
 const MyPreset = definePreset(Lara, {
   semantic: {
@@ -60,11 +60,10 @@ const MyPreset = definePreset(Lara, {
           hoverColor: '{primary.100}',
           activeColor: '{primary.50}',
         },
-      }
-    }
-  }
+      },
+    },
+  },
 });
-
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -98,7 +97,9 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideHttpClient(withFetch()),
+    // Usamos XHR (por defecto) en lugar de fetch para que las cookies con
+    // withCredentials se conserven correctamente tras el login y al recargar.
+    provideHttpClient(),
     provideNamedApollo(() => {
       const httpLink = inject(HttpLink);
 
