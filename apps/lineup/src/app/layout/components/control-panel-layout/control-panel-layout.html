@@ -1,2 +1,13 @@
-<lib-control-panel-nav></lib-control-panel-nav>
-<router-outlet></router-outlet>
+<div class="w-full min-h-screen flex flex-col">
+  <lib-nav></lib-nav>
+  <section
+    class="h-100vh-calc w-full flex flex-row justify-between items-start"
+  >
+    <div class="sidebar h-100vh-calc w-2/12 sm:w-1/12 lg:w-2/10 max-w-sm">
+      <lib-sidebar class="h-100vh-calc w-full" [items]="items"></lib-sidebar>
+    </div>
+    <div class="w-10/12 sm:w-11/12 lg:w-8/10 2xl:w-full p-2 sm:p-5">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</div>

@@ -1,9 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Ui } from '@lineup/ui';
+import { UserGraphqlService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
-
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   imports: [RouterModule, ButtonModule, TranslateModule],
@@ -11,14 +20,52 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App implements OnInit {
+export class App implements OnInit, AfterViewInit, OnDestroy {
   protected title = 'lineup';
-  
+
   protected translate = inject(TranslateService);
+  private platformId: object = inject(PLATFORM_ID);
+  private _user = inject(UserGraphqlService);
+  private _subscription: Subscription = new Subscription();
 
   ngOnInit() {
-    this.translate.addLangs(['es', 'en',]);
+    this.translate.addLangs(['es', 'en']);
     this.translate.setDefaultLang('es');
     this.translate.use('es');
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this._subscription.add(
+      this._user
+        .getMe()
+        .pipe(take(1))
+        .subscribe({
+          next: (user) => {
+            console.log(user);
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        }),
+    );
+
+    this._subscription.add(
+      this._user
+        .getUser(2)
+        .pipe(take(1))
+        .subscribe({
+          next: (user) => {
+            console.log(user);
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 }

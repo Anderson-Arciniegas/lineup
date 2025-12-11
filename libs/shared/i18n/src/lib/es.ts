@@ -52,6 +52,14 @@ export const es = {
     country: 'País',
     changePassword: 'Cambiar contraseña',
     signIn: 'Iniciar sesión',
+    featuredBusinesses: 'Negocios destacados',
+    featuredCatalogs: 'Catálogos destacados',
+    featuredProducts: 'Productos destacados',
+    userProfile: 'Perfil de usuario',
+    userData: 'Datos de usuario',
+    profilePicture: 'Foto de perfil',
+    businesses: 'Negocios',
+    products: 'Productos',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',
@@ -93,7 +101,9 @@ export const es = {
       'Ponte en contacto con nuestro equipo. Solo se responderán las consultas relacionadas con nuestros servicios y solicitudes de ingresos.',
   },
   searchPage: {
-    discoverLocalBusinessesAndCuratedCatalogs: 'Descubre negocios locales, catálogos seleccionados',
-    findTheProductsYouLoveFastAndEasy: 'Encuentra los productos que te encantan, rápido y fácil.',
-  }
+    discoverLocalBusinessesAndCuratedCatalogs:
+      'Descubre negocios locales, catálogos seleccionados',
+    findTheProductsYouLoveFastAndEasy:
+      'Encuentra los productos que te encantan, rápido y fácil.',
+  },
 };
