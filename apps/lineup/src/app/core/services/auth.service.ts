@@ -7,13 +7,15 @@ import {
   AppConfigService,
   AppState,
   EncryptionService,
-  SetTokens,
+  selectUser,
   SetUser,
   StorageService,
   UnsetUser,
+  UserSchema,
   UtilsService,
 } from '@lineup/core';
 import { environment } from 'apps/lineup/src/environment/environment';
+import { take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +34,15 @@ export class AuthService {
     } else {
       return false;
     }
+  }
+
+  get userValue() {
+    let user: any;
+    this._store
+      .select(selectUser)
+      .pipe(take(1))
+      .subscribe((auth) => (user = auth));
+    return user;
   }
 
   // login(data: any): Observable<any> {
@@ -65,21 +76,21 @@ export class AuthService {
   //     return this._api.put(app, `auth/validate-email/${code}`, { email });
   //   }
 
-  async handleTokens(loggedUser: any) {
-    const tokens = {
-      token: loggedUser.token,
-      refreshToken: loggedUser.refreshToken,
-    };
-    this._store.dispatch(SetTokens({ tokens }));
-    const encryptedTokens = await this.encryptTokens(tokens);
-    this._storageService.set('accessToken', encryptedTokens);
-  }
+  // async handleTokens(loggedUser: any) {
+  //   const tokens = {
+  //     token: loggedUser.token,
+  //     refreshToken: loggedUser.refreshToken,
+  //   };
+  //   this._store.dispatch(SetTokens({ tokens }));
+  //   const encryptedTokens = await this.encryptTokens(tokens);
+  //   this._storageService.set('accessToken', encryptedTokens);
+  // }
 
-  async handleSuccessLogin(loggedUser: any, newUser?: boolean) {
+  async handleSuccessLogin(loggedUser: UserSchema, newUser?: boolean) {
     this._storageService.set('loggedUser', true);
-    await this.handleTokens(loggedUser);
-    this.setUser(loggedUser.user);
-    this._utilsService.navigate([AppConfigService.config.routes.controlPanel]);
+    // await this.handleTokens(loggedUser);
+    this.setUser(loggedUser);
+    this._utilsService.navigate([AppConfigService.config.routes.profile]);
     // if (
     //   loggedUser.user.roles.some((role) => role === RolesCodesEnum.BUSINESS)
     // ) {
