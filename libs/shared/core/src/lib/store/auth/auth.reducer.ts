@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { SetUser, UnsetUser, SetTokens, ClearTokens } from './auth.actions';
-import { initialAuthState, AuthState } from './auth.state';
+import { SetBusiness, SetUser, UnsetBusiness, UnsetUser } from './auth.actions';
+import { AuthState, initialAuthState } from './auth.state';
 
 export const authReducer = createReducer(
   initialAuthState,
@@ -14,13 +14,14 @@ export const authReducer = createReducer(
     user: null as AuthState['user'],
     isAuthenticated: false,
   })),
-  on(SetTokens, (state, { tokens }) => ({
+  on(SetBusiness, (state, { business }) => ({
     ...state,
-    tokens,
+    business,
+    isAuthenticated: true,
   })),
-  on(ClearTokens, (state) => ({
+  on(UnsetBusiness, (state) => ({
     ...state,
-    tokens: null as AuthState['tokens'],
-  }))
+    business: null as AuthState['business'],
+    isAuthenticated: false,
+  })),
 );
-
