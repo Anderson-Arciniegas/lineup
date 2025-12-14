@@ -1,6 +1,6 @@
 {
   "/api/business": {
-    "target": "https://190.9.40.168/api3/",
+    "target": "http://localhost:3002/graphql",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
@@ -9,7 +9,7 @@
     "logLevel": "debug"
   },
   "/api/admin": {
-    "target": "https://190.9.40.168/api2/",
+    "target": "http://localhost:3001/graphql",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
@@ -18,7 +18,7 @@
     "logLevel": "debug"
   },
   "/api/user": {
-    "target": "https://190.9.40.168/api1/",
+    "target": "http://localhost:3000/graphql",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
