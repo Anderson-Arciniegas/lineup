@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AppConfigService } from '../config/services/app-config.service';
 import { AuthGuard } from '../core/guards/auth.guard';
+import { NoAuthGuard } from '../core/guards/no-auth.guard';
 import { AccountTypePage } from '../features/auth/views/account-type-page/account-type-page';
 import { LoginPage } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
@@ -30,6 +31,7 @@ export const layoutRoutes: Routes = [
   },
   {
     path: AppConfigService.config.routes.login,
+    canActivate: [NoAuthGuard],
     component: AuthLayout,
     children: [
       {
@@ -40,6 +42,7 @@ export const layoutRoutes: Routes = [
   },
   {
     path: AppConfigService.config.routes.register,
+    canActivate: [NoAuthGuard],
     component: AuthLayout,
     children: [
       {
@@ -57,7 +60,7 @@ export const layoutRoutes: Routes = [
     ],
   },
   {
-    path: AppConfigService.config.routes.controlPanel,
+    path: AppConfigService.config.routes.dashboard,
     canActivate: [AuthGuard],
     component: ControlPanelLayout,
     children: [
@@ -98,7 +101,6 @@ export const layoutRoutes: Routes = [
   },
   {
     path: ':business',
-    // component: HomeLayout,
     loadChildren: () =>
       import('../features/business/business.routes').then(
         (m) => m.businessRoutes,

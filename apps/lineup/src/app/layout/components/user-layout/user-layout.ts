@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Nav, Sidebar } from '@lineup/ui';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-user-layout',
@@ -12,6 +13,8 @@ import { MenuItem } from 'primeng/api';
 })
 export class UserLayout implements OnInit {
   items: MenuItem[];
+
+  private _auth = inject(AuthService);
 
   ngOnInit(): void {
     this.items = [
@@ -42,6 +45,6 @@ export class UserLayout implements OnInit {
   }
 
   signOut() {
-    console.log('Sign out logic here');
+    this._auth.signOut();
   }
 }

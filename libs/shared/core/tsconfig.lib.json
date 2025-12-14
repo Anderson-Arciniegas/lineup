@@ -13,5 +13,5 @@
     "jest.config.ts",
     "src/**/*.test.ts"
   ],
-  "include": ["src/**/*.ts", "../graphql/src/lib/inputs/businesses/create-business-input.schema.ts"]
+  "include": ["src/**/*.ts"]
 }

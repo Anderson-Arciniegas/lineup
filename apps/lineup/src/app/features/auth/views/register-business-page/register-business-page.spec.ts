@@ -1,19 +1,37 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { AppState, initialAuthState } from '@lineup/core';
+import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
+import { Apollo } from 'apollo-angular';
 import { RegisterBusinessPage } from './register-business-page';
 
 describe('RegisterBusinessPage', () => {
   let component: RegisterBusinessPage;
   let fixture: ComponentFixture<RegisterBusinessPage>;
 
+  const initialState: AppState = {
+    auth: initialAuthState,
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RegisterBusinessPage, TranslateModule.forRoot()],
+      imports: [
+        RegisterBusinessPage,
+        TranslateModule.forRoot(),
+        HttpClientTestingModule,
+      ],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
+        { provide: Apollo, useValue: {} },
+        provideMockStore({ initialState }),
         TranslateService,
-        TranslateStore
+        TranslateStore,
       ],
     }).compileComponents();
 

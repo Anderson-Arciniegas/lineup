@@ -1,5 +1,3 @@
-export * from './lib/graphql.module';
-export * from './lib/graphql.service';
-export * from './lib/services';
-export * from './lib/inputs';
+export * from './lib/mutations';
+export * from './lib/queries';
 export * from './lib/selections';

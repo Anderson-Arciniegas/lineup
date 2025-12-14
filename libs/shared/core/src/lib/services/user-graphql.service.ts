@@ -1,131 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
+import {
+  CREATE_USER_MUTATION,
+  GET_ME_QUERY,
+  GET_USER_BY_ID_QUERY,
+  LOGIN_MUTATION,
+  REFRESH_TOKEN_MUTATION,
+  USER_LOGOUT_MUTATION,
+} from '@libs/graphql';
+import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CreateUserInput, CreateUserResponse } from '../models';
 import { UserSchema } from '../schemas';
-
-const LOGIN = gql`
-  mutation Login($login: LoginDto!) {
-    login(login: $login) {
-      code
-      status
-      user {
-        id
-        email
-        username
-        firstName
-        lastName
-        userRoles {
-          idRole
-          idUser
-          role {
-            id
-            code
-            description
-          }
-        }
-      }
-    }
-  }
-`;
-
-const CREATE_USER_MUTATION = gql`
-  mutation CreateUser($data: CreateUserInput!) {
-    createUser(data: $data) {
-      code
-      status
-      user {
-        id
-        email
-        firstName
-        lastName
-        username
-        provider
-        status
-        emailValidated
-        creationDate
-        creationIp
-      }
-    }
-  }
-`;
-
-const GET_USER_QUERY = gql`
-  query GetUser($id: Int!) {
-    userById(id: $id) {
-      id
-      email
-      emailValidated
-      firstName
-      lastName
-      username
-      provider
-      status
-      creationDate
-      userRoles {
-        idRole
-        idUser
-        role {
-          id
-          code
-          description
-        }
-      }
-    }
-  }
-`;
-
-const GET_ME = gql`
-  query Me {
-    me {
-      id
-      email
-      emailValidated
-      firstName
-      lastName
-      username
-      provider
-      status
-      creationDate
-      creationIp
-      modificationDate
-      modificationIp
-      creationCoordinate {
-        latitude
-        longitude
-      }
-      modificationCoordinate {
-        latitude
-        longitude
-      }
-      userRoles {
-        idRole
-        idUser
-        idCreationUser
-        status
-        creationDate
-        creationIp
-        modificationDate
-        modificationIp
-        creationCoordinate {
-          latitude
-          longitude
-        }
-        modificationCoordinate {
-          latitude
-          longitude
-        }
-        role {
-          id
-          code
-          description
-          status
-        }
-      }
-    }
-  }
-`;
 
 @Injectable({
   providedIn: 'root',
@@ -137,7 +23,7 @@ export class UserGraphqlService {
     return this.apollo
       .use('userAPI')
       .mutate<any>({
-        mutation: LOGIN,
+        mutation: LOGIN_MUTATION,
         variables: { login: { email, password } },
         context: {
           withCredentials: true,
@@ -146,11 +32,23 @@ export class UserGraphqlService {
       .pipe(map((result) => result.data!.login.user));
   }
 
+  logOut(): Observable<any> {
+    return this.apollo
+      .use('userAPI')
+      .mutate<any>({
+        mutation: USER_LOGOUT_MUTATION,
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.logout.status));
+  }
+
   getMe(): Observable<any> {
     return this.apollo
       .use('userAPI')
       .query<{ me: UserSchema }>({
-        query: GET_ME,
+        query: GET_ME_QUERY,
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -175,15 +73,27 @@ export class UserGraphqlService {
   getUser(id: number): Observable<any> {
     return this.apollo
       .use('userAPI')
-      .query<{ user: UserSchema }>({
-        query: GET_USER_QUERY,
+      .query<{ userById: UserSchema }>({
+        query: GET_USER_BY_ID_QUERY,
         variables: { id },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
         },
       })
-      .pipe(map((result) => result.data.user));
+      .pipe(map((result) => result.data.userById));
+  }
+
+  refreshToken(): Observable<any> {
+    return this.apollo
+      .use('userAPI')
+      .mutate<any>({
+        mutation: REFRESH_TOKEN_MUTATION,
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.refreshToken.user));
   }
 
   // Si usas una API secundaria, especifica el cliente:

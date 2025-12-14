@@ -39,8 +39,19 @@ app.use(
 
 /**
  * Handle all other requests by rendering the Angular application.
+ * Exclude API endpoints and static assets that should not be handled by Angular.
  */
 app.use('/**', (req, res, next) => {
+  // Exclude API endpoints, GraphQL endpoints, and other non-Angular routes
+  if (
+    req.path.startsWith('/api') ||
+    req.path.includes('/graphql') ||
+    req.path.startsWith('/assets') ||
+    req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)
+  ) {
+    return next();
+  }
+
   angularApp
     .handle(req)
     .then((response) =>
