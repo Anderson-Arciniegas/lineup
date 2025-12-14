@@ -60,6 +60,10 @@ export const es = {
     profilePicture: 'Foto de perfil',
     businesses: 'Negocios',
     products: 'Productos',
+    statistics: 'Estadísticas',
+    followers: 'Seguidores',
+    dashboard: 'Panel de control',
+    businessName: 'Nombre del negocio',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',

@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UserGraphqlService } from '@lineup/core';
+import { BusinessService, UserGraphqlService } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/';
 
 @Component({
@@ -28,15 +29,22 @@ import { AuthService } from '../../../../core/';
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
   loginForm: FormGroup;
   attempt = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
   private _users = inject(UserGraphqlService);
+  private _business = inject(BusinessService);
+
+  private _subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
     this.loginForm = this._createForm();
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   onSubmit(): void {
@@ -44,21 +52,43 @@ export class LoginPage implements OnInit {
       return;
     }
     this.attempt = true;
-    this._users
-      .login(this.loginForm.value.email, this.loginForm.value.password)
-      .subscribe({
-        next: (user) => {
-          console.log(user);
-          if (user) {
-            this._authService.handleSuccessLogin(user);
-          }
-          this.attempt = false;
-        },
-        error: (error) => {
-          console.error(error);
-          this.attempt = false;
-        },
-      });
+    this._subscription.add(
+      this._users
+        .login(this.loginForm.value.email, this.loginForm.value.password)
+        .subscribe({
+          next: (user) => {
+            console.log(user);
+            if (user) {
+              this._authService.handleSuccessLogin(user);
+            }
+            this.attempt = false;
+          },
+          error: (error) => {
+            console.log(error);
+            this.loginBusiness();
+          },
+        }),
+    );
+  }
+
+  loginBusiness(): void {
+    this._subscription.add(
+      this._business
+        .login(this.loginForm.value.email, this.loginForm.value.password)
+        .subscribe({
+          next: (business) => {
+            console.log(business);
+            this.attempt = false;
+            if (business) {
+              this._authService.handleSuccessLogin(null, business);
+            }
+          },
+          error: (error) => {
+            console.log(error);
+            this.attempt = false;
+          },
+        }),
+    );
   }
 
   private _createForm(): FormGroup {

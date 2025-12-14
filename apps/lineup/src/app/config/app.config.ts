@@ -13,6 +13,7 @@ export const appRoutes: AppRoutes = {
   createProduct: 'create-product',
   edit: 'edit',
   profile: 'profile',
+  dashboard: 'dashboard',
 };
 
 export const languagesList: Language[] = [
@@ -52,4 +53,5 @@ export interface AppRoutes {
   createProduct: string;
   edit: string;
   profile: string;
+  dashboard: string;
 }

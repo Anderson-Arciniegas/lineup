@@ -56,6 +56,10 @@ export const en = {
     profilePicture: 'Profile picture',
     businesses: 'Businesses',
     products: 'Products',
+    statistics: 'Statistics',
+    followers: 'Followers',
+    dashboard: 'Dashboard',
+    businessName: 'Business name',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',
