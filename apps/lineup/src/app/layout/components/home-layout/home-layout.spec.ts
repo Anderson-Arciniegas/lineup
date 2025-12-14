@@ -1,20 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { AppState, initialAuthState } from '@lineup/core';
+import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
 import { HomeLayout } from './home-layout';
 
 describe('HomeLayout', () => {
   let component: HomeLayout;
   let fixture: ComponentFixture<HomeLayout>;
 
+  const initialState: AppState = {
+    auth: initialAuthState,
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeLayout, RouterModule.forRoot([]), TranslateModule.forRoot()], 
+      imports: [
+        HomeLayout,
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot(),
+      ],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
+        provideMockStore({ initialState }),
         TranslateService,
-        TranslateStore
-      ]
+        TranslateStore,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeLayout);
