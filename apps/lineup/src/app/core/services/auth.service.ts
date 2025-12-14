@@ -6,11 +6,16 @@ import {
   ApiService,
   AppConfigService,
   AppState,
+  BusinessSchema,
+  BusinessService,
   EncryptionService,
   selectUser,
+  SetBusiness,
   SetUser,
   StorageService,
+  UnsetBusiness,
   UnsetUser,
+  UserGraphqlService,
   UserSchema,
   UtilsService,
 } from '@lineup/core';
@@ -27,6 +32,8 @@ export class AuthService {
   private _storageService = inject(StorageService);
   private _encryptionService = inject(EncryptionService);
   private _platformId = inject(PLATFORM_ID);
+  private _user = inject(UserGraphqlService);
+  private _business = inject(BusinessService);
 
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this._platformId)) {
@@ -43,6 +50,24 @@ export class AuthService {
       .pipe(take(1))
       .subscribe((auth) => (user = auth));
     return user;
+  }
+
+  signOut() {
+    this._user.logOut().subscribe((status) => {
+      if (status) {
+        this._business.logOut().subscribe((status) => {
+          if (status) {
+            this.removeUser(true);
+          }
+        });
+      }
+    });
+
+    this._business.logOut().subscribe((status) => {
+      if (status) {
+        this.removeUser(true);
+      }
+    });
   }
 
   // login(data: any): Observable<any> {
@@ -86,11 +111,21 @@ export class AuthService {
   //   this._storageService.set('accessToken', encryptedTokens);
   // }
 
-  async handleSuccessLogin(loggedUser: UserSchema, newUser?: boolean) {
+  async handleSuccessLogin(
+    loggedUser?: UserSchema,
+    loggedBusiness?: BusinessSchema,
+    newUser?: boolean,
+  ) {
     this._storageService.set('loggedUser', true);
     // await this.handleTokens(loggedUser);
-    this.setUser(loggedUser);
-    this._utilsService.navigate([AppConfigService.config.routes.profile]);
+    if (loggedBusiness) {
+      this.setBusiness(loggedBusiness);
+      this._utilsService.navigate([AppConfigService.config.routes.dashboard]);
+    } else {
+      this.setUser(loggedUser);
+      this._utilsService.navigate([AppConfigService.config.routes.profile]);
+    }
+
     // if (
     //   loggedUser.user.roles.some((role) => role === RolesCodesEnum.BUSINESS)
     // ) {
@@ -159,9 +194,14 @@ export class AuthService {
     this._store.dispatch(SetUser({ user }));
   }
 
+  setBusiness(business: BusinessSchema) {
+    this._store.dispatch(SetBusiness({ business }));
+  }
+
   removeUser(redirect?: boolean) {
     if (isPlatformBrowser(this._platformId)) {
       this._store.dispatch(UnsetUser());
+      this._store.dispatch(UnsetBusiness());
       this._storageService.remove('loggedUser');
       if (redirect) {
         this._utilsService.navigate([AppConfigService.config.routes.login]);

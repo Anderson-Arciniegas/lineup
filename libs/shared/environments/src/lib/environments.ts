@@ -13,9 +13,9 @@ export interface EnvironmentsConfig {
 
 export const environments: EnvironmentsConfig = {
   production: false,
-  apiBusiness: '/business/',
-  apiAdmin: '/admin/',
-  apiUser: '/user/',
+  apiBusiness: '/api/business-graphql/',
+  apiAdmin: '/api/admin-graphql/',
+  apiUser: '/api/user-graphql/',
 };
 
 export const PROD: EnvironmentsConfig = {

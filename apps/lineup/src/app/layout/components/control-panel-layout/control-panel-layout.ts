@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { BusinessService } from '@lineup/core';
 import { Nav, Sidebar } from '@lineup/ui';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-control-panel-layout',
@@ -13,42 +15,44 @@ import { MenuItem } from 'primeng/api';
 export class ControlPanelLayout implements OnInit {
   items: MenuItem[];
 
+  private _business = inject(BusinessService);
+  private _auth = inject(AuthService);
+
   ngOnInit(): void {
     this.items = [
       {
         label: 'general.dashboard',
         icon: 'pi pi-home',
-        url: '/control-panel',
+        url: '/dashboard',
       },
       {
         label: 'general.profile',
         icon: 'pi pi-user',
-        url: '/control-panel/profile',
+        url: '/dashboard/profile',
       },
       {
         label: 'general.followers',
-        icon: 'pi pi-user',
-        url: '/control-panel/followers',
+        icon: 'pi pi-heart',
+        url: '/dashboard/followers',
       },
       {
         label: 'general.products',
-        icon: 'pi pi-user',
-        url: '/control-panel/products',
+        icon: 'pi pi-box',
+        url: '/dashboard/products',
       },
       {
         label: 'general.statistics',
-        icon: 'pi pi-heart',
-        url: '/control-panel/statistics',
+        icon: 'pi pi-chart-bar',
+        url: '/dashboard/statistics',
       },
       {
         label: 'general.settings',
         icon: 'pi pi-cog',
-        url: '/profile/settings',
+        url: '/dashboard/settings',
       },
       {
         label: 'general.signOut',
         icon: 'pi pi-sign-out',
-        url: '/profile/sign-out',
         command: () => {
           this.signOut();
         },
@@ -57,6 +61,10 @@ export class ControlPanelLayout implements OnInit {
   }
 
   signOut() {
-    console.log('Sign out logic here');
+    this._business.logOut().subscribe((status) => {
+      if (status) {
+        this._auth.removeUser(true);
+      }
+    });
   }
 }
