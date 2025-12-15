@@ -12,6 +12,7 @@ import { Button } from '../button/button';
 
 @Component({
   selector: 'lib-nav',
+  standalone: true,
   imports: [
     CommonModule,
     Button,
@@ -22,7 +23,7 @@ import { Button } from '../button/button';
     IconField,
   ],
   templateUrl: './nav.html',
-  styleUrl: './nav.scss',
+  styleUrls: ['./nav.scss'],
 })
 export class Nav implements OnInit {
   @Input() navItems: any[];
