@@ -22,49 +22,84 @@
         <div class="w-full hidden sm:flex">
           <div class="flex flex-wrap gap-2 w-full items-center justify-center">
             @for (tag of tags; track $index) {
-            <lib-button
-              class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12 h-full"
-              [label]="tag"
-              color="secondary"
-              type="rounded"
-              [width]="'w-full'"
-              [size]="'small'"
-            >
-            </lib-button>
+              <lib-button
+                class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12"
+                [label]="tag"
+                color="secondary"
+                type="rounded"
+                [width]="'w-full'"
+                [size]="'small'"
+              >
+              </lib-button>
             }
           </div>
         </div>
         <div
-          class="flex items-center justify-center search w-full gap-2 sm:gap-3"
+          class="
+            flex
+            items-center justify-center
+            search
+            w-full
+            gap-2 sm:gap-3
+          "
         >
-          <lib-button icon="pi pi-map-marker" type="rounded" width="w-11">
-          </lib-button>
-          <p-iconfield class="w-full max-width">
-            <p-inputicon
-              class="pi pi-search"
-              style="color: var(--p-button-secondary-color)"
-            />
+        <p-iconfield 
+          class="
+            flex flex-row
+            items-center justify-center
+            w-full max-width
+            bg-white
+            h-12 sm:h-16
+            shadow
+            iconfield
+            px-2 sm:px-3
+            gap-2 sm:gap-4
+          "
+        >
+            <lib-button
+              class="hidden sm:flex"
+              icon="pi pi-map-marker"
+              type="rounded"
+              label="Ubicacion"
+              color="secondary"
+              [size]="'small'"
+              fontSize="'text-sm'"
+            >
+            </lib-button>
+            <lib-button
+              class="flex sm:hidden"
+              icon="pi pi-map-marker"
+              type="rounded"
+              color="secondary"
+              [size]="'small'"
+            >
+            </lib-button>
+            <div class="h-6 w-0.5 bg-gray-300"></div>
             <input
               type="text"
-              class="w-full input font-medium"
+              class="
+                input
+                w-full 
+                text-sm sm:text-base
+              "
               pInputText
               placeholder="Search"
             />
+            <lib-button
+              class="hidden sm:flex"
+              icon="pi pi-search"
+              type="rounded"
+              width="w-11"
+            >
+            </lib-button>
+            <lib-button
+              class="flex sm:hidden"
+              icon="pi pi-search"
+              type="rounded"
+              [size]="'small'"
+            >
+            </lib-button>
           </p-iconfield>
-          <lib-button
-            label="Buscar"
-            icon="pi pi-search"
-            type="rounded"
-            class="hidden sm:block"
-          >
-          </lib-button>
-          <lib-button
-            icon="pi pi-search"
-            type="rounded"
-            class="block sm:hidden"
-            width="w-11"
-          >
-          </lib-button>
         </div>
       </div>
     </div>
@@ -87,7 +122,7 @@
         <ng-template let-product #item>
           <lib-business-card
             class="cursor-pointer my-8 w-full"
-            [width]="'w-40'"
+            [width]="'w-48'"
             [height]="'h-48'"
           ></lib-business-card>
         </ng-template>
@@ -112,7 +147,7 @@
           <div class="w-full flex flex-col justify-center items-center">
             <lib-catalog-card
               class="cursor-pointer my-8 w-full"
-              [width]="'w-40'"
+              [width]="'w-48'"
               [height]="'h-48'"
             ></lib-catalog-card>
           </div>
