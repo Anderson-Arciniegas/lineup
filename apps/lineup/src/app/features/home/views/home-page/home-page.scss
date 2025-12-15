@@ -1,6 +1,6 @@
 ::ng-deep {
   .max-width {
-    max-width: 760px;
+    max-width: 950px;
   }
 
   .search {
@@ -21,9 +21,9 @@
     border-radius: var(--border-radius);
     height: 45.6px;
     outline: none;
-    padding: 0 40px;
-    background-color: #fff !important;
-    border: 1px solid var(--p-primary-300);
+    padding: 0 0px 0px 2px;
+    background-color: none;
+    border: none;
   }
 
   .p-carousel-indicator-button {
@@ -32,5 +32,9 @@
 
   .p-carousel-item {
     max-height: 220px !important;
+  }
+
+  .iconfield {
+    border-radius: var(--border-radius);
   }
 }
