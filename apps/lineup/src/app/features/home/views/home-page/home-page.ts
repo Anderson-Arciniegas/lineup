@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { ɵɵDir } from "@angular/cdk/scrolling";
 
 // gsap.registerPlugin(ScrollTrigger);
 @Component({
@@ -30,13 +31,15 @@ import { InputIcon } from 'primeng/inputicon';
     Carousel,
     ButtonModule,
     TranslateModule,
-  ],
+    ɵɵDir
+],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   responsiveOptions: any[] | undefined;
+  responsiveOptionsCatalogs: any[] | undefined;
 
   tags = [
     'Accessories',
@@ -113,18 +116,57 @@ export class HomePage implements OnInit, AfterViewInit {
       price: 300,
       inventoryStatus: 'low-stock',
     },
+    {
+      id: 10,
+      name: 'Product 3',
+      image: 'product3.jpg',
+      price: 300,
+      inventoryStatus: 'low-stock',
+    },
   ];
 
   ngOnInit() {
     this.responsiveOptions = [
       {
         breakpoint: '1920px',
-        numVisible: 7,
+        numVisible: 6,
         numScroll: 1,
       },
       {
         breakpoint: '1536px',
+        numVisible: 5,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1280px',
+        numVisible: 4,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1024px',
+        numVisible: 3,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '768px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '640px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+    ];
+    this.responsiveOptionsCatalogs = [
+      {
+        breakpoint: '1920px',
         numVisible: 6,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1536px',
+        numVisible: 5,
         numScroll: 1,
       },
       {
