@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AppState, selectUser } from '@lineup/core';
-import { Store } from '@ngrx/store';
+import { AuthStore } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DrawerModule } from 'primeng/drawer';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
-import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
 @Component({
@@ -25,20 +23,17 @@ import { Button } from '../button/button';
   templateUrl: './nav.html',
   styleUrls: ['./nav.scss'],
 })
-export class Nav implements OnInit {
+export class Nav {
   @Input() navItems: any[];
-  logged = false;
-  businessMode = false;
   visible = false;
 
-  private _store = inject(Store<AppState>);
-  private _subscription: Subscription = new Subscription();
+  private _authStore = inject(AuthStore);
 
-  ngOnInit(): void {
-    this._subscription.add(
-      this._store.select(selectUser).subscribe((user) => {
-        this.logged = user ? true : false;
-      }),
-    );
-  }
+  // Computed signals - se actualizan automáticamente
+  logged = computed(
+    () =>
+      this._authStore.isUserLoggedIn() || this._authStore.isBusinessLoggedIn(),
+  );
+
+  businessMode = computed(() => this._authStore.isBusinessLoggedIn());
 }
