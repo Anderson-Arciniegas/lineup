@@ -1,13 +1,15 @@
 import { Routes } from '@angular/router';
 
 import { AppConfigService } from '../config/services/app-config.service';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { BusinessAuthGuard } from '../core';
 import { NoAuthGuard } from '../core/guards/no-auth.guard';
+import { UserAuthGuard } from '../core/guards/user-auth.guard';
 import { AccountTypePage } from '../features/auth/views/account-type-page/account-type-page';
 import { LoginPage } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
 import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
+import { EditBusinessPage } from '../features/control-panel/views/edit-business-page/edit-business-page';
 import { HomePage } from '../features/home/views/home-page/home-page';
 import { SearchPage } from '../features/home/views/search-page/search-page';
 import { LandingPage } from '../features/landing-page/views/landing-page/landing-page';
@@ -61,18 +63,22 @@ export const layoutRoutes: Routes = [
   },
   {
     path: AppConfigService.config.routes.dashboard,
-    canActivate: [AuthGuard],
+    canActivate: [BusinessAuthGuard],
     component: ControlPanelLayout,
     children: [
       {
         path: '',
         component: ControlPanelPage,
       },
+      {
+        path: AppConfigService.config.routes.edit,
+        component: EditBusinessPage,
+      },
     ],
   },
   {
     path: AppConfigService.config.routes.profile,
-    canActivate: [AuthGuard],
+    canActivate: [UserAuthGuard],
     component: UserLayout,
     loadChildren: () =>
       import('../features/user/user.routes').then((m) => m.userRoutes),

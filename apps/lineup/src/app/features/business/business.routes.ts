@@ -2,16 +2,11 @@ import { Routes } from '@angular/router';
 import { AppConfigService } from '../../config/services/app-config.service';
 import { BusinessPage } from './views/business-page/business-page';
 import { CreateProductPage } from './views/create-product-page/create-product-page';
-import { EditBusinessPage } from './views/edit-business-page/edit-business-page';
 
 export const businessRoutes: Routes = [
   {
     path: '',
     component: BusinessPage,
-  },
-  {
-    path: AppConfigService.config.routes.edit,
-    component: EditBusinessPage,
   },
   {
     path: 'lineup/:name',

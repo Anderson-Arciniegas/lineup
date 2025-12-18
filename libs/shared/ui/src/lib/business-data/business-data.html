@@ -3,17 +3,6 @@
 >
   <div class="flex flex-col items-center justify-center img-box">
     <img src="assets/images/vShop.jpg" alt="Shop Icon" />
-    <div class="flex flex-row items-center justify-center button-container">
-      @if(editMode){
-      <lib-button
-        [icon]="'pi pi-pencil'"
-        [width]="'w-11'"
-        [color]="'secondary'"
-        [type]="'rounded'"
-        (action)="editMode = !editMode"
-      ></lib-button>
-      }
-    </div>
   </div>
   <div
     class="flex flex-col items-center md:items-start justify-center gap-5 sm:gap-2"
@@ -22,36 +11,23 @@
       <div class="flex flex-row items-center justify-center gap-4">
         <h3 class="text-3xl font-semibold">Tu Punto vShop</h3>
         <div class="flex flex-row items-center justify-center">
-          @if (editMode) {
-          <lib-button
-            [icon]="'pi pi-pencil'"
-            [width]="'w-11'"
-            [color]="'secondary'"
-            [type]="'rounded'"
-            (action)="editMode = !editMode"
-          ></lib-button>
-
-          } @else {
           <lib-button
             [icon]="'pi pi-share-alt'"
             [width]="'w-11'"
             [color]="'secondary'"
             [type]="'rounded'"
           ></lib-button>
-          }
         </div>
       </div>
 
       <div class="flex flex-row items-center justify-center">
-        @if(!editMode){
         <lib-button
           [icon]="'pi pi-pencil'"
-          [label]="'Editar negocio'"
+          [label]="'general.editBusiness' | translate"
           [color]="'secondary'"
           [type]="'rounded'"
-          [link]="editUrl"
+          [link]="'/dashboard/edit'"
         ></lib-button>
-        }
       </div>
     </div>
 
@@ -60,15 +36,6 @@
         <i class="pi pi-user" style="font-size: 1rem"></i>
         <span>1000</span>
       </div>
-      @if(!editMode){
-      <lib-button
-        label="Seguir"
-        icon="pi pi-plus"
-        [size]="'small'"
-        type="rounded"
-        color="secondary"
-      ></lib-button>
-      }
     </div>
 
     <div
@@ -87,17 +54,6 @@
           Tinaquillo, Cojedes
         </span>
       </div>
-      @if (editMode) {
-      <div class="ms-4">
-        <lib-button
-          [icon]="'pi pi-pencil'"
-          [width]="'w-11'"
-          [color]="'secondary'"
-          [type]="'rounded'"
-          (action)="editMode = !editMode"
-        ></lib-button>
-      </div>
-      }
     </div>
     <div class="flex flex-row items-center content-center justify-center gap-5">
       <div class="img-social-media">
@@ -121,16 +77,6 @@
           title="whatsapp icon"
         />
       </div>
-      @if (editMode) {
-      <lib-button
-        [icon]="'pi pi-pencil'"
-        [width]="'w-11'"
-        [color]="'secondary'"
-        [type]="'rounded'"
-        (action)="editMode = !editMode"
-      ></lib-button>
-
-      }
     </div>
   </div>
 </div>

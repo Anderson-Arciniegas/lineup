@@ -1,33 +1,26 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Store } from '@ngrx/store';
 
 import {
   ApiService,
   AppConfigService,
-  AppState,
+  AuthStore,
   BusinessSchema,
   BusinessService,
   EncryptionService,
-  selectUser,
-  SetBusiness,
-  SetUser,
   StorageService,
-  UnsetBusiness,
-  UnsetUser,
   UserGraphqlService,
   UserSchema,
   UtilsService,
 } from '@lineup/core';
 import { environment } from 'apps/lineup/src/environment/environment';
-import { take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private _api = inject(ApiService);
-  private _store = inject(Store<AppState>);
+  private _authStore = inject(AuthStore);
   private _utilsService = inject(UtilsService);
   private _storageService = inject(StorageService);
   private _encryptionService = inject(EncryptionService);
@@ -44,12 +37,11 @@ export class AuthService {
   }
 
   get userValue() {
-    let user: any;
-    this._store
-      .select(selectUser)
-      .pipe(take(1))
-      .subscribe((auth) => (user = auth));
-    return user;
+    return this._authStore.user();
+  }
+
+  get businessValue() {
+    return this._authStore.business();
   }
 
   signOut() {
@@ -190,19 +182,19 @@ export class AuthService {
     return JSON.parse(decryptedBytes);
   }
 
-  setUser(user: any) {
-    this._store.dispatch(SetUser({ user }));
+  setUser(user: UserSchema) {
+    this._authStore.setUser(user);
   }
 
   setBusiness(business: BusinessSchema) {
-    this._store.dispatch(SetBusiness({ business }));
+    this._authStore.setBusiness(business);
   }
 
   removeUser(redirect?: boolean) {
     if (isPlatformBrowser(this._platformId)) {
-      this._store.dispatch(UnsetUser());
-      this._store.dispatch(UnsetBusiness());
+      this._authStore.clearAuth();
       this._storageService.remove('loggedUser');
+      console.log('remove user');
       if (redirect) {
         this._utilsService.navigate([AppConfigService.config.routes.login]);
       }

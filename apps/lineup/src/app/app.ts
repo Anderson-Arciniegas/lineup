@@ -56,7 +56,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
           error: (error) => {
             console.log(error);
             console.error(error);
-            this._auth.removeUser(false);
+            // this._auth.removeUser(false);
           },
         }),
     );
@@ -78,7 +78,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
           error: (error) => {
             console.log(error);
             console.error(error);
-            this._auth.removeUser(false);
+            // this._auth.removeUser(false);
           },
         }),
     );

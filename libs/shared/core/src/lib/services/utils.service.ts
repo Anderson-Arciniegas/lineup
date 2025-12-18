@@ -2,7 +2,8 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { DOC_ORIENTATION, NgxImageCompressService } from 'ngx-image-compress';
+import { from, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -12,7 +13,7 @@ export class UtilsService {
   private _router = inject(Router);
   //   private _toast = inject(ToastService);
   //   private _errors = inject(ErrorsService);
-  //   private _imageCompress = inject(NgxImageCompressService);
+  private _imageCompress = inject(NgxImageCompressService);
 
   get document() {
     return this._document;
@@ -115,14 +116,13 @@ export class UtilsService {
    * @memberof UtilsService
    */
   compressImage(image: string): Observable<string> {
-    return of('image');
-    // return from(
-    //   this._imageCompress.compressFile(
-    //     image,
-    //     DOC_ORIENTATION.NotDefined,
-    //     75,
-    //     80,
-    //   ),
-    // );
+    return from(
+      this._imageCompress.compressFile(
+        image,
+        DOC_ORIENTATION.NotDefined,
+        75,
+        80,
+      ),
+    );
   }
 }

@@ -25,5 +25,23 @@
       "^/api/user": "/graphql"
     },
     "logLevel": "debug"
+  },
+  "/api/user-file": {
+    "target": "https://190.9.40.168/api1/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/user-file": "/files"
+    },
+    "logLevel": "debug"
+  },
+  "/api/business-file": {
+    "target": "https://190.9.40.168/api3/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/business-file": "/files"
+    },
+    "logLevel": "debug"
   }
 }

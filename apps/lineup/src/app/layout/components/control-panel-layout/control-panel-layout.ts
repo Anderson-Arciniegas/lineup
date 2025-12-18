@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BusinessService } from '@lineup/core';
+import { AuthStore, BusinessService } from '@lineup/core';
 import { Nav, Sidebar } from '@lineup/ui';
-import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -13,22 +12,33 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './control-panel-layout.scss',
 })
 export class ControlPanelLayout implements OnInit {
-  items: MenuItem[];
-
   private _business = inject(BusinessService);
+  private _authStore = inject(AuthStore);
   private _auth = inject(AuthService);
 
-  ngOnInit(): void {
-    this.items = [
+  // Acceder directamente a los signals
+  business = this._authStore.business;
+
+  // Computed signal para items del menú
+  items = computed(() => {
+    const business = this.business();
+    if (!business) return [];
+
+    return [
       {
         label: 'general.dashboard',
-        icon: 'pi pi-home',
+        icon: 'pi pi-objects-column',
         url: '/dashboard',
       },
       {
         label: 'general.profile',
-        icon: 'pi pi-user',
-        url: '/dashboard/profile',
+        icon: 'pi pi-shop',
+        url: `/${business.path}`,
+      },
+      {
+        label: 'general.editBusiness',
+        icon: 'pi pi-pencil',
+        url: '/dashboard/edit',
       },
       {
         label: 'general.followers',
@@ -58,6 +68,14 @@ export class ControlPanelLayout implements OnInit {
         },
       },
     ];
+  });
+
+  ngOnInit(): void {
+    // Los signals se actualizan automáticamente, no necesitas suscripciones
+    const business = this.business();
+    if (business) {
+      console.log(business);
+    }
   }
 
   signOut() {
