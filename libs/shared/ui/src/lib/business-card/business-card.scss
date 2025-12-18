@@ -34,24 +34,13 @@
   right: 8px;
 }
 
-.border-radius {
-  border-radius: var(--border-radius-catalog-card);
-
-  &:hover {
-    .image {
-      transform: scale(1.05);
-    }
-  }
-}
-
 .image-container {
   overflow: hidden;
   border-radius: 25px;
 }
 
 .image {
-  border-radius: var(--border-radius-img);
-
+  border-radius: var(--border-radius-img) !important;
   transition: transform 0.3s ease-in-out;
   object-fit: cover;
 }

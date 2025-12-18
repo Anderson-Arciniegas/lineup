@@ -1,8 +1,8 @@
 <nav
-  class="nav flex flex-row justify-between py-3 px-3 md:px-10 bg-primary-50 shadow h-18 sm:h-20"
+  class="nav flex flex-row justify-between py-3 px-4 md:px-4 lg:px-9 bg-primary-50 shadow h-18 sm:h-20"
 >
   <div class="flex flex-row items-center gap-3 sm:gap-5">
-    <div class="block md:hidden">
+    <div class="hidden">
       <lib-button
         [icon]="'pi pi-bars'"
         [variant]="'text'"
@@ -16,96 +16,76 @@
       <img
         src="assets/images/logo-2.png"
         alt="Lineup logo"
-        class="h-11 sm:h-13 object-contain cursor-pointer"
+        class="h-10 sm:h-12 object-contain cursor-pointer"
       />
     </a>
-  </div>
-
-  <!--<div class="
-        flex flex-row 
-        items-center
-        w-5/12
-      ">
-    <p-iconfield class="w-full h-full flex items-center justify-center">
-      <p-inputicon class="pi pi-search" />
-      <input
-        type="text"
-        class="w-full h-full input font-medium"
-        pInputText
-        placeholder="Search"
-      />
-    </p-iconfield>
-  </div>-->
-
-  @if(!logged){
-  <div class="flex flex-row items-center justify-end gap-5 md:gap-5">
-    <div class="hidden md:flex flex-row gap-2 items-center justify-center">
+    <div class="hidden sm:flex flex-row gap-1 items-center justify-center">
       <lib-button
         [link]="'/'"
-        [type]="'rounded'"
         variant="text"
         color="secondary"
-        icon="pi pi-globe"
         [label]="'general.explore' | translate"
       ></lib-button>
       <lib-button
         [link]="'/info'"
-        [type]="'rounded'"
         variant="text"
         color="secondary"
-        icon="pi pi-info-circle"
         [label]="'general.information' | translate"
-      ></lib-button>
-    </div>
-    <div>
-      <lib-button
-        [link]="'/login'"
-        [type]="'rounded'"
-        color="secondary"
-        icon="pi pi-user"
-        width="w-11"
-      ></lib-button>
-    </div>
-  </div>
-  }@else if (logged && !businessMode) {
-  <div class="flex flex-row items-center justify-end gap-5 md:gap-9">
-    <div class="hidden md:flex flex-row gap-2 items-center justify-center">
-      <lib-button
-        [link]="'/'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-globe"
-        [label]="'general.explore' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/info'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-info-circle"
-        [label]="'general.information' | translate"
-      ></lib-button>
-      <lib-button
-        [icon]="'pi pi-heart'"
-        [link]="'/profile/favorites'"
-        [type]="'rounded'"
-        [label]="'general.favorites' | translate"
-        variant="text"
-      ></lib-button>
-    </div>
-    <div>
-      <lib-button
-        [link]="'/profile'"
-        [type]="'rounded'"
-        color="secondary"
-        icon="pi pi-user"
-        width="w-11"
       ></lib-button>
     </div>
   </div>
 
-  }@else if (logged && businessMode) {
+  <div class="flex flex-row items-center justify-end gap-3">
+    @if (logged && !businessMode) {
+    <lib-button
+      class="hidden sm:flex"
+      [link]="'profile/favorites'"
+      [type]="'rounded'"
+      color="secondary"
+      [icon]="'pi pi-heart'"
+      width="w-11"
+    ></lib-button>
+    }
+    <lib-button
+      class="flex"
+      [link]="'/'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-search"
+      width="w-11"
+    ></lib-button>
+
+    @if (!logged) {
+    <lib-button
+      class="hidden sm:flex"
+      [link]="'/login'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-user"
+      width="w-11"
+    ></lib-button>
+    }@else if (!businessMode) {
+    <lib-button
+      class="hidden sm:flex"
+      [link]="'/profile'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-user"
+      width="w-11"
+    ></lib-button>
+    }@else if (businessMode) {
+    <lib-button
+      class="hidden sm:flex"
+      [link]="'/dashboard'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-home"
+      width="w-11"
+    ></lib-button>
+    }
+  </div>
+
+  <!-- }@else if (logged && businessMode) {
   <div class="flex flex-row items-center justify-end gap-5 md:gap-9">
     <div class="hidden md:flex flex-row gap-2 items-center justify-center">
       <lib-button
@@ -135,7 +115,7 @@
       ></lib-button>
     </div>
   </div>
-  }
+  } -->
 </nav>
 
 <p-drawer [(visible)]="visible" header="Lineup">
