@@ -38,27 +38,13 @@
   right: 8px;
 }
 
-.border-radius {
-  border-radius: var(--border-radius-catalog-card);
-
-  &:hover {
-    .image {
-      transform: scale(1.05);
-    }
-  }
-}
-
 .image-container {
   overflow: hidden;
   border-radius: 25px;
 }
 
 .image {
-  border-radius: 25px;
+  border-radius: var(--border-radius) !important;
   transition: transform 0.3s ease-in-out;
   object-fit: cover;
-}
-
-.w-92 {
-  width: 92%;
 }
