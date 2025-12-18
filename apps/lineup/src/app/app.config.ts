@@ -3,7 +3,6 @@ import {
   ApplicationConfig,
   importProvidersFrom,
   inject,
-  isDevMode,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -14,11 +13,7 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { InMemoryCache } from '@apollo/client/core';
-import { appReducers } from '@lineup/core';
 import { I18nModule } from '@lineup/i18n';
-import { provideEffects } from '@ngrx/effects';
-import { provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/lara';
 import { provideNamedApollo } from 'apollo-angular';
@@ -73,15 +68,8 @@ export const appConfig: ApplicationConfig = {
       eventCoalescing: true,
     }),
     provideRouter(appRoutes),
-    provideStore(appReducers),
-    provideEffects(),
-    provideStoreDevtools({
-      maxAge: 25,
-      logOnly: !isDevMode(),
-      autoPause: true,
-      trace: false,
-      traceLimit: 75,
-    }),
+    // Signal Store se proporciona automáticamente con providedIn: 'root'
+    // No necesitamos provideStore ni provideEffects
     importProvidersFrom(I18nModule),
     provideAnimationsAsync(),
     providePrimeNG({

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Output } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UtilsService } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   ImageCroppedEvent,
@@ -8,6 +9,7 @@ import {
   ImageTransform,
   LoadedImage,
 } from 'ngx-image-cropper';
+import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
 @Component({
@@ -19,7 +21,7 @@ import { Button } from '../button/button';
 })
 export class ImageCropper {
   imageChangedEvent: Event | null = null;
-  croppedImage: SafeUrl = '';
+  croppedImage: string;
   canvasRotation = 0;
   rotation = 0;
   scale = 1;
@@ -27,11 +29,13 @@ export class ImageCropper {
   containWithinAspectRatio = false;
   transform: ImageTransform = {};
   format: string;
-
-  @Output() imageCroppedEvent = new EventEmitter<SafeUrl>();
+  @Output() imageCroppedEvent = new EventEmitter<any>();
   @Output() cancelCrop = new EventEmitter<void>();
 
   sanitizer = inject(DomSanitizer);
+
+  private _utilsService = inject(UtilsService);
+  private _subscription: Subscription = new Subscription();
 
   fileChangeEvent(event: Event) {
     const input = event.target as HTMLInputElement | null;
@@ -45,7 +49,7 @@ export class ImageCropper {
 
   imageCropped(event: ImageCroppedEvent) {
     console.log(event);
-    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
+    this.croppedImage = event.objectUrl;
     // this.imageCroppedEvent.emit(this.croppedImage);
   }
 
@@ -64,18 +68,23 @@ export class ImageCropper {
 
   saveCrop() {
     if (this.croppedImage) {
-      this.imageCroppedEvent.emit(this.croppedImage);
-      this.croppedImage = '';
-      this.imageChangedEvent = null;
-      this.showCropper = false;
-      this.canvasRotation = 0;
-      this.rotation = 0;
-      this.scale = 1;
-      this.transform = {};
+      this._subscription.add(
+        this._utilsService
+          .compressImage(this.croppedImage)
+          .subscribe((compressImage) => {
+            this.imageCroppedEvent.emit(compressImage);
+            this.croppedImage = '';
+            this.imageChangedEvent = null;
+            this.showCropper = false;
+            this.canvasRotation = 0;
+            this.rotation = 0;
+            this.scale = 1;
+            this.transform = {};
+          }),
+      );
     }
     // Do not close modal here; parent modal should handle visibility. Emit only the cropped image.
   }
-
   onCancel() {
     this.cancelCrop.emit();
   }

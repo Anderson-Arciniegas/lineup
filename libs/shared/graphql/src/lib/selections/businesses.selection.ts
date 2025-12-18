@@ -27,6 +27,7 @@ export const businessBasicSelection = `{
   path
   status
   businessRoles ${businessRoleSelection}
+  telephone
 }`;
 
 /**
