@@ -64,6 +64,8 @@ export const es = {
     followers: 'Seguidores',
     dashboard: 'Panel de control',
     businessName: 'Nombre del negocio',
+    editBusiness: 'Editar negocio',
+    businessPath: 'Ruta del negocio',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',

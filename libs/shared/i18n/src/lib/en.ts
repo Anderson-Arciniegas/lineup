@@ -60,6 +60,8 @@ export const en = {
     followers: 'Followers',
     dashboard: 'Dashboard',
     businessName: 'Business name',
+    editBusiness: 'Edit business',
+    businessPath: 'Business path',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',

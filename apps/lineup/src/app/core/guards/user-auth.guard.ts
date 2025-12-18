@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services';
 
-export const AuthGuard: CanActivateFn = ():
+export const UserAuthGuard: CanActivateFn = ():
   | Observable<boolean | UrlTree>
   | Promise<boolean | UrlTree>
   | boolean

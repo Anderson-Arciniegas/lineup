@@ -105,6 +105,36 @@
     </div>
   </div>
 
+  }@else if (logged && businessMode) {
+  <div class="flex flex-row items-center justify-end gap-5 md:gap-9">
+    <div class="hidden md:flex flex-row gap-2 items-center justify-center">
+      <lib-button
+        [link]="'/'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-globe"
+        [label]="'general.explore' | translate"
+      ></lib-button>
+      <lib-button
+        [link]="'/info'"
+        [type]="'rounded'"
+        variant="text"
+        color="secondary"
+        icon="pi pi-info-circle"
+        [label]="'general.information' | translate"
+      ></lib-button>
+    </div>
+    <div>
+      <lib-button
+        [link]="'/dashboard'"
+        [type]="'rounded'"
+        color="secondary"
+        icon="pi pi-home"
+        width="w-11"
+      ></lib-button>
+    </div>
+  </div>
   }
 </nav>
 
