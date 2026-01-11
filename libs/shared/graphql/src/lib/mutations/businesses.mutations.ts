@@ -35,6 +35,15 @@ export const CREATE_BUSINESS_MUTATION = gql`
   }
 `;
 
+/**
+ * Mutation para actualizar un business
+ */
+export const UPDATE_BUSINESS_MUTATION = gql`
+  mutation UpdateBusiness($data: UpdateBusinessInput!) {
+    updateBusiness(data: $data) ${businessBasicSelection}    
+  }
+`;
+
 export const BUSINESS_LOGOUT_MUTATION = gql`
   mutation BusinessLogout {
     logout {

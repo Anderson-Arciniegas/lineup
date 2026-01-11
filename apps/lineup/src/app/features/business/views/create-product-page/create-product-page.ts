@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   generateRandomProducts,
@@ -8,10 +8,10 @@ import {
   Product,
 } from '@lineup/core';
 import { Button, ImageCropper, ProductBreadcrumb } from '@lineup/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
-import { DialogModule } from 'primeng/dialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { EditorModule } from 'primeng/editor';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -40,15 +40,17 @@ import { TextareaModule } from 'primeng/textarea';
     MenuModule,
     ChipModule,
     EditorModule,
-    ImageCropper,
-    DialogModule,
     OrderListModule,
   ],
+  providers: [DialogService],
   templateUrl: './create-product-page.html',
   styleUrl: './create-product-page.scss',
 })
 export class CreateProductPage implements OnInit {
-  private _cdr = Inject(ChangeDetectorRef);
+  private _cdr = inject(ChangeDetectorRef);
+  private readonly _dialogService = inject(DialogService);
+  private readonly _translate = inject(TranslateService);
+  ref: DynamicDialogRef | undefined;
   business = {
     name: 'Tu Punto vShop',
     image: 'assets/images/vShop.jpg',
@@ -68,7 +70,6 @@ export class CreateProductPage implements OnInit {
   variationName = '';
   variationValue = '';
   variations: IVariation[] = [];
-  cropperVisible = false;
 
   ngOnInit() {
     this.product = generateRandomProducts(1)[0];
@@ -82,11 +83,27 @@ export class CreateProductPage implements OnInit {
     }
   }
 
-  onCropped($event) {
-    console.log($event);
-    this.urls = [...this.urls, $event as string];
-    this.cropperVisible = false;
-    this._cdr.detectChanges();
+  openImageCropper() {
+    this.ref = this._dialogService.open(ImageCropper, {
+      header: this._translate.instant('general.addImage'),
+      width: '600px',
+      style: { maxHeight: '80vh' },
+      breakpoints: {
+        '640px': '450px',
+        '500px': '80vw',
+        '400px': '90vw',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+
+    this.ref.onClose.subscribe((image: string) => {
+      if (image) {
+        this.urls = [...this.urls, image];
+        this._cdr.detectChanges();
+      }
+    });
   }
 
   onDragOver(event: DragEvent) {

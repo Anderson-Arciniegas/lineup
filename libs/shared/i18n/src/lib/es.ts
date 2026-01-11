@@ -66,6 +66,12 @@ export const es = {
     businessName: 'Nombre del negocio',
     editBusiness: 'Editar negocio',
     businessPath: 'Ruta del negocio',
+    next: 'Siguiente',
+    back: 'Atrás',
+    socialMedias: 'Redes sociales',
+    locations: 'Ubicaciones',
+    addSocialMedia: 'Agregar red social',
+    url: 'URL',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',

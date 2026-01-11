@@ -62,6 +62,12 @@ export const en = {
     businessName: 'Business name',
     editBusiness: 'Edit business',
     businessPath: 'Business path',
+    next: 'Next',
+    back: 'Back',
+    socialMedias: 'Social medias',
+    locations: 'Locations',
+    addSocialMedia: 'Add social media',
+    url: 'URL',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',

@@ -22,12 +22,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@libs/graphql": ["libs/shared/graphql/src/index.ts"],
       "@lineup/core": ["libs/shared/core/src/index.ts"],
-      "@lineup/i18n": ["libs/shared/i18n/src/index.ts"],
-      "@lineup/ui": ["libs/shared/ui/src/index.ts"],
-      "@lineup/envs": ["libs/shared/environments/src/index.ts"],
       "@lineup/environments": ["libs/shared/environments/src/index.ts"],
-      "@libs/graphql": ["libs/shared/graphql/src/index.ts"]
+      "@lineup/envs": ["libs/shared/environments/src/index.ts"],
+      "@lineup/i18n": ["libs/shared/i18n/src/index.ts"],
+      "@lineup/ui": ["libs/shared/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

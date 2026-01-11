@@ -8,6 +8,17 @@ export interface CreateBusinessInput {
   role: RolesCodesEnum;
 }
 
+export interface UpdateBusinessInput {
+  id: number;
+  description?: string;
+  email?: string;
+  imageCode?: string;
+  name?: string;
+  path?: string;
+  tags?: string[];
+  telephone?: string;
+}
+
 export interface CreateBusinessResponse {
   // The server returns a LoginResponse-like object for createUser
   createBusiness: {

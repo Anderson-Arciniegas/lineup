@@ -1,28 +1,24 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { CreateCatalogCard } from './create-catalog-card';
+import { CreateCatalogModal } from './create-catalog-modal';
 
-describe('CreateCatalogCard', () => {
-  let component: CreateCatalogCard;
-  let fixture: ComponentFixture<CreateCatalogCard>;
+describe('CreateCatalogModal', () => {
+  let component: CreateCatalogModal;
+  let fixture: ComponentFixture<CreateCatalogModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        CreateCatalogCard,
-        TranslateModule.forRoot()
-      ],
+      imports: [CreateCatalogModal, TranslateModule.forRoot(), HttpClientTestingModule],
       providers: [
-        { provide: ActivatedRoute, useValue: {} },
         DialogService,
         TranslateService,
-        TranslateStore
+        TranslateStore,
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateCatalogCard);
+    fixture = TestBed.createComponent(CreateCatalogModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
