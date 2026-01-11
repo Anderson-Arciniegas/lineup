@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
 import { SocialMediasPage } from './social-medias-page';
 
 describe('SocialMediasPage', () => {
@@ -7,7 +9,12 @@ describe('SocialMediasPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SocialMediasPage],
+      imports: [SocialMediasPage, TranslateModule.forRoot()],
+      providers: [
+        DialogService,
+        TranslateService,
+        TranslateStore,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SocialMediasPage);
