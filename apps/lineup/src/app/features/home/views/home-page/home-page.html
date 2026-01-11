@@ -1,22 +1,9 @@
 <section
-  class="
-    flex flex-col 
-    gap-6 sm:gap-10 
-    items-center justify-start 
-    w-full
-    py-1
-  "
+  class="flex flex-col gap-6 sm:gap-10 items-center justify-start w-full py-1"
 >
-  <section class="
-    py-6 sm:py-8 sm:py-14 
-    px-4 sm:px-3 2xl:px-15
-    box-border
-    w-full 
-    flex flex-col
-    gap-14
-    items-center justify-start
-    bg-white
-  ">
+  <section
+    class="py-6 sm:py-8 sm:py-14 px-4 sm:px-3 2xl:px-15 box-border w-full flex flex-col gap-14 items-center justify-start bg-white"
+  >
     <div
       class="w-full flex flex-col items-center justify-center gap-2 sm:gap-6"
     >
@@ -37,39 +24,23 @@
         <div class="w-full hidden sm:flex">
           <div class="flex flex-wrap gap-2 w-full items-center justify-center">
             @for (tag of tags; track $index) {
-              <lib-button
-                class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12"
-                [label]="tag"
-                color="secondary"
-                type="rounded"
-                [width]="'w-full'"
-                [size]="'small'"
-              >
-              </lib-button>
+            <lib-button
+              class="mb-2 lg:w-1/9 sm:w-2/9 w-5/12"
+              [label]="tag"
+              color="secondary"
+              type="rounded"
+              [width]="'w-full'"
+              [size]="'small'"
+            >
+            </lib-button>
             }
           </div>
         </div>
         <div
-          class="
-            flex
-            items-center justify-center
-            search
-            w-full
-            gap-2 sm:gap-3
-          "
+          class="flex items-center justify-center search w-full gap-2 sm:gap-3"
         >
-          <p-iconfield 
-            class="
-              flex flex-row
-              items-center justify-center
-              w-full max-width
-              bg-white
-              h-12 sm:h-16
-              shadow
-              iconfield
-              px-2 sm:px-3
-              gap-2 sm:gap-4
-            "
+          <p-iconfield
+            class="flex flex-row items-center justify-center w-full max-width bg-white h-12 sm:h-16 shadow iconfield px-2 sm:px-3 gap-2 sm:gap-4"
           >
             <lib-button
               class="hidden sm:flex"
@@ -92,11 +63,7 @@
             <div class="h-6 w-0.5 bg-gray-300"></div>
             <input
               type="text"
-              class="
-                input
-                w-full 
-                text-sm sm:text-base
-              "
+              class="input w-full text-sm sm:text-base"
               pInputText
               placeholder="Search"
             />
@@ -120,13 +87,9 @@
     </div>
   </section>
 
-  <div class="
-    flex flex-col
-    items-start justify-center
-    w-10/10
-    px-4 sm:px-3 2xl:px-15
-    box-border
-  ">
+  <div
+    class="flex flex-col items-start justify-center w-10/10 2xl:w-10/12 px-4 sm:px-3 2xl:px-15 box-border"
+  >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
@@ -141,25 +104,17 @@
       >
         <ng-template let-product #item>
           <lib-business-card
-              class="
-                cursor-pointer
-                mt-2 sm:mt-4 
-                w-full
-              "
-              [width]="'w-11/12'"
-              [height]="'h-11/12'"
+            class="cursor-pointer mt-2 sm:mt-4 w-full"
+            [width]="'w-full'"
+            [height]="'h-full'"
           ></lib-business-card>
         </ng-template>
       </p-carousel>
     </div>
   </div>
-  <div class="
-    flex flex-col
-    items-start justify-center
-    w-10/10
-    px-4 sm:px-3 2xl:px-15
-    box-border
-  ">
+  <div
+    class="flex flex-col items-start justify-center w-10/10 2xl:w-10/12 px-4 sm:px-3 2xl:px-15 box-border"
+  >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
@@ -172,31 +127,20 @@
         [responsiveOptions]="responsiveOptionsCatalogs"
         showIndicators="false"
       >
-        <ng-template let-product #item >
+        <ng-template let-product #item>
           <lib-catalog-card
-            class="
-              cursor-pointer
-              mt-2 sm:mt-4 
-              w-full
-            "
-            [width]="'w-48'"
-            [height]="'h-48'"
+            class="cursor-pointer mt-2 sm:mt-4 w-full"
+            [width]="'w-full'"
+            [height]="'h-full'"
           ></lib-catalog-card>
         </ng-template>
       </p-carousel>
     </div>
   </div>
 
-  <div class="
-    flex flex-col
-    items-start justify-center
-    gap-5
-    w-10/10
-    px-4 sm:px-3 2xl:px-15
-    pt-10
-    box-border
-    bg-white
-  ">
+  <div
+    class="flex flex-col items-start justify-center gap-5 w-10/10 2xl:w-10/12 px-4 sm:px-3 2xl:px-15 pt-10 box-border bg-white"
+  >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredProducts' | translate }}
     </h3>

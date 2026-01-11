@@ -19,6 +19,11 @@ import Lara from '@primeuix/themes/lara';
 import { provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { providePrimeNG } from 'primeng/config';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { environment } from '../environment/environment';
 import { appRoutes } from './app.routes';
 
@@ -85,6 +90,15 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    DialogService,
+    {
+      provide: DynamicDialogConfig,
+      useValue: {},
+    },
+    {
+      provide: DynamicDialogRef,
+      useFactory: () => null,
+    },
     // Usamos XHR (por defecto) en lugar de fetch para que las cookies con
     // withCredentials se conserven correctamente tras el login y al recargar.
     provideHttpClient(),

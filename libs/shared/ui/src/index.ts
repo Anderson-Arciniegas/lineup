@@ -1,3 +1,4 @@
+export * from './lib/add-social-media-modal/add-social-media-modal';
 export * from './lib/business-card/business-card';
 export * from './lib/business-data/business-data';
 export * from './lib/button/button';
@@ -8,6 +9,7 @@ export * from './lib/categories-list/categories-list';
 export * from './lib/category-item/category-item';
 export * from './lib/control-panel-nav/control-panel-nav';
 export * from './lib/create-catalog-card/create-catalog-card';
+export * from './lib/create-catalog-modal/create-catalog-modal';
 export * from './lib/create-product-card/create-product-card';
 export * from './lib/image-cropper/image-cropper';
 export * from './lib/nav/nav';

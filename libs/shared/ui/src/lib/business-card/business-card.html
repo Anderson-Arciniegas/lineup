@@ -1,42 +1,17 @@
 <a [routerLink]="'/business-1'" [ngClass]="[width, height]">
   <div
-    class="
-      business-card
-      p-2
-      shadow
-      cursor-pointer
-      flex flex-col
-      justify-end
-      bg-primary-50
-      w-full
-      h-full
-    "
+    class="business-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
   >
     <div
-      class="
-        business-data-content
-        flex flex-row
-        items-center justify-between
-        gap-3
-        text-white
-        font-medium
-        w-10/10
-        text-xs
-      "
+      class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs"
     >
       @if (!favoritesMode) {
-        <div
-          class="
-            business-data-left
-            hidden sm:flex flex-row
-            items-center justify-start
-            gap-1
-            w-fit
-            px-2 py-2"
-        >
-          <i class="pi pi-heart-fill" style="font-size: 0.8rem"></i>
-          <span class="font-semibold">1 m</span>
-        </div>
+      <div
+        class="business-data-left hidden sm:flex flex-row items-center justify-start gap-1 w-fit px-2 py-2"
+      >
+        <i class="pi pi-heart-fill" style="font-size: 0.8rem"></i>
+        <span class="font-semibold">1 m</span>
+      </div>
       }
       <!-- <div class="business-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
                 <i class="pi pi-objects-column"

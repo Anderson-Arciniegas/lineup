@@ -1,28 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { CreateCatalogCard } from './create-catalog-card';
+import { SocialMediasPage } from './social-medias-page';
 
-describe('CreateCatalogCard', () => {
-  let component: CreateCatalogCard;
-  let fixture: ComponentFixture<CreateCatalogCard>;
+describe('SocialMediasPage', () => {
+  let component: SocialMediasPage;
+  let fixture: ComponentFixture<SocialMediasPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        CreateCatalogCard,
-        TranslateModule.forRoot()
-      ],
+      imports: [SocialMediasPage, TranslateModule.forRoot()],
       providers: [
-        { provide: ActivatedRoute, useValue: {} },
         DialogService,
         TranslateService,
-        TranslateStore
+        TranslateStore,
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateCatalogCard);
+    fixture = TestBed.createComponent(SocialMediasPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

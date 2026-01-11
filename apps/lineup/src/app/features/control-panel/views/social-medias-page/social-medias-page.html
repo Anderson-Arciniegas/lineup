@@ -1,0 +1,27 @@
+<section class="profile flex flex-col gap-10 py-5 sm:py-0">
+  <h2 class="text-2xl font-semibold ps-4">
+    {{'general.socialMedias' | translate}}
+  </h2>
+
+  <div class="flex flex-col gap-4 ps-10 w-11/12">
+    @for (socialMedia of socialMedias; track socialMedia.name) {
+    <div
+      class="social-media-item flex flex-row justify-between items-center gap-8 p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300"
+      (click)="addSocialMediaModal(socialMedia)"
+      (keyup.enter)="addSocialMediaModal(socialMedia)"
+      tabindex="0"
+      role="button"
+    >
+      <div class="flex flex-row justify-start items-center gap-4">
+        <i [class]="socialMedia.icon" style="font-size: 2rem"></i>
+        <span class="font-medium">{{socialMedia.name}}</span>
+      </div>
+
+      <div class="flex flex-row justify-around items-center w-full gap-4">
+        <span>{{socialMedia.username}}</span>
+        <span>{{socialMedia.url}}</span>
+      </div>
+    </div>
+    }
+  </div>
+</section>

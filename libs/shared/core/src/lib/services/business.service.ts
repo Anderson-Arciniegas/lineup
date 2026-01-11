@@ -4,7 +4,9 @@ import {
   BUSINESS_LOGOUT_MUTATION,
   BUSINESS_REFRESH_TOKEN_MUTATION,
   CREATE_BUSINESS_MUTATION,
+  GET_BUSINESS_BY_PATH,
   GET_MY_BUSINESS_QUERY,
+  UPDATE_BUSINESS_MUTATION,
 } from '@libs/graphql';
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
@@ -12,6 +14,7 @@ import { map } from 'rxjs/operators';
 import {
   CreateBusinessInput,
   CreateBusinessResponse,
+  UpdateBusinessInput,
 } from '../models/business.model';
 import { BusinessSchema } from '../schemas';
 
@@ -82,6 +85,33 @@ export class BusinessService {
         },
       })
       .pipe(map((result) => result.data!.refreshToken.business));
+  }
+
+  updateBusiness(data: UpdateBusinessInput): Observable<any> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<any>({
+        mutation: UPDATE_BUSINESS_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.updateBusiness.business));
+  }
+
+  getBusinessByPath(path: string): Observable<any> {
+    return this.apollo
+      .use('businessAPI')
+      .query<{ findBusinessByPath: BusinessSchema }>({
+        query: GET_BUSINESS_BY_PATH,
+        variables: { path },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.findBusinessByPath));
   }
 
   //   getUser(id: number): Observable<any> {

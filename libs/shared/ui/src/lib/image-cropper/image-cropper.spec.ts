@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ImageCropper } from './image-cropper';
 
 describe('ImageCropper', () => {
@@ -12,6 +13,7 @@ describe('ImageCropper', () => {
       imports: [ImageCropper, TranslateModule.forRoot()],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
+        { provide: DynamicDialogRef, useValue: null },
         TranslateService,
         TranslateStore
       ],

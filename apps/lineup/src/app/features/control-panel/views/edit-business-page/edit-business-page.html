@@ -16,11 +16,19 @@
         </h3>
         <div
           tabindex="0"
-          (keyup.enter)="cropperVisible = !cropperVisible"
-          (click)="cropperVisible = !cropperVisible"
-          class="image-placeholder flex flex-row justify-center items-center w-40 h-40 rounded-full bg-gray-100 p-3 cursor-pointer"
+          (keyup.enter)="openImageCropper()"
+          (click)="openImageCropper()"
+          class="image-placeholder flex flex-row justify-center items-center w-40 h-40 bg-gray-100 cursor-pointer"
         >
+          @if (imageUrl) {
+          <img
+            [src]="imageUrl"
+            alt="Business image"
+            class="w-full h-full object-cover"
+          />
+          } @else {
           <i class="pi pi-camera" style="font-size: 4rem"></i>
+          }
         </div>
       </div>
       <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
@@ -135,6 +143,8 @@
       </div> -->
       <div class="flex flex-row justify-center items-center mt-5">
         <lib-button
+          (action)="updateBusiness()"
+          [loading]="attempt"
           [label]="'general.save' | translate"
           [type]="'rounded'"
           width="w-40"
@@ -143,17 +153,3 @@
     </form>
   </div>
 </section>
-
-<p-dialog
-  [(visible)]="cropperVisible"
-  [draggable]="false"
-  [resizable]="false"
-  [modal]="true"
-  [header]="'general.addImage' | translate"
-  [style]="{ width: '600px', maxHeight: '80vh' }"
-  [breakpoints]="{ '640px': '450px', '500px': '80vw', '400px' : '90vw' }"
->
-  <lib-image-cropper
-    (imageCroppedEvent)="onCropped($event)"
-  ></lib-image-cropper>
-</p-dialog>

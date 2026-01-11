@@ -1,17 +1,14 @@
-import {
-  CommonModule
-} from '@angular/common';
-import {
-  Component,
-  Input,
-} from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IftaLabelModule } from 'primeng/iftalabel';
-import { FormsModule } from '@angular/forms';
-import { Button } from "../button/button";
+import { Button } from '../button/button';
+import { CreateCatalogModal } from '../create-catalog-modal/create-catalog-modal';
 
 @Component({
   selector: 'lib-create-catalog-card',
@@ -23,62 +20,39 @@ import { Button } from "../button/button";
     ButtonModule,
     IftaLabelModule,
     FormsModule,
-    Button
-],
+    Button,
+  ],
   templateUrl: './create-catalog-card.html',
   styleUrl: './create-catalog-card.scss',
 })
 export class CreateCatalogCard {
-    @Input() width = 'w-72';
-    @Input() height = 'h-96';
-    visible = false;
-    catalogName = '';
-    isDragging = false;
-    previewUrl: string | null = null;
+  @Input() width = 'w-72';
+  @Input() height = 'h-96';
+  ref: DynamicDialogRef | undefined;
+  private readonly _dialogService = inject(DialogService);
+  private readonly _translate = inject(TranslateService);
 
-    createCatalog() {
-      this.visible = true;
-    }
+  createCatalog() {
+    this.ref = this._dialogService.open(CreateCatalogModal, {
+      header: this._translate.instant('general.createCatalog'),
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      breakpoints: {
+        '640px': '450px',
+        '500px': '80vw',
+        '400px': '90vw',
+      },
+      dismissableMask: true,
+      modal: true,
+      draggable: false,
+      resizable: false,
+      closable: true,
+    });
 
-    enterCreateCatalog() {
-      return;
-    }
-
-    onFileSelected(event: Event) {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        this.handleFile(input.files[0]);
+    this.ref.onClose.subscribe((catalog: any) => {
+      if (catalog) {
+        console.log(catalog);
       }
-    }
-
-    onDragOver(event: DragEvent) {
-      event.preventDefault();
-      this.isDragging = true;
-    }
-
-    onDragLeave(event: DragEvent) {
-      event.preventDefault();
-      this.isDragging = false;
-    }
-
-    onDrop(event: DragEvent) {
-      event.preventDefault();
-      this.isDragging = false;
-      if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        this.handleFile(event.dataTransfer.files[0]);
-      }
-    }
-
-    handleFile(file: File) {
-      if (!file.type.startsWith('image/')) {
-        alert('Solo se permiten imágenes');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+    });
+  }
 }
