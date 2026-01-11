@@ -11,11 +11,11 @@ import { BusinessCard, Button, CatalogCard, ProductCard } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
+import { ɵɵDir } from '@angular/cdk/scrolling';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
-import { ɵɵDir } from "@angular/cdk/scrolling";
 
 // gsap.registerPlugin(ScrollTrigger);
 @Component({
@@ -31,8 +31,8 @@ import { ɵɵDir } from "@angular/cdk/scrolling";
     Carousel,
     ButtonModule,
     TranslateModule,
-    ɵɵDir
-],
+    ɵɵDir,
+  ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -129,7 +129,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.responsiveOptions = [
       {
         breakpoint: '1920px',
-        numVisible: 6,
+        numVisible: 5,
         numScroll: 1,
       },
       {
@@ -155,13 +155,18 @@ export class HomePage implements OnInit, AfterViewInit {
       {
         breakpoint: '640px',
         numVisible: 2,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '576px',
+        numVisible: 1,
         numScroll: 1,
       },
     ];
     this.responsiveOptionsCatalogs = [
       {
         breakpoint: '1920px',
-        numVisible: 6,
+        numVisible: 5,
         numScroll: 1,
       },
       {
@@ -186,6 +191,11 @@ export class HomePage implements OnInit, AfterViewInit {
       },
       {
         breakpoint: '640px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '576px',
         numVisible: 1,
         numScroll: 1,
       },

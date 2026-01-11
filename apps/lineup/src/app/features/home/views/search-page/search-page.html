@@ -1,69 +1,64 @@
-<section class="
-    pt-8 md:pt-12 
-    px-2 sm:px-0 2xl:px-5 2xl:px-8 
-    flex flex-col 
-    gap-4 sm:gap-8 
-    items-center justify-start 
-    container
-    ">
-    <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
-        <div class="
-        w-full
-        sm:w-9/10
-        flex flex-row
-        items-center justify-center
-        search-container
-        ">
-            <div class="search 
-                    flex items-center justify-center
-                    bg-primary-50 
-                    gap-2 lg:gap-5 px-4 sm:px-8 ">
-                <lib-button width="w-10 h-10"
-                            size="large"
-                            icon="pi pi-sliders-h"
-                            variant="text"
-                            type="rounded"
-                            (action)="showDialog()"
-                            class="block lg:hidden">
-                </lib-button>
-                <p-iconfield class="
-                    w-full
-                    max-width">
-                    <p-inputicon class="pi pi-search" />
-                    <input type="text"
-                           class="w-full input font-medium"
-                           pInputText
-                           placeholder="Search" />
-                </p-iconfield>
+<section
+  class="pt-8 md:pt-12 px-2 sm:px-0 2xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start container"
+>
+  <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
+    <div
+      class="w-full sm:w-9/10 flex flex-row items-center justify-center search-container"
+    >
+      <div
+        class="search flex items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4 sm:px-8"
+      >
+        <lib-button
+          width="w-10 h-10"
+          size="large"
+          icon="pi pi-sliders-h"
+          variant="text"
+          type="rounded"
+          (action)="showDialog()"
+          class="block lg:hidden"
+        >
+        </lib-button>
+        <p-iconfield class="w-full max-width">
+          <p-inputicon class="pi pi-search" />
+          <input
+            type="text"
+            class="w-full input font-medium"
+            pInputText
+            placeholder="Search"
+          />
+        </p-iconfield>
 
-                <lib-button label="Buscar"
-                            icon="pi pi-search"
-                            type="rounded"
-                            class="hidden sm:block">
-                </lib-button>
+        <lib-button
+          label="Buscar"
+          icon="pi pi-search"
+          type="rounded"
+          class="hidden sm:block"
+        >
+        </lib-button>
 
-                <lib-button width="w-10 h-10"
-                            icon="pi pi-search"
-                            type="rounded"
-                            class="block sm:hidden">
-                </lib-button>
+        <lib-button
+          width="w-10 h-10"
+          icon="pi pi-search"
+          type="rounded"
+          class="block sm:hidden"
+        >
+        </lib-button>
+      </div>
+      <div
+        class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
+      ></div>
+    </div>
 
-            </div>
-            <div class="search-ghost
-                    flex items-center justify-center
-                    gap-2 sm:gap-5 px-3 sm:px-8 ">
+    <p-dialog
+      header="Filtros"
+      [modal]="true"
+      [(visible)]="visible"
+      [style]="{ width: '25rem', height: '90vh' }"
+    >
+      <lib-search-filters></lib-search-filters>
+    </p-dialog>
 
-            </div>
-        </div>
-
-        <p-dialog header="Filtros"
-                  [modal]="true"
-                  [(visible)]="visible"
-                  [style]="{ width: '25rem', height: '90vh' }">
-            <lib-search-filters></lib-search-filters>
-        </p-dialog>
-
-        <!-- <div class="
+    <!-- <div class="
         flex flex-col
         items-start justify-center
         gap-5
@@ -113,73 +108,64 @@
             </p-carousel>
         </div>
     </div> -->
-        <div class="
-        flex flex-row items-start justify-center
-        w-10/10 gap-3">
-            <div class="
-        filters-parent-container
-        hidden
-        lg:flex flex-col items-start justify-start
-        gap-5
-        w-3/12">
-
-                <div class="w-10/10 mt-15 filters-container">
-                    <lib-search-filters></lib-search-filters>
-                </div>
-            </div>
-            <div class="
-                 flex flex-col items-start justify-center
-                 gap-5
-                 w-10/10
-                 lg:w-9/12">
-                <h3 class="font-medium text-3xl pl-10">{{'general.searchResults' | translate}}</h3>
-                <div class="
-                w-full
-                grid
-                [grid-template-columns:repeat(1,auto)]
-                sm:[grid-template-columns:repeat(2,auto)]
-                md:[grid-template-columns:repeat(2,auto)]
-                lg:[grid-template-columns:repeat(3,auto)]
-                xl:[grid-template-columns:repeat(3,auto)]
-                2xl:[grid-template-columns:repeat(4,auto)]
-                
-                justify-center sm:justify-center
-                gap-2 sm:gap-x-5 sm:gap-y-5
-                px-1 sm:px-4 md:px-5
-                mb-10
-            ">
-
-                    <lib-business-card class="cursor-pointer my-3"
-                                       [width]="'w-65 lg:w-60 xl:w-65'"
-                                       [height]="'h-100'"></lib-business-card>
-
-
-                    <lib-business-card class="cursor-pointer my-3"
-                                       [width]="'w-65 lg:w-60 xl:w-65'"
-                                       [height]="'h-100'"></lib-business-card>
-
-                    <lib-catalog-card class="cursor-pointer my-3"
-                                      [width]="'w-65 lg:w-60 xl:w-65'"
-                                      [height]="'h-100'"></lib-catalog-card>
-
-                    <lib-catalog-card class="cursor-pointer my-3"
-                                      [width]="'w-65 lg:w-60 xl:w-65'"
-                                      [height]="'h-100'"></lib-catalog-card>
-
-                    @for (product of products; track product.id) {
-                    <lib-product-card class="my-3"
-                                      [width]="'w-65 lg:w-60 xl:w-65'"
-                                      [index]="product.id"></lib-product-card>
-                    }
-                    @for (product of products; track product.id) {
-                    <lib-product-card class="my-3"
-                                      [width]="'w-65 lg:w-60 xl:w-65'"
-                                      [index]="product.id"></lib-product-card>
-                    }
-                </div>
-            </div>
+    <div class="flex flex-row items-start justify-center w-10/10 gap-3">
+      <div
+        class="filters-parent-container hidden lg:flex flex-col items-start justify-start gap-5 w-3/12"
+      >
+        <div class="w-10/10 mt-15 filters-container">
+          <lib-search-filters></lib-search-filters>
         </div>
+      </div>
+      <div
+        class="flex flex-col items-start justify-center gap-5 w-10/10 lg:w-9/12"
+      >
+        <h3 class="font-medium text-3xl pl-10">
+          {{'general.searchResults' | translate}}
+        </h3>
+        <div
+          class="w-full grid [grid-template-columns:repeat(1,auto)] sm:[grid-template-columns:repeat(2,auto)] md:[grid-template-columns:repeat(2,auto)] lg:[grid-template-columns:repeat(3,auto)] xl:[grid-template-columns:repeat(3,auto)] 2xl:[grid-template-columns:repeat(4,auto)] justify-center sm:justify-center gap-2 sm:gap-x-5 sm:gap-y-5 px-1 sm:px-4 md:px-5 mb-10"
+        >
+          <lib-business-card
+            class="cursor-pointer my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+          ></lib-business-card>
 
+          <lib-business-card
+            class="cursor-pointer my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+          ></lib-business-card>
 
+          <lib-catalog-card
+            class="cursor-pointer my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+          ></lib-catalog-card>
 
-    </section>
+          <lib-catalog-card
+            class="cursor-pointer my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+          ></lib-catalog-card>
+
+          @for (product of products; track product.id) {
+          <lib-product-card
+            class="my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+            [index]="product.id"
+          ></lib-product-card>
+          } @for (product of products; track product.id) {
+          <lib-product-card
+            class="my-3"
+            [width]="'w-65 lg:w-60 xl:w-65'"
+            [height]="'h-80'"
+            [index]="product.id"
+          ></lib-product-card>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</section>

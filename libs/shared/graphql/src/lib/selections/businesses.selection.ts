@@ -3,6 +3,8 @@
  * Estas selecciones pueden ser usadas en queries y mutations para evitar duplicación
  */
 
+import { fileSelection } from './file.selection';
+
 /**
  * Selección básica de roles de business
  */
@@ -28,6 +30,7 @@ export const businessBasicSelection = `{
   status
   businessRoles ${businessRoleSelection}
   telephone
+  image ${fileSelection}
 }`;
 
 /**
@@ -260,4 +263,6 @@ export const businessMyBusinessSelection = `{
       description
     }
   }
+  telephone
+  image ${fileSelection}
 }`;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UtilsService } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import {
   ImageTransform,
   LoadedImage,
 } from 'ngx-image-cropper';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
@@ -29,10 +30,9 @@ export class ImageCropper {
   containWithinAspectRatio = false;
   transform: ImageTransform = {};
   format: string;
-  @Output() imageCroppedEvent = new EventEmitter<any>();
-  @Output() cancelCrop = new EventEmitter<void>();
-
+  step = 1;
   sanitizer = inject(DomSanitizer);
+  ref = inject(DynamicDialogRef);
 
   private _utilsService = inject(UtilsService);
   private _subscription: Subscription = new Subscription();
@@ -72,21 +72,22 @@ export class ImageCropper {
         this._utilsService
           .compressImage(this.croppedImage)
           .subscribe((compressImage) => {
-            this.imageCroppedEvent.emit(compressImage);
-            this.croppedImage = '';
-            this.imageChangedEvent = null;
-            this.showCropper = false;
-            this.canvasRotation = 0;
-            this.rotation = 0;
-            this.scale = 1;
-            this.transform = {};
+            this.ref.close(compressImage);
           }),
       );
     }
-    // Do not close modal here; parent modal should handle visibility. Emit only the cropped image.
   }
+
   onCancel() {
-    this.cancelCrop.emit();
+    this.ref.close();
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  previousStep() {
+    this.step--;
   }
 
   zoomOut() {

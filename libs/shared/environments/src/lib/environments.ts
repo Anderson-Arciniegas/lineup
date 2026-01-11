@@ -19,7 +19,7 @@ export const environments: EnvironmentsConfig = {
   apiAdmin: '/api/admin-graphql/',
   apiUser: '/api/user-graphql/',
   userApiFile: '/api/user-file/',
-  businessApiFile: '/api/business-file/',
+  businessApiFile: 'https://190.9.40.168/api3/',
 };
 
 export const PROD: EnvironmentsConfig = {

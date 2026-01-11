@@ -1,4 +1,6 @@
 <div class="image-cropper flex flex-col items-center justify-center gap-5">
+  @if (step === 1) {
+
   <!-- file input puede estar fuera del modal o dentro; se deja visible para disparar el modal -->
   @if (!imageChangedEvent) {
   <div
@@ -86,11 +88,6 @@
       (action)="flipVertical()"
     ></lib-button>
   </div>
-  } @if (croppedImage) {
-  <div class="preview flex flex-col gap-5">
-    <h4 class="font-semibold">Previsualización</h4>
-    <img [src]="croppedImage" alt="Cropped image preview" />
-  </div>
 
   <div
     class="actions flex flex-col sm:flex-row justify-center items-center gap-5 mt-4"
@@ -102,6 +99,31 @@
       [size]="'small'"
       [width]="'w-40'"
       (action)="onCancel()"
+    ></lib-button>
+
+    <lib-button
+      label="{{'general.next' | translate}}"
+      [type]="'rounded'"
+      [size]="'small'"
+      [width]="'w-40'"
+      (action)="nextStep()"
+    ></lib-button>
+  </div>
+  } } @if (croppedImage && step === 2) {
+  <div class="preview flex flex-col gap-5">
+    <img [src]="croppedImage" alt="Cropped image preview" />
+  </div>
+
+  <div
+    class="actions flex flex-col sm:flex-row justify-center items-center gap-5 mt-4"
+  >
+    <lib-button
+      label="{{'general.back' | translate}}"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-40'"
+      (action)="previousStep()"
     ></lib-button>
 
     <lib-button

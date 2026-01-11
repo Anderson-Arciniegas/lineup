@@ -10,6 +10,8 @@ import { RegisterBusinessPage } from '../features/auth/views/register-business-p
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
 import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
 import { EditBusinessPage } from '../features/control-panel/views/edit-business-page/edit-business-page';
+import { LocationsPage } from '../features/control-panel/views/locations-page/locations-page';
+import { SocialMediasPage } from '../features/control-panel/views/social-medias-page/social-medias-page';
 import { HomePage } from '../features/home/views/home-page/home-page';
 import { SearchPage } from '../features/home/views/search-page/search-page';
 import { LandingPage } from '../features/landing-page/views/landing-page/landing-page';
@@ -73,6 +75,14 @@ export const layoutRoutes: Routes = [
       {
         path: AppConfigService.config.routes.edit,
         component: EditBusinessPage,
+      },
+      {
+        path: AppConfigService.config.routes.socialMedias,
+        component: SocialMediasPage,
+      },
+      {
+        path: AppConfigService.config.routes.locations,
+        component: LocationsPage,
       },
     ],
   },
