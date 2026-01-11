@@ -1,16 +1,12 @@
 ::ng-deep {
-  .p-inputmask {
-    width: 100% !important;
-  }
-
   .profile {
     height: calc(100vh - 120px);
     overflow-y: auto;
   }
 
-  .image-placeholder {
-    overflow: hidden;
-    border-radius: 25px;
+  .social-media-item {
+    border: 1px solid var(--p-primary-300);
+    border-radius: 15px;
   }
 
   @media screen and (max-width: 639px) {

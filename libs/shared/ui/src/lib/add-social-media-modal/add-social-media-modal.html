@@ -1,0 +1,48 @@
+<div class="flex flex-col gap-8">
+  <div
+    class="social-media-item flex flex-row justify-between items-center gap-8 p-2"
+  >
+    <div class="flex flex-row justify-start items-center gap-4">
+      <i [class]="socialMedia.icon" style="font-size: 2rem"></i>
+      <span class="font-medium">{{socialMedia.name}}</span>
+    </div>
+  </div>
+
+  <form
+    [formGroup]="socialMediaForm"
+    class="flex flex-col items-start justify-center gap-3 w-full"
+  >
+    <div class="flex flex-col items-start justify-center gap-1 w-full">
+      <label for="name" class="font-semibold"
+        >{{'general.username' | translate}}:</label
+      >
+      <input
+        type="text"
+        id="name"
+        formControlName="username"
+        class="input w-full h-11 rounded"
+        placeholder="{{'general.username' | translate}}"
+      />
+    </div>
+    <div class="flex flex-col items-start justify-center gap-1 w-full">
+      <label for="name" class="font-semibold"
+        >{{'general.url' | translate}}:</label
+      >
+      <input
+        type="text"
+        id="name"
+        formControlName="url"
+        class="input w-full h-11 rounded"
+        placeholder="{{'general.url' | translate}}"
+      />
+    </div>
+  </form>
+
+  <div class="w-full">
+    <lib-button
+      [label]="'Guardar'"
+      [width]="'w-full'"
+      (click)="saveSocialMedia()"
+    ></lib-button>
+  </div>
+</div>

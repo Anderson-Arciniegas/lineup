@@ -41,6 +41,16 @@ export class ControlPanelLayout implements OnInit {
         url: '/dashboard/edit',
       },
       {
+        label: 'general.socialMedias',
+        icon: 'pi pi-instagram',
+        url: '/dashboard/social-medias',
+      },
+      {
+        label: 'general.locations',
+        icon: 'pi pi-map-marker',
+        url: '/dashboard/locations',
+      },
+      {
         label: 'general.followers',
         icon: 'pi pi-heart',
         url: '/dashboard/followers',

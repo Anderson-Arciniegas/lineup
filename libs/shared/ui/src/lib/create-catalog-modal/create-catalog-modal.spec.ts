@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BusinessSettingsPage } from './business-settings-page';
+import { CreateCatalogModal } from './create-catalog-modal';
 
-describe('BusinessSettingsPage', () => {
-  let component: BusinessSettingsPage;
-  let fixture: ComponentFixture<BusinessSettingsPage>;
+describe('CreateCatalogModal', () => {
+  let component: CreateCatalogModal;
+  let fixture: ComponentFixture<CreateCatalogModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BusinessSettingsPage],
+      imports: [CreateCatalogModal],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BusinessSettingsPage);
+    fixture = TestBed.createComponent(CreateCatalogModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

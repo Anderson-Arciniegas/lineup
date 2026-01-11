@@ -14,6 +14,8 @@ export const appRoutes: AppRoutes = {
   edit: 'edit',
   profile: 'profile',
   dashboard: 'dashboard',
+  socialMedias: 'social-medias',
+  locations: 'locations',
 };
 
 export const languagesList: Language[] = [
@@ -54,4 +56,6 @@ export interface AppRoutes {
   edit: string;
   profile: string;
   dashboard: string;
+  socialMedias: string;
+  locations: string;
 }
