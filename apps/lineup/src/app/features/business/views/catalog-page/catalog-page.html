@@ -1,65 +1,97 @@
-<section class="catalog-page w-full px-4 sm:py-5 px-2 sm:px-10 gap-5 flex flex-col duration-500"
-         [ngStyle]="{'background': bgColor}">
-    <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
-    <div>
-        <h3 class="text-4xl text-center font-medium">Zapatos</h3>
+<section
+  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-10 gap-5 flex flex-col duration-500"
+  [ngStyle]="{'background': bgColor}"
+>
+  <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+  @if (catalog) {
+  <div>
+    <h3 class="text-4xl text-center font-medium">
+      {{catalog.title || 'Zapatos'}}
+    </h3>
+  </div>
+  <div class="w-full flex flex-col items-center gap-20">
+    @if (products.length > 0) {
+    <div class="flex flex-row items-center justify-center w-10/10">
+      <lib-catalog-carousel
+        [products]="products"
+        class="w-10/10"
+        (setColor)="setColor($event)"
+      >
+      </lib-catalog-carousel>
     </div>
-    <div class="w-full flex flex-col items-center gap-20">
-        <div class="flex flex-row items-center justify-center w-10/10 ">
-            <lib-catalog-carousel class="w-10/10"
-                                  (setColor)="setColor($event)">
-            </lib-catalog-carousel>
-        </div>
-        <div class="w-full flex flex-row items-center justify-center">
-            <div class="flex items-center justify-center bg-primary-50 search gap-2 sm:gap-6 px-3 sm:px-7">
-                <p-iconfield class="w-full max-width">
-                    <p-inputicon class="pi pi-search" />
-                    <input type="text"
-                           class="w-full input font-medium"
-                           pInputText
-                           placeholder="Search" />
-                </p-iconfield>
-                <lib-button label="Buscar"
-                            icon="pi pi-search"
-                            type="rounded"
-                            class="hidden sm:block">
-                </lib-button>
-                <lib-button width="w-10 h-10"
-                            icon="pi pi-search"
-                            type="rounded"
-                            class="block sm:hidden">
-                </lib-button>
-            </div>
-
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl">
-            <lib-create-product-card [width]="'w-full'"
-                    [height]="'h-70'"></lib-create-product-card>
-            <lib-product-card [index]="1"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="2"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="3"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="4"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="1"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="2"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="3"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-            <lib-product-card [index]="4"
-                              [width]="'w-full'"
-                              [height]="'h-70'"></lib-product-card>
-        </div>
+    <div class="w-full flex flex-row items-center justify-center">
+      <div
+        class="flex items-center justify-center bg-primary-50 search gap-2 sm:gap-6 px-3 sm:px-7"
+      >
+        <p-iconfield class="w-full max-width">
+          <p-inputicon class="pi pi-search" />
+          <input
+            type="text"
+            class="w-full input font-medium"
+            pInputText
+            placeholder="Search"
+          />
+        </p-iconfield>
+        <lib-button
+          label="Buscar"
+          icon="pi pi-search"
+          type="rounded"
+          class="hidden sm:block"
+        >
+        </lib-button>
+        <lib-button
+          width="w-10 h-10"
+          icon="pi pi-search"
+          type="rounded"
+          class="block sm:hidden"
+        >
+        </lib-button>
+      </div>
     </div>
-
+    }
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
+    >
+      <lib-create-product-card
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-create-product-card>
+      @for (product of products; track product.id) {
+      <lib-product-card
+        [index]="$index"
+        [product]="product"
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-product-card>
+      }
+      <!-- <lib-product-card
+        [index]="1"
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-product-card>
+      <lib-product-card
+        [index]="2"
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-product-card>
+      <lib-product-card
+        [index]="3"
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-product-card>
+      <lib-product-card
+        [index]="4"
+        [width]="'w-full'"
+        [height]="'h-70'"
+      ></lib-product-card> -->
+    </div>
+  </div>
+  }@else {
+  <div class="card flex justify-cente p-10 mt-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
 </section>

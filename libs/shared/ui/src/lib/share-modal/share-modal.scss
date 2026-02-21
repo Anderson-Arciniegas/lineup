@@ -1,0 +1,76 @@
+.share-modal-content {
+  padding: 0.25rem 0;
+}
+
+.share-modal-social-row {
+  margin-bottom: 0.25rem;
+}
+
+.share-modal-social-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 4.5rem;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--p-primary-200);
+  border-radius: 12px;
+  background: var(--p-surface-0);
+  color: var(--p-primary-800);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    transform 0.15s;
+
+  &:hover {
+    background: var(--p-primary-100);
+    border-color: var(--p-primary-300);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--p-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.share-modal-social-icon {
+  font-size: 1.5rem;
+}
+
+.share-modal-social-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.share-modal-url-row {
+  flex-wrap: wrap;
+}
+
+.share-modal-url-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--p-primary-200);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: var(--p-surface-50);
+  color: var(--p-text-color);
+
+  &:focus {
+    outline: none;
+    border-color: var(--p-primary-400);
+  }
+}
+
+::ng-deep .share-modal-dialog {
+  .p-dialog-header {
+    padding-bottom: 0.5rem;
+  }
+
+  .p-dialog-content {
+    padding-top: 0;
+  }
+}

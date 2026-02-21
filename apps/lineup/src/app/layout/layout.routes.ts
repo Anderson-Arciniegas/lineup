@@ -8,6 +8,10 @@ import { AccountTypePage } from '../features/auth/views/account-type-page/accoun
 import { LoginPage } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
+import { CreateCatalogPage } from '../features/business/views/create-catalog-page/create-catalog-page';
+import { CreateProductPage } from '../features/business/views/create-product-page/create-product-page';
+import { CatalogPanelPage } from '../features/control-panel/views/catalog-panel-page/catalog-panel-page';
+import { CatalogsPage } from '../features/control-panel/views/catalogs-page/catalogs-page';
 import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
 import { EditBusinessPage } from '../features/control-panel/views/edit-business-page/edit-business-page';
 import { LocationsPage } from '../features/control-panel/views/locations-page/locations-page';
@@ -83,6 +87,36 @@ export const layoutRoutes: Routes = [
       {
         path: AppConfigService.config.routes.locations,
         component: LocationsPage,
+      },
+      {
+        path: AppConfigService.config.routes.catalogs,
+        children: [
+          {
+            path: '',
+            component: CatalogsPage,
+          },
+          {
+            path: ':catalogPath',
+            children: [
+              {
+                path: '',
+                component: CatalogPanelPage,
+              },
+              {
+                path: 'edit',
+                component: CreateCatalogPage,
+              },
+              {
+                path: 'create-product',
+                component: CreateProductPage,
+              },
+              {
+                path: ':idProduct/edit',
+                component: CreateProductPage,
+              },
+            ],
+          },
+        ],
       },
     ],
   },

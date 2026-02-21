@@ -16,6 +16,8 @@ export const appRoutes: AppRoutes = {
   dashboard: 'dashboard',
   socialMedias: 'social-medias',
   locations: 'locations',
+  createCatalog: 'create-catalog',
+  catalogs: 'catalogs',
 };
 
 export const languagesList: Language[] = [
@@ -58,4 +60,6 @@ export interface AppRoutes {
   dashboard: string;
   socialMedias: string;
   locations: string;
+  createCatalog: string;
+  catalogs: string;
 }

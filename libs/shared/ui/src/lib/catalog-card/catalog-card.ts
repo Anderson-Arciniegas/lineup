@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CatalogSchema } from '@lineup/core';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Button } from '../button/button';
@@ -21,6 +22,8 @@ export class CatalogCard implements OnInit {
   @Input() width = 'w-72';
   @Input() height = 'h-96';
   @Input() editMode: boolean;
+  @Input() catalog: CatalogSchema;
+  @Input() dashboardMode: boolean;
   image: string;
   imageLoaded: boolean;
   images: string[] = [
@@ -36,6 +39,10 @@ export class CatalogCard implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.image = this.images[Math.floor(Math.random() * this.images.length)];
+    if (this.catalog && this.catalog.image) {
+      this.image = this.catalog.image?.url;
+    } else {
+      this.image = this.images[Math.floor(Math.random() * this.images.length)];
+    }
   }
 }

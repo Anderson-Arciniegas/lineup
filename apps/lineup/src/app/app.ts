@@ -10,17 +10,26 @@ import {
 import { RouterModule } from '@angular/router';
 import { BusinessService, UserGraphqlService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { Toast } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
-  imports: [RouterModule, ButtonModule, TranslateModule, DynamicDialogModule],
+  imports: [
+    RouterModule,
+    ButtonModule,
+    TranslateModule,
+    DynamicDialogModule,
+    Toast,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  providers: [MessageService],
 })
 export class App implements OnInit, AfterViewInit, OnDestroy {
   protected title = 'lineup';

@@ -1,25 +1,35 @@
 import { Routes } from '@angular/router';
 import { AppConfigService } from '../../config/services/app-config.service';
 import { BusinessPage } from './views/business-page/business-page';
+import { CreateCatalogPage } from './views/create-catalog-page/create-catalog-page';
 import { CreateProductPage } from './views/create-product-page/create-product-page';
 
 export const businessRoutes: Routes = [
   {
     path: '',
-    component: BusinessPage,
+    children: [
+      {
+        path: '',
+        component: BusinessPage,
+      },
+      {
+        path: AppConfigService.config.routes.createCatalog,
+        component: CreateCatalogPage,
+      },
+    ],
   },
   {
-    path: 'lineup/:name',
+    path: ':catalogPath',
     data: {
       prerender: true,
       getPrerenderParams: () => [
         {
           business: 'business-1',
-          name: '1-catalog',
+          catalogPath: 'catalog-1',
         },
         {
           business: 'business-2',
-          name: '2-catalog',
+          catalogPath: 'catalog-2',
         },
       ],
     },
@@ -46,12 +56,12 @@ export const businessRoutes: Routes = [
           getPrerenderParams: () => [
             {
               business: 'business-1',
-              name: '1-catalog',
+              catalogPath: 'catalog-1',
               idProduct: '1',
             },
             {
               business: 'business-2',
-              name: '2-catalog',
+              catalogPath: 'catalog-2',
               idProduct: '2',
             },
           ],

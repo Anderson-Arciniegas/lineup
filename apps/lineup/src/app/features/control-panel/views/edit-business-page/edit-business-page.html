@@ -1,4 +1,4 @@
-<section class="profile flex flex-col gap-6 py-5 sm:py-0">
+<section class="profile flex flex-col gap-6 py-5">
   <h2 class="text-2xl font-semibold ps-4">
     {{'general.editBusiness' | translate}}
   </h2>
@@ -6,6 +6,7 @@
   <div
     class="flex flex-col-reverse lg:flex-row justify-start lg:justify-center items-center lg:items-start gap-8 p-0 pe-3 sm:p-3"
   >
+    @if (business) {
     <form
       class="flex flex-col justify-center items-center gap-8 w-3/3 md:w-2/3"
       [formGroup]="businessForm"
@@ -88,8 +89,8 @@
               formControlName="phone"
               id="phone"
               autocomplete="off"
-              mask="(58) 499 999-9999"
-              placeholder="(58) 499 999-9999"
+              mask="+58 (499) 999-9999"
+              placeholder="+58 (499) 999-9999"
             />
             <label for="phone" class="font-medium"
               >{{'general.phoneNumber' | translate}}</label
@@ -151,5 +152,10 @@
         ></lib-button>
       </div>
     </form>
+    } @else {
+    <div class="card flex justify-cente p-10">
+      <p-progress-spinner ariaLabel="loading" />
+    </div>
+    }
   </div>
 </section>

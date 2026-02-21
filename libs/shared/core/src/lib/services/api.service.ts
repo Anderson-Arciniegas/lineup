@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Params, Router, UrlSerializer, UrlTree } from '@angular/router';
-import { environments } from '@lineup/envs';
+import { environment } from '@lineup/envs';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class ApiService {
     if (noCache) {
       httpParams = httpParams.set('timestamp', Date.now().toString());
     }
-    const url = environments.apiUser;
+    const url = environment.userApi;
 
     return this._http.get(`${url}${path}`, {
       params: httpParams,
@@ -37,7 +37,7 @@ export class ApiService {
   }
 
   put<T = any>(path: string, body: object = {}): Observable<T> {
-    const url = environments.apiUser;
+    const url = environment.userApi;
     return this._http.put<T>(
       `${url}${path}`,
       JSON.stringify(body),
@@ -46,7 +46,7 @@ export class ApiService {
   }
 
   post<T = any>(path: string, body: object = {}): Observable<T> {
-    const url = environments.apiUser;
+    const url = environment.userApi;
     return this._http.post<T>(
       `${url}${path}`,
       JSON.stringify(body),
@@ -55,12 +55,12 @@ export class ApiService {
   }
 
   delete<T = any>(path: string): Observable<T> {
-    const url = environments.apiUser;
+    const url = environment.userApi;
     return this._http.delete<T>(`${url}${path}`, this._options());
   }
 
   patch<T = any>(path: string, body: object = {}): Observable<T> {
-    const url = environments.apiUser;
+    const url = environment.userApi;
     return this._http.patch<T>(
       `${url}${path}`,
       JSON.stringify(body),

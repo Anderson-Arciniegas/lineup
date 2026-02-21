@@ -6,6 +6,8 @@ import {
   AuthStore,
   BusinessSchema,
   BusinessService,
+  CatalogSchema,
+  CatalogService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -51,19 +53,24 @@ export class BusinessPage implements OnInit {
   value: '';
   business: BusinessSchema;
   path: string;
+  catalogs: CatalogSchema[] = [];
+
   private readonly _businessService = inject(BusinessService);
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
   private readonly _utils = inject(UtilsService);
   private readonly _activatedRoute = inject(ActivatedRoute);
+  private readonly _catalogService = inject(CatalogService);
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
     console.log(this.path);
+    console.log('business', this._authStore.business());
 
     this.getBusiness();
+    this.getCatalogs();
   }
 
   private getBusiness(): void {
@@ -72,6 +79,30 @@ export class BusinessPage implements OnInit {
         next: (business) => {
           console.log(business);
           this.business = business;
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
+        },
+      }),
+    );
+  }
+
+  private getCatalogs(): void {
+    this._subscription.add(
+      this._catalogService.findAllMyCatalogs({ page: 1, limit: 10 }).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.catalogs = response.items;
+          console.log(this.catalogs);
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
         },
       }),
     );

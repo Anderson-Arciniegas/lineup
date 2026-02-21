@@ -1,25 +1,14 @@
-<div class="
-        w-full 
-        flex 
-        flex-col lg:flex-row 
-        items-start justify-center
-        px-2 sm:px-15 md:px-22
-        gap-2 lg:gap-0
-    ">
-    <lib-product-description class="
-            w-full lg:w-3/5
-            flex flex-col
-            items-start justify-between
-            px-5
-            gap-2
-        ">
-    </lib-product-description>
-    <lib-product-details class="
-            w-full lg:w-2/6
-            flex flex-col
-            items-start justify-between
-            gap-4
-            py-1
-        ">
-    </lib-product-details>
+<div
+  class="w-full flex flex-col lg:flex-row items-start justify-center px-2 sm:px-15 md:px-22 gap-2 lg:gap-0"
+>
+  <lib-product-description
+    [product]="product"
+    class="w-full lg:w-3/5 flex flex-col items-start justify-between px-5 gap-2"
+  >
+  </lib-product-description>
+  <lib-product-details
+    [product]="product"
+    class="w-full lg:w-2/6 flex flex-col items-start justify-between gap-4 py-1"
+  >
+  </lib-product-details>
 </div>

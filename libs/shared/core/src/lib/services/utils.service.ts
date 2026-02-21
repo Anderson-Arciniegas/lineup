@@ -125,4 +125,9 @@ export class UtilsService {
       ),
     );
   }
+
+  formatWhatsappPhone(phone: string, text: string) {
+    const href = `https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9]/g, '')}&text=${text}`;
+    return href;
+  }
 }

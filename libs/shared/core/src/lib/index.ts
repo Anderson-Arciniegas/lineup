@@ -7,3 +7,4 @@ export * from './schemas';
 export * from './services';
 export * from './store';
 export * from './validators';
+export * from './pipes';
