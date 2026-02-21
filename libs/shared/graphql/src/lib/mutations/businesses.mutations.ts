@@ -1,6 +1,6 @@
 import { gql } from 'apollo-angular';
 import {
-  businessBasicSelection,
+  businessFullSelection,
   businessLoginResponseSelection,
 } from '../selections/businesses.selection';
 
@@ -30,7 +30,7 @@ export const CREATE_BUSINESS_MUTATION = gql`
     createBusiness(data: $data) {
       code
       status
-      business ${businessBasicSelection}
+      business ${businessFullSelection}
     }
   }
 `;
@@ -40,7 +40,7 @@ export const CREATE_BUSINESS_MUTATION = gql`
  */
 export const UPDATE_BUSINESS_MUTATION = gql`
   mutation UpdateBusiness($data: UpdateBusinessInput!) {
-    updateBusiness(data: $data) ${businessBasicSelection}    
+    updateBusiness(data: $data) ${businessFullSelection}    
   }
 `;
 

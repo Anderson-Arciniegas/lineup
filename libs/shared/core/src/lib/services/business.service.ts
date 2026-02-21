@@ -97,7 +97,7 @@ export class BusinessService {
           withCredentials: true,
         },
       })
-      .pipe(map((result) => result.data!.updateBusiness.business));
+      .pipe(map((result) => result.data.updateBusiness));
   }
 
   getBusinessByPath(path: string): Observable<any> {

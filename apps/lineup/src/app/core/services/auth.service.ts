@@ -13,7 +13,7 @@ import {
   UserSchema,
   UtilsService,
 } from '@lineup/core';
-import { environment } from 'apps/lineup/src/environment/environment';
+import { environment } from '@lineup/envs';
 
 @Injectable({
   providedIn: 'root',

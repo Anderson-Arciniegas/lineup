@@ -1,3 +1,9 @@
 export * from './businesses.selection';
+export * from './catalog.selection';
+export * from './currency.selection';
 export * from './file.selection';
+export * from './product.selection';
+export * from './social-network-business.selection';
+export * from './social-network.selection';
 export * from './users.selection';
+

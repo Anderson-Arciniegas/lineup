@@ -1,24 +1,23 @@
 <div>
-    <span class="font-medium font-medium text-left">Select {{title}}:</span>
+  <span class="font-medium font-medium text-left">{{title}}:</span>
 </div>
-<div class="
-        w-full
-        flex flex-row flex-wrap
-        items-center justify-start
-        gap-2
-    ">
-    @for (item of variations; track $index) {
-        @if (item.primary) {
-        <lib-button [label]="item.name"
-                    [width]="'w-20'"
-                    size="small"
-                    type="rounded"></lib-button>
-        } @else {
-        <lib-button [label]="item.name"
-                    [width]="'w-20'"
-                    size="small"
-                    color="secondary"
-                    type="rounded"></lib-button>
-        }
-    }
+<div class="w-full flex flex-row flex-wrap items-center justify-start gap-2">
+  @for (option of options; track $index) { @if (option === selectedOption) {
+  <lib-button
+    [label]="option"
+    [width]="'w-20'"
+    size="small"
+    type="rounded"
+    (action)="selectedOption = option"
+  ></lib-button>
+  } @else {
+  <lib-button
+    [label]="option"
+    [width]="'w-20'"
+    size="small"
+    color="secondary"
+    type="rounded"
+    (action)="selectedOption = option"
+  ></lib-button>
+  } }
 </div>

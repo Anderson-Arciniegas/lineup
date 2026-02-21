@@ -1,4 +1,6 @@
-<section class="profile flex flex-col gap-10 py-5 sm:py-0">
+<p-toast position="bottom-right" />
+
+<section class="profile flex flex-col gap-10 py-5">
   <h2 class="text-2xl font-semibold ps-4">
     {{'general.socialMedias' | translate}}
   </h2>
@@ -13,14 +15,28 @@
       role="button"
     >
       <div class="flex flex-row justify-start items-center gap-4">
-        <i [class]="socialMedia.icon" style="font-size: 2rem"></i>
+        <img
+          [src]="socialMedia.image?.url"
+          alt="Social Media Icon"
+          class="w-10 h-10 rounded-xl"
+        />
         <span class="font-medium">{{socialMedia.name}}</span>
       </div>
 
       <div class="flex flex-row justify-around items-center w-full gap-4">
-        <span>{{socialMedia.username}}</span>
-        <span>{{socialMedia.url}}</span>
+        <span>{{getSocialNetworkUrl(socialMedia.id)}}</span>
       </div>
+
+      @if(getSocialNetworkUrl(socialMedia.id)){
+      <lib-button
+        [icon]="'pi pi-trash'"
+        [type]="'rounded'"
+        [size]="'large'"
+        variant="text"
+        width="w-13"
+        (action)="$event.stopPropagation();deleteSocialNetwork(socialMedia)"
+      ></lib-button>
+      }
     </div>
     }
   </div>

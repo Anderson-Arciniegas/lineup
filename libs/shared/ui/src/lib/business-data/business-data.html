@@ -1,3 +1,4 @@
+@if (business) {
 <div
   class="flex flex-col md:flex-row items-center justify-center gap-6 py-5 w-full mw-740p"
 >
@@ -16,6 +17,7 @@
             [width]="'w-11'"
             [color]="'secondary'"
             [type]="'rounded'"
+            (action)="share()"
           ></lib-button>
         </div>
       </div>
@@ -31,10 +33,21 @@
       </div>
     </div>
 
-    <div class="flex flex-row items-center justify-center gap-4 h-10">
+    <div class="flex flex-row items-center justify-start gap-4 h-10">
       <div class="flex items-center justify-center gap-2">
         <i class="pi pi-user" style="font-size: 1rem"></i>
         <span>1000</span>
+      </div>
+
+      <div>
+        <lib-button
+          [icon]="following ? 'pi pi-heart-fill' : 'pi pi-heart'"
+          [label]="following ? ('general.following' | translate) : ('general.follow' | translate)"
+          [color]="following ? 'secondary' : 'primary'"
+          [type]="'rounded'"
+          [size]="'small'"
+          (action)="following = !following"
+        ></lib-button>
       </div>
     </div>
 
@@ -56,27 +69,55 @@
       </div>
     </div>
     <div class="flex flex-row items-center content-center justify-center gap-5">
+      @for (socialNetwork of businessSocialNetworks; track socialNetwork.id) {
       <div class="img-social-media">
-        <img
-          src="assets/images/gmail.png"
-          alt="Gmail Icon"
-          title="gmail icon"
-        />
+        <a
+          [href]="getSocialNetworkUrl(socialNetwork.socialNetwork.id)"
+          target="_blank"
+        >
+          <img
+            [src]="socialNetwork.socialNetwork.image?.url"
+            [alt]="socialNetwork.socialNetwork.name"
+            [title]="socialNetwork.socialNetwork.name"
+          />
+        </a>
       </div>
-      <div class="img-social-media">
-        <img
-          src="assets/images/instagram.png"
-          alt="Instagram Icon"
-          title="instagram icon"
-        />
-      </div>
-      <div class="img-social-media">
-        <img
-          src="assets/images/whatsapp.png"
-          alt="Whatsapp Icon"
-          title="whatsapp icon"
-        />
-      </div>
+      }
     </div>
   </div>
 </div>
+} @else {
+<div
+  class="flex flex-col md:flex-row items-center justify-center gap-6 py-5 w-full mw-740p"
+>
+  <p-skeleton width="160px" height="160px" class="img-box" />
+
+  <div
+    class="flex flex-col items-center md:items-start justify-center gap-5 sm:gap-2 w-125"
+  >
+    <p-skeleton width="100%" height="46px" borderRadius="30px" />
+    <p-skeleton width="100%" height="28px" borderRadius="16px" />
+    <p-skeleton width="100%" height="28px" borderRadius="16px" />
+    <div class="flex flex-row items-center content-center justify-center gap-5">
+      <p-skeleton
+        width="40px"
+        height="40px"
+        class="img-social-media"
+        borderRadius="16px"
+      />
+      <p-skeleton
+        width="40px"
+        height="40px"
+        class="img-social-media"
+        borderRadius="16px"
+      />
+      <p-skeleton
+        width="40px"
+        height="40px"
+        class="img-social-media"
+        borderRadius="16px"
+      />
+    </div>
+  </div>
+</div>
+}

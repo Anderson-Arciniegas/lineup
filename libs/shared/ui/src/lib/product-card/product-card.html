@@ -1,50 +1,70 @@
-<section ngSkipHydrations
-         [routerLink]="'/business-1/lineup/catalog-1/123'"
-         id="product-flip-{{index}}"
-         class="product-card shadow-lg  flex flex-col content-between justify-between cursor-pointer"
-         [ngClass]="[width, height]">
+<section
+  ngSkipHydrations
+  [routerLink]="url"
+  id="product-flip-{{index}}"
+  class="product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+  [ngClass]="[width, height]"
+>
+  <div [ngClass]="[width, height]">
+    <img
+      class="product-image"
+      (load)="imageLoaded = true"
+      [hidden]="!imageLoaded"
+      [ngClass]="[width, height]"
+      [src]="image"
+      alt=""
+    />
 
-    <div [ngClass]="[width, height]">
-        <img class="product-image"
-             (load)="imageLoaded = true"
-             [hidden]="!imageLoaded"
-             [ngClass]="[width, height]"
-             [src]="image"
-             alt="">
-
-        <div [hidden]="imageLoaded"
-             [ngClass]="[width, height]"
-             class="flex flex-row items-center justify-center">
-            <p-progress-spinner strokeWidth="8"
-                                fill="transparent"
-                                animationDuration=".5s"
-                                [style]="{ width: '50px', height: '50px' }" />
-        </div>
+    <div
+      [hidden]="imageLoaded"
+      [ngClass]="[width, height]"
+      class="flex flex-row items-center justify-center"
+    >
+      <p-progress-spinner
+        strokeWidth="8"
+        fill="transparent"
+        animationDuration=".5s"
+        [style]="{ width: '50px', height: '50px' }"
+      />
     </div>
+  </div>
 
+  @if (!dashboardMode) {
+  <div
+    [ngClass]="[width]"
+    class="button-content flex flex-row w-full justify-start"
+  >
+    <lib-button
+      class="card-like-button"
+      [icon]="'pi pi-heart'"
+      [width]="'w-11'"
+      [type]="'rounded'"
+    ></lib-button>
+  </div>
+  }
 
-    <div [ngClass]="[width]"
-         class="button-content flex flex-row w-full justify-start">
-        <lib-button class="card-like-button"
-                    [icon]="'pi pi-heart'"
-                    [width]="'w-11'"
-                    [type]="'rounded'"></lib-button>
+  <div [ngClass]="[width]" class="flip-box">
+    <div class="flip-inner h-12">
+      <div
+        class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-center items-center"
+      >
+        <h2 class="text-white text-xs text-center font-medium">
+          {{product?.title || 'Televisor 65″ Samsung Neo QLED 4K QN90B'}}
+        </h2>
+      </div>
+
+      <div
+        class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
+      >
+        <h2 class="text-white text-xs text-center font-medium">
+          {{product?.business?.name || 'TuPuntoShop'}}
+        </h2>
+        <h2 class="text-white text-base text-center font-medium">
+          {{product?.price || 200}} {{product?.currency?.code === 'USD' ? '$' :
+          product?.currency?.code === 'EUR' ? '€' : product?.currency?.code ===
+          'BS' ? 'Bs' : '$'}}
+        </h2>
+      </div>
     </div>
-
-    <div [ngClass]="[width]"
-         class="flip-box">
-        <div class="flip-inner h-12">
-            <div class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-center items-center">
-                <h2 class="text-white text-xs text-center font-medium">Televisor 65″ Samsung Neo QLED 4K QN90B</h2>
-
-            </div>
-
-            <div class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center">
-                <h2 class="text-white text-xs text-center font-medium">TuPuntoShop</h2>
-                <h2 class="text-white text-base text-center font-medium">200$</h2>
-
-            </div>
-
-        </div>
-    </div>
+  </div>
 </section>

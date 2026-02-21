@@ -13,6 +13,7 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { InMemoryCache } from '@apollo/client/core';
+import { environment } from '@lineup/envs';
 import { I18nModule } from '@lineup/i18n';
 import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/lara';
@@ -24,7 +25,6 @@ import {
   DynamicDialogConfig,
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
-import { environment } from '../environment/environment';
 import { appRoutes } from './app.routes';
 
 const MyPreset = definePreset(Lara, {
@@ -112,6 +112,7 @@ export const appConfig: ApplicationConfig = {
             uri: environment.userApi,
             withCredentials: true,
           }),
+          connectToDevTools: true,
           cache: new InMemoryCache(),
         },
         // info named client
@@ -120,6 +121,7 @@ export const appConfig: ApplicationConfig = {
             uri: environment.businessApi,
             withCredentials: true,
           }),
+          connectToDevTools: true,
           cache: new InMemoryCache(),
         },
       };

@@ -20,9 +20,9 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { map, Subscription } from 'rxjs';
-
 @Component({
   selector: 'app-edit-business-page',
   imports: [
@@ -36,6 +36,7 @@ import { map, Subscription } from 'rxjs';
     FloatLabel,
     TranslateModule,
     ReactiveFormsModule,
+    ProgressSpinnerModule,
   ],
   providers: [DialogService],
   templateUrl: './edit-business-page.html',
@@ -165,7 +166,7 @@ export class EditBusinessPage implements OnInit {
         next: (business) => {
           console.log(business);
           this.business = business;
-          this._authStore.setBusiness(business);
+          this._authStore.setBusiness(this.business);
           this.attempt = false;
         },
         error: (error) => {

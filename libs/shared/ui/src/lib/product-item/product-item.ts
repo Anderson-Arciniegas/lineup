@@ -1,0 +1,166 @@
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  inject,
+  Inject,
+  Input,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
+import { RouterLink } from '@angular/router';
+import {
+  AppConfigService,
+  CurrencySymbolPipe,
+  ProductSchema,
+  ProductService,
+  UtilsService,
+} from '@lineup/core';
+import { TranslateService } from '@ngx-translate/core';
+import { MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { MenuModule } from 'primeng/menu';
+import { PopoverModule } from 'primeng/popover';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Subscription } from 'rxjs';
+import { Button } from '../button/button';
+import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
+@Component({
+  selector: 'lib-product-item',
+  imports: [
+    CommonModule,
+    Button,
+    CardModule,
+    ButtonModule,
+    RouterLink,
+    ProgressSpinnerModule,
+    CurrencySymbolPipe,
+    PopoverModule,
+    MenuModule,
+  ],
+  templateUrl: './product-item.html',
+  styleUrl: './product-item.scss',
+})
+export class ProductItem implements OnInit {
+  @Input() index: number;
+  @Input() product: ProductSchema;
+  @Input() dashboardMode: boolean;
+  ref: DynamicDialogRef | undefined;
+  image: string;
+  imageLoaded: boolean;
+  url: string;
+  editUrl: string;
+  images: string[] = [
+    'assets/images/products/headphones-min.webp',
+    'assets/images/products/makeup.webp',
+    'assets/images/products/shoes-min.webp',
+    'assets/images/products/phone-min.webp',
+    'assets/images/products/skincare-min.webp',
+    'assets/images/products/tomato-min.webp',
+    'assets/images/products/camera.webp',
+    'assets/images/products/cooler.webp',
+    'assets/images/products/laptop.webp',
+  ];
+
+  attemptDelete: boolean;
+  items: MenuItem[] | undefined;
+
+  private _subscription = new Subscription();
+
+  private readonly _dialogService = inject(DialogService);
+  private _translate = inject(TranslateService);
+  private _utils = inject(UtilsService);
+  private readonly _productService = inject(ProductService);
+  private readonly _messageService = inject(MessageService);
+
+  constructor(
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
+  ) {}
+
+  ngOnInit(): void {
+    if (this.product) {
+      this.image = this.product.productFiles[0].file?.url;
+      this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
+      this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/edit`;
+    } else {
+      this.image = this.images[Math.floor(Math.random() * this.images.length)];
+      this.url = `/business-1/catalog-1/123`;
+      this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/catalog-1/123/edit`;
+    }
+    this.items = [
+      {
+        label: this._translate.instant('general.edit'),
+        icon: 'pi pi-pencil',
+        command: () => {
+          this._utils.navigate([this.url + '/edit']);
+        },
+      },
+      {
+        label: this._translate.instant('general.delete'),
+        icon: 'pi pi-trash',
+        command: () => {
+          this.deleteProduct();
+        },
+      },
+    ];
+  }
+
+  deleteProduct(): void {
+    this.ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      breakpoints: {
+        '640px': '450px',
+        '500px': '80vw',
+        '400px': '90vw',
+      },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToDeleteThisProduct',
+        ),
+        color: 'danger',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+
+    this.ref.onClose.subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log(confirmed);
+        const id = this.product.id;
+        if (this.attemptDelete) return;
+        this.attemptDelete = true;
+        this._subscription.add(
+          this._productService.removeProduct(id).subscribe({
+            next: (response) => {
+              console.log(response);
+              this.attemptDelete = false;
+              this._messageService.add({
+                severity: 'success',
+                summary: this._translate.instant('general.success'),
+                detail: this._translate.instant(
+                  'toast.productDeletedSuccessfully',
+                ),
+                life: 3000,
+              });
+            },
+            error: (error) => {
+              console.error(error);
+              this.attemptDelete = false;
+            },
+            complete: () => {
+              console.log('Product deleted');
+            },
+          }),
+        );
+      }
+    });
+  }
+
+  setLabel(title: string): string {
+    return title.length > 20 ? title.substring(0, 20) + '...' : title;
+  }
+}

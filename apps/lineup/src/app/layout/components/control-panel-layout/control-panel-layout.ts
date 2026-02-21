@@ -41,6 +41,11 @@ export class ControlPanelLayout implements OnInit {
         url: '/dashboard/edit',
       },
       {
+        label: 'general.catalogs',
+        icon: 'pi pi-book',
+        url: '/dashboard/catalogs',
+      },
+      {
         label: 'general.socialMedias',
         icon: 'pi pi-instagram',
         url: '/dashboard/social-medias',
@@ -55,11 +60,7 @@ export class ControlPanelLayout implements OnInit {
         icon: 'pi pi-heart',
         url: '/dashboard/followers',
       },
-      {
-        label: 'general.products',
-        icon: 'pi pi-box',
-        url: '/dashboard/products',
-      },
+
       {
         label: 'general.statistics',
         icon: 'pi pi-chart-bar',

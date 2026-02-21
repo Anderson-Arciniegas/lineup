@@ -1,0 +1,19 @@
+.product-card {
+  border-radius: var(--border-radius);
+  position: relative;
+  overflow: hidden;
+}
+
+// .info-translucid{
+//     background: rgba(52, 52, 52, 0.7);
+//     border: 1px solid var(--p-primary-800);
+//     overflow: hidden;
+
+// }
+
+.product-image {
+  border-radius: var(--border-radius);
+  object-fit: cover;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  filter: brightness(1) contrast(1.1) saturate(1.2);
+}

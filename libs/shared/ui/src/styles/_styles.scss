@@ -42,20 +42,20 @@ body {
   --p-listbox-option-selected-focus-background: var(--p-primary-600);
   --p-listbox-option-selected-background: var(--p-primary-600);
 
-    --p-button-secondary-background: #ffffff;
-    --p-button-secondary-hover-background: var(--p-primary-200);
-    --p-button-secondary-active-background: var(--p-primary-200);
-    --p-button-secondary-border-color: var(--p-primary-200);
-    --p-button-secondary-hover-border-color: var(--p-primary-200);
-    --p-button-secondary-active-border-color: var(--p-primary-200);
-    --p-button-secondary-color: var(--p-primary-800);
-    --p-button-secondary-hover-color: var(--p-primary-800);
-    --p-button-secondary-active-color: var(--p-primary-800);
-    --p-button-text-secondary-hover-background: var(--p-primary-200);
-    --p-button-text-secondary-active-background: var(--p-primary-200);
-    --p-button-text-secondary-color: var(--p-primary-800);
-    //--p-button-secondary-focus-ring-color: transparent;
-    //--p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
+  --p-button-secondary-background: #ffffff;
+  --p-button-secondary-hover-background: var(--p-primary-200);
+  --p-button-secondary-active-background: var(--p-primary-200);
+  --p-button-secondary-border-color: var(--p-primary-200);
+  --p-button-secondary-hover-border-color: var(--p-primary-200);
+  --p-button-secondary-active-border-color: var(--p-primary-200);
+  --p-button-secondary-color: var(--p-primary-800);
+  --p-button-secondary-hover-color: var(--p-primary-800);
+  --p-button-secondary-active-color: var(--p-primary-800);
+  --p-button-text-secondary-hover-background: var(--p-primary-200);
+  --p-button-text-secondary-active-background: var(--p-primary-200);
+  --p-button-text-secondary-color: var(--p-primary-800);
+  //--p-button-secondary-focus-ring-color: transparent;
+  //--p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
 }
 
 // h1{
@@ -139,6 +139,20 @@ body {
 
 .h-100vh-calc {
   height: calc(100vh - 80px);
+}
+
+.p-image-mask .p-image-original {
+  max-width: 95vw !important;
+  max-height: 95vh !important;
+  min-width: 30vw !important;
+  min-height: 30vh !important;
+  object-fit: cover;
+  border-radius: 15px !important;
+}
+
+.p-image-preview:hover > .p-image-preview-mask {
+  opacity: 0.4 !important;
+  border-radius: 15px !important;
 }
 
 @media screen and (max-width: 639px) {

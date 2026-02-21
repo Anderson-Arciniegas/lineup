@@ -2,9 +2,14 @@ export * from './api.service';
 export * from './apollo.service';
 export * from './business-api-file.service';
 export * from './business.service';
+export * from './catalog.service';
+export * from './currency.service';
 export * from './encryption.service';
 export * from './graphql.service';
+export * from './product.service';
+export * from './social-network.service';
 export * from './storage.service';
 export * from './user-api-file.service';
 export * from './user-graphql.service';
 export * from './utils.service';
+

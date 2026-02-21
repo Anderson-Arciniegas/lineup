@@ -31,6 +31,7 @@ export const businessBasicSelection = `{
   businessRoles ${businessRoleSelection}
   telephone
   image ${fileSelection}
+  path
 }`;
 
 /**

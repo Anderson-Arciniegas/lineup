@@ -1,0 +1,138 @@
+<section
+  class="catalog-page w-full px-0 py-5 sm:px-6 gap-10 flex flex-col duration-500"
+  [ngStyle]="{'background': bgColor}"
+>
+  <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+  @if (catalog) {
+
+  <div
+    class="w-full flex flex-col xl:flex-row items-center justify-between px-0 2xl:px-4 gap-6"
+  >
+    <div class="flex flex-col sm:flex-row items-center justify-start gap-5">
+      <img
+        [src]="catalog.image.url"
+        alt="Catalog Image"
+        class="w-40 h-40 catalog-image"
+      />
+      <div
+        class="flex flex-col items-center sm:items-start justify-start gap-4"
+      >
+        <div
+          class="flex flex-row items-center justify-center sm:justify-start gap-4"
+        >
+          <h3 class="text-xl sm:text-2xl 2xl:text-3xl text-center font-medium">
+            {{catalog.title || 'Zapatos'}}
+          </h3>
+
+          <div class="flex flex-row items-center justify-center gap-3">
+            <lib-button
+              [icon]="'pi pi-pencil'"
+              [width]="'w-11'"
+              [color]="'primary'"
+              [type]="'rounded'"
+              [link]="'edit'"
+            ></lib-button>
+
+            <lib-button
+              [icon]="'pi pi-trash'"
+              [width]="'w-11'"
+              [color]="'danger'"
+              [type]="'rounded'"
+              [loading]="deleteAttempt"
+              (action)="deleteCatalog()"
+            ></lib-button>
+          </div>
+        </div>
+        <div class="flex flex-row items-center justify-start gap-2">
+          <div class="flex flex-row items-center justify-start gap-2 flex-wrap">
+            @for (tag of catalog.tags; track $index) {
+            <p-chip
+              class="bg-primary-500 text-white font-medium py-1 px-4"
+              [label]="tag"
+            />
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="w-10/10 sm:w-90 md:w-100 2xl:w-120 flex flex-row items-center justify-center gap-4"
+    >
+      <div
+        class="flex items-center justify-center bg-primary-50 search gap-2 sm:gap-5 px-3 sm:px-5 w-100"
+      >
+        <p-iconfield class="w-full max-width">
+          <p-inputicon class="pi pi-search" />
+          <input
+            type="text"
+            class="w-full input font-medium"
+            pInputText
+            placeholder="Search"
+          />
+        </p-iconfield>
+
+        <lib-button
+          [width]="'w-9'"
+          icon="pi pi-search"
+          type="rounded"
+          size="small"
+          class="block"
+        >
+        </lib-button>
+      </div>
+      <lib-button
+        class="md:block hidden"
+        icon="pi pi-plus"
+        type="rounded"
+        [label]="'general.create' | translate"
+        [link]="'create-product'"
+      >
+      </lib-button>
+
+      <lib-button
+        [width]="'w-11'"
+        class="block md:hidden"
+        icon="pi pi-plus"
+        type="rounded"
+        [link]="'create-product'"
+      >
+      </lib-button>
+    </div>
+  </div>
+
+  <div class="w-full flex flex-col items-center gap-20">
+    <!-- <div class="flex flex-row items-center justify-center w-10/10">
+      <lib-catalog-carousel class="w-10/10" (setColor)="setColor($event)">
+      </lib-catalog-carousel>
+    </div> -->
+    <!-- <lib-create-product-card
+      [width]="'w-full'"
+      [height]="'h-60'"
+    ></lib-create-product-card> -->
+    <div class="flex flex-col gap-6 p-4 w-10/10 px-0 lg:px-4 max-w-screen-2xl">
+      @for (product of products; track $index) {
+      <lib-product-item
+        [index]="1"
+        [dashboardMode]="true"
+        [product]="product"
+      ></lib-product-item>
+      }
+      <lib-product-item [index]="1" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="2" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="3" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="4" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="1" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="2" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="3" [dashboardMode]="true"></lib-product-item>
+      <lib-product-item [index]="4" [dashboardMode]="true"></lib-product-item>
+    </div>
+  </div>
+  }@else {
+  <div class="item flex justify-center p-10 mt-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
+</section>
