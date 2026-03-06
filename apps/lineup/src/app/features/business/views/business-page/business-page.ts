@@ -52,6 +52,7 @@ export class BusinessPage implements OnInit {
   ];
   value: '';
   business: BusinessSchema;
+  myBusiness = false;
   path: string;
   catalogs: CatalogSchema[] = [];
 
@@ -79,6 +80,8 @@ export class BusinessPage implements OnInit {
         next: (business) => {
           console.log(business);
           this.business = business;
+          this.myBusiness =
+            Number(this._authStore.business().id) === Number(this.business.id);
         },
         error: (error) => {
           console.error(error);

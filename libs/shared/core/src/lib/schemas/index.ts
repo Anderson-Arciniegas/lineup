@@ -1,8 +1,9 @@
+export * from './business-follower.schema';
 export * from './business-role.schema';
 export * from './business.schema';
 export * from './catalog.schema';
-export * from './currency.schema';
 export * from './coordinate.schema';
+export * from './currency.schema';
 export * from './file.schema';
 export * from './location.schema';
 export * from './permission.schema';
@@ -13,4 +14,3 @@ export * from './social-network-business.schema';
 export * from './social-network.schema';
 export * from './user-role.schema';
 export * from './user.schema';
-

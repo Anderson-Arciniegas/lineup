@@ -10,7 +10,6 @@ import { Button, CatalogCard, CreateCatalogCard } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { ToastModule } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,14 +18,12 @@ import { Subscription } from 'rxjs';
     CommonModule,
     Button,
     TranslateModule,
-    ToastModule,
     CatalogCard,
     CreateCatalogCard,
     ProgressSpinner,
   ],
   templateUrl: './catalogs-page.html',
   styleUrl: './catalogs-page.scss',
-  providers: [MessageService],
 })
 export class CatalogsPage implements OnInit {
   catalogs: CatalogSchema[] = [];

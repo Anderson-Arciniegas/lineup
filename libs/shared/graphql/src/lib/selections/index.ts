@@ -1,5 +1,6 @@
 export * from './businesses.selection';
 export * from './catalog.selection';
+export * from './location.selection';
 export * from './currency.selection';
 export * from './file.selection';
 export * from './product.selection';

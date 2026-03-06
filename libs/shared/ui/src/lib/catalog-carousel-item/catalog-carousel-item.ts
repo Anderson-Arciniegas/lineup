@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
-import { CurrencySymbolPipe, ProductSchema } from '@lineup/core';
+import { RouterModule } from '@angular/router';
+import { CurrencySymbolPipe, ProductSchema, UtilsService } from '@lineup/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Skeleton } from 'primeng/skeleton';
@@ -9,7 +10,7 @@ import { ShareModal } from '../share-modal/share-modal';
 
 @Component({
   selector: 'lib-catalog-carousel-item',
-  imports: [CommonModule, Button, Skeleton, CurrencySymbolPipe],
+  imports: [CommonModule, Button, Skeleton, CurrencySymbolPipe, RouterModule],
   templateUrl: './catalog-carousel-item.html',
   styleUrl: './catalog-carousel-item.scss',
 })
@@ -19,6 +20,7 @@ export class CatalogCarouselItem {
   ref: DynamicDialogRef | undefined;
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
+  private readonly _utilsService = inject(UtilsService);
 
   share() {
     this.ref = this._dialogService.open(ShareModal, {

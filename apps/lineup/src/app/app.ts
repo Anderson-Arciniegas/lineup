@@ -8,9 +8,8 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BusinessService, UserGraphqlService } from '@lineup/core';
+import { BusinessService, UserService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { Toast } from 'primeng/toast';
@@ -29,14 +28,13 @@ import { AuthService } from './core/services/auth.service';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  providers: [MessageService],
 })
 export class App implements OnInit, AfterViewInit, OnDestroy {
   protected title = 'lineup';
 
   protected translate = inject(TranslateService);
   private platformId: object = inject(PLATFORM_ID);
-  private _user = inject(UserGraphqlService);
+  private _user = inject(UserService);
   private _auth = inject(AuthService);
   private _business = inject(BusinessService);
   private _subscription: Subscription = new Subscription();

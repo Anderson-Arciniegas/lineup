@@ -12,6 +12,7 @@ export const catalogSelection = `{
   image ${fileSelection}
   modificationBusiness ${businessBasicSelection}
   path
+  productsCount
   products {
     id
     title

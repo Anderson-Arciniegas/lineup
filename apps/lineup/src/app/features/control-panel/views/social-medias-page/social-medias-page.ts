@@ -10,14 +10,19 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SocialNetworkSchema } from 'libs/shared/core/src/lib/schemas/social-network.schema';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ToastModule } from 'primeng/toast';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-social-medias-page',
-  imports: [CommonModule, Button, TranslateModule, ToastModule],
+  imports: [
+    CommonModule,
+    Button,
+    TranslateModule,
+    ProgressSpinner,
+  ],
   templateUrl: './social-medias-page.html',
   styleUrl: './social-medias-page.scss',
-  providers: [MessageService],
 })
 export class SocialMediasPage implements OnInit {
   socialMedias: SocialNetworkSchema[] = [];

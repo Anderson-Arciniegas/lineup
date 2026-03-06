@@ -11,6 +11,8 @@ export const en = {
     logout: 'Logout',
     usernameOrEmail: 'Username or email',
     password: 'Password',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
     confirmPassword: 'Confirm password',
     howDoYouWantToBePartOfLineUp: 'How do you want to be part of LineUp?',
     user: 'User',
@@ -112,6 +114,19 @@ export const en = {
     contactUs: 'Contact us',
     follow: 'Follow',
     following: 'Following',
+    visits: 'Visits',
+    welcomeToYourDashboard:
+      'Welcome to your dashboard here you can see a summary of the activity of your business.',
+    popularProducts: 'Popular products',
+    sales: 'Sales',
+    addLocation: 'Add location',
+    editLocation: 'Edit location',
+    location: 'Location',
+    close: 'Close',
+    coordinates: 'Coordinates',
+    noLocations: 'No locations to show.',
+    locationsOf: 'Locations of',
+    locationOf: 'Location of',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',
@@ -160,6 +175,9 @@ export const en = {
   validation: {
     urlRequired: 'The URL is required (eg: https://instagram.com/username)',
     invalidUrl: 'The URL is not valid (eg: https://instagram.com/username)',
+    fieldRequired: 'This field is required.',
+    passwordMismatch: 'Passwords do not match.',
+    passwordUpdateFailed: 'Could not update password. Please try again.',
   },
   toast: {
     socialNetworkBusinessUpdated: 'Social network business updated',
@@ -173,5 +191,26 @@ export const en = {
       'Are you sure you want to delete this catalog?',
     areYouSureYouWantToDeleteThisProduct:
       'Are you sure you want to delete this product?',
+    doYouWantToDeleteThisLocation:
+      'Are you sure you want to delete this location?',
+  },
+  locationModal: {
+    instruction:
+      'Click on the map or use your current location to select an address.',
+    nameLabel: 'Name',
+    namePlaceholder: 'Location name',
+    nameRequired: 'Location name is required.',
+    nameMaxLength: 'Name cannot exceed 20 characters.',
+    addressPlaceholder: 'Selected address will appear here',
+    searchPlace: 'Search for a place',
+    searchPlaceholder: 'Type an address or place name...',
+    loadingMap: 'Loading map...',
+    useCurrentLocation: 'Use my current location',
+    mapLoadError: 'Could not load the map. Please try again.',
+    openInGoogleMaps: 'Open in Google Maps',
+    geolocationNotSupported: 'Geolocation is not supported by your browser.',
+    permissionDenied: 'Location permission was denied.',
+    positionUnavailable: 'Location is unavailable.',
+    geolocationError: 'An error occurred while getting your location.',
   },
 };

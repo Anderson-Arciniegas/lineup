@@ -1,0 +1,135 @@
+<div class="add-location-modal flex flex-col gap-4">
+  <p class="text-base font-medium">
+    {{ 'locationModal.instruction' | translate }}
+  </p>
+
+  <div class="flex flex-col gap-2 w-full">
+    <label for="location-name" class="font-semibold">
+      {{ 'locationModal.nameLabel' | translate }}
+    </label>
+    <input
+      pInputText
+      id="location-name"
+      type="text"
+      class="w-full"
+      maxlength="25"
+      [placeholder]="'locationModal.namePlaceholder' | translate"
+      [value]="locationName()"
+      (input)="onNameInput($any($event.target).value)"
+      (blur)="nameTouched.set(true)"
+      [class.ng-invalid]="
+        (nameTouched() && !locationNameTrimmed()) ||
+        (nameTouched() && locationNameExceedsMax())
+      "
+      [class.ng-dirty]="nameTouched()"
+    />
+    @if (nameTouched() && !locationNameTrimmed()) {
+    <small class="text-red-600">
+      {{ 'locationModal.nameRequired' | translate }}
+    </small>
+    } @if (nameTouched() && locationNameTrimmed() && locationNameExceedsMax()) {
+    <small class="text-red-600">
+      {{ 'locationModal.nameMaxLength' | translate }}
+    </small>
+    }
+  </div>
+
+  <div class="search-wrapper relative w-full flex flex-col gap-2">
+    <label for="place-search" class="font-semibold">
+      {{ 'general.address' | translate }}
+    </label>
+    <p-iconfield class="w-10/10">
+      <p-inputicon class="pi pi-map-marker" />
+      <input
+        pInputText
+        id="place-search"
+        type="text"
+        class="w-10/10"
+        [placeholder]="'locationModal.searchPlaceholder' | translate"
+        [value]="searchQuery()"
+        (input)="onSearchInput($any($event.target).value)"
+        (keydown.enter)="onSearchSubmit($any($event.target).value)"
+        (focus)="cancelClosePredictions()"
+        (blur)="scheduleClosePredictions()"
+        autocomplete="off"
+      />
+    </p-iconfield>
+    <!-- <p-floatlabel class="w-10/10">
+      <label for="place-search" class="font-semibold block mb-2">
+        {{ 'locationModal.searchPlace' | translate }}
+      </label>
+    </p-floatlabel> -->
+
+    @if (placePredictions().length > 0) {
+    <ul
+      class="predictions-list"
+      role="listbox"
+      (mousedown)="$event.preventDefault()"
+    >
+      @for (pred of placePredictions(); track pred.place_id) {
+      <li
+        class="predictions-list__item"
+        tabindex="0"
+        (keyup.enter)="onSelectPlace(pred)"
+        (click)="onSelectPlace(pred)"
+      >
+        {{ pred.description }}
+      </li>
+      }
+    </ul>
+    }
+  </div>
+
+  <div
+    class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full"
+  >
+    <lib-button
+      class="w-full"
+      [label]="'locationModal.useCurrentLocation' | translate"
+      [icon]="'pi pi-map-marker'"
+      [width]="'w-full'"
+      [loading]="isLoadingGeolocation()"
+      (click)="useCurrentLocation()"
+    ></lib-button>
+    @if (geolocationError()) {
+    <small class="text-red-600 flex-1 sm:flex-none">
+      {{ geolocationError() | translate }}
+    </small>
+    }
+  </div>
+
+  <div
+    class="map-wrapper relative rounded-xl overflow-hidden border border-primary-300"
+  >
+    @if (isMapLoading()) {
+    <div
+      class="map-skeleton absolute inset-0 flex items-center justify-center bg-primary-100"
+    >
+      <span class="text-primary-700"
+        >{{ 'locationModal.loadingMap' | translate }}</span
+      >
+    </div>
+    }
+    <div
+      #mapContainer
+      class="map-container w-full h-80 min-h-80"
+      [class.invisible]="!isMapReady()"
+    ></div>
+  </div>
+
+  <div class="flex flex-row justify-center gap-5 pt-2">
+    <lib-button
+      [label]="'general.cancel' | translate"
+      [width]="'w-35'"
+      variant="outlined"
+      (click)="cancel()"
+    ></lib-button>
+    <lib-button
+      [label]="'general.save' | translate"
+      [width]="'w-35'"
+      [disabled]="!selectedLocation() || !locationNameValid()"
+      [loading]="attempt"
+      (click)="confirm()"
+    ></lib-button>
+  </div>
+</div>

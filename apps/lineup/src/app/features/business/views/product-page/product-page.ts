@@ -12,7 +12,6 @@ import {
 } from '@lineup/core';
 import { ProductBreadcrumb, ProductCard, ProductInfo } from '@lineup/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { Carousel } from 'primeng/carousel';
 import { ImageModule } from 'primeng/image';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -21,7 +20,6 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-page',
-  providers: [MessageService],
   imports: [
     CommonModule,
     SkeletonModule,

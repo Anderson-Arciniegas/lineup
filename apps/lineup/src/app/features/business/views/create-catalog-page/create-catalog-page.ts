@@ -35,7 +35,6 @@ import { PanelModule } from 'primeng/panel';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { Toast } from 'primeng/toast';
 import { map, Subscription } from 'rxjs';
 
 @Component({
@@ -56,11 +55,9 @@ import { map, Subscription } from 'rxjs';
     MenuModule,
     ChipModule,
     ReactiveFormsModule,
-    Toast,
   ],
   templateUrl: './create-catalog-page.html',
   styleUrl: './create-catalog-page.scss',
-  providers: [MessageService],
 })
 export class CreateCatalogPage implements OnInit {
   business: BusinessSchema;
@@ -252,6 +249,7 @@ export class CreateCatalogPage implements OnInit {
 
     this.ref.onClose.subscribe((image: string) => {
       if (image) {
+        console.log(image);
         this.uploadFile(image);
       }
     });
@@ -271,6 +269,7 @@ export class CreateCatalogPage implements OnInit {
     fileUpload.append('directory', AllowedFilesDirectory.Public);
     fileUpload.append('file', image, `image.${extension}`);
 
+    console.log(fileUpload);
     this._subscription.add(
       this._apiFileService
         .post('files/upload', fileUpload)

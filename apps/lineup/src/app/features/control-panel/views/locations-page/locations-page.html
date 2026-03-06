@@ -1,1 +1,69 @@
-<p>locations-page works!</p>
+<section class="profile flex flex-col gap-10 py-5">
+  <div
+    class="flex flex-col justify-start items-start sm:flex-row sm:justify-between sm:items-center gap-4 px-4"
+  >
+    <h2 class="text-2xl font-semibold self-start">
+      {{'general.locations' | translate}}
+    </h2>
+    <lib-button
+      class="self-end"
+      [type]="'rounded'"
+      [icon]="'pi pi-plus'"
+      [label]="'general.addLocation' | translate"
+      (action)="addLocationModal()"
+    ></lib-button>
+  </div>
+
+  <div class="flex flex-col gap-4 md:ps-10 w-11/12">
+    @for (location of locations; track location.id) {
+    <div
+      class="location-item flex flex-row justify-between items-center gap-8 p-3 md:p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300"
+      (click)="openLocationModal(location)"
+      (keyup.enter)="openLocationModal(location)"
+      tabindex="0"
+      role="button"
+    >
+      <div class="flex flex-row justify-start items-center gap-5">
+        <span class="font-semibold">#{{location.id}}</span>
+        <span class="font-medium text-sm md:text-base"
+          >{{location.name ?? ''}}</span
+        >
+        <span class="font-medium text-sm md:text-base hidden md:flex"
+          >{{getAddress(location.address)}}</span
+        >
+      </div>
+
+      <div
+        class="flex flex-row justify-start items-center gap-2 md:gap-4 hidden md:flex"
+      >
+        <lib-button
+          [icon]="'pi pi-pencil'"
+          [type]="'rounded'"
+          [size]="'large'"
+          variant="text"
+          width="w-13"
+          (action)="$event.stopPropagation();addLocationModal(location)"
+        ></lib-button>
+
+        <lib-button
+          [icon]="'pi pi-trash'"
+          [type]="'rounded'"
+          [size]="'large'"
+          variant="text"
+          width="w-13"
+          (action)="$event.stopPropagation();deleteLocation(location)"
+        ></lib-button>
+      </div>
+    </div>
+    }
+  </div>
+
+  @if(attempt) {
+  <div class="flex justify-center p-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
+</section>

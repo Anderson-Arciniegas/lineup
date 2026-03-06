@@ -5,7 +5,9 @@
   <div
     class="flex flex-col items-start justify-start gap-2 sm:gap-4 w-10/10 sm:w-8/10 lg:w-4/10 h-max max-w-3xl"
   >
-    <h4 class="font-bold text-xl md:text-4xl">{{ product.title}}</h4>
+    <a [routerLink]="[product.id]"
+      ><h4 class="font-bold text-xl md:text-4xl">{{ product.title}}</h4></a
+    >
     <p class="text-sm md:text-lg text-gray-600">{{ product.subtitle }}</p>
     <div class="flex flex-row justify-start items-center gap-10">
       <span class="font-bold text-xl md:text-4xl"
@@ -33,11 +35,13 @@
     </div>
   </div>
 
-  <img
-    [id]="product.id"
-    class="carousel-image max-h-64 md:max-h-80 lg:max-h-screen w-10/10 sm:w-8/10 lg:w-4/10"
-    [src]="product.productFiles[0].file?.url || 'assets/images/products/headphones-min.webp'"
-    alt=""
-  />
+  <a [routerLink]="[product.id]">
+    <img
+      [id]="product.id"
+      class="carousel-image max-h-64 md:max-h-80 lg:max-h-screen w-10/10 sm:w-8/10 lg:w-4/10"
+      [src]="product.productFiles[0].file?.url || 'assets/images/products/headphones-min.webp'"
+      alt=""
+    />
+  </a>
 </section>
 }

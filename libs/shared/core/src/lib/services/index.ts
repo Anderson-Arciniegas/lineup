@@ -6,10 +6,10 @@ export * from './catalog.service';
 export * from './currency.service';
 export * from './encryption.service';
 export * from './graphql.service';
+export * from './locations.service';
 export * from './product.service';
 export * from './social-network.service';
 export * from './storage.service';
 export * from './user-api-file.service';
-export * from './user-graphql.service';
+export * from './user.service';
 export * from './utils.service';
-

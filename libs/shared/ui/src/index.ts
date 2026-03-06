@@ -1,4 +1,7 @@
 export * from './lib/add-social-media-modal/add-social-media-modal';
+export * from './lib/add-location-modal/add-location-modal';
+export * from './lib/business-locations-modal/business-locations-modal';
+export * from './lib/location-modal/location-modal';
 export * from './lib/business-card/business-card';
 export * from './lib/business-data/business-data';
 export * from './lib/button/button';
@@ -28,3 +31,4 @@ export * from './lib/search-filters/search-filters';
 export * from './lib/share-modal/share-modal';
 export * from './lib/sidebar/sidebar';
 export * from './lib/ui/ui';
+export * from './lib/update-password-modal/update-password-modal';
