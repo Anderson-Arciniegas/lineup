@@ -3,6 +3,7 @@ import {
   BUSINESS_LOGIN_MUTATION,
   BUSINESS_LOGOUT_MUTATION,
   BUSINESS_REFRESH_TOKEN_MUTATION,
+  CHANGE_BUSINESS_PASSWORD_MUTATION,
   CREATE_BUSINESS_MUTATION,
   GET_BUSINESS_BY_PATH,
   GET_MY_BUSINESS_QUERY,
@@ -16,6 +17,7 @@ import {
   CreateBusinessResponse,
   UpdateBusinessInput,
 } from '../models/business.model';
+import { ChangePasswordInput } from '../models/user.model';
 import { BusinessSchema } from '../schemas';
 
 @Injectable({
@@ -112,6 +114,19 @@ export class BusinessService {
         },
       })
       .pipe(map((result) => result.data.findBusinessByPath));
+  }
+
+  changeBusinessPassword(data: ChangePasswordInput): Observable<boolean> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ changeBusinessPassword: boolean }>({
+        mutation: CHANGE_BUSINESS_PASSWORD_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.changeBusinessPassword));
   }
 
   //   getUser(id: number): Observable<any> {

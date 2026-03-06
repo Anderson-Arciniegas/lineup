@@ -49,7 +49,6 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { ToastModule } from 'primeng/toast';
 import { map, Subscription } from 'rxjs';
 
 @Component({
@@ -73,9 +72,7 @@ import { map, Subscription } from 'rxjs';
     DraggableImageList,
     ReactiveFormsModule,
     ProgressSpinner,
-    ToastModule,
   ],
-  providers: [DialogService, MessageService],
   templateUrl: './create-product-page.html',
   styleUrl: './create-product-page.scss',
 })
@@ -482,8 +479,8 @@ export class CreateProductPage implements OnInit {
         title: raw.title,
         subtitle: raw.subtitle,
         description: raw.description,
-        price: Number(raw.price),
-        idCurrency: Number(raw.idCurrency),
+        price: raw.idCurrency !== 0 ? Number(raw.price) : null,
+        idCurrency: raw.idCurrency !== 0 ? Number(raw.idCurrency) : null,
         idCatalog: this.catalog.id,
         images,
         tags: [],
@@ -533,8 +530,8 @@ export class CreateProductPage implements OnInit {
         title: raw.title,
         subtitle: raw.subtitle,
         description: raw.description,
-        price: Number(raw.price),
-        idCurrency: Number(raw.idCurrency),
+        price: raw.idCurrency !== 0 ? Number(raw.price) : null,
+        idCurrency: raw.idCurrency !== 0 ? Number(raw.idCurrency) : null,
         idCatalog: this.catalog.id,
         images,
         tags: [],

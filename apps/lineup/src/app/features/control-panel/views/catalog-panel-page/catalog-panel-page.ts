@@ -47,7 +47,6 @@ import { Subscription } from 'rxjs';
   ],
   templateUrl: './catalog-panel-page.html',
   styleUrl: './catalog-panel-page.scss',
-  providers: [MessageService],
 })
 export class CatalogPanelPage implements OnInit {
   business: BusinessSchema;

@@ -97,6 +97,25 @@
             >
           </p-floatlabel>
         </div>
+
+        <div
+          class="flex flex-col sm:flex-row gap-8 justify-between items-start"
+        >
+          <p-floatlabel class="w-10/10">
+            <textarea
+              pInputTextarea
+              class="w-10/10 font-medium"
+              formControlName="description"
+              id="description"
+              rows="4"
+              [autoResize]="true"
+              [attr.maxlength]="maxDescriptionLength"
+            ></textarea>
+            <label for="description" class="font-medium"
+              >{{'general.description' | translate}}</label
+            >
+          </p-floatlabel>
+        </div>
       </div>
       <!-- <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
         <div

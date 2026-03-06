@@ -53,3 +53,12 @@ export const BUSINESS_LOGOUT_MUTATION = gql`
     }
   }
 `;
+
+/**
+ * Mutation para cambiar la contraseña del business
+ */
+export const CHANGE_BUSINESS_PASSWORD_MUTATION = gql`
+  mutation ChangeBusinessPassword($data: ChangePasswordInput!) {
+    changeBusinessPassword(data: $data)
+  }
+`;

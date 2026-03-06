@@ -1,6 +1,6 @@
-.mw-740p {
-  max-width: 740px;
-}
+// .mw-740p {
+//   max-width: 740px;
+// }
 
 .img-box {
   position: relative;
@@ -8,6 +8,7 @@
   border-radius: 25px;
   img {
     height: 100%;
+    width: 160px;
     border: 10px solid var(--p-primary-50);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border-radius: 25px;
@@ -16,8 +17,8 @@
 }
 
 .img-social-media {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   object-fit: cover;
   img {
     width: 100%;
@@ -36,4 +37,8 @@
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.business-description {
+  white-space: pre-line;
 }

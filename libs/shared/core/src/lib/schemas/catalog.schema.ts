@@ -13,4 +13,5 @@ export interface CatalogSchema {
   tags?: string[];
   title: string;
   path?: string;
+  productsCount?: number;
 }

@@ -99,6 +99,11 @@ body {
   margin: auto;
 }
 
+/* Toast por encima de modales y overlays (DynamicDialog suele usar ~1100) */
+.p-toast {
+  z-index: 9999 !important;
+}
+
 .p-dialog-header-actions {
   .p-button {
     width: 40px !important;
@@ -150,9 +155,14 @@ body {
   border-radius: 15px !important;
 }
 
+.p-card-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
 .p-image-preview:hover > .p-image-preview-mask {
   opacity: 0.4 !important;
-  border-radius: 15px !important;
+  border-radius: 50px !important;
 }
 
 @media screen and (max-width: 639px) {

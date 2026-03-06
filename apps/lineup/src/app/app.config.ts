@@ -19,6 +19,7 @@ import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/lara';
 import { provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import {
   DialogService,
@@ -90,6 +91,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    MessageService,
     DialogService,
     {
       provide: DynamicDialogConfig,

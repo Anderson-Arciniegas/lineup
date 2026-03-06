@@ -44,3 +44,21 @@ export const USER_LOGOUT_MUTATION = gql`
     }
   }
 `;
+
+/**
+ * Mutation para actualizar un usuario
+ */
+export const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUser($data: UpdateUserInput!) {
+    updateUser(data: $data) ${userBasicSelection}
+  }
+`;
+
+/**
+ * Mutation para cambiar la contraseña del usuario
+ */
+export const CHANGE_PASSWORD_MUTATION = gql`
+  mutation ChangePassword($data: ChangePasswordInput!) {
+    changePassword(data: $data)
+  }
+`;

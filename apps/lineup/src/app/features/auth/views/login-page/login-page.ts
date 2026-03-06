@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BusinessService, UserGraphqlService } from '@lineup/core';
+import { BusinessService, UserService } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -34,7 +34,7 @@ export class LoginPage implements OnInit, OnDestroy {
   attempt = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
-  private _users = inject(UserGraphqlService);
+  private _users = inject(UserService);
   private _business = inject(BusinessService);
 
   private _subscription: Subscription = new Subscription();

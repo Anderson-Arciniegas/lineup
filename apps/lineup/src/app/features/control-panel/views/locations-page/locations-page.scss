@@ -1,0 +1,19 @@
+::ng-deep {
+  .profile {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  .location-item {
+    border: 1px solid var(--p-primary-300);
+    border-radius: 15px;
+    min-height: 80px;
+  }
+
+  @media screen and (max-width: 639px) {
+    .profile {
+      height: calc(100vh - 88px);
+      overflow-y: auto;
+    }
+  }
+}

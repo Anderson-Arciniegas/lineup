@@ -1,22 +1,29 @@
 import { inject, Injectable } from '@angular/core';
 import {
+  CHANGE_PASSWORD_MUTATION,
   CREATE_USER_MUTATION,
   GET_ME_QUERY,
   GET_USER_BY_ID_QUERY,
   LOGIN_MUTATION,
   REFRESH_TOKEN_MUTATION,
+  UPDATE_USER_MUTATION,
   USER_LOGOUT_MUTATION,
 } from '@libs/graphql';
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CreateUserInput, CreateUserResponse } from '../models';
+import {
+  ChangePasswordInput,
+  CreateUserInput,
+  CreateUserResponse,
+  UpdateUserInput,
+} from '../models';
 import { UserSchema } from '../schemas';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserGraphqlService {
+export class UserService {
   private apollo = inject(Apollo);
 
   login(email: string, password: string): Observable<any> {
@@ -96,6 +103,29 @@ export class UserGraphqlService {
       .pipe(map((result) => result.data!.refreshToken.user));
   }
 
-  // Si usas una API secundaria, especifica el cliente:
-  // this.apollo.use('secondaryAPI').mutate(...)
+  updateUser(data: UpdateUserInput): Observable<UserSchema> {
+    return this.apollo
+      .use('userAPI')
+      .mutate<{ updateUser: UserSchema }>({
+        mutation: UPDATE_USER_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.updateUser));
+  }
+
+  changePassword(data: ChangePasswordInput): Observable<boolean> {
+    return this.apollo
+      .use('userAPI')
+      .mutate<{ changePassword: boolean }>({
+        mutation: CHANGE_PASSWORD_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.changePassword));
+  }
 }

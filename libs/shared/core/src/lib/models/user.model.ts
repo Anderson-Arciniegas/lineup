@@ -19,3 +19,16 @@ export interface CreateUserResponse {
     user: UserSchema;
   };
 }
+
+export interface UpdateUserInput {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  imgCode?: string;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}

@@ -11,7 +11,7 @@ import {
   CreateUserInput,
   PasswordValidation,
   RolesCodesEnum,
-  UserGraphqlService,
+  UserService,
 } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
@@ -39,7 +39,7 @@ export class RegisterUserPage implements OnInit, OnDestroy {
   registerUserForm!: FormGroup;
   attempt = false;
   private readonly _fb = inject(FormBuilder);
-  private _users = inject(UserGraphqlService);
+  private _users = inject(UserService);
   private readonly _authService = inject(AuthService);
 
   private _subscription: Subscription = new Subscription();

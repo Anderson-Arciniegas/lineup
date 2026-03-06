@@ -11,6 +11,8 @@ export const es = {
     logout: 'Cerrar sesión',
     usernameOrEmail: 'Usuario o correo',
     password: 'Contraseña',
+    currentPassword: 'Contraseña actual',
+    newPassword: 'Nueva contraseña',
     confirmPassword: 'Confirmar contraseña',
     howDoYouWantToBePartOfLineUp: '¿Cómo deseas formar parte de LineUp?',
     user: 'Usuario',
@@ -115,6 +117,19 @@ export const es = {
     contactUs: 'Contactanos',
     follow: 'Seguir',
     following: 'Siguiendo',
+    visits: 'Visitas',
+    welcomeToYourDashboard:
+      'Bienvenido a tu panel de control aqui puedes ver un resumen de la actividad de tu negocio.',
+    popularProducts: 'Productos populares',
+    sales: 'Ventas',
+    addLocation: 'Agregar ubicación',
+    editLocation: 'Editar ubicación',
+    location: 'Ubicación',
+    close: 'Cerrar',
+    coordinates: 'Coordenadas',
+    noLocations: 'No hay ubicaciones para mostrar.',
+    locationsOf: 'Ubicaciones de',
+    locationOf: 'Ubicación de',
   },
   landingPage: {
     yourSpaceToBuildA: 'Tu espacio para construir un',
@@ -164,11 +179,16 @@ export const es = {
   validation: {
     urlRequired: 'La URL es requerida (ej: https://instagram.com/username)',
     invalidUrl: 'La URL no es válida (ej: https://instagram.com/username)',
+    fieldRequired: 'Este campo es obligatorio.',
+    passwordMismatch: 'Las contraseñas no coinciden.',
+    passwordUpdateFailed:
+      'No se pudo actualizar la contraseña. Intenta de nuevo.',
   },
   toast: {
     socialNetworkBusinessUpdated: 'Red social actualizada',
     socialNetworkBusinessCreated: 'Red social creada',
     socialNetworkBusinessDeleted: 'Red social eliminada',
+    passwordUpdated: 'Contraseña actualizada correctamente',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork: '¿Deseas eliminar esta red social?',
@@ -176,5 +196,26 @@ export const es = {
       '¿Estás seguro de querer eliminar este catálogo?',
     areYouSureYouWantToDeleteThisProduct:
       '¿Estás seguro de querer eliminar este producto?',
+    doYouWantToDeleteThisLocation:
+      '¿Estás seguro de querer eliminar esta ubicación?',
+  },
+  locationModal: {
+    instruction:
+      'Haz clic en el mapa o usa tu ubicación actual para seleccionar una dirección.',
+    nameLabel: 'Nombre',
+    namePlaceholder: 'Nombre de la ubicación',
+    nameRequired: 'El nombre de la ubicación es obligatorio.',
+    nameMaxLength: 'El nombre no puede superar los 20 caracteres.',
+    addressPlaceholder: 'La dirección seleccionada aparecerá aquí',
+    searchPlace: 'Buscar un lugar',
+    searchPlaceholder: 'Escribe una dirección o nombre de lugar...',
+    loadingMap: 'Cargando mapa...',
+    useCurrentLocation: 'Usar mi ubicación actual',
+    mapLoadError: 'No se pudo cargar el mapa. Intenta de nuevo.',
+    openInGoogleMaps: 'Abrir en Google Maps',
+    geolocationNotSupported: 'Tu navegador no admite geolocalización.',
+    permissionDenied: 'Se denegó el permiso de ubicación.',
+    positionUnavailable: 'La ubicación no está disponible.',
+    geolocationError: 'Ocurrió un error al obtener tu ubicación.',
   },
 };

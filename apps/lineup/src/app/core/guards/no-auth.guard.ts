@@ -5,32 +5,46 @@ import {
   CanActivateFn,
   UrlTree,
 } from '@angular/router';
-import { UtilsService } from '@lineup/core';
+import { AppConfigService, UtilsService } from '@lineup/core';
 import { AuthService } from '../services';
 
+/** Si ya hay sesión (user o business), redirige al área correspondiente. */
 export const NoAuthGuard: CanActivateFn = async (
-  route: ActivatedRouteSnapshot,
+  _route: ActivatedRouteSnapshot,
 ): Promise<boolean | UrlTree> => {
-  const _utils = inject(UtilsService);
-  const _auth = inject(AuthService);
-  console.log('no auth guard');
-  if (_auth.isLoggedIn()) {
-    _utils.navigate(['/']);
-    return false;
+  const utils = inject(UtilsService);
+  const auth = inject(AuthService);
+
+  if (!auth.isLoggedIn()) {
+    return true;
   }
-  return true;
+  const sessionType = auth.getSessionType();
+  if (sessionType === 'business') {
+    utils.navigate([AppConfigService.config.routes.dashboard]);
+  } else if (sessionType === 'user') {
+    utils.navigate([AppConfigService.config.routes.profile]);
+  } else {
+    utils.navigate(['/']);
+  }
+  return false;
 };
 
 export const NoAuthGuardChild: CanActivateChildFn = async (
-  route: ActivatedRouteSnapshot,
+  _route: ActivatedRouteSnapshot,
 ): Promise<boolean | UrlTree> => {
-  console.log('no auth guard child');
-  const _utils = inject(UtilsService);
-  const _auth = inject(AuthService);
+  const utils = inject(UtilsService);
+  const auth = inject(AuthService);
 
-  if (_auth.isLoggedIn()) {
-    _utils.navigate(['/']);
-    return false;
+  if (!auth.isLoggedIn()) {
+    return true;
   }
-  return true;
+  const sessionType = auth.getSessionType();
+  if (sessionType === 'business') {
+    utils.navigate([AppConfigService.config.routes.dashboard]);
+  } else if (sessionType === 'user') {
+    utils.navigate([AppConfigService.config.routes.profile]);
+  } else {
+    utils.navigate(['/']);
+  }
+  return false;
 };

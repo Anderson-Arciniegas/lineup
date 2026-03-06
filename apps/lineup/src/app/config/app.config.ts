@@ -18,6 +18,7 @@ export const appRoutes: AppRoutes = {
   locations: 'locations',
   createCatalog: 'create-catalog',
   catalogs: 'catalogs',
+  settings: 'settings',
 };
 
 export const languagesList: Language[] = [
@@ -62,4 +63,5 @@ export interface AppRoutes {
   locations: string;
   createCatalog: string;
   catalogs: string;
+  settings: string;
 }

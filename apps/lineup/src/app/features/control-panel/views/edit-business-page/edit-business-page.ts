@@ -22,6 +22,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription } from 'rxjs';
 @Component({
   selector: 'app-edit-business-page',
@@ -32,6 +33,7 @@ import { map, Subscription } from 'rxjs';
     InputIconModule,
     InputMaskModule,
     InputTextModule,
+    TextareaModule,
     SkeletonModule,
     FloatLabel,
     TranslateModule,
@@ -62,11 +64,14 @@ export class EditBusinessPage implements OnInit {
   private _authStore = inject(AuthStore);
   private _subscription: Subscription = new Subscription();
 
+  readonly maxDescriptionLength = 100;
+
   readonly businessForm = this._fb.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     businessPath: ['', [Validators.required]],
     phone: [''],
+    description: ['', [Validators.maxLength(this.maxDescriptionLength)]],
   });
 
   ngOnInit(): void {
@@ -97,7 +102,7 @@ export class EditBusinessPage implements OnInit {
     });
   }
 
-  uploadFile(fileBase64: any) {
+  uploadFile(fileBase64: string) {
     this.loadingFile = true;
 
     const image: File = this._utils.blobToFile(
@@ -159,6 +164,7 @@ export class EditBusinessPage implements OnInit {
       imageCode: this.imgCode,
       path: this.businessForm.value.businessPath,
       telephone: this.businessForm.value.phone,
+      description: this.businessForm.value.description,
     };
 
     this._subscription.add(
@@ -187,6 +193,7 @@ export class EditBusinessPage implements OnInit {
             email: business.email,
             businessPath: business.path,
             phone: business.telephone,
+            description: business.description ?? '',
           });
 
           if (business.image) {

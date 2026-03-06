@@ -4,6 +4,7 @@
  */
 
 import { fileSelection } from './file.selection';
+import { locationFullSelection } from './location.selection';
 
 /**
  * Selección básica de roles de business
@@ -45,6 +46,8 @@ export const businessFullSelection = `{
   path
   description
   emailValidated
+  visits
+  followers
   image {
     directory
     extension
@@ -68,41 +71,7 @@ export const businessFullSelection = `{
   provider
   status
   tags
-  locations {
-    id
-    address
-    addressComponents
-    business {
-      id
-      name
-      path
-      description
-      email
-      emailValidated
-      image { directory extension name url }
-      imageCode
-      telephone
-      provider
-      status
-      tags
-    }
-    idCreationBusiness
-    modificationBusiness {
-      id
-      name
-      path
-      description
-      email
-      emailValidated
-      image { directory extension name url }
-      imageCode
-      telephone
-      provider
-      status
-      tags
-    }
-    status
-  }
+  locations ${locationFullSelection}
   products {
     id
     title

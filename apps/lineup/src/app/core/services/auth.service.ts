@@ -9,8 +9,8 @@ import {
   BusinessService,
   EncryptionService,
   StorageService,
-  UserGraphqlService,
   UserSchema,
+  UserService,
   UtilsService,
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
@@ -25,7 +25,7 @@ export class AuthService {
   private _storageService = inject(StorageService);
   private _encryptionService = inject(EncryptionService);
   private _platformId = inject(PLATFORM_ID);
-  private _user = inject(UserGraphqlService);
+  private _user = inject(UserService);
   private _business = inject(BusinessService);
 
   isLoggedIn(): boolean {
@@ -44,22 +44,23 @@ export class AuthService {
     return this._authStore.business();
   }
 
-  signOut() {
-    this._user.logOut().subscribe((status) => {
-      if (status) {
-        this._business.logOut().subscribe((status) => {
-          if (status) {
-            this.removeUser(true);
-          }
-        });
-      }
-    });
+  /** Cierra la sesión actual (solo puede haber una: user o business). */
+  signOut(): void {
+    const isBusiness = this._authStore.isBusinessLoggedIn();
+    const isUser = this._authStore.isUserLoggedIn();
 
-    this._business.logOut().subscribe((status) => {
-      if (status) {
-        this.removeUser(true);
-      }
-    });
+    if (isBusiness) {
+      this._business.logOut().subscribe((status) => {
+        if (status) this.removeUser(true);
+      });
+      return;
+    }
+    if (isUser) {
+      this._user.logOut().subscribe((status) => {
+        if (status) this.removeUser(true);
+      });
+      return;
+    }
   }
 
   // login(data: any): Observable<any> {
@@ -106,14 +107,15 @@ export class AuthService {
   async handleSuccessLogin(
     loggedUser?: UserSchema,
     loggedBusiness?: BusinessSchema,
-    newUser?: boolean,
-  ) {
+    _newUser?: boolean,
+  ): Promise<void> {
     this._storageService.set('loggedUser', true);
-    // await this.handleTokens(loggedUser);
+    const sessionType = loggedBusiness ? 'business' : 'user';
+    this._storageService.set('sessionType', sessionType);
     if (loggedBusiness) {
       this.setBusiness(loggedBusiness);
       this._utilsService.navigate([AppConfigService.config.routes.dashboard]);
-    } else {
+    } else if (loggedUser) {
       this.setUser(loggedUser);
       this._utilsService.navigate([AppConfigService.config.routes.profile]);
     }
@@ -190,14 +192,24 @@ export class AuthService {
     this._authStore.setBusiness(business);
   }
 
-  removeUser(redirect?: boolean) {
+  removeUser(redirect?: boolean): void {
     if (isPlatformBrowser(this._platformId)) {
       this._authStore.clearAuth();
       this._storageService.remove('loggedUser');
-      console.log('remove user');
+      this._storageService.remove('sessionType');
       if (redirect) {
         this._utilsService.navigate([AppConfigService.config.routes.login]);
       }
     }
+  }
+
+  /** Tipo de sesión actual (store o storage tras refresh). */
+  getSessionType(): 'user' | 'business' | null {
+    const fromStore = this._authStore.sessionType?.();
+    if (fromStore) return fromStore;
+    const fromStorage = this._storageService.get('sessionType');
+    return fromStorage === 'user' || fromStorage === 'business'
+      ? fromStorage
+      : null;
   }
 }

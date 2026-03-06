@@ -10,6 +10,7 @@ import { RegisterBusinessPage } from '../features/auth/views/register-business-p
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
 import { CreateCatalogPage } from '../features/business/views/create-catalog-page/create-catalog-page';
 import { CreateProductPage } from '../features/business/views/create-product-page/create-product-page';
+import { BusinessSettingsPage } from '../features/control-panel/views/business-settings-page/business-settings-page';
 import { CatalogPanelPage } from '../features/control-panel/views/catalog-panel-page/catalog-panel-page';
 import { CatalogsPage } from '../features/control-panel/views/catalogs-page/catalogs-page';
 import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
@@ -58,11 +59,11 @@ export const layoutRoutes: Routes = [
         component: AccountTypePage,
       },
       {
-        path: 'user',
+        path: AppConfigService.config.routes.user,
         component: RegisterUserPage,
       },
       {
-        path: 'business',
+        path: AppConfigService.config.routes.business,
         component: RegisterBusinessPage,
       },
     ],
@@ -103,20 +104,24 @@ export const layoutRoutes: Routes = [
                 component: CatalogPanelPage,
               },
               {
-                path: 'edit',
+                path: AppConfigService.config.routes.edit,
                 component: CreateCatalogPage,
               },
               {
-                path: 'create-product',
+                path: AppConfigService.config.routes.createProduct,
                 component: CreateProductPage,
               },
               {
-                path: ':idProduct/edit',
+                path: ':idProduct/' + AppConfigService.config.routes.edit,
                 component: CreateProductPage,
               },
             ],
           },
         ],
+      },
+      {
+        path: AppConfigService.config.routes.settings,
+        component: BusinessSettingsPage,
       },
     ],
   },
