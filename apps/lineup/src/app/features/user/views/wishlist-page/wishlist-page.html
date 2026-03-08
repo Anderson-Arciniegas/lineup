@@ -1,0 +1,35 @@
+<section
+  class="favorites flex flex-col gap-6 py-5 sm:py-0"
+  infiniteScroll
+  [infiniteScrollDistance]="2"
+  [infiniteScrollThrottle]="50"
+  [scrollWindow]="false"
+  [infiniteScrollDisabled]="attempt || noMoreResults"
+  (scrolled)="onScroll()"
+>
+  <h2 class="text-2xl font-semibold ps-4">
+    {{ 'general.wishlist' | translate }}
+  </h2>
+
+  <div class="flex flex-col gap-8 px-0 xl:px-8 py-8 justify-start items-center">
+    <div class="container w-full products-grid mb-10">
+      @for (product of products; track product.id) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-product-card
+          [width]="'w-55 2xl:w-65'"
+          [height]="'h-70 2xl:h-100'"
+          [product]="product"
+        />
+      </div>
+      }
+    </div>
+    @if(attempt) {
+    <div class="flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    }
+  </div>
+</section>

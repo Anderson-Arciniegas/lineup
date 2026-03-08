@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   CREATE_SOCIAL_NETWORK_BUSINESS_MUTATION,
   GET_MY_SOCIAL_NETWORK_BUSINESSES_QUERY,
+  GET_SOCIAL_NETWORK_BUSINESSES_BY_BUSINESS_QUERY,
   GET_SOCIAL_NETWORKS_QUERY,
   REMOVE_SOCIAL_NETWORK_BUSINESS_MUTATION,
   UPDATE_SOCIAL_NETWORK_BUSINESS_MUTATION,
@@ -56,6 +57,20 @@ export class SocialNetworkService {
         },
       )
       .pipe(map((result) => result.data.findAllMySocialNetworkBusinesses));
+  }
+
+  findByBusiness(idBusiness: number): Observable<SocialNetworkBusinessSchema[]> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ findByBusiness: SocialNetworkBusinessSchema[] }>({
+        query: GET_SOCIAL_NETWORK_BUSINESSES_BY_BUSINESS_QUERY,
+        variables: { idBusiness },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.findByBusiness));
   }
 
   createSocialNetworkBusiness(

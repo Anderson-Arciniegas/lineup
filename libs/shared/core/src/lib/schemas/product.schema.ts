@@ -25,6 +25,7 @@ export interface ProductSchema {
   variations?: ProductVariationSchema[];
   reactions?: ProductReactionSchema[];
   currency?: CurrencySchema;
+  __typename?: 'ProductSchema';
 }
 
 export interface ProductFileSchema {
@@ -60,6 +61,17 @@ export interface ProductReactionSchema {
   type: ReactionTypeEnum;
   product?: ProductSchema;
   creationUser?: UserSchema;
+}
+
+export interface ProductRatingSchema {
+  id: number;
+  idCreationUser: number;
+  idProduct: number;
+  stars: number;
+  status: StatusEnum;
+  comment?: string;
+  creationUser?: UserSchema;
+  product?: ProductSchema;
 }
 
 export enum ReactionTypeEnum {

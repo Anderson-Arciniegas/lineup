@@ -79,10 +79,18 @@ export const userFullSelection = `{
 
 /**
  * Selección de respuesta de login/refresh token
- * Incluye la estructura de respuesta con code, status y user
+ * Incluye la estructura de respuesta con code, message, status, user y business (Google login/register)
  */
 export const loginResponseSelection = `{
   code
+  message
   status
   user ${userBasicSelection}
+  business {
+    id
+    email
+    name
+    path
+    status
+  }
 }`;

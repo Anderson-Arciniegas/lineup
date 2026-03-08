@@ -8,7 +8,9 @@ import {
   CatalogService,
   ProductSchema,
   ProductService,
+  UserService,
   UtilsService,
+  VisitTypeEnum,
 } from '@lineup/core';
 import { ProductBreadcrumb, ProductCard, ProductInfo } from '@lineup/ui';
 import { TranslateService } from '@ngx-translate/core';
@@ -51,7 +53,7 @@ export class ProductPage implements OnInit {
   ];
   attempt = false;
   responsiveOptions: any[] | undefined;
-
+  myBusiness = false;
   private readonly _businessService = inject(BusinessService);
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _translate = inject(TranslateService);
@@ -60,6 +62,7 @@ export class ProductPage implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _catalogService = inject(CatalogService);
   private readonly _productService = inject(ProductService);
+  private readonly _userService = inject(UserService);
 
   private readonly _subscription = new Subscription();
 
@@ -114,6 +117,9 @@ export class ProductPage implements OnInit {
               (file) => file.file?.url || '',
             );
           }
+          if (!this.myBusiness) {
+            this.visitProduct();
+          }
           this.attempt = false;
         },
         error: (error) => {
@@ -134,6 +140,8 @@ export class ProductPage implements OnInit {
         next: (business) => {
           console.log(business);
           this.business = business;
+          this.myBusiness =
+            Number(this._authStore.business()?.id) === Number(this.business.id);
         },
         error: (error) => {
           console.error(error);
@@ -147,5 +155,20 @@ export class ProductPage implements OnInit {
 
   onPage($event) {
     console.log('Page changed to: ', $event.page);
+  }
+
+  private visitProduct(): void {
+    this._subscription.add(
+      this._userService
+        .recordVisit({
+          id: this.product.id,
+          type: VisitTypeEnum.PRODUCT,
+        })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+          },
+        }),
+    );
   }
 }

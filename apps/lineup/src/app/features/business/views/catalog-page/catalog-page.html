@@ -52,13 +52,13 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
     >
+      @if (myBusiness) {
       <lib-create-product-card
         [width]="'w-full'"
         [height]="'h-70'"
       ></lib-create-product-card>
-      @for (product of products; track product.id) {
+      } @for (product of products; track product.id) {
       <lib-product-card
-        [index]="$index"
         [product]="product"
         [width]="'w-full'"
         [height]="'h-70'"

@@ -112,9 +112,9 @@
     <div class="flex flex-col gap-6 p-4 w-10/10 px-0 lg:px-4 max-w-screen-2xl">
       @for (product of products; track $index) {
       <lib-product-item
-        [index]="1"
         [dashboardMode]="true"
         [product]="product"
+        (productDeletionEvent)="deleteProduct($event)"
       ></lib-product-item>
       }
       <!-- <lib-product-item [index]="1" [dashboardMode]="true"></lib-product-item>

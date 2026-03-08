@@ -143,7 +143,7 @@ export class CreateProductPage implements OnInit {
       ],
       subtitle: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      price: [null, [Validators.required]],
+      price: [null],
       idCurrency: ['', [Validators.required]],
       variations: this._formBuilder.array([]),
     });
@@ -445,6 +445,21 @@ export class CreateProductPage implements OnInit {
   createProduct(): void {
     if (this.createProductForm.invalid) {
       this.createProductForm.markAllAsTouched();
+      return;
+    }
+    if (
+      (this.createProductForm.get('price')?.value === null ||
+        this.createProductForm.get('price')?.value === 0) &&
+      this.selectedCurrency?.id !== 0
+    ) {
+      return;
+    }
+    if (this.imgCodes.length === 0) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: this._translate.instant('general.warning'),
+        detail: this._translate.instant('validation.imageRequired'),
+      });
       return;
     }
     if (!this.catalog?.id) {

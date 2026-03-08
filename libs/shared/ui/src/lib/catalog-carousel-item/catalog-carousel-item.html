@@ -15,12 +15,13 @@
       >
       <div class="flex flex-row items-center justify-center gap-6">
         <lib-button
-          [icon]="'pi pi-heart'"
+          [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
           [width]="'w-13'"
           [color]="'secondary'"
           [variant]="'text'"
           [size]="'large'"
           [type]="'rounded'"
+          (action)="hasLiked ? unlikeProduct() : likeProduct()"
         ></lib-button>
         <lib-button
           [icon]="'pi pi-share-alt'"

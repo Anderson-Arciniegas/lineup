@@ -24,9 +24,19 @@ export class UserLayout implements OnInit {
         url: '/profile',
       },
       {
-        label: 'general.favorites',
+        label: 'general.wishlist',
         icon: 'pi pi-heart',
+        url: '/profile/wishlist',
+      },
+      {
+        label: 'general.favorites',
+        icon: 'pi pi-shop',
         url: '/profile/favorites',
+      },
+      {
+        label: 'general.myRatings',
+        icon: 'pi pi-star',
+        url: '/profile/my-ratings',
       },
       {
         label: 'general.settings',

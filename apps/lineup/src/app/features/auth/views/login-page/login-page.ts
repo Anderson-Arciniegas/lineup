@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -13,7 +23,8 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../../core/';
+import { AuthService } from '../../../../core/services/auth.service';
+import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -29,13 +40,17 @@ import { AuthService } from '../../../../core/';
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
-export class LoginPage implements OnInit, OnDestroy {
+export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('googleBtn') googleBtnRef!: ElementRef<HTMLDivElement>;
   loginForm: FormGroup;
   attempt = false;
+  attemptGoogle = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
-  private _users = inject(UserService);
-  private _business = inject(BusinessService);
+  private readonly _users = inject(UserService);
+  private readonly _business = inject(BusinessService);
+  private readonly _googleAuth = inject(GoogleAuthService);
+  @Inject(PLATFORM_ID) private _platform: any;
 
   private _subscription: Subscription = new Subscription();
 
@@ -43,8 +58,61 @@ export class LoginPage implements OnInit, OnDestroy {
     this.loginForm = this._createForm();
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const el = this.googleBtnRef?.nativeElement;
+      if (el) {
+        this._googleAuth.renderButton(el, {
+          text: 'signin_with',
+        });
+      }
+    }, 100);
+    this._subscription.add(
+      this._googleAuth.credential$.subscribe((token) =>
+        this._handleGoogleToken(token),
+      ),
+    );
+  }
+
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  private _handleGoogleToken(token: string): void {
+    this.attemptGoogle = true;
+    this._subscription.add(
+      this._users.loginWithGoogle({ token }).subscribe({
+        next: (response) => {
+          this.attemptGoogle = false;
+          if (response.user) {
+            this._authService.handleSuccessLogin(response.user);
+          } else if (response.business) {
+            this._authService.handleSuccessLogin(undefined, response.business);
+          }
+        },
+        error: () => {
+          this._subscription.add(
+            this._business.loginWithGoogle({ token }).subscribe({
+              next: (response) => {
+                this.attemptGoogle = false;
+                if (response.business) {
+                  this._authService.handleSuccessLogin(
+                    undefined,
+                    response.business,
+                  );
+                } else if (response.user) {
+                  this._authService.handleSuccessLogin(response.user);
+                }
+              },
+              error: (err) => {
+                console.error(err);
+                this.attemptGoogle = false;
+              },
+            }),
+          );
+        },
+      }),
+    );
   }
 
   onSubmit(): void {

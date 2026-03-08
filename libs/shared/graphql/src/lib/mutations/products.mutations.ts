@@ -14,7 +14,7 @@ export const UPDATE_PRODUCT_MUTATION = gql`
 `;
 
 export const REMOVE_PRODUCT_MUTATION = gql`
-  mutation RemoveProduct($id: Float!) {
-    removeProduct(id: $id) ${productSelection}
+  mutation RemoveProduct($id: Int!) {
+    removeProduct(id: $id)
   }
 `;
