@@ -1,8 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
 import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  AuthStore,
   ProductSchema,
   SocialNetworkService,
+  UserService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -30,11 +39,12 @@ import { ShareModal } from '../share-modal/share-modal';
   styleUrl: './product-details.scss',
   providers: [MessageService],
 })
-export class ProductDetails implements OnInit {
+export class ProductDetails implements OnInit, OnChanges {
   @Input() product: ProductSchema;
   businessSocialNetworks: SocialNetworkBusinessSchema[] = [];
   attempt: boolean;
   ref: DynamicDialogRef | undefined;
+  hasLiked = false;
   colors = [
     { name: 'Red', primary: false },
     { name: 'Blue', primary: false },
@@ -69,13 +79,20 @@ export class ProductDetails implements OnInit {
   private readonly _utilsService = inject(UtilsService);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
-
-  private _subscriptions = new Subscription();
+  private readonly _authStore = inject(AuthStore);
+  private readonly _userService = inject(UserService);
+  private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
     //variations
     console.log(this.product.variations);
-    this.getMySocialNetworkBusinesses();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.product) {
+      this.getSocialNetworkBusinesses();
+      this.hasLikedProduct();
+    }
   }
 
   getSocialNetworkUrl(id: number) {
@@ -89,35 +106,37 @@ export class ProductDetails implements OnInit {
       : '';
   }
 
-  getMySocialNetworkBusinesses() {
+  getSocialNetworkBusinesses() {
     this.attempt = true;
-    this._subscriptions.add(
-      this._socialMediaService.findAllMySocialNetworkBusinesses().subscribe({
-        next: (socialNetworkBusinesses) => {
-          console.log(socialNetworkBusinesses);
-          if (socialNetworkBusinesses.length > 0) {
-            this.businessSocialNetworks = socialNetworkBusinesses;
-            const phone = this.businessSocialNetworks
-              .find((socialNetwork) => socialNetwork.phone)
-              .phone.trim();
-            console.log(phone);
-            this.href = this._utilsService.formatWhatsappPhone(
-              phone,
-              `Hola%20estoy%20interesado%20en%20este%20producto:%20${location.href}`,
-            );
-          } else {
-            this.businessSocialNetworks = [];
-          }
-          this.attempt = false;
-        },
-        error: (error) => {
-          console.error(error);
-          this.attempt = false;
-        },
-        complete: () => {
-          console.log('Social network businesses fetched');
-        },
-      }),
+    this._subscription.add(
+      this._socialMediaService
+        .findByBusiness(this.product.business.id)
+        .subscribe({
+          next: (socialNetworkBusinesses) => {
+            console.log(socialNetworkBusinesses);
+            if (socialNetworkBusinesses.length > 0) {
+              this.businessSocialNetworks = socialNetworkBusinesses;
+              const phone = this.businessSocialNetworks
+                .find((socialNetwork) => socialNetwork.phone)
+                .phone.trim();
+              console.log(phone);
+              this.href = this._utilsService.formatWhatsappPhone(
+                phone,
+                `Hola%20estoy%20interesado%20en%20este%20producto:%20${location.href}`,
+              );
+            } else {
+              this.businessSocialNetworks = [];
+            }
+            this.attempt = false;
+          },
+          error: (error) => {
+            console.error(error);
+            this.attempt = false;
+          },
+          complete: () => {
+            console.log('Social network businesses fetched');
+          },
+        }),
     );
   }
 
@@ -137,5 +156,57 @@ export class ProductDetails implements OnInit {
       modal: true,
       closable: true,
     });
+  }
+
+  likeProduct(): void {
+    if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    this.hasLiked = true;
+    this._subscription.add(
+      this._userService.likeProduct(this.product.id).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.hasLiked = true;
+        },
+        error: (error) => {
+          console.error(error);
+          this.hasLiked = false;
+        },
+        complete: () => {
+          console.log('Product liked');
+        },
+      }),
+    );
+  }
+
+  unlikeProduct(): void {
+    if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    this.hasLiked = false;
+    this._subscription.add(
+      this._userService.unlikeProduct(this.product.id).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.hasLiked = false;
+        },
+        error: (error) => {
+          console.error(error);
+          this.hasLiked = true;
+        },
+        complete: () => {
+          console.log('Product unliked');
+        },
+      }),
+    );
+  }
+
+  hasLikedProduct(): void {
+    if (this._authStore.isBusinessLoggedIn()) return;
+    this._subscription.add(
+      this._userService.hasLikedProduct(this.product.id).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.hasLiked = response;
+        },
+      }),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { BusinessSchema } from '@lineup/core';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
@@ -14,6 +15,7 @@ export class BusinessCard implements OnInit {
   @Input() width = 'w-40';
   @Input() height = 'h-50';
   @Input() favoritesMode = false;
+  @Input() business: BusinessSchema;
   image: string;
   imageLoaded: boolean;
   images = [
@@ -25,5 +27,18 @@ export class BusinessCard implements OnInit {
 
   ngOnInit(): void {
     this.image = this.images[Math.floor(Math.random() * this.images.length)];
+  }
+
+  formatFollowers(count: number): string {
+    if (count == null || count < 0) return '0';
+    if (count >= 1_000_000) {
+      const value = count / 1_000_000;
+      return value % 1 === 0 ? `${value} M` : `${value.toFixed(1)} M`;
+    }
+    if (count >= 1_000) {
+      const value = count / 1_000;
+      return value % 1 === 0 ? `${value} m` : `${value.toFixed(1)} m`;
+    }
+    return String(count);
   }
 }

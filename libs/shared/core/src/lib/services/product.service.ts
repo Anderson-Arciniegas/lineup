@@ -113,12 +113,12 @@ export class ProductService {
       );
   }
 
-  removeProduct(id: number): Observable<ProductSchema> {
+  removeProduct(id: number): Observable<boolean> {
     return this.apollo
       .use(ApiClient.BUSINESS)
-      .mutate<{ removeProduct: ProductSchema }>({
+      .mutate<{ removeProduct: boolean }>({
         mutation: REMOVE_PRODUCT_MUTATION,
-        variables: { id },
+        variables: { id: Math.trunc(id) },
         context: {
           withCredentials: true,
         },

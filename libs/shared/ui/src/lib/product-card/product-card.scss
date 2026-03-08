@@ -1,9 +1,8 @@
 .product-card {
-    border-radius: var(--border-radius);
-    position: relative;
-    overflow: hidden;
+  border-radius: var(--border-radius);
+  position: relative;
+  overflow: hidden;
 }
-
 
 // .info-translucid{
 //     background: rgba(52, 52, 52, 0.7);
@@ -12,65 +11,66 @@
 
 // }
 
-
+a {
+  display: block;
+}
 
 .button-content {
-    position: absolute;
-    padding: 15px;
-    box-sizing: border-box;
+  position: absolute;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
 .flip-box {
-    position: absolute;
-    box-sizing: border-box;
-    
-    width: 100%;
-    padding: 15px;
-    bottom: 0px;
+  position: absolute;
+  box-sizing: border-box;
+
+  width: 100%;
+  padding: 15px;
+  bottom: 0px;
 }
 
 .product-image {
-    border-radius: var(--border-radius);
-    object-fit: cover;
+  border-radius: var(--border-radius);
+  object-fit: cover;
 
-    filter: brightness(1) contrast(1.1) saturate(1.2);
+  filter: brightness(1) contrast(1.1) saturate(1.2);
 }
 
 .flip-inner {
-    width: 100%;
-    position: relative;
-    transform-style: preserve-3d;
+  width: 100%;
+  position: relative;
+  transform-style: preserve-3d;
 }
 
 .front,
 .back {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    backface-visibility: hidden;
-    background: rgba(52, 52, 52, 0.4);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 4px solid rgba(255, 255, 255, 0.6);
-    
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  background: rgba(52, 52, 52, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 4px solid rgba(255, 255, 255, 0.6);
 }
 
 .back {
-    transform: rotateX(180deg);
+  transform: rotateX(180deg);
 }
 
 ::ng-deep .card-like-button {
-    .p-button {
-        background: rgba(52, 52, 52, 0.4);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        color: white !important;
+  .p-button {
+    background: rgba(52, 52, 52, 0.4);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white !important;
 
-        &:hover {
-            background-color: rgba(52, 52, 52, 0.6);
-        }
+    &:hover {
+      background-color: rgba(52, 52, 52, 0.6);
     }
+  }
 }

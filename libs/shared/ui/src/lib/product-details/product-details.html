@@ -26,9 +26,10 @@
     type="rounded"
   ></lib-button>
   <lib-button
-    icon="pi pi-heart"
+    [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
     [width]="'w-11'"
     type="rounded"
+    (action)="hasLiked ? unlikeProduct() : likeProduct()"
     color="secondary"
   ></lib-button>
   <lib-button

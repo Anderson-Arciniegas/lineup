@@ -12,6 +12,7 @@ export interface EnvironmentConfig {
   userApiFile: string;
   businessApiFile: string;
   google: {
+    GOOGLE_ID: string;
     GOOGLE_MAPS_API_KEY: string;
     GOOGLE_MAPS_API_URL: string;
     GEMINI_API_KEY: string;
@@ -31,6 +32,8 @@ export const environment: EnvironmentConfig = {
   userApiFile: 'https://users.api.lineup.com.ve/',
   businessApiFile: 'https://businesses.api.lineup.com.ve/',
   google: {
+    GOOGLE_ID:
+      '193526416514-fnmifm4h0k4rfqrgb1f436okag52ef9s.apps.googleusercontent.com',
     GOOGLE_MAPS_API_KEY: 'AIzaSyB-wWujcOp0U_dDay-ZMEOSuKoJEZii0II',
     GOOGLE_MAPS_API_URL: 'https://maps.googleapis.com/maps/api/js?key=',
     GEMINI_API_KEY: 'AIzaSyDSar4Pi6I9vpIZoj15-dCBXvG1vQOrnXA',
@@ -51,6 +54,8 @@ export const PROD: EnvironmentConfig = {
   userApiFile: 'https://users.api.lineup.com.ve/',
   businessApiFile: 'https://businesses.api.lineup.com.ve/',
   google: {
+    GOOGLE_ID:
+      '193526416514-fnmifm4h0k4rfqrgb1f436okag52ef9s.apps.googleusercontent.com',
     GOOGLE_MAPS_API_KEY: 'AIzaSyB-wWujcOp0U_dDay-ZMEOSuKoJEZii0II',
     GOOGLE_MAPS_API_URL: 'https://maps.googleapis.com/maps/api/js?key=',
     GEMINI_API_KEY: 'AIzaSyDSar4Pi6I9vpIZoj15-dCBXvG1vQOrnXA',

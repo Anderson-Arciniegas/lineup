@@ -10,14 +10,14 @@
     }
   }
 
-  .p-carousel-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box !important;
-    padding: 6px;
-  }
+  // .p-carousel-item {
+  //   display: flex;
+  //   flex-direction: row;
+  //   align-items: center;
+  //   justify-content: center;
+  //   box-sizing: border-box !important;
+  //   padding: 6px;
+  // }
 
   .input {
     border-radius: var(--border-radius);
@@ -34,5 +34,23 @@
 
   .iconfield {
     border-radius: var(--border-radius);
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 272px), 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    padding: 0 0.25rem 2.5rem;
+
+    @media (min-width: 640px) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      padding-left: 3.75rem;
+      padding-right: 3.75rem;
+    }
   }
 }

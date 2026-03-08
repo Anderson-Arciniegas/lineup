@@ -2,12 +2,15 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AuthStore,
   BusinessSchema,
   BusinessService,
   CatalogSchema,
   CatalogService,
   ProductSchema,
   ProductService,
+  UserService,
+  VisitTypeEnum,
 } from '@lineup/core';
 import {
   Button,
@@ -47,11 +50,14 @@ export class CatalogPage implements OnInit {
   attempt = false;
   page = 1;
   noMoreResults = false;
+  myBusiness = false;
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessService = inject(BusinessService);
   private readonly _catalogService = inject(CatalogService);
   private readonly _productService = inject(ProductService);
+  private readonly _authStore = inject(AuthStore);
+  private readonly _userService = inject(UserService);
 
   private _subscription: Subscription = new Subscription();
 
@@ -67,6 +73,8 @@ export class CatalogPage implements OnInit {
       this._businessService.getBusinessByPath(this.path).subscribe({
         next: (business) => {
           this.business = business;
+          this.myBusiness =
+            Number(this._authStore.business()?.id) === Number(this.business.id);
         },
       }),
     );
@@ -82,6 +90,9 @@ export class CatalogPage implements OnInit {
           this.attempt = false;
           console.log(this.catalog);
           this.getProducts();
+          if (!this.myBusiness) {
+            this.visitCatalog();
+          }
         },
         error: (error) => {
           console.error(error);
@@ -92,6 +103,21 @@ export class CatalogPage implements OnInit {
           this.attempt = false;
         },
       }),
+    );
+  }
+
+  private visitCatalog(): void {
+    this._subscription.add(
+      this._userService
+        .recordVisit({
+          id: this.catalog.id,
+          type: VisitTypeEnum.CATALOG,
+        })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+          },
+        }),
     );
   }
 

@@ -5,6 +5,7 @@
 
 import { fileSelection } from './file.selection';
 import { locationFullSelection } from './location.selection';
+import { userBasicSelection } from './users.selection';
 
 /**
  * Selección básica de roles de business
@@ -207,6 +208,20 @@ export const businessFullSelection = `{
 }`;
 
 /**
+ * Selección de business para búsqueda (alias en description/tags para evitar conflicto de tipos en union)
+ */
+const twoSpaces = '  ';
+export const businessSearchSelection = businessFullSelection
+  .replace(
+    new RegExp(`\\n${twoSpaces}description\\n${twoSpaces}emailValidated`),
+    `\n  businessDescription: description\n  emailValidated`
+  )
+  .replace(
+    new RegExp(`\\n${twoSpaces}tags\\n${twoSpaces}locations`),
+    `\n  businessTags: tags\n  locations`
+  );
+
+/**
  * Selección de respuesta de login/refresh token para business
  * Incluye la estructura de respuesta con code, status y business
  */
@@ -214,6 +229,18 @@ export const businessLoginResponseSelection = `{
   code
   status
   business ${businessBasicSelection}
+}`;
+
+/**
+ * Selección de respuesta LoginResponse para loginWithGoogle/registerWithGoogle (business API)
+ * Incluye code, message, status, business y user
+ */
+export const businessLoginResponseWithUserSelection = `{
+  code
+  message
+  status
+  business ${businessBasicSelection}
+  user ${userBasicSelection}
 }`;
 
 /**
@@ -235,4 +262,16 @@ export const businessMyBusinessSelection = `{
   }
   telephone
   image ${fileSelection}
+}`;
+
+/**
+ * Selección para BusinessFollowerSchema
+ */
+export const businessFollowerSelection = `{
+  id
+  idBusiness
+  idCreationUser
+  status
+  business ${businessBasicSelection}
+  creationUser ${userBasicSelection}
 }`;

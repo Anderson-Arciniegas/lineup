@@ -8,7 +8,9 @@ import {
   BusinessService,
   CatalogSchema,
   CatalogService,
+  UserService,
   UtilsService,
+  VisitTypeEnum,
 } from '@lineup/core';
 import {
   BusinessData,
@@ -63,6 +65,8 @@ export class BusinessPage implements OnInit {
   private readonly _utils = inject(UtilsService);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _catalogService = inject(CatalogService);
+  private readonly _userService = inject(UserService);
+
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
@@ -81,7 +85,10 @@ export class BusinessPage implements OnInit {
           console.log(business);
           this.business = business;
           this.myBusiness =
-            Number(this._authStore.business().id) === Number(this.business.id);
+            Number(this._authStore.business()?.id) === Number(this.business.id);
+          if (!this.myBusiness) {
+            this.visitBusiness();
+          }
         },
         error: (error) => {
           console.error(error);
@@ -90,6 +97,21 @@ export class BusinessPage implements OnInit {
           console.log('complete');
         },
       }),
+    );
+  }
+
+  private visitBusiness(): void {
+    this._subscription.add(
+      this._userService
+        .recordVisit({
+          id: this.business.id,
+          type: VisitTypeEnum.BUSINESS,
+        })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+          },
+        }),
     );
   }
 

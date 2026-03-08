@@ -26,3 +26,11 @@ export const catalogSelection = `{
     idCreationBusiness
   }
 }`;
+
+/**
+ * Selección de catálogo para búsqueda (alias en tags para evitar conflicto de tipos en union)
+ */
+export const catalogSearchSelection = catalogSelection.replace(
+  /\n  tags\n  business/,
+  '\n  catalogTags: tags\n  business'
+);

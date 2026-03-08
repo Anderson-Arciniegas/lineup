@@ -1,4 +1,4 @@
-<a [routerLink]="'/business-1'" [ngClass]="[width, height]">
+<a [routerLink]="'/' + business?.path" [ngClass]="[width, height]">
   <div
     class="business-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
   >
@@ -9,8 +9,10 @@
       <div
         class="business-data-left hidden sm:flex flex-row items-center justify-start gap-1 w-fit px-2 py-2"
       >
-        <i class="pi pi-heart-fill" style="font-size: 0.8rem"></i>
-        <span class="font-semibold">1 m</span>
+        <i class="pi pi-user" style="font-size: 0.8rem"></i>
+        <span class="font-semibold"
+          >{{ formatFollowers(business?.followers ?? 0) }}</span
+        >
       </div>
       }
       <!-- <div class="business-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
@@ -26,7 +28,7 @@
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
         class="image h-full w-full"
-        [src]="image"
+        [src]="business?.image?.url ?? image"
       />
       <div
         [hidden]="imageLoaded"
@@ -41,12 +43,12 @@
         />
       </div>
     </div>
-    <!--<div>
+    <div>
       <p
         class="text-center font-medium text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden"
       >
-        TuPuntoShopVe
+        {{ business?.name ?? 'business name' }}
       </p>
-    </div>-->
+    </div>
   </div>
 </a>

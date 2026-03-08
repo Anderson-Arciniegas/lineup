@@ -152,6 +152,14 @@ export const layoutRoutes: Routes = [
           breadcrumb: 'search',
         },
       },
+      {
+        path: AppConfigService.config.routes.search + '/:query',
+        component: SearchPage,
+        data: {
+          title: 'general.search',
+          breadcrumb: 'search',
+        },
+      },
     ],
   },
   {

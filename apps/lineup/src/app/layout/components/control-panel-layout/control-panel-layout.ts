@@ -90,10 +90,6 @@ export class ControlPanelLayout implements OnInit {
   }
 
   signOut() {
-    this._business.logOut().subscribe((status) => {
-      if (status) {
-        this._auth.removeUser(true);
-      }
-    });
+    this._auth.signOut();
   }
 }

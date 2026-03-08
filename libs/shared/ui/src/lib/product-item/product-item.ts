@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   inject,
   Inject,
   Input,
   OnInit,
+  Output,
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -43,9 +45,9 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
   styleUrl: './product-item.scss',
 })
 export class ProductItem implements OnInit {
-  @Input() index: number;
   @Input() product: ProductSchema;
   @Input() dashboardMode: boolean;
+  @Output() productDeletionEvent = new EventEmitter<number>();
   ref: DynamicDialogRef | undefined;
   image: string;
   imageLoaded: boolean;
@@ -81,7 +83,9 @@ export class ProductItem implements OnInit {
 
   ngOnInit(): void {
     if (this.product) {
-      this.image = this.product.productFiles[0].file?.url;
+      this.image = this.product.productFiles
+        ? this.product.productFiles[0]?.file?.url
+        : '';
       this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
       this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/edit`;
     } else {
@@ -146,6 +150,7 @@ export class ProductItem implements OnInit {
                 ),
                 life: 3000,
               });
+              this.productDeletionEvent.emit(id);
             },
             error: (error) => {
               console.error(error);

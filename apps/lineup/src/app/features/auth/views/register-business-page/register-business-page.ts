@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControlOptions,
   FormBuilder,
@@ -15,11 +23,12 @@ import {
 } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from 'apps/lineup/src/app/core/services/auth.service';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../../core/services/auth.service';
+import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
 @Component({
   selector: 'app-register-business-page',
@@ -35,12 +44,15 @@ import { Subscription } from 'rxjs';
   templateUrl: './register-business-page.html',
   styleUrl: './register-business-page.scss',
 })
-export class RegisterBusinessPage implements OnInit, OnDestroy {
+export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('googleBtn') googleBtnRef!: ElementRef<HTMLDivElement>;
   registerBusinessForm: FormGroup;
   attempt = false;
+  attemptGoogle = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _business = inject(BusinessService);
   private readonly _authService = inject(AuthService);
+  private readonly _googleAuth = inject(GoogleAuthService);
 
   private _subscription: Subscription = new Subscription();
 
@@ -48,8 +60,47 @@ export class RegisterBusinessPage implements OnInit, OnDestroy {
     this.registerBusinessForm = this._createForm();
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const el = this.googleBtnRef?.nativeElement;
+      if (el) {
+        this._googleAuth.renderButton(el, {
+          text: 'signup_with',
+        });
+      }
+    }, 100);
+    this._subscription.add(
+      this._googleAuth.credential$.subscribe((token) =>
+        this._handleGoogleToken(token),
+      ),
+    );
+  }
+
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  private _handleGoogleToken(token: string): void {
+    this.attemptGoogle = true;
+    this._subscription.add(
+      this._business
+        .registerWithGoogle({ token, role: RolesCodesEnum.BUSINESS })
+        .subscribe({
+          next: (response) => {
+            this.attemptGoogle = false;
+            if (response.business) {
+              this._authService.handleSuccessLogin(
+                undefined,
+                response.business,
+              );
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.attemptGoogle = false;
+          },
+        }),
+    );
   }
 
   onSubmit(): void {

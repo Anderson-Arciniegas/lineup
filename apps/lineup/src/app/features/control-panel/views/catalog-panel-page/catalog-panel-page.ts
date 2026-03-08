@@ -194,4 +194,9 @@ export class CatalogPanelPage implements OnInit {
       }
     });
   }
+
+  deleteProduct(id: number): void {
+    console.log(id);
+    this.products = this.products.filter((product) => product.id !== id);
+  }
 }

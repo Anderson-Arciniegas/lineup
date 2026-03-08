@@ -15,9 +15,15 @@
 
       <div class="flex flex-row items-center justify-start gap-4">
         <div class="flex flex-row items-center justify-start">
-          <div class="flex items-center justify-center gap-2">
+          <div
+            [pTooltip]="(followers ?? 0) | number: '1.0-2':'es'"
+            tooltipPosition="top"
+            class="flex items-center justify-center gap-2 min-w-11"
+          >
             <i class="pi pi-user" style="font-size: 1rem"></i>
-            <span>{{business?.followers ?? 0}}</span>
+            <span class="cursor-default"
+              >{{ formatFollowers(followers ?? 0) }}</span
+            >
           </div>
         </div>
 
@@ -35,13 +41,13 @@
         <div class="flex flex-row items-center justify-start h-10">
           <div>
             <lib-button
-              [icon]="following ? 'pi pi-heart-fill' : 'pi pi-heart'"
+              \
               [label]="following ? ('general.following' | translate) : ('general.follow' | translate)"
               [color]="following ? 'secondary' : 'primary'"
               [type]="'rounded'"
               [size]="'small'"
               [width]="'w-30'"
-              (action)="following = !following"
+              (action)="following ? unfollowBusiness() : followBusiness()"
             ></lib-button>
           </div>
         </div>

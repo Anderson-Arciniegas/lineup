@@ -16,7 +16,7 @@ export interface CreateProductInput {
   description: string;
   idCatalog: number;
   images: ProductImageInput[];
-  price: number;
+  price?: number;
   subtitle: string;
   tags: string[];
   title: string;
@@ -29,7 +29,7 @@ export interface UpdateProductInput {
   id: number;
   idCatalog: number;
   images?: ProductImageInput[];
-  price: number;
+  price?: number;
   subtitle: string;
   tags: string[];
   title: string;

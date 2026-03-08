@@ -35,4 +35,5 @@ export interface BusinessSchema {
   tags?: string[];
   telephone?: string;
   visits: number;
+  __typename: 'BusinessSchema';
 }
