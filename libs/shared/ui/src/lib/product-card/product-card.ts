@@ -14,6 +14,7 @@ import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
@@ -26,6 +27,7 @@ import { Button } from '../button/button';
     ButtonModule,
     RouterLink,
     ProgressSpinnerModule,
+    TooltipModule,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
@@ -36,6 +38,7 @@ export class ProductCard implements AfterViewInit, OnInit {
   @Input() height = 'h-100';
   @Input() dashboardMode: boolean;
   image: string;
+  businessImage: string;
   imageLoaded: boolean;
   url: string;
   hasLiked: boolean;
@@ -65,6 +68,7 @@ export class ProductCard implements AfterViewInit, OnInit {
       this.image = this.product.productFiles[0].file?.url;
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
+        this.businessImage = this.product.business.image?.url;
       } else {
         this.url = `/business-1/catalog-1/123`;
       }
@@ -153,5 +157,12 @@ export class ProductCard implements AfterViewInit, OnInit {
         },
       }),
     );
+  }
+
+  setTitle(title: string): string {
+    return title.length > 50
+      ? (title[49] === ' ' ? title.substring(0, 49) : title.substring(0, 50)) +
+          '...'
+      : title;
   }
 }

@@ -18,7 +18,9 @@ import {
   CreateProductCard,
   ProductBreadcrumb,
   ProductCard,
+  SearchBar,
 } from '@lineup/ui';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -36,9 +38,11 @@ import { Subscription } from 'rxjs';
     CatalogCarousel,
     CreateProductCard,
     ProgressSpinner,
+    SearchBar,
+    InfiniteScrollDirective,
   ],
-  templateUrl: './catalog-page.html',
-  styleUrl: './catalog-page.scss',
+  templateUrl: 'catalog-page.html',
+  styleUrls: ['./catalog-page.scss'],
 })
 export class CatalogPage implements OnInit {
   business: BusinessSchema;
@@ -48,9 +52,12 @@ export class CatalogPage implements OnInit {
   catalogPath: string;
   products: ProductSchema[] = [];
   attempt = false;
+  productsAttempt = false;
   page = 1;
   noMoreResults = false;
   myBusiness = false;
+  searchQuery = '';
+
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessService = inject(BusinessService);
@@ -78,6 +85,15 @@ export class CatalogPage implements OnInit {
         },
       }),
     );
+  }
+
+  onSearchSubmit(query: string): void {
+    console.log(query);
+    this.searchQuery = query;
+    this.products = [];
+    this.page = 1;
+    this.noMoreResults = false;
+    this.getProducts();
   }
 
   private getCatalog(): void {
@@ -122,32 +138,36 @@ export class CatalogPage implements OnInit {
   }
 
   getProducts(): void {
-    if (isPlatformBrowser(this._platformId)) {
-      this._subscription.add(
-        this._productService
-          .getAllByCatalog(this.catalog.id, {
-            page: this.page,
-            limit: 100,
-          })
-          .subscribe({
-            next: (products) => {
-              console.log(products);
-
-              this.products = [...this.products, ...products.items];
-              this.page++;
-              if (products.items.length === 0) {
-                this.noMoreResults = true;
-              }
-            },
-            error: (error) => {
-              console.error(error);
-            },
-            complete: () => {
-              console.log('complete');
-            },
-          }),
-      );
-    }
+    if (!isPlatformBrowser(this._platformId)) return;
+    if (this.productsAttempt || this.noMoreResults) return;
+    this.productsAttempt = true;
+    this._subscription.add(
+      this._productService
+        .getAllByCatalog(this.catalog.id, {
+          page: this.page,
+          limit: 20,
+          search: this.searchQuery,
+        })
+        .subscribe({
+          next: (products) => {
+            console.log(products);
+            this.productsAttempt = false;
+            this.products = [...this.products, ...products.items];
+            this.page++;
+            if (products.items.length === 0) {
+              this.noMoreResults = true;
+            }
+          },
+          error: (error) => {
+            console.error(error);
+            this.productsAttempt = false;
+          },
+          complete: () => {
+            console.log('complete');
+            this.productsAttempt = false;
+          },
+        }),
+    );
   }
 
   setColor($event: string) {
@@ -155,5 +175,10 @@ export class CatalogPage implements OnInit {
     const color2 = 'rgba(255, 255, 255, 0.5)'; // Color de fondo
 
     this.bgColor = `linear-gradient(to bottom, ${color1}, ${color2})`;
+  }
+
+  onScroll(): void {
+    console.log('onScroll');
+    this.getProducts();
   }
 }

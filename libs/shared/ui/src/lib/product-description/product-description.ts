@@ -18,10 +18,26 @@ export class ProductDescription implements OnInit {
   private readonly _sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
-    this.tags = this.product.tags;
+    this.tags =
+      this.product.productTags
+        ?.map((pt) => pt.tag?.name)
+        .filter((n): n is string => n != null) ?? [];
 
+    const raw = this.product.description ?? '';
+    const withNonBreakingHyphens = this._replaceHyphensInTextContent(raw);
     this.description = this._sanitizer.bypassSecurityTrustHtml(
-      this.product.description ?? '',
+      withNonBreakingHyphens,
     );
+  }
+
+  /**
+   * Reemplaza guiones (-) por guion de no separación (U+2011) solo en el
+   * contenido de texto del HTML, para que no se rompa la línea en cada guión.
+   * No modifica guiones dentro de etiquetas ni atributos (p. ej. class="ql-align-center").
+   */
+  private _replaceHyphensInTextContent(html: string): string {
+    return html.replace(/(^|>)([^<]*)(?=<|$)/g, (_, prefix, text) => {
+      return prefix + text.replace(/-/g, '\u2011');
+    });
   }
 }

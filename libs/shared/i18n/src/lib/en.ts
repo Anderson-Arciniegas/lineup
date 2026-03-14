@@ -68,6 +68,14 @@ export const en = {
     businessName: 'Business name',
     editBusiness: 'Edit business',
     businessPath: 'Business path',
+    businessPathFormatHint:
+      'Only letters, numbers, hyphens (-), dots (.) and underscores (_). E.g. my-business, abc_123.',
+    businessPathInvalidFormat:
+      'Only letters, numbers, hyphens, dots and underscores are allowed.',
+    usernameFormatHint:
+      'Only letters, numbers, hyphens (-), dots (.) and underscores (_). E.g. john-doe, user_123.',
+    usernameInvalidFormat:
+      'Only letters, numbers, hyphens, dots and underscores are allowed.',
     next: 'Next',
     back: 'Back',
     socialMedias: 'Social medias',
@@ -85,6 +93,7 @@ export const en = {
     catalogs: 'Catalogs',
     editCatalog: 'Edit catalog',
     subtitle: 'Subtitle',
+    maxLength: 'Maximum length',
     variationNamePlaceholder: 'Name of the variation',
     variationValuePlaceholder: 'Value of the variation',
     value: 'Value',
@@ -98,6 +107,7 @@ export const en = {
     productVariationNamePlaceholder: 'Enter the name of the variation',
     productVariationValuePlaceholder: 'Enter the value of the variation',
     selectCurrency: 'Select currency',
+    selectState: 'Select state',
     imagesUpload: 'Images upload',
     success: 'Success',
     error: 'Error',
@@ -147,6 +157,7 @@ export const en = {
     all: 'All',
     wishlist: 'Wishlist',
     myFavoriteBusinesses: 'My favorite businesses',
+    businessTagsPlaceholder: 'Enter the business tags',
   },
   landingPage: {
     yourSpaceToBuildA: 'Your space to build a',
@@ -205,6 +216,11 @@ export const en = {
     socialNetworkBusinessCreated: 'Social network business created',
     socialNetworkBusinessDeleted: 'Social network business deleted',
     productDeletedSuccessfully: 'Product deleted successfully',
+    businessUpdatedSuccessfully: 'Business updated successfully',
+    userUpdatedSuccessfully: 'User updated successfully',
+    catalogUpdated: 'Catalog updated successfully',
+    catalogCreated: 'Catalog created successfully',
+    catalogDeletedSuccessfully: 'Catalog deleted successfully',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork:
@@ -234,5 +250,40 @@ export const en = {
     permissionDenied: 'Location permission was denied.',
     positionUnavailable: 'Location is unavailable.',
     geolocationError: 'An error occurred while getting your location.',
+  },
+  verificationCodeModal: {
+    title: 'Verify your email',
+    description: 'Enter the verification code we sent to your email',
+    codeLabel: 'Verification code',
+    resendCode: 'Resend code',
+    verificationFailed:
+      'We could not verify the code. Please check it and try again.',
+  },
+  colors: {
+    black: 'Black',
+    white: 'White',
+    red: 'Red',
+    green: 'Green',
+    blue: 'Blue',
+    yellow: 'Yellow',
+    orange: 'Orange',
+    purple: 'Purple',
+    pink: 'Pink',
+    gray: 'Gray',
+    brown: 'Brown',
+    beige: 'Beige',
+    light_blue: 'Light blue',
+    light_green: 'Light green',
+    light_pink: 'Light pink',
+    light_yellow: 'Light yellow',
+    lavender: 'Lavender',
+    mint: 'Mint',
+    peach: 'Peach',
+    coral: 'Coral',
+    turquoise: 'Turquoise',
+  },
+  variations: {
+    color: 'Color',
+    size: 'Size',
   },
 };

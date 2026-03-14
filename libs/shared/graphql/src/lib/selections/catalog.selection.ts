@@ -20,7 +20,12 @@ export const catalogSelection = `{
     description
     price
     likes
-    tags
+    productTags {
+      idProduct
+      idTag
+      product { id }
+      tag { id name }
+    }
     status
     idCatalog
     idCreationBusiness
@@ -32,5 +37,5 @@ export const catalogSelection = `{
  */
 export const catalogSearchSelection = catalogSelection.replace(
   /\n  tags\n  business/,
-  '\n  catalogTags: tags\n  business'
+  '\n  catalogTags: tags\n  business',
 );

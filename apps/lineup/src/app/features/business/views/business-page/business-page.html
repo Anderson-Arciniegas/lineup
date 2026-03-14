@@ -13,23 +13,29 @@
       <!-- <div class="w-full px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46">
         <h2 class="text-4xl font-semibold text-center sm:text-left">LineUps</h2>
       </div> -->
-      <div class="catalogs-grid">
+      <div
+        class="catalogs-grid"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        [scrollWindow]="true"
+        [infiniteScrollDisabled]="attempt || noMoreResults"
+        (scrolled)="onScroll()"
+      >
         @if (business && myBusiness) {
-        <div class="flex flex-row items-center justify-center">
+        <div class="w-full flex flex-col items-center justify-center">
           <lib-create-catalog-card
-            class="w-72"
             [business]="business"
-            [width]="'w-72'"
+            [width]="'w-60 2xl:w-65'"
             [height]="'h-80'"
           ></lib-create-catalog-card>
         </div>
 
         } @for (catalog of catalogs; track catalog.id) {
 
-        <div class="flex flex-row items-center justify-center">
+        <div class="w-full flex flex-col items-center justify-center">
           <lib-catalog-card
-            class="w-72"
-            [width]="'w-72'"
+            [width]="'w-60 2xl:w-65'"
             [height]="'h-80'"
             [catalog]="catalog"
           ></lib-catalog-card>

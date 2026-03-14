@@ -5,6 +5,24 @@ import { fileSelection } from './file.selection';
 import { userBasicSelection } from './users.selection';
 
 /**
+ * Selección para TagSchema
+ */
+export const tagSelection = `{
+  id
+  name
+}`;
+
+/**
+ * Selección para ProductTagSchema
+ */
+export const productTagSelection = `{
+  idProduct
+  idTag
+  product { id }
+  tag ${tagSelection}
+}`;
+
+/**
  * Selección para ProductFileSchema
  */
 export const productFileSelection = `{
@@ -58,7 +76,7 @@ export const productSelection = `{
   description
   price
   likes
-  tags
+  productTags ${productTagSelection}
   status
   business ${businessBasicSelection}
   catalog ${catalogSelection}
@@ -84,8 +102,9 @@ export const productRatingSelection = `{
 }`;
 
 /**
- * Selección de producto para búsqueda (alias en description/tags para evitar conflicto de tipos en union)
+ * Selección de producto para búsqueda (alias en description para evitar conflicto de tipos en union)
  */
-export const productSearchSelection = productSelection
-  .replace(/\n  description\n  price/, '\n  productDescription: description\n  price')
-  .replace(/\n  tags\n  status/, '\n  productTags: tags\n  status');
+export const productSearchSelection = productSelection.replace(
+  /\n  description\n  price/,
+  '\n  productDescription: description\n  price',
+);

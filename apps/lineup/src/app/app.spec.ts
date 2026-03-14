@@ -9,6 +9,7 @@ import {
   TranslateStore,
 } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
+import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { App } from './app';
 
@@ -46,6 +47,7 @@ describe('App', () => {
         provideMockStore({ initialState }),
         TranslateService,
         TranslateStore,
+        MessageService,
       ],
     }).compileComponents();
   });

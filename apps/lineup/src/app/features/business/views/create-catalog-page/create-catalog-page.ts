@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
-  AllowedFilesDirectory,
   AppConfigService,
   BusinessApiFileService,
   BusinessSchema,
@@ -18,6 +17,7 @@ import {
   CatalogSchema,
   CatalogService,
   CreateCatalogInput,
+  DirectoriesEnum,
   UpdateCatalogInput,
   UtilsService,
 } from '@lineup/core';
@@ -141,8 +141,17 @@ export class CreateCatalogPage implements OnInit {
   }
 
   addTag() {
-    if (this.createCatalogForm.get('tag')?.value) {
-      this.tags.push(this.createCatalogForm.get('tag')?.value);
+    const tagValue = this._utils.normalizeSpaces(
+      this.createCatalogForm.get('tag')?.value ?? '',
+    );
+    if (
+      this.tags.includes(tagValue.toLowerCase()) ||
+      this.tags.length >= 10
+    ) {
+      return;
+    }
+    if (tagValue) {
+      this.tags.push(tagValue.toLowerCase());
     }
     this.createCatalogForm.get('tag')?.setValue('');
     console.log(this.tags);
@@ -160,12 +169,17 @@ export class CreateCatalogPage implements OnInit {
 
     this.attempt = true;
     const { catalogName } = this.createCatalogForm.value;
+    const titleNormalized = this._utils.normalizeSpaces(catalogName ?? '');
+    const tagsNormalized =
+      this.tags && this.tags.length > 0
+        ? this.tags.map((tag) => this._utils.normalizeSpaces(tag))
+        : undefined;
 
     if (this.catalogPath) {
       const updateCatalogInput: UpdateCatalogInput = {
         idCatalog: this.catalog.id,
-        title: catalogName,
-        tags: this.tags && this.tags.length > 0 ? this.tags : undefined,
+        title: titleNormalized,
+        tags: tagsNormalized,
         imageCode: this.imgCode,
       };
 
@@ -177,7 +191,7 @@ export class CreateCatalogPage implements OnInit {
             this._messageService.add({
               severity: 'success',
               summary: this._translate.instant('general.success'),
-              detail: this._translate.instant('general.catalogUpdated'),
+              detail: this._translate.instant('toast.catalogUpdated'),
             });
 
             this._utils.navigate([
@@ -197,8 +211,8 @@ export class CreateCatalogPage implements OnInit {
       );
     } else {
       const createCatalogInput: CreateCatalogInput = {
-        title: catalogName,
-        tags: this.tags && this.tags.length > 0 ? this.tags : undefined,
+        title: titleNormalized,
+        tags: tagsNormalized,
         imageCode: this.imgCode,
       };
 
@@ -210,7 +224,7 @@ export class CreateCatalogPage implements OnInit {
             this._messageService.add({
               severity: 'success',
               summary: this._translate.instant('general.success'),
-              detail: this._translate.instant('general.catalogCreated'),
+              detail: this._translate.instant('toast.catalogCreated'),
             });
             this._utils.navigate([
               AppConfigService.config.routes.dashboard,
@@ -266,7 +280,7 @@ export class CreateCatalogPage implements OnInit {
     const fileUpload = new FormData();
     const extension = this._utils.getExtensionFile(fileBase64);
 
-    fileUpload.append('directory', AllowedFilesDirectory.Public);
+    fileUpload.append('directory', DirectoriesEnum.CATALOG);
     fileUpload.append('file', image, `image.${extension}`);
 
     console.log(fileUpload);

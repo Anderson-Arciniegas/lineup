@@ -51,6 +51,7 @@ export class ProductPage implements OnInit {
     'assets/images/products/cooler.webp',
     'assets/images/products/laptop.webp',
   ];
+  imageLoaded: boolean[] = [];
   attempt = false;
   responsiveOptions: any[] | undefined;
   myBusiness = false;
@@ -124,6 +125,10 @@ export class ProductPage implements OnInit {
         },
         error: (error) => {
           console.error(error);
+          console.log(
+            (error as { graphQLErrors?: Array<{ message?: string }> })
+              ?.graphQLErrors,
+          );
           this.attempt = false;
         },
         complete: () => {
@@ -155,6 +160,11 @@ export class ProductPage implements OnInit {
 
   onPage($event) {
     console.log('Page changed to: ', $event.page);
+  }
+
+  onImageLoad(index: number): void {
+    this.imageLoaded[index] = true;
+    this._cdr.detectChanges();
   }
 
   private visitProduct(): void {

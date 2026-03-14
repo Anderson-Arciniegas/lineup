@@ -7,6 +7,9 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
+import { Apollo } from 'apollo-angular';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { BusinessService } from 'libs/shared/core/src/lib/services/business.service';
 import { of } from 'rxjs';
 import { EditBusinessPage } from './edit-business-page';
@@ -46,6 +49,12 @@ describe('EditBusinessPage', () => {
         TranslateService,
         TranslateStore,
         provideNoopAnimations(),
+        {
+          provide: Apollo,
+          useValue: { use: () => ({ query: () => of({ data: {} }), mutate: () => of({ data: {} }) }) },
+        },
+        MessageService,
+        DialogService,
         { provide: BusinessService, useValue: businessServiceMock },
         { provide: UtilsService, useValue: utilsServiceMock },
         {

@@ -2,56 +2,11 @@
   class="py-8 md:pt-12 px-2 sm:px-0 xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start w-full"
 >
   <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
-    <div
-      class="w-full sm:w-9/10 flex flex-row items-center justify-center search-container"
-    >
-      <div
-        class="search flex items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4 sm:px-8"
-      >
-        <lib-button
-          width="w-10 h-10"
-          size="large"
-          icon="pi pi-sliders-h"
-          variant="text"
-          type="rounded"
-          (action)="showFiltersDialog()"
-          class="block lg:hidden"
-        >
-        </lib-button>
-        <p-iconfield class="w-full max-width">
-          <p-inputicon class="pi pi-search" />
-          <input
-            type="text"
-            class="w-full input font-medium"
-            pInputText
-            [(ngModel)]="searchQuery"
-            placeholder="{{'general.search' | translate}}"
-            (keydown.enter)="onSearchSubmit()"
-          />
-        </p-iconfield>
-
-        <lib-button
-          [label]="'general.search' | translate"
-          icon="pi pi-search"
-          type="rounded"
-          class="hidden sm:block"
-          (action)="onSearchSubmit()"
-        >
-        </lib-button>
-
-        <lib-button
-          width="w-11"
-          icon="pi pi-search"
-          type="rounded"
-          class="block sm:hidden"
-          (action)="onSearchSubmit()"
-        >
-        </lib-button>
-      </div>
-      <div
-        class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
-      ></div>
-    </div>
+    <lib-search-bar
+      class="w-full max-w-200"
+      (searchSubmit)="onSearchSubmit($event)"
+      [shrink]="true"
+    ></lib-search-bar>
 
     <!-- <p-dialog
       [header]="'general.filters' | translate"
@@ -125,51 +80,70 @@
       <div
         class="flex flex-col items-start justify-center gap-5 w-10/10 lg:w-9/12"
       >
-        <h3 class="font-medium text-3xl pl-10">
-          {{'general.searchResults' | translate}}
-        </h3>
-        @if(businesses.length > 0 || catalogs.length > 0 || products.length > 0)
-        {
-        <div class="w-full products-grid">
-          @for (business of businesses; track business.id) {
+        <div
+          class="w-full lg:w-auto flex flex-row items-center justify-between lg:justify-start gap-6 px-5 sm:px-10"
+        >
+          <h3 class="font-medium text-xl sm:text-3xl">
+            {{'general.searchResults' | translate}}
+          </h3>
+          <lib-button
+            width="w-13"
+            size="large"
+            icon="pi pi-sliders-h"
+            type="rounded"
+            (action)="showFiltersDialog()"
+            class="block lg:hidden"
+          >
+          </lib-button>
+        </div>
+        @if(items.length > 0) {
+        <div
+          class="w-full products-grid"
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollThrottle]="50"
+          [scrollWindow]="true"
+          [infiniteScrollDisabled]="attempt || noMoreResults"
+          (scrolled)="onScroll()"
+        >
+          @for (item of items; track item.id) { @if(item.__typename ===
+          'BusinessSchema') {
           <div class="w-full flex flex-col items-center justify-center">
             <lib-business-card
               class="my-3"
               [width]="'w-60'"
               [height]="'h-80'"
-              [business]="business"
+              [business]="item"
             ></lib-business-card>
           </div>
-
-          } @for (catalog of catalogs; track catalog.id) {
+          } @else if(item.__typename === 'CatalogSchema') {
           <div class="w-full flex flex-col items-center justify-center">
             <lib-catalog-card
               class="my-3"
               [width]="'w-60'"
               [height]="'h-80'"
-              [catalog]="catalog"
+              [catalog]="item"
             ></lib-catalog-card>
           </div>
-          } @for (product of products; track product.id) {
+          } @else if(item.__typename === 'ProductSchema') {
           <div class="w-full flex flex-col items-center justify-center">
             <lib-product-card
               class="my-3"
               [width]="'w-60'"
               [height]="'h-80'"
-              [product]="product"
+              [product]="item"
             ></lib-product-card>
           </div>
-          }
+          } }
         </div>
-        } @if(attempt) {
+        } @if(!attempt) {
         <div class="card flex flex-col items-center justify-center p-10 w-full">
           <p-progress-spinner
             strokeWidth="4"
             [style]="{ width: '100px', height: '100px' }"
           />
         </div>
-        } @if(businesses.length === 0 && catalogs.length === 0 &&
-        products.length === 0 && !attempt) {
+        } @else if(items.length === 0) {
         <div
           class="card flex flex-col items-center justify-center mt-10 p-10 w-full"
         >

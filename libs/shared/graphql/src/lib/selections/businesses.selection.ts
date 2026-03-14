@@ -80,7 +80,12 @@ export const businessFullSelection = `{
     description
     price
     likes
-    tags
+    productTags {
+      idProduct
+      idTag
+      product { id }
+      tag { id name }
+    }
     status
     idCatalog
     idCreationBusiness
@@ -112,7 +117,12 @@ export const businessFullSelection = `{
       description
       price
       likes
-      tags
+      productTags {
+        idProduct
+        idTag
+        product { id }
+        tag { id name }
+      }
       status
       idCatalog
       idCreationBusiness
@@ -214,11 +224,11 @@ const twoSpaces = '  ';
 export const businessSearchSelection = businessFullSelection
   .replace(
     new RegExp(`\\n${twoSpaces}description\\n${twoSpaces}emailValidated`),
-    `\n  businessDescription: description\n  emailValidated`
+    `\n  businessDescription: description\n  emailValidated`,
   )
   .replace(
     new RegExp(`\\n${twoSpaces}tags\\n${twoSpaces}locations`),
-    `\n  businessTags: tags\n  locations`
+    `\n  businessTags: tags\n  locations`,
   );
 
 /**
@@ -260,6 +270,8 @@ export const businessMyBusinessSelection = `{
       description
     }
   }
+  description
+  tags
   telephone
   image ${fileSelection}
 }`;

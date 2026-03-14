@@ -14,6 +14,7 @@ export interface RecordVisitInput {
 
 export interface CreateUserInput {
   email: string;
+  emailValidated?: boolean;
   firstName: string;
   lastName: string;
   username?: string;
@@ -32,11 +33,11 @@ export interface CreateUserResponse {
 }
 
 export interface UpdateUserInput {
-  id: number;
   firstName?: string;
+  idState?: number;
+  imageCode?: string;
   lastName?: string;
   username?: string;
-  imgCode?: string;
 }
 
 export interface ChangePasswordInput {

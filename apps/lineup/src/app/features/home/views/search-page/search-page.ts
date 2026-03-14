@@ -4,9 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
-  BusinessSchema,
-  CatalogSchema,
-  ProductSchema,
+  SearchResultItem,
   SearchTargetEnum,
   UserService,
   UtilsService,
@@ -16,10 +14,12 @@ import {
   Button,
   CatalogCard,
   ProductCard,
+  SearchBar,
   SearchFilters,
   Ui,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { TreeNode } from 'primeng/api';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -31,7 +31,14 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
-import { Subscription } from 'rxjs';
+import {
+  Subject,
+  Subscription,
+  filter,
+  finalize,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-search-page',
@@ -52,6 +59,8 @@ import { Subscription } from 'rxjs';
     TranslateModule,
     FormsModule,
     ProgressSpinner,
+    SearchBar,
+    InfiniteScrollDirective,
   ],
   templateUrl: './search-page.html',
   styleUrl: './search-page.scss',
@@ -59,15 +68,15 @@ import { Subscription } from 'rxjs';
 export class SearchPage implements OnInit {
   visible: boolean;
   searchQuery = '';
-  products: ProductSchema[] = [];
-  catalogs: CatalogSchema[] = [];
-  businesses: BusinessSchema[] = [];
+  items: SearchResultItem[] = [];
   attempt = false;
   page = 1;
   ref: DynamicDialogRef;
+  noMoreResults: boolean;
   searchTypeFilter: SearchTargetEnum = SearchTargetEnum.ALL;
   searchLocationFilter: string;
   searchDeliveryFilter: string;
+  private readonly searchTrigger$ = new Subject<void>();
   private readonly _userService = inject(UserService);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _utils = inject(UtilsService);
@@ -77,89 +86,64 @@ export class SearchPage implements OnInit {
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
-    window.addEventListener('scroll', function () {
-      const searchBar = document.querySelector('.search');
-      const filters = document.querySelector('.filters-container');
-
-      if (window.scrollY > 100) {
-        searchBar.classList.add('shrink');
-      } else {
-        searchBar.classList.remove('shrink');
-      }
-
-      // if (window.scrollY > 280) {
-      //   filters.classList.add('filters-shrink');
-      // } else {
-      //   filters.classList.remove('filters-shrink');
-      // }
-    });
-
     this.searchQuery = this._activatedRoute.snapshot.params['query'];
+    this._subscription.add(
+      this.searchTrigger$
+        .pipe(
+          filter(() => !this.noMoreResults),
+          tap(() => {
+            this.attempt = true;
+          }),
+          switchMap(() =>
+            this._userService
+              .search(
+                { page: this.page, limit: 10, search: this.searchQuery },
+                this.searchTypeFilter as SearchTargetEnum,
+              )
+              .pipe(
+                finalize(() => {
+                  this.attempt = false;
+                }),
+              ),
+          ),
+        )
+        .subscribe({
+          next: (results) => {
+            console.log(results);
+            if (results.items.length > 0) {
+              this.page++;
+            } else {
+              this.noMoreResults = true;
+            }
+
+            this.items = [...this.items, ...results.items];
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        }),
+    );
+
     if (this.searchQuery) {
       this.getSearchResults();
     }
   }
 
-  onSearchSubmit(): void {
-    if (this.searchQuery === '') return;
+  onSearchSubmit(query: string): void {
+    if (query === '') return;
+    this.searchQuery = query;
     this._utils.navigate([
       AppConfigService.config.routes.search,
       this.searchQuery,
     ]);
-    this.products = [];
-    this.catalogs = [];
-    this.businesses = [];
+    this.items = [];
+    this.noMoreResults = false;
     this.page = 1;
     this.getSearchResults();
   }
 
   getSearchResults(): void {
-    if (this.attempt) return;
-    this.attempt = true;
-    this._subscription.add(
-      this._userService
-        .search(
-          { page: this.page, limit: 10, search: this.searchQuery },
-          this.searchTypeFilter as SearchTargetEnum,
-        )
-        .subscribe({
-          next: (results) => {
-            this.attempt = false;
-            console.log(results);
-            if (results.items.length > 0) {
-              this.page++;
-            }
-            this.products = [
-              ...this.products,
-              ...results.items.filter(
-                (item): item is ProductSchema =>
-                  item.__typename === 'ProductSchema',
-              ),
-            ];
-            this.catalogs = [
-              ...this.catalogs,
-              ...results.items.filter(
-                (item): item is CatalogSchema =>
-                  item.__typename === 'CatalogSchema',
-              ),
-            ];
-            this.businesses = [
-              ...this.businesses,
-              ...results.items.filter(
-                (item): item is BusinessSchema =>
-                  item.__typename === 'BusinessSchema',
-              ),
-            ];
-          },
-          error: (error) => {
-            console.error(error);
-            this.attempt = false;
-          },
-          complete: () => {
-            console.log('complete');
-          },
-        }),
-    );
+    this.searchTrigger$.next();
   }
 
   showFiltersDialog() {
@@ -199,10 +183,13 @@ export class SearchPage implements OnInit {
       this.searchDeliveryFilter = filters[2].data as string;
     }
 
-    this.products = [];
-    this.catalogs = [];
-    this.businesses = [];
+    this.items = [];
+    this.noMoreResults = false;
     this.page = 1;
+    this.getSearchResults();
+  }
+
+  onScroll(): void {
     this.getSearchResults();
   }
 }

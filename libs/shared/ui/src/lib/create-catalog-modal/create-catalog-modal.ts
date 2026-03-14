@@ -3,8 +3,8 @@ import { HttpEventType } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  AllowedFilesDirectory,
   BusinessApiFileService,
+  DirectoriesEnum,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -82,7 +82,7 @@ export class CreateCatalogModal {
     const fileUpload = new FormData();
     const extension = this._utils.getExtensionFile(fileBase64);
 
-    fileUpload.append('directory', AllowedFilesDirectory.Public);
+    fileUpload.append('directory', DirectoriesEnum.CATALOG);
     fileUpload.append('file', image, `image.${extension}`);
 
     this._subscription.add(

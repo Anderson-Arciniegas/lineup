@@ -20,7 +20,11 @@ import {
   RegisterGoogleBusinessInput,
   UpdateBusinessInput,
 } from '../models/business.model';
-import { ChangePasswordInput, LoginGoogleInput, LoginResponse } from '../models/user.model';
+import {
+  ChangePasswordInput,
+  LoginGoogleInput,
+  LoginResponse,
+} from '../models/user.model';
 import { BusinessSchema } from '../schemas';
 
 @Injectable({
@@ -145,7 +149,9 @@ export class BusinessService {
       .pipe(map((result) => result.data!.loginWithGoogle));
   }
 
-  registerWithGoogle(data: RegisterGoogleBusinessInput): Observable<LoginResponse> {
+  registerWithGoogle(
+    data: RegisterGoogleBusinessInput,
+  ): Observable<LoginResponse> {
     return this.apollo
       .use('businessAPI')
       .mutate<{ registerWithGoogle: LoginResponse }>({

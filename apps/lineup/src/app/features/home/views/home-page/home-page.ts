@@ -7,7 +7,13 @@ import {
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { BusinessCard, Button, CatalogCard, ProductCard } from '@lineup/ui';
+import {
+  BusinessCard,
+  Button,
+  CatalogCard,
+  ProductCard,
+  SearchBar,
+} from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -41,6 +47,7 @@ import { Subscription } from 'rxjs';
     ButtonModule,
     TranslateModule,
     FormsModule,
+    SearchBar,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -49,7 +56,6 @@ export class HomePage implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   responsiveOptions: any[] | undefined;
   responsiveOptionsCatalogs: any[] | undefined;
-  searchQuery = '';
   tags = [
     'Accessories',
     'Technology',
@@ -205,12 +211,9 @@ export class HomePage implements OnInit, AfterViewInit {
     );
   }
 
-  onSearchSubmit(): void {
-    if (this.searchQuery === '') return;
+  onSearchSubmit(query: string): void {
+    if (query === '') return;
 
-    this._utils.navigate([
-      AppConfigService.config.routes.search,
-      this.searchQuery,
-    ]);
+    this._utils.navigate([AppConfigService.config.routes.search, query]);
   }
 }

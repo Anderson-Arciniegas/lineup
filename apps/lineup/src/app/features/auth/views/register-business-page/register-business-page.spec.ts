@@ -9,6 +9,8 @@ import {
   TranslateStore,
 } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { RegisterBusinessPage } from './register-business-page';
 
 describe('RegisterBusinessPage', () => {
@@ -32,6 +34,8 @@ describe('RegisterBusinessPage', () => {
         provideMockStore({ initialState }),
         TranslateService,
         TranslateStore,
+        DialogService,
+        MessageService,
       ],
     }).compileComponents();
 

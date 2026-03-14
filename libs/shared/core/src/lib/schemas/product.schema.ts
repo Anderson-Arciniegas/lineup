@@ -7,6 +7,20 @@ import type {
 } from '.';
 import type { StatusEnum } from '../enums';
 
+export interface TagSchema {
+  id: number;
+  name?: string;
+  __typename?: 'TagSchema';
+}
+
+export interface ProductTagSchema {
+  idProduct: number;
+  idTag: number;
+  product?: ProductSchema;
+  tag?: TagSchema;
+  __typename?: 'ProductTagSchema';
+}
+
 export interface ProductSchema {
   business?: BusinessSchema;
   catalog?: CatalogSchema;
@@ -18,9 +32,9 @@ export interface ProductSchema {
   modificationBusiness?: BusinessSchema;
   price?: number;
   productFiles?: ProductFileSchema[];
+  productTags?: ProductTagSchema[];
   status: StatusEnum;
   subtitle: string;
-  tags: string[];
   title: string;
   variations?: ProductVariationSchema[];
   reactions?: ProductReactionSchema[];

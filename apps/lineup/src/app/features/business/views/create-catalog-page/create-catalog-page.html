@@ -22,7 +22,7 @@
     <form class="w-full flex flex-col gap-10" [formGroup]="createCatalogForm">
       <div class="flex flex-col items-start justify-center gap-2 w-full">
         <div class="flex flex-row items-end justify-start gap-2">
-          <label for="title" class="font-semibold text-lg"
+          <label for="title" class="font-medium text-lg"
             >{{'general.catalogName' | translate}}:</label
           >
         </div>
@@ -35,9 +35,16 @@
           class="input w-full h-11"
           placeholder="{{'general.catalogNamePlaceholder' | translate}}"
         />
+        <small
+          id="catalogName-help"
+          class="text-color-secondary text-xs mt-1 block"
+        >
+          {{ createCatalogForm.get('catalogName')?.value.length }} / {{
+          maxLengthCatalogName }}
+        </small>
       </div>
       <div class="flex flex-col items-start justify-start gap-2 w-full">
-        <label for="image" class="font-semibold w-full text-lg"
+        <label for="image" class="font-medium w-full text-lg"
           >{{'general.imageUpload' | translate}}:</label
         >
         <div
@@ -67,7 +74,7 @@
       </div>
       <div class="flex flex-col items-start justify-center gap-2 w-full">
         <div class="flex flex-row items-end justify-start gap-2">
-          <label for="title" class="font-semibold text-lg"
+          <label for="title" class="font-medium text-lg"
             >{{'general.tags' | translate}}:</label
           >
         </div>

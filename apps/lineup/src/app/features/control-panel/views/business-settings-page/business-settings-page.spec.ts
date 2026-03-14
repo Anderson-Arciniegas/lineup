@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { BusinessSettingsPage } from './business-settings-page';
 
 describe('BusinessSettingsPage', () => {
@@ -7,7 +10,13 @@ describe('BusinessSettingsPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BusinessSettingsPage],
+      imports: [BusinessSettingsPage, TranslateModule.forRoot()],
+      providers: [
+        DialogService,
+        MessageService,
+        TranslateService,
+        TranslateStore,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BusinessSettingsPage);

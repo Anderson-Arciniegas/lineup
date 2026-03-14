@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { ProductVariations } from './product-variations';
 
 describe('ProductVariations', () => {
@@ -7,7 +8,8 @@ describe('ProductVariations', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductVariations],
+      imports: [ProductVariations, TranslateModule.forRoot()],
+      providers: [TranslateService, TranslateStore],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductVariations);

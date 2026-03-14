@@ -12,6 +12,7 @@ describe('DraggableImageList', () => {
 
     fixture = TestBed.createComponent(DraggableImageList);
     fixture.componentRef.setInput('images', ['url1.jpg', 'url2.jpg']);
+    fixture.componentRef.setInput('imageCodes', ['code1', 'code2']);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -23,6 +24,9 @@ describe('DraggableImageList', () => {
   it('should emit imagesChange when removeImage is called', () => {
     const emitSpy = jest.spyOn(component.imagesChange, 'emit');
     component.removeImage(0);
-    expect(emitSpy).toHaveBeenCalledWith(['url2.jpg']);
+    expect(emitSpy).toHaveBeenCalledWith({
+      urls: ['url2.jpg'],
+      imageCodes: ['code2'],
+    });
   });
 });

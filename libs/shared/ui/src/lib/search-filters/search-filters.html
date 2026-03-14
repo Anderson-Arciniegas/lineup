@@ -26,37 +26,37 @@
     [(selection)]="selectedFilterDelivery"
   />
 
-  <div class="w-10/10 flex flex-col items-start justify-center gap-3 px-4 pl-8">
-    <h3 class="font-medium text-xl">{{'general.price' | translate}}</h3>
-    <div class="flex flex-col w-10/10 gap-3 pl-4 price-filter">
-      <div class="flex-auto w-5/10">
-        <label for="integeronly">{{'general.minimum' | translate}}</label>
-        <p-inputnumber
-          size="small"
-          class="w-full"
-          locale="es-ES"
-          inputId="integeronly"
-        />
+  <div
+    class="w-10/10 flex flex-col items-center justify-center gap-3 px-4 sm:px-8"
+  >
+    <h3 class="font-medium text-base w-full">
+      {{'general.price' | translate}}
+    </h3>
+    <div
+      class="flex flex-row w-10/10 gap-3 price-filter justify-between items-center"
+    >
+      <div class="w-5/10">
+        <label for="integeronly" class="text-sm"
+          >{{'general.minimum' | translate}}</label
+        >
+        <p-inputnumber size="small" locale="es-ES" inputId="integeronly" />
       </div>
 
-      <div class="flex-auto w-5/10">
-        <label for="integeronly">{{'general.maximum' | translate}}</label>
-        <p-inputnumber
-          size="small"
-          class="w-full"
-          locale="es-ES"
-          inputId="integeronly"
-        />
+      <div class="w-5/10">
+        <label for="integeronly" class="text-sm"
+          >{{'general.maximum' | translate}}</label
+        >
+        <p-inputnumber size="small" locale="es-ES" inputId="integeronly" />
       </div>
     </div>
   </div>
 
-  <div class="w-full flex flex-row justify-center align-center mt-8">
+  <div class="w-full flex flex-row justify-center align-center mt-6">
     <lib-button
       [label]="'general.filter' | translate"
       type="rounded"
-      class="w-8/10"
-      [width]="'w-10/10'"
+      [size]="'small'"
+      [width]="'w-40'"
       (action)="saveFilters()"
     >
     </lib-button>

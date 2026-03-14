@@ -35,8 +35,8 @@
 
     <div class="flex flex-row justify-end items-center">
       <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | number:'1.0-2':'es') ||
-        ''}}{{product?.currency?.code | currencySymbol}}
+        {{(product?.price | currency: product?.currency?.code : 'symbol'
+        :'1.0-2' : 'es')}}
       </span>
     </div>
   </div>
@@ -51,8 +51,8 @@
 
     <div class="w-full flex flex-row justify-end items-end">
       <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | number:'1.0-2':'es') || ''}}
-        {{product?.currency?.code | currencySymbol}}
+        {{(product?.price | currency: product?.currency?.code : 'symbol'
+        :'1.0-2' : 'es')}}
       </span>
     </div>
   </div>

@@ -1,15 +1,15 @@
 <section
-  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-10 gap-5 flex flex-col duration-500"
+  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-10 gap-5 flex flex-col"
   [ngStyle]="{'background': bgColor}"
 >
   <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
   @if (catalog) {
   <div>
     <h3 class="text-4xl text-center font-medium">
-      {{catalog.title || 'Zapatos'}}
+      {{catalog.title || 'Catalogo'}}
     </h3>
   </div>
-  <div class="w-full flex flex-col items-center gap-20">
+  <div class="w-full flex flex-col items-center gap-10 md:gap-20">
     @if (products.length > 0) {
     <div class="flex flex-row items-center justify-center w-10/10">
       <lib-catalog-carousel
@@ -19,79 +19,50 @@
       >
       </lib-catalog-carousel>
     </div>
-    <div class="w-full flex flex-row items-center justify-center">
-      <div
-        class="flex items-center justify-center bg-primary-50 search gap-2 sm:gap-6 px-3 sm:px-7"
-      >
-        <p-iconfield class="w-full max-width">
-          <p-inputicon class="pi pi-search" />
-          <input
-            type="text"
-            class="w-full input font-medium"
-            pInputText
-            placeholder="Search"
-          />
-        </p-iconfield>
-        <lib-button
-          label="Buscar"
-          icon="pi pi-search"
-          type="rounded"
-          class="hidden sm:block"
-        >
-        </lib-button>
-        <lib-button
-          width="w-10 h-10"
-          icon="pi pi-search"
-          type="rounded"
-          class="block sm:hidden"
-        >
-        </lib-button>
-      </div>
+    <div class="flex flex-row items-center justify-center w-full w-full">
+      <lib-search-bar
+        class="w-full max-w-200"
+        (searchSubmit)="onSearchSubmit($event)"
+      ></lib-search-bar>
     </div>
     }
     <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
+      class="container w-full products-grid"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      [scrollWindow]="true"
+      [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
+      (scrolled)="onScroll()"
     >
-      @if (myBusiness) {
-      <lib-create-product-card
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-create-product-card>
+      @if (myBusiness && ((!productsAttempt && !attempt) || (products.length > 0
+      || noMoreResults))) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-create-product-card
+          [width]="'w-65'"
+          [height]="'h-100'"
+        ></lib-create-product-card>
+      </div>
       } @for (product of products; track product.id) {
-      <lib-product-card
-        [product]="product"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-product-card
+          [width]="'w-65'"
+          [height]="'h-100'"
+          [product]="product"
+        />
+      </div>
       }
-      <!-- <lib-product-card
-        [index]="1"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="2"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="3"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="4"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card> -->
     </div>
   </div>
-  }@else {
-  <div class="card flex justify-cente p-10 mt-10">
-    <p-progress-spinner
-      strokeWidth="4"
-      [style]="{ width: '100px', height: '100px' }"
-    />
+
+  } @if(attempt || productsAttempt) {
+  <div class="flex flex-col justify-center items-center w-full">
+    <div class="card flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
   </div>
   }
 </section>

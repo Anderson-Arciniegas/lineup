@@ -21,8 +21,10 @@ import {
   RolesCodesEnum,
   UserService,
 } from '@lineup/core';
-import { Button } from '@lineup/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { Button, VerificationCodeModal } from '@lineup/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -53,6 +55,9 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   private readonly _users = inject(UserService);
   private readonly _authService = inject(AuthService);
   private readonly _googleAuth = inject(GoogleAuthService);
+  private readonly _dialogService = inject(DialogService);
+  private readonly _messageService = inject(MessageService);
+  private readonly _translate = inject(TranslateService);
 
   private _subscription: Subscription = new Subscription();
 
@@ -102,34 +107,68 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     if (this.registerUserForm.invalid || this.attempt) {
+      this.registerUserForm.markAllAsTouched();
       return;
     }
     this.attempt = true;
     const { firstName, lastName, email, password } =
       this.registerUserForm.value;
 
-    const userData: CreateUserInput = {
-      firstName,
-      lastName,
-      email,
-      password,
-      role: RolesCodesEnum.USER,
-    };
+    // Primero: abrir modal de verificación de código y, si es válido, crear el usuario
+    const ref = this._dialogService.open(VerificationCodeModal, {
+      header: this._translate.instant('verificationCodeModal.title'),
+      width: '400px',
+      style: { maxHeight: '80vh' },
+      dismissableMask: true,
+      modal: true,
+      draggable: false,
+      resizable: false,
+      data: {
+        type: 'user',
+        email,
+      },
+    });
+
     this._subscription.add(
-      this._users.createUser(userData).subscribe({
-        next: (user) => {
-          console.log(user);
+      ref.onClose.subscribe((verified: boolean) => {
+        if (!verified) {
           this.attempt = false;
-          if (user) {
-            this._authService.handleSuccessLogin(user);
-          }
-        },
-        error: (error) => {
-          console.error(error);
-        },
-        complete: () => {
-          this.attempt = false;
-        },
+          return;
+        }
+
+        const userData: CreateUserInput = {
+          firstName,
+          lastName,
+          email,
+          password,
+          role: RolesCodesEnum.USER,
+        };
+
+        this._subscription.add(
+          this._users.createUser(userData).subscribe({
+            next: (user) => {
+              this.attempt = false;
+              if (user) {
+                this._authService.handleSuccessLogin(user);
+              }
+            },
+            error: (err) => {
+              this.attempt = false;
+              console.error(err);
+              this._messageService.add({
+                severity: 'error',
+                summary: this._translate.instant('general.error'),
+                detail:
+                  err?.graphQLErrors?.[0]?.message ??
+                  err?.message ??
+                  this._translate.instant(
+                    'verificationCodeModal.verificationFailed',
+                  ),
+                life: 5000,
+              });
+            },
+          }),
+        );
       }),
     );
   }

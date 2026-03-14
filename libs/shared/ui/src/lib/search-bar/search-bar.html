@@ -1,0 +1,36 @@
+<div class="w-full flex flex-row items-center justify-center search-container">
+  <div
+    class="search flex flex-row items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4 sm:px-8"
+  >
+    <p-iconfield class="w-full max-width">
+      <p-inputicon class="pi pi-search" />
+      <input
+        type="text"
+        class="w-full search-input font-medium"
+        pInputText
+        [(ngModel)]="searchQuery"
+        placeholder="{{'general.search' | translate}}"
+        (keydown.enter)="onSearchSubmit()"
+      />
+    </p-iconfield>
+    <lib-button
+      class="hidden sm:flex"
+      icon="pi pi-search"
+      type="rounded"
+      (action)="onSearchSubmit()"
+      width="w-11"
+    >
+    </lib-button>
+    <lib-button
+      class="flex sm:hidden"
+      icon="pi pi-search"
+      type="rounded"
+      [size]="'small'"
+      (action)="onSearchSubmit()"
+    >
+    </lib-button>
+  </div>
+  <div
+    class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
+  ></div>
+</div>

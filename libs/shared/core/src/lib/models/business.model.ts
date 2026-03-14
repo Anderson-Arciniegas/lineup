@@ -3,11 +3,11 @@ import { BusinessSchema } from '../schemas';
 
 export interface RegisterGoogleBusinessInput {
   token: string;
-  role: RolesCodesEnum;
 }
 
 export interface CreateBusinessInput {
   email: string;
+  emailValidated?: boolean;
   name: string;
   password: string;
   role: RolesCodesEnum;
