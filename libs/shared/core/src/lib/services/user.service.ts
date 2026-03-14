@@ -441,8 +441,13 @@ export class UserService {
   private normalizeSearchItem(item: Record<string, unknown>): SearchResultItem {
     const description =
       item['businessDescription'] ?? item['productDescription'] ?? item['description'];
-    const tags =
+    const rawTags =
       item['businessTags'] ?? item['catalogTags'] ?? item['productTags'] ?? item['tags'];
+    const tags = Array.isArray(rawTags) && rawTags.length > 0 && typeof rawTags[0] === 'object'
+      ? (rawTags as Array<{ tag?: { name?: string } }>)
+          .map((pt) => pt.tag?.name)
+          .filter((n): n is string => n != null)
+      : rawTags;
     const rest = { ...item };
     delete rest['businessDescription'];
     delete rest['productDescription'];

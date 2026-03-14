@@ -6,11 +6,15 @@
 
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
     gap: 1rem;
     width: 100%;
     padding-left: 1rem;
     padding-right: 1rem;
+
+    @media screen and (max-width: 1535px) {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
   }
 
   @media screen and (max-width: 639px) {

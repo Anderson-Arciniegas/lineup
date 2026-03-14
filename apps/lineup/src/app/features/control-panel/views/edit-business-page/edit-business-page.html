@@ -1,17 +1,17 @@
-<section class="profile flex flex-col gap-6 py-5">
+<section class="page flex flex-col gap-2 py-5">
   <h2 class="text-2xl font-semibold ps-4">
     {{'general.editBusiness' | translate}}
   </h2>
 
   <div
-    class="flex flex-col-reverse lg:flex-row justify-start lg:justify-center items-center lg:items-start gap-8 p-0 pe-3 sm:p-3"
+    class="flex flex-col-reverse lg:flex-row justify-start lg:justify-center items-center lg:items-start gap-8 p-3"
   >
     @if (business) {
     <form
       class="flex flex-col justify-center items-center gap-8 w-3/3 md:w-2/3"
       [formGroup]="businessForm"
     >
-      <div class="flex flex-col justify-center items-center gap-4">
+      <div class="flex flex-col justify-center items-center gap-3">
         <h3 class="text-lg font-medium">
           {{'general.profilePicture' | translate}}
         </h3>
@@ -19,7 +19,7 @@
           tabindex="0"
           (keyup.enter)="openImageCropper()"
           (click)="openImageCropper()"
-          class="image-placeholder flex flex-row justify-center items-center w-40 h-40 bg-gray-100 cursor-pointer"
+          class="image-placeholder flex flex-row justify-center items-center w-38 h-38 bg-gray-100 cursor-pointer"
         >
           @if (imageUrl) {
           <img
@@ -27,18 +27,28 @@
             alt="Business image"
             class="w-full h-full object-cover"
           />
-          } @else {
+          } @else if (loadingFile){
+          <div class="flex flex-row items-center justify-center">
+            <p-progress-spinner
+              strokeWidth="8"
+              fill="transparent"
+              animationDuration=".5s"
+              [style]="{ width: '50px', height: '50px' }"
+            />
+          </div>
+          }@else {
           <i class="pi pi-camera" style="font-size: 4rem"></i>
           }
         </div>
       </div>
-      <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
+      <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl mt-3">
         <div
           class="flex flex-col sm:flex-row gap-8 justify-between items-start"
         >
-          <p-floatlabel class="w-10/10">
+          <p-floatlabel class="w-full md:w-5/10">
             <input
               pInputText
+              [maxlength]="maxNameLength"
               class="w-10/10 font-medium"
               formControlName="name"
               id="name"
@@ -48,36 +58,31 @@
               >{{'general.businessName' | translate}}*</label
             >
           </p-floatlabel>
-        </div>
-        <div
-          class="flex flex-col sm:flex-row gap-8 justify-between items-start"
-        >
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="businessPath"
-              id="businessPath"
-              autocomplete="off"
-            />
-            <label for="businessPath" class="font-medium"
-              >{{'general.businessPath' | translate}}*</label
-            >
-          </p-floatlabel>
-        </div>
-        <div class="flex flex-row gap-8 justify-between items-start">
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="email"
-              id="email"
-              autocomplete="off"
-            />
-            <label for="email" class="font-medium"
-              >{{'general.email' | translate}}*</label
-            >
-          </p-floatlabel>
+          <div class="flex flex-col w-full sm:w-5/10">
+            <p-floatlabel class="w-full flex flex-col items-start">
+              <input
+                pInputText
+                [maxlength]="maxNameLength"
+                class="w-10/10 font-medium"
+                formControlName="businessPath"
+                id="businessPath"
+                autocomplete="off"
+              />
+              <label for="businessPath" class="font-medium"
+                >{{'general.businessPath' | translate}}*</label
+              >
+            </p-floatlabel>
+
+            <small class="text-color-secondary text-xs mt-1 block">
+              {{ 'general.businessPathFormatHint' | translate }}
+            </small>
+            @if (businessPathControl?.invalid && businessPathControl?.touched &&
+            businessPathControl?.errors?.['pattern']) {
+            <small class="text-red-500 text-xs mt-1 block" role="alert">
+              {{ 'general.businessPathInvalidFormat' | translate }}
+            </small>
+            }
+          </div>
         </div>
 
         <div
@@ -101,13 +106,22 @@
         <div
           class="flex flex-col sm:flex-row gap-8 justify-between items-start"
         >
-          <p-floatlabel class="w-10/10">
+          <p-floatlabel
+            class="w-10/10"
+            [ngClass]="{
+              'p-inputwrapper-filled': businessForm.get('description')?.value
+            }"
+          >
             <textarea
               pInputTextarea
               class="w-10/10 font-medium"
               formControlName="description"
               id="description"
-              rows="4"
+              name="description"
+              rows="3"
+              [ngClass]="{
+                'p-filled': businessForm.get('description')?.value
+              }"
               [autoResize]="true"
               [attr.maxlength]="maxDescriptionLength"
             ></textarea>
@@ -115,6 +129,42 @@
               >{{'general.description' | translate}}</label
             >
           </p-floatlabel>
+        </div>
+
+        <div class="flex flex-col items-start justify-center gap-2 w-full">
+          <div class="flex flex-row items-start justify-between w-full gap-2">
+            <p-floatlabel class="w-10/10">
+              <input
+                pInputText
+                placeholder="{{'general.businessTagsPlaceholder' | translate}}"
+                class="w-10/10 font-medium"
+                id="tags"
+                formControlName="tag"
+                (keyup.enter)="addTag()"
+                autocomplete="off"
+              />
+              <label for="tags" class="font-medium"
+                >{{'general.tags' | translate}}</label
+              >
+            </p-floatlabel>
+            <lib-button
+              icon="pi pi-plus"
+              label="{{ 'general.add' | translate }}"
+              color="secondary"
+              type="rounded"
+              (click)="addTag()"
+            ></lib-button>
+          </div>
+
+          <div class="card flex items-center gap-2 flex-wrap mt-1">
+            @for (tag of tags; track $index) {
+            <p-chip
+              [label]="tag"
+              [removable]="true"
+              (onRemove)="removeTag($index)"
+            />
+            }
+          </div>
         </div>
       </div>
       <!-- <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
@@ -161,7 +211,7 @@
           </p-floatlabel>
         </div>
       </div> -->
-      <div class="flex flex-row justify-center items-center mt-5">
+      <div class="flex flex-row justify-center items-center">
         <lib-button
           (action)="updateBusiness()"
           [loading]="attempt"

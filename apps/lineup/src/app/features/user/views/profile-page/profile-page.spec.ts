@@ -1,6 +1,11 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { Apollo } from 'apollo-angular';
+import { MessageService } from 'primeng/api';
+import { of } from 'rxjs';
+import { DialogService } from 'primeng/dynamicdialog';
 import { ProfilePage } from './profile-page';
 
 describe('ProfilePage', () => {
@@ -9,11 +14,17 @@ describe('ProfilePage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfilePage, TranslateModule.forRoot()],
+      imports: [ProfilePage, TranslateModule.forRoot(), HttpClientTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
         TranslateService,
-        TranslateStore
+        TranslateStore,
+        {
+          provide: Apollo,
+          useValue: { use: () => ({ query: () => of({ data: {} }), mutate: () => of({ data: {} }) }) },
+        },
+        MessageService,
+        DialogService,
       ],
     }).compileComponents();
 

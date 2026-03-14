@@ -1,3 +1,5 @@
+export * from './business-email-verification.mutations';
+export * from './user-email-verification.mutations';
 export * from './businesses.mutations';
 export * from './catalogs.mutations';
 export * from './locations.mutations';

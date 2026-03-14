@@ -12,5 +12,6 @@ export * from './role-permission.schema';
 export * from './role.schema';
 export * from './social-network-business.schema';
 export * from './social-network.schema';
+export * from './state.schema';
 export * from './user-role.schema';
 export * from './user.schema';

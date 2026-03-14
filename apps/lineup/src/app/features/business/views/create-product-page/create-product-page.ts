@@ -12,19 +12,23 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
-  AllowedFilesDirectory,
   AppConfigService,
+  BASIC_COLORS,
+  BASIC_SIZES,
   BusinessApiFileService,
   BusinessSchema,
   BusinessService,
   CatalogSchema,
   CatalogService,
+  Color,
   CreateProductInput,
   CurrencyService,
+  DirectoriesEnum,
   ProductImageInput,
   ProductSchema,
   ProductService,
   ProductVariationInput,
+  Size,
   UpdateProductInput,
   UtilsService,
 } from '@lineup/core';
@@ -44,6 +48,7 @@ import { EditorModule } from 'primeng/editor';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
@@ -63,6 +68,7 @@ import { map, Subscription } from 'rxjs';
     ButtonModule,
     TextareaModule,
     InputNumberModule,
+    MultiSelectModule,
     SelectModule,
     Button,
     PanelModule,
@@ -116,6 +122,9 @@ export class CreateProductPage implements OnInit {
   adultContent = false;
   attempt = false;
 
+  maxTitleLength = 80;
+  maxSubtitleLength = 100;
+
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
@@ -138,10 +147,13 @@ export class CreateProductPage implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100),
+          Validators.maxLength(this.maxTitleLength),
         ],
       ],
-      subtitle: ['', [Validators.required]],
+      subtitle: [
+        '',
+        [Validators.minLength(3), Validators.maxLength(this.maxSubtitleLength)],
+      ],
       description: ['', [Validators.required]],
       price: [null],
       idCurrency: ['', [Validators.required]],
@@ -191,10 +203,27 @@ export class CreateProductPage implements OnInit {
             description: product.description,
             price: product.price,
             idCurrency: product.currency?.id,
-            variations: product.variations?.map((variation) => ({
+          });
+          const variations = product.variations ?? [];
+          this.variationsFormArray.clear();
+          variations.forEach((variation) => {
+            const key: 'color' | 'size' | null =
+              variation.title === 'variations.color'
+                ? 'color'
+                : variation.title === 'variations.size'
+                  ? 'size'
+                  : null;
+            const group = this.createVariationFormGroup();
+            group.patchValue({
               title: variation.title,
-              options: variation.options,
-            })),
+              variationKey: key,
+            });
+            (variation.options ?? []).forEach((opt: string) =>
+              this.getVariationOptionsFormArray(group).push(
+                this._formBuilder.control(opt),
+              ),
+            );
+            this.variationsFormArray.push(group);
           });
           this.urls =
             product.productFiles?.map((file) => file.file?.url || '') ?? [];
@@ -229,6 +258,74 @@ export class CreateProductPage implements OnInit {
     return (variationGroup as FormGroup).get('options') as FormArray;
   }
 
+  isColorVariation(variationGroup: AbstractControl): boolean {
+    const group = variationGroup as FormGroup;
+    return group.get('variationKey')?.value === 'color';
+  }
+
+  isSizeVariation(variationGroup: AbstractControl): boolean {
+    const group = variationGroup as FormGroup;
+    return group.get('variationKey')?.value === 'size';
+  }
+
+  hasPredefinedOptions(variationGroup: AbstractControl): boolean {
+    return (
+      this.isColorVariation(variationGroup) ||
+      this.isSizeVariation(variationGroup)
+    );
+  }
+
+  getPredefinedOptions(
+    variationGroup: AbstractControl,
+  ): { label: string; value: string; hex?: string; labelTranslated?: string }[] {
+    if (this.isColorVariation(variationGroup)) {
+      const options: {
+        label: string;
+        value: string;
+        hex?: string;
+        labelTranslated: string;
+      }[] = [];
+      for (const color of BASIC_COLORS as readonly Color[]) {
+        options.push({
+          label: color.name,
+          value: color.value,
+          hex: color.hex,
+          labelTranslated: this._translate.instant(color.name),
+        });
+      }
+      return options;
+    }
+
+    if (this.isSizeVariation(variationGroup)) {
+      const options: { label: string; value: string; labelTranslated: string }[] =
+        [];
+      for (const size of BASIC_SIZES as readonly Size[]) {
+        options.push({
+          label: size.name,
+          value: size.value,
+          labelTranslated: size.name,
+        });
+      }
+      return options;
+    }
+
+    return [];
+  }
+
+  onPredefinedOptionsChange(
+    variationGroup: AbstractControl,
+    selectedValues: string[],
+  ): void {
+    const optionsArray = this.getVariationOptionsFormArray(variationGroup);
+    while (optionsArray.length > 0) {
+      optionsArray.removeAt(0);
+    }
+
+    selectedValues.forEach((value: string) => {
+      optionsArray.push(this._formBuilder.control(value));
+    });
+  }
+
   addVariation(): void {
     this.variationsFormArray.push(this.createVariationFormGroup());
   }
@@ -236,9 +333,28 @@ export class CreateProductPage implements OnInit {
   createVariationFormGroup(): FormGroup {
     return this._formBuilder.group({
       title: ['', [Validators.required]],
+      variationKey: [null as 'color' | 'size' | null],
       options: this._formBuilder.array([]),
       newOption: [''],
     });
+  }
+
+  addColorVariation(): void {
+    const variationGroup = this.createVariationFormGroup();
+    variationGroup.patchValue({
+      title: 'variations.color',
+      variationKey: 'color',
+    });
+    this.variationsFormArray.push(variationGroup);
+  }
+
+  addSizeVariation(): void {
+    const variationGroup = this.createVariationFormGroup();
+    variationGroup.patchValue({
+      title: 'variations.size',
+      variationKey: 'size',
+    });
+    this.variationsFormArray.push(variationGroup);
   }
 
   addVariationOption(variationGroup: AbstractControl): void {
@@ -363,7 +479,7 @@ export class CreateProductPage implements OnInit {
     const fileUpload = new FormData();
     const extension = this._utils.getExtensionFile(fileBase64);
 
-    fileUpload.append('directory', AllowedFilesDirectory.Public);
+    fileUpload.append('directory', DirectoriesEnum.PRODUCTS);
     fileUpload.append('file', image, `image.${extension}`);
 
     this._subscription.add(
@@ -477,8 +593,10 @@ export class CreateProductPage implements OnInit {
     const variationsFormatted: ProductVariationInput[] = (
       raw.variations ?? []
     ).map((v: { title: string; options: string[]; newOption?: string }) => ({
-      title: v.title,
-      options: v.options ?? [],
+      title: this._utils.normalizeSpaces(v.title ?? ''),
+      options: (v.options ?? []).map((opt) =>
+        this._utils.normalizeSpaces(String(opt ?? '')),
+      ),
     }));
     console.log(this.urls);
     const images: ProductImageInput[] = this.imgCodes.map(
@@ -491,8 +609,10 @@ export class CreateProductPage implements OnInit {
     if (this.product) {
       const data: UpdateProductInput = {
         id: this.product.id,
-        title: raw.title,
-        subtitle: raw.subtitle,
+        title: this._utils.normalizeSpaces(raw.title ?? ''),
+        subtitle: raw.subtitle
+          ? this._utils.normalizeSpaces(raw.subtitle)
+          : raw.subtitle,
         description: raw.description,
         price: raw.idCurrency !== 0 ? Number(raw.price) : null,
         idCurrency: raw.idCurrency !== 0 ? Number(raw.idCurrency) : null,
@@ -542,8 +662,10 @@ export class CreateProductPage implements OnInit {
       );
     } else {
       const data: CreateProductInput = {
-        title: raw.title,
-        subtitle: raw.subtitle,
+        title: this._utils.normalizeSpaces(raw.title ?? ''),
+        subtitle: raw.subtitle
+          ? this._utils.normalizeSpaces(raw.subtitle)
+          : raw.subtitle,
         description: raw.description,
         price: raw.idCurrency !== 0 ? Number(raw.price) : null,
         idCurrency: raw.idCurrency !== 0 ? Number(raw.idCurrency) : null,

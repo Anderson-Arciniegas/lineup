@@ -21,8 +21,10 @@ import {
   PasswordValidation,
   RolesCodesEnum,
 } from '@lineup/core';
-import { Button } from '@lineup/ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { Button, VerificationCodeModal } from '@lineup/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -53,6 +55,9 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   private readonly _business = inject(BusinessService);
   private readonly _authService = inject(AuthService);
   private readonly _googleAuth = inject(GoogleAuthService);
+  private readonly _dialogService = inject(DialogService);
+  private readonly _messageService = inject(MessageService);
+  private readonly _translate = inject(TranslateService);
 
   private _subscription: Subscription = new Subscription();
 
@@ -83,54 +88,86 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   private _handleGoogleToken(token: string): void {
     this.attemptGoogle = true;
     this._subscription.add(
-      this._business
-        .registerWithGoogle({ token, role: RolesCodesEnum.BUSINESS })
-        .subscribe({
-          next: (response) => {
-            this.attemptGoogle = false;
-            if (response.business) {
-              this._authService.handleSuccessLogin(
-                undefined,
-                response.business,
-              );
-            }
-          },
-          error: (err) => {
-            console.error(err);
-            this.attemptGoogle = false;
-          },
-        }),
+      this._business.registerWithGoogle({ token }).subscribe({
+        next: (response) => {
+          this.attemptGoogle = false;
+          if (response.business) {
+            this._authService.handleSuccessLogin(
+              undefined,
+              response.business,
+              true,
+            );
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.attemptGoogle = false;
+        },
+      }),
     );
   }
 
   onSubmit(): void {
     if (this.registerBusinessForm.invalid || this.attempt) {
+      this.registerBusinessForm.markAllAsTouched();
       return;
     }
     this.attempt = true;
     const { name, email, password } = this.registerBusinessForm.value;
 
-    const businessData: CreateBusinessInput = {
-      name,
-      email,
-      password,
-      role: RolesCodesEnum.BUSINESS,
-    };
+    const ref = this._dialogService.open(VerificationCodeModal, {
+      header: this._translate.instant('verificationCodeModal.title'),
+      width: '400px',
+      style: { maxHeight: '80vh' },
+      dismissableMask: true,
+      modal: true,
+      draggable: false,
+      resizable: false,
+      data: {
+        type: 'business',
+        email,
+      },
+    });
+
     this._subscription.add(
-      this._business.createBusiness(businessData).subscribe({
-        next: (business) => {
-          console.log(business);
+      ref.onClose.subscribe((verified: boolean) => {
+        if (!verified) {
           this.attempt = false;
-          if (business) {
-            this._authService.handleSuccessLogin(null, business);
-          }
-        },
-        error: (error) => {
-          console.error(error);
-        },
-        complete: () => {
-          this.attempt = false;
-        },
+          return;
+        }
+
+        const businessData: CreateBusinessInput = {
+          name,
+          email,
+          password,
+          role: RolesCodesEnum.BUSINESS,
+        };
+
+        this._subscription.add(
+          this._business.createBusiness(businessData).subscribe({
+            next: (business) => {
+              this.attempt = false;
+              if (business) {
+                this._authService.handleSuccessLogin(null, business, true);
+              }
+            },
+            error: (err) => {
+              this.attempt = false;
+              console.error(err);
+              this._messageService.add({
+                severity: 'error',
+                summary: this._translate.instant('general.error'),
+                detail:
+                  err?.graphQLErrors?.[0]?.message ??
+                  err?.message ??
+                  this._translate.instant(
+                    'verificationCodeModal.verificationFailed',
+                  ),
+                life: 5000,
+              });
+            },
+          }),
+        );
       }),
     );
   }

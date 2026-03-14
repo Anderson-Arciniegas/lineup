@@ -107,14 +107,22 @@ export class AuthService {
   async handleSuccessLogin(
     loggedUser?: UserSchema,
     loggedBusiness?: BusinessSchema,
-    _newUser?: boolean,
+    newUser?: boolean,
   ): Promise<void> {
     this._storageService.set('loggedUser', true);
     const sessionType = loggedBusiness ? 'business' : 'user';
     this._storageService.set('sessionType', sessionType);
+
     if (loggedBusiness) {
       this.setBusiness(loggedBusiness);
-      this._utilsService.navigate([AppConfigService.config.routes.dashboard]);
+      if (newUser) {
+        this._utilsService.navigate([
+          AppConfigService.config.routes.dashboard,
+          AppConfigService.config.routes.edit,
+        ]);
+      } else {
+        this._utilsService.navigate([AppConfigService.config.routes.dashboard]);
+      }
     } else if (loggedUser) {
       this.setUser(loggedUser);
       this._utilsService.navigate([AppConfigService.config.routes.profile]);

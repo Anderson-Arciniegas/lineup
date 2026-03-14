@@ -1,16 +1,45 @@
-<section class="profile flex flex-col gap-6 py-5 sm:py-0">
+<section class="profile flex flex-col gap-6 py-5">
   <h2 class="text-2xl font-semibold ps-4">
-    {{'general.userProfile' | translate}}
+    {{ 'general.userProfile' | translate }}
   </h2>
 
-  <div
-    class="flex flex-col-reverse lg:flex-row justify-start lg:justify-center items-center lg:items-start gap-8 p-0 pe-3 sm:p-3"
-  >
+  <div class="flex flex-col justify-start items-center gap-8 p-3">
+    <div class="flex flex-col justify-center items-center gap-3">
+      <h3 class="text-lg font-medium">
+        {{ 'general.profilePicture' | translate }}
+      </h3>
+      <div
+        tabindex="0"
+        (keyup.enter)="openImageCropper()"
+        (click)="openImageCropper()"
+        class="image-placeholder flex flex-row justify-center items-center w-40 h-40 rounded-full bg-gray-100 cursor-pointer"
+      >
+        @if (imageUrl) {
+        <img
+          [src]="imageUrl"
+          alt="User image"
+          class="w-full h-full object-cover rounded-full"
+        />
+        } @else if (loadingFile) {
+        <div class="flex flex-row items-center justify-center">
+          <p-progress-spinner
+            strokeWidth="8"
+            fill="transparent"
+            animationDuration=".5s"
+            [style]="{ width: '50px', height: '50px' }"
+          />
+        </div>
+        } @else {
+        <i class="pi pi-camera" style="font-size: 4rem"></i>
+        }
+      </div>
+    </div>
     <form
       class="flex flex-col justify-center items-center gap-8 w-3/3 md:w-2/3"
       [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()"
     >
-      <h3 class="text-lg font-medium">{{'general.userData' | translate}}</h3>
+      <h3 class="text-lg font-medium">{{ 'general.userData' | translate }}</h3>
       <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
         <div
           class="flex flex-col sm:flex-row gap-8 justify-between items-start"
@@ -22,9 +51,10 @@
               formControlName="firstName"
               id="firstName"
               autocomplete="off"
+              [maxlength]="maxFirstNameLength"
             />
             <label for="firstName" class="font-medium"
-              >{{'general.firstName' | translate}}*</label
+              >{{ 'general.firstName' | translate }}*</label
             >
           </p-floatlabel>
           <p-floatlabel class="w-10/10">
@@ -34,30 +64,15 @@
               formControlName="lastName"
               id="lastName"
               autocomplete="off"
+              [maxlength]="maxLastNameLength"
             />
             <label for="lastName" class="font-medium"
-              >{{'general.lastName' | translate}}*</label
-            >
-          </p-floatlabel>
-        </div>
-        <div class="flex flex-row gap-8 justify-between items-start">
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="email"
-              id="email"
-              autocomplete="off"
-            />
-            <label for="email" class="font-medium"
-              >{{'general.email' | translate}}*</label
+              >{{ 'general.lastName' | translate }}*</label
             >
           </p-floatlabel>
         </div>
 
-        <div
-          class="flex flex-col sm:flex-row gap-8 justify-between items-start"
-        >
+        <div class="flex flex-col w-full">
           <p-floatlabel class="w-10/10">
             <input
               pInputText
@@ -67,85 +82,44 @@
               autocomplete="off"
             />
             <label for="username" class="font-medium"
-              >{{'general.username' | translate}}*</label
+              >{{ 'general.username' | translate }}*</label
             >
           </p-floatlabel>
-          <p-floatlabel class="w-10/10">
-            <p-inputmask
-              class="w-10/10 font-medium block"
-              formControlName="phone"
-              id="phone"
-              autocomplete="off"
-              mask="+58 (499) 999-9999"
-              placeholder="+58 (499) 999-9999"
-            />
-            <label for="phone" class="font-medium"
-              >{{'general.phoneNumber' | translate}}</label
-            >
-          </p-floatlabel>
+          <small class="text-color-secondary text-xs mt-1 block">
+            {{ 'general.usernameFormatHint' | translate }}
+          </small>
+          @if (usernameControl?.invalid && usernameControl?.touched &&
+          usernameControl?.errors?.['pattern']) {
+          <small class="text-red-500 text-xs mt-1 block" role="alert">
+            {{ 'general.usernameInvalidFormat' | translate }}
+          </small>
+          }
         </div>
+
+        <p-floatlabel class="w-full">
+          <p-select
+            formControlName="idState"
+            [options]="states"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full font-medium"
+            inputId="idState"
+          />
+          <label for="idState" class="font-medium"
+            >{{ 'general.state' | translate }}</label
+          >
+        </p-floatlabel>
       </div>
-      <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl">
-        <div
-          class="flex flex-col sm:flex-row gap-8 justify-between items-start"
-        >
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="state"
-              id="state"
-              autocomplete="off"
-            />
-            <label for="state" class="font-medium"
-              >{{'general.state' | translate}}*</label
-            >
-          </p-floatlabel>
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="city"
-              id="city"
-              autocomplete="off"
-            />
-            <label for="city" class="font-medium"
-              >{{'general.city' | translate}}*</label
-            >
-          </p-floatlabel>
-        </div>
-        <div class="flex flex-row gap-8 justify-between items-start">
-          <p-floatlabel class="w-10/10">
-            <input
-              pInputText
-              class="w-10/10 font-medium"
-              formControlName="address"
-              id="address"
-              autocomplete="off"
-            />
-            <label for="address" class="font-medium"
-              >{{'general.address' | translate}}</label
-            >
-          </p-floatlabel>
-        </div>
-      </div>
-      <div class="flex flex-row justify-center items-center mt-5">
+      <div class="flex flex-row justify-center items-center">
         <lib-button
           [label]="'general.save' | translate"
           [type]="'rounded'"
+          [buttonType]="'submit'"
+          [loading]="saving"
           width="w-40"
+          [disabled]="profileForm.invalid || saving || loadingUser"
         ></lib-button>
       </div>
     </form>
-    <div class="flex flex-col justify-center items-center gap-8">
-      <h3 class="text-lg font-medium">
-        {{'general.profilePicture' | translate}}
-      </h3>
-      <div
-        class="image-placeholder flex flex-row justify-center items-center w-40 h-40 rounded-full bg-gray-100 p-3 cursor-pointer"
-      >
-        <i class="pi pi-camera" style="font-size: 4rem"></i>
-      </div>
-    </div>
   </div>
 </section>

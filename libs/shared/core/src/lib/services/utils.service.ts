@@ -91,6 +91,19 @@ export class UtilsService {
   }
 
   /**
+   * Replaces multiple consecutive spaces with a single space and trims the string.
+   * Use for normalizing user input before sending to the API (except for rich text like product description).
+   *
+   * @param {string} value
+   * @returns {string}
+   * @memberof UtilsService
+   */
+  normalizeSpaces(value: string): string {
+    if (value == null || typeof value !== 'string') return value;
+    return value.trim().replace(/\s{2,}/g, ' ');
+  }
+
+  /**
    * This method trim all controls in the form
    *
    * @param {FormGroup} formGroup

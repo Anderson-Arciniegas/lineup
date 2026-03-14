@@ -19,6 +19,7 @@ import {
   ProductBreadcrumb,
 } from '@lineup/ui';
 import { TranslateService } from '@ngx-translate/core';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -38,7 +39,9 @@ import { Subscription } from 'rxjs';
     CatalogCard,
     ProductBreadcrumb,
     CreateCatalogCard,
+    InfiniteScrollDirective,
   ],
+
   templateUrl: './business-page.html',
   styleUrl: './business-page.scss',
 })
@@ -57,6 +60,9 @@ export class BusinessPage implements OnInit {
   myBusiness = false;
   path: string;
   catalogs: CatalogSchema[] = [];
+  page = 1;
+  noMoreResults = false;
+  attempt = false;
 
   private readonly _businessService = inject(BusinessService);
   private readonly _cdr = inject(ChangeDetectorRef);
@@ -75,7 +81,6 @@ export class BusinessPage implements OnInit {
     console.log('business', this._authStore.business());
 
     this.getBusiness();
-    this.getCatalogs();
   }
 
   private getBusiness(): void {
@@ -86,6 +91,7 @@ export class BusinessPage implements OnInit {
           this.business = business;
           this.myBusiness =
             Number(this._authStore.business()?.id) === Number(this.business.id);
+          this.getCatalogs();
           if (!this.myBusiness) {
             this.visitBusiness();
           }
@@ -115,21 +121,39 @@ export class BusinessPage implements OnInit {
     );
   }
 
+  onScroll(): void {
+    console.log('onScroll');
+    this.getCatalogs();
+  }
+
   private getCatalogs(): void {
+    if (this.attempt || this.noMoreResults) return;
+    this.attempt = true;
     this._subscription.add(
-      this._catalogService.findAllMyCatalogs({ page: 1, limit: 10 }).subscribe({
-        next: (response) => {
-          console.log(response);
-          this.catalogs = response.items;
-          console.log(this.catalogs);
-        },
-        error: (error) => {
-          console.error(error);
-        },
-        complete: () => {
-          console.log('complete');
-        },
-      }),
+      this._catalogService
+        .findCatalogsByBusinessId(this.business.id, {
+          page: this.page,
+          limit: 20,
+        })
+        .subscribe({
+          next: (response) => {
+            console.log(response);
+            this.page++;
+            if (response.items.length === 0) {
+              this.noMoreResults = true;
+            } else {
+              this.catalogs = [...this.catalogs, ...response.items];
+            }
+          },
+          error: (error) => {
+            console.error(error);
+            this.attempt = false;
+          },
+          complete: () => {
+            console.log('complete');
+            this.attempt = false;
+          },
+        }),
     );
   }
 }

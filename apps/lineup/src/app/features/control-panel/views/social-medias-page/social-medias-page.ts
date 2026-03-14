@@ -15,12 +15,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-social-medias-page',
-  imports: [
-    CommonModule,
-    Button,
-    TranslateModule,
-    ProgressSpinner,
-  ],
+  imports: [CommonModule, Button, TranslateModule, ProgressSpinner],
   templateUrl: './social-medias-page.html',
   styleUrl: './social-medias-page.scss',
 })
@@ -48,7 +43,9 @@ export class SocialMediasPage implements OnInit {
     );
     return socialNetwork
       ? socialNetwork.url
-        ? socialNetwork.url
+        ? socialNetwork.url.length > 30
+          ? socialNetwork.url.substring(0, 30) + '...'
+          : socialNetwork.url
         : socialNetwork.phone
       : '';
   }

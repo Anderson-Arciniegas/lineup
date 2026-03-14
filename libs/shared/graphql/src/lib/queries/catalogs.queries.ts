@@ -23,6 +23,17 @@ export const FIND_ALL_MY_CATALOGS_QUERY = gql`
   }
 `;
 
+export const FIND_CATALOGS_BY_BUSINESS_ID_QUERY = gql`
+  query FindCatalogsByBusinessId($idBusiness: Int!, $pagination: InfinityScrollInput!) {
+    findCatalogsByBusinessId(idBusiness: $idBusiness, pagination: $pagination) {
+      items ${catalogSelection}
+      limit
+      page
+      total
+    }
+  }
+`;
+
 export const FIND_ONE_CATALOG_QUERY = gql`
   query FindOneCatalog($id: Int!) {
     findOneCatalog(id: $id) ${catalogSelection}

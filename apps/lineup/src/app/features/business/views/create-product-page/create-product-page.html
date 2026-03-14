@@ -1,5 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
   <lib-product-breadcrumb
     [business]="business"
     class="w-full"
@@ -23,7 +25,7 @@
     </div>
     <div class="w-full flex flex-col gap-2">
       <div class="flex flex-row items-end justify-start gap-2">
-        <label for="title" class="font-semibold text-lg"
+        <label for="title" class="font-medium text-lg"
           >{{ 'general.title' | translate }}:</label
         >
       </div>
@@ -33,11 +35,16 @@
         placeholder="{{'general.productTitlePlaceholder' | translate}}"
         aria-describedby="title-help"
         formControlName="title"
+        [maxlength]="maxTitleLength"
       />
+      <small id="title-help" class="text-color-secondary text-xs mt-1 block">
+        {{ createProductForm.get('title')?.value.length }} / {{ maxTitleLength
+        }}
+      </small>
     </div>
     <div class="w-full flex flex-col gap-2">
       <div class="flex flex-row items-end justify-start gap-2">
-        <label for="title" class="font-semibold text-lg"
+        <label for="title" class="font-medium text-lg"
           >{{ 'general.subtitle' | translate }}:</label
         >
       </div>
@@ -45,15 +52,20 @@
         pInputText
         id="subtitle"
         placeholder="{{'general.productSubtitlePlaceholder' | translate}}"
-        aria-describedby="title-help"
+        aria-describedby="subtitle-help"
         formControlName="subtitle"
+        [maxlength]="maxSubtitleLength"
       />
+      <small id="subtitle-help" class="text-color-secondary text-xs mt-1 block">
+        {{ createProductForm.get('subtitle')?.value.length }} / {{
+        maxSubtitleLength }}
+      </small>
     </div>
     <div class="w-full flex flex-row justify-between">
       <div class="w-full md:w-1/2 lg:w-2/3 xl:w-full flex flex-col gap-5">
         <div class="w-full flex flex-col items-center justify-center gap-2">
           <div class="w-full flex flex-row flex-wrap items-end justify-start">
-            <label for="image" class="font-semibold text-lg">
+            <label for="image" class="font-medium text-lg">
               {{'general.imagesUpload' | translate}}:
             </label>
           </div>
@@ -90,7 +102,7 @@
           </div>
         </div>
         <div class="w-full flex flex-col gap-1">
-          <label for="price" class="font-semibold text-lg"
+          <label for="price" class="font-medium text-lg"
             >{{ 'general.price' | translate }}:</label
           >
           <div class="flex flex-col lg:flex-row gap-2 w-full">
@@ -129,9 +141,9 @@
             />
           </div>
         </div>
-        <div class="w-full flex flex-col gap-3">
+        <div class="w-full flex flex-col gap-3 max-w-5xl">
           <div class="flex flex-row items-center justify-between">
-            <label for="title" class="font-semibold text-lg"
+            <label for="title" class="font-medium text-lg"
               >{{ 'general.variations' | translate }}:</label
             >
           </div>
@@ -148,9 +160,12 @@
                 <div class="w-full flex flex-row items-center justify-between">
                   <label
                     [attr.for]="'variation-title-' + $index"
-                    class="font-semibold text-lg"
+                    class="font-medium text-lg"
                   >
-                    {{ 'general.name' | translate }}:
+                    {{ 'general.name' | translate }}: @if
+                    (hasPredefinedOptions(item)) { &nbsp; {{
+                    (item.get('title')?.value | translate) || ('general.name' |
+                    translate) }} }
                   </label>
                   <button
                     type="button"
@@ -161,6 +176,7 @@
                     <i class="pi pi-times" style="color: #ff3535"></i>
                   </button>
                 </div>
+                @if (!hasPredefinedOptions(item)){
                 <input
                   pInputText
                   [id]="'variation-title-' + $index"
@@ -168,11 +184,48 @@
                   formControlName="title"
                   [placeholder]="'general.variationNamePlaceholder' | translate"
                 />
+                }
               </div>
+              @if (hasPredefinedOptions(item)) {
+              <div class="flex flex-col gap-2 w-full mt-2">
+                <label
+                  class="font-medium text-lg"
+                  [attr.for]="'variation-predefined-' + $index"
+                >
+                  {{ 'general.value' | translate }}:
+                </label>
+                <p-multiselect
+                  [options]="getPredefinedOptions(item)"
+                  optionLabel="labelTranslated"
+                  optionValue="value"
+                  [inputId]="'variation-predefined-' + $index"
+                  [ngModel]="getVariationOptionsFormArray(item).value"
+                  [ngModelOptions]="{ standalone: true }"
+                  (onChange)="onPredefinedOptionsChange(item, $event.value)"
+                  [placeholder]="'general.select' | translate"
+                  display="chip"
+                  [filter]="true"
+                  filterBy="label,labelTranslated"
+                  class="w-full"
+                >
+                  <ng-template let-option pTemplate="item">
+                    <div class="flex items-center gap-2">
+                      @if (option.hex) {
+                      <span
+                        class="w-4 h-4 rounded-full border shrink-0"
+                        [style.backgroundColor]="option.hex"
+                      ></span>
+                      }
+                      <span>{{ option.label | translate }}</span>
+                    </div>
+                  </ng-template>
+                </p-multiselect>
+              </div>
+              } @else {
               <div class="flex flex-row items-center gap-2 w-full mt-2">
                 <label
                   [attr.for]="'variation-option-' + $index"
-                  class="font-semibold text-lg"
+                  class="font-medium text-lg"
                 >
                   {{ 'general.value' | translate }}:
                 </label>
@@ -180,6 +233,7 @@
                   pInputText
                   [id]="'variation-option-' + $index"
                   formControlName="newOption"
+                  [maxlength]="20"
                   [placeholder]="'general.variationValuePlaceholder' | translate"
                   (keydown.enter)="$event.preventDefault(); addVariationOption(item)"
                 />
@@ -205,14 +259,35 @@
                 </p-chip>
                 }
               </div>
+              }
             </div>
             }
           </div>
-          <div class="flex flex-row items-center justify-between">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-5"
+          >
+            <lib-button
+              label="{{'variations.color' | translate}}"
+              [icon]="'pi pi-palette'"
+              [width]="'w-30'"
+              size="small"
+              type="rounded"
+              (action)="addColorVariation()"
+            >
+            </lib-button>
+            <lib-button
+              label="{{'variations.size' | translate}}"
+              [icon]="'pi pi-tag'"
+              [width]="'w-30'"
+              size="small"
+              type="rounded"
+              (action)="addSizeVariation()"
+            >
+            </lib-button>
             <lib-button
               label="{{'general.add' | translate}}"
               [icon]="'pi pi-plus'"
-              [width]="'w-auto'"
+              [width]="'w-30'"
               size="small"
               type="rounded"
               (action)="addVariation()"
@@ -222,7 +297,7 @@
         </div>
         <div class="w-full flex flex-col gap-1">
           <div class="flex flex-col gap-2 w-full">
-            <label for="description" class="font-semibold text-lg"
+            <label for="description" class="font-medium text-lg"
               >{{ 'general.description' | translate }}:</label
             >
             <p-editor

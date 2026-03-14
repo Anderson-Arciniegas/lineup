@@ -4,6 +4,7 @@ import {
   CREATE_CATALOG_MUTATION,
   FIND_ALL_CATALOGS_QUERY,
   FIND_ALL_MY_CATALOGS_QUERY,
+  FIND_CATALOGS_BY_BUSINESS_ID_QUERY,
   FIND_ONE_CATALOG_BY_PATH_QUERY,
   FIND_ONE_CATALOG_QUERY,
   REMOVE_CATALOG_MUTATION,
@@ -85,6 +86,23 @@ export class CatalogService {
         },
       })
       .pipe(map((result) => result.data.findOneCatalogByPath));
+  }
+
+  findCatalogsByBusinessId(
+    idBusiness: number,
+    pagination: InfinityScrollInput,
+  ): Observable<PaginatedCatalogs> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ findCatalogsByBusinessId: PaginatedCatalogs }>({
+        query: FIND_CATALOGS_BY_BUSINESS_ID_QUERY,
+        variables: { idBusiness, pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.findCatalogsByBusinessId));
   }
 
   createCatalog(data: CreateCatalogInput): Observable<CatalogSchema> {

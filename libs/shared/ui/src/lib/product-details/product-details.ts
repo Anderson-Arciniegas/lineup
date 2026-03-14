@@ -45,34 +45,7 @@ export class ProductDetails implements OnInit, OnChanges {
   attempt: boolean;
   ref: DynamicDialogRef | undefined;
   hasLiked = false;
-  colors = [
-    { name: 'Red', primary: false },
-    { name: 'Blue', primary: false },
-    { name: 'Green', primary: true },
-    { name: 'Yellow', primary: false },
-  ];
-
-  sizes = [
-    { name: 'S', primary: false },
-    { name: 'M', primary: false },
-    { name: 'L', primary: true },
-    { name: 'XL', primary: false },
-  ];
-
-  shipping = [
-    { name: 'Delivery', primary: false },
-    { name: 'MRW', primary: false },
-    { name: 'Zoom', primary: true },
-  ];
-
-  variations = [
-    { title: 'Color', variations: this.colors },
-    { title: 'Size', variations: this.sizes },
-    { title: 'Shipping', variations: this.shipping },
-  ];
-
-  href =
-    'https://api.whatsapp.com/send?phone=584244124890&text=Hola%20quiero%20informacion%20del%20producto%20Laptop%20Gamer%20ASUS';
+  href: string;
 
   private readonly _socialMediaService = inject(SocialNetworkService);
   private readonly _messageService = inject(MessageService);
@@ -116,14 +89,21 @@ export class ProductDetails implements OnInit, OnChanges {
             console.log(socialNetworkBusinesses);
             if (socialNetworkBusinesses.length > 0) {
               this.businessSocialNetworks = socialNetworkBusinesses;
-              const phone = this.businessSocialNetworks
-                .find((socialNetwork) => socialNetwork.phone)
-                .phone.trim();
-              console.log(phone);
-              this.href = this._utilsService.formatWhatsappPhone(
-                phone,
-                `Hola%20estoy%20interesado%20en%20este%20producto:%20${location.href}`,
-              );
+              if (
+                this.businessSocialNetworks &&
+                this.businessSocialNetworks.find(
+                  (socialNetwork) => socialNetwork.phone,
+                )
+              ) {
+                const phone = this.businessSocialNetworks
+                  .find((socialNetwork) => socialNetwork.phone)
+                  .phone.trim();
+                console.log(phone);
+                this.href = this._utilsService.formatWhatsappPhone(
+                  phone,
+                  `Hola%20estoy%20interesado%20en%20este%20producto:%20${location.href}`,
+                );
+              }
             } else {
               this.businessSocialNetworks = [];
             }
