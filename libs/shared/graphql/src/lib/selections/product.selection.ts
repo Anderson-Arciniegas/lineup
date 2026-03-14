@@ -105,6 +105,6 @@ export const productRatingSelection = `{
  * Selección de producto para búsqueda (alias en description para evitar conflicto de tipos en union)
  */
 export const productSearchSelection = productSelection.replace(
-  /\n  description\n  price/,
+  /\n {2}description\n {2}price/,
   '\n  productDescription: description\n  price',
 );

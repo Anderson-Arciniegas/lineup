@@ -11,7 +11,7 @@ describe('SearchFilters', () => {
     await TestBed.configureTestingModule({
       imports: [SearchFilters, TranslateModule.forRoot()],
       providers: [
-        { provide: DynamicDialogRef, useValue: { close: () => {} } },
+        { provide: DynamicDialogRef, useValue: { close: (): void => { /* mock */ } } },
         { provide: DynamicDialogConfig, useValue: { data: {} } },
         TranslateService,
         TranslateStore,
