@@ -15,7 +15,7 @@ describe('AddSocialMediaModal', () => {
         TranslateService,
         TranslateStore,
         { provide: Apollo, useValue: {} },
-        { provide: DynamicDialogRef, useValue: { close: () => {} } },
+        { provide: DynamicDialogRef, useValue: { close: (): void => { /* mock */ } } },
         {
           provide: DynamicDialogConfig,
           useValue: {

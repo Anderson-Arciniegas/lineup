@@ -1,6 +1,19 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
+  // Rutas que usan Server para evitar errores de getPrerenderParams con parámetros dinámicos/catch-all
+  {
+    path: 'profile/**',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'search/:query',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: ':business/**',
+    renderMode: RenderMode.Server,
+  },
   {
     path: ':business',
     renderMode: RenderMode.Server,
