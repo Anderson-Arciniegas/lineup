@@ -8,16 +8,23 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BusinessService, UserGraphqlService } from '@lineup/core';
+import { BusinessService, UserService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { Toast } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
-  imports: [RouterModule, ButtonModule, TranslateModule, DynamicDialogModule],
+  imports: [
+    RouterModule,
+    ButtonModule,
+    TranslateModule,
+    DynamicDialogModule,
+    Toast,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -27,7 +34,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   protected translate = inject(TranslateService);
   private platformId: object = inject(PLATFORM_ID);
-  private _user = inject(UserGraphqlService);
+  private _user = inject(UserService);
   private _auth = inject(AuthService);
   private _business = inject(BusinessService);
   private _subscription: Subscription = new Subscription();

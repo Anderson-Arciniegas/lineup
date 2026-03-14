@@ -1,41 +1,35 @@
-<section class="favorites flex flex-col gap-6 py-5 sm:py-0">
+<section
+  class="favorites flex flex-col gap-6 py-5"
+  infiniteScroll
+  [infiniteScrollDistance]="2"
+  [infiniteScrollThrottle]="50"
+  [scrollWindow]="false"
+  [infiniteScrollDisabled]="attempt || noMoreResults"
+  (scrolled)="onScroll()"
+>
   <h2 class="text-2xl font-semibold ps-4">
-    {{ 'general.favorites' | translate }}
+    {{ 'general.myFavoriteBusinesses' | translate }}
   </h2>
 
-  <div class="flex flex-col gap-8 px-0 xl:px-8 py-8 justify-start items-start">
-    <h2 class="text-xl font-semibold ps-4">
-      {{ 'general.businesses' | translate }}
-    </h2>
-    <div
-      class="container w-full flex flex-row flex-wrap justify-start items-center mb-10"
-    >
-      @for (product of products; track product.id) {
-      <lib-business-card
-        [favoritesMode]="true"
-        class="cursor-pointer w-5/11 max-w-35 sm:max-w-none sm:w-40 2xl:w-45 m-0 m-1 md:m-3"
-        [width]="'w-full sm:w-40 2xl:w-45'"
-        [height]="'h-35 sm:h-45 2xl:h-50'"
-      ></lib-business-card>
+  <div class="flex flex-col gap-8 px-0 xl:px-8 py-8 justify-start items-center">
+    <div class="w-full products-grid mb-10">
+      @for (business of businesses; track business.id) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-business-card
+          [width]="'w-60 2xl:w-65'"
+          [height]="'h-80'"
+          [business]="business"
+        />
+      </div>
       }
     </div>
-  </div>
-
-  <div class="flex flex-col gap-8 px-0 xl:px-8 py-8 justify-start items-start">
-    <h2 class="text-xl font-semibold ps-4">
-      {{ 'general.products' | translate }}
-    </h2>
-    <div
-      class="container w-full flex flex-row flex-wrap justify-start items-center mb-10"
-    >
-      @for (product of products; track product.id) {
-      <lib-product-card
-        class="m-1 lg:m-3 w-55 h-70 2xl:w-65 2xl:h-100"
-        [width]="'w-55 2xl:w-65'"
-        [height]="'h-70 2xl:h-100'"
-        [index]="product.id"
-      ></lib-product-card>
-      }
+    @if(attempt) {
+    <div class="flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
     </div>
+    }
   </div>
 </section>

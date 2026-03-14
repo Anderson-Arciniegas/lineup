@@ -8,6 +8,11 @@ import { AccountTypePage } from '../features/auth/views/account-type-page/accoun
 import { LoginPage } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
+import { CreateCatalogPage } from '../features/business/views/create-catalog-page/create-catalog-page';
+import { CreateProductPage } from '../features/business/views/create-product-page/create-product-page';
+import { BusinessSettingsPage } from '../features/control-panel/views/business-settings-page/business-settings-page';
+import { CatalogPanelPage } from '../features/control-panel/views/catalog-panel-page/catalog-panel-page';
+import { CatalogsPage } from '../features/control-panel/views/catalogs-page/catalogs-page';
 import { ControlPanelPage } from '../features/control-panel/views/control-panel-page/control-panel-page';
 import { EditBusinessPage } from '../features/control-panel/views/edit-business-page/edit-business-page';
 import { LocationsPage } from '../features/control-panel/views/locations-page/locations-page';
@@ -54,11 +59,11 @@ export const layoutRoutes: Routes = [
         component: AccountTypePage,
       },
       {
-        path: 'user',
+        path: AppConfigService.config.routes.user,
         component: RegisterUserPage,
       },
       {
-        path: 'business',
+        path: AppConfigService.config.routes.business,
         component: RegisterBusinessPage,
       },
     ],
@@ -84,6 +89,40 @@ export const layoutRoutes: Routes = [
         path: AppConfigService.config.routes.locations,
         component: LocationsPage,
       },
+      {
+        path: AppConfigService.config.routes.catalogs,
+        children: [
+          {
+            path: '',
+            component: CatalogsPage,
+          },
+          {
+            path: ':catalogPath',
+            children: [
+              {
+                path: '',
+                component: CatalogPanelPage,
+              },
+              {
+                path: AppConfigService.config.routes.edit,
+                component: CreateCatalogPage,
+              },
+              {
+                path: AppConfigService.config.routes.createProduct,
+                component: CreateProductPage,
+              },
+              {
+                path: ':idProduct/' + AppConfigService.config.routes.edit,
+                component: CreateProductPage,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: AppConfigService.config.routes.settings,
+        component: BusinessSettingsPage,
+      },
     ],
   },
   {
@@ -107,6 +146,14 @@ export const layoutRoutes: Routes = [
       },
       {
         path: AppConfigService.config.routes.search,
+        component: SearchPage,
+        data: {
+          title: 'general.search',
+          breadcrumb: 'search',
+        },
+      },
+      {
+        path: AppConfigService.config.routes.search + '/:query',
         component: SearchPage,
         data: {
           title: 'general.search',

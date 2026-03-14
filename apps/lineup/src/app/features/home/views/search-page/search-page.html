@@ -1,62 +1,21 @@
 <section
-  class="pt-8 md:pt-12 px-2 sm:px-0 2xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start container"
+  class="py-8 md:pt-12 px-2 sm:px-0 xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start w-full"
 >
   <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
-    <div
-      class="w-full sm:w-9/10 flex flex-row items-center justify-center search-container"
-    >
-      <div
-        class="search flex items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4 sm:px-8"
-      >
-        <lib-button
-          width="w-10 h-10"
-          size="large"
-          icon="pi pi-sliders-h"
-          variant="text"
-          type="rounded"
-          (action)="showDialog()"
-          class="block lg:hidden"
-        >
-        </lib-button>
-        <p-iconfield class="w-full max-width">
-          <p-inputicon class="pi pi-search" />
-          <input
-            type="text"
-            class="w-full input font-medium"
-            pInputText
-            placeholder="Search"
-          />
-        </p-iconfield>
+    <lib-search-bar
+      class="w-full max-w-200"
+      (searchSubmit)="onSearchSubmit($event)"
+      [shrink]="true"
+    ></lib-search-bar>
 
-        <lib-button
-          label="Buscar"
-          icon="pi pi-search"
-          type="rounded"
-          class="hidden sm:block"
-        >
-        </lib-button>
-
-        <lib-button
-          width="w-10 h-10"
-          icon="pi pi-search"
-          type="rounded"
-          class="block sm:hidden"
-        >
-        </lib-button>
-      </div>
-      <div
-        class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
-      ></div>
-    </div>
-
-    <p-dialog
-      header="Filtros"
+    <!-- <p-dialog
+      [header]="'general.filters' | translate"
       [modal]="true"
       [(visible)]="visible"
       [style]="{ width: '25rem', height: '90vh' }"
     >
       <lib-search-filters></lib-search-filters>
-    </p-dialog>
+    </p-dialog> -->
 
     <!-- <div class="
         flex flex-col
@@ -113,58 +72,86 @@
         class="filters-parent-container hidden lg:flex flex-col items-start justify-start gap-5 w-3/12"
       >
         <div class="w-10/10 mt-15 filters-container">
-          <lib-search-filters></lib-search-filters>
+          <lib-search-filters
+            (setFilters)="setFilters($event)"
+          ></lib-search-filters>
         </div>
       </div>
       <div
         class="flex flex-col items-start justify-center gap-5 w-10/10 lg:w-9/12"
       >
-        <h3 class="font-medium text-3xl pl-10">
-          {{'general.searchResults' | translate}}
-        </h3>
         <div
-          class="w-full grid [grid-template-columns:repeat(1,auto)] sm:[grid-template-columns:repeat(2,auto)] md:[grid-template-columns:repeat(2,auto)] lg:[grid-template-columns:repeat(3,auto)] xl:[grid-template-columns:repeat(3,auto)] 2xl:[grid-template-columns:repeat(4,auto)] justify-center sm:justify-center gap-2 sm:gap-x-5 sm:gap-y-5 px-1 sm:px-4 md:px-5 mb-10"
+          class="w-full lg:w-auto flex flex-row items-center justify-between lg:justify-start gap-6 px-5 sm:px-10"
         >
-          <lib-business-card
-            class="cursor-pointer my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-          ></lib-business-card>
-
-          <lib-business-card
-            class="cursor-pointer my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-          ></lib-business-card>
-
-          <lib-catalog-card
-            class="cursor-pointer my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-          ></lib-catalog-card>
-
-          <lib-catalog-card
-            class="cursor-pointer my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-          ></lib-catalog-card>
-
-          @for (product of products; track product.id) {
-          <lib-product-card
-            class="my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-            [index]="product.id"
-          ></lib-product-card>
-          } @for (product of products; track product.id) {
-          <lib-product-card
-            class="my-3"
-            [width]="'w-65 lg:w-60 xl:w-65'"
-            [height]="'h-80'"
-            [index]="product.id"
-          ></lib-product-card>
-          }
+          <h3 class="font-medium text-xl sm:text-3xl">
+            {{'general.searchResults' | translate}}
+          </h3>
+          <lib-button
+            width="w-13"
+            size="large"
+            icon="pi pi-sliders-h"
+            type="rounded"
+            (action)="showFiltersDialog()"
+            class="block lg:hidden"
+          >
+          </lib-button>
         </div>
+        @if(items.length > 0) {
+        <div
+          class="w-full products-grid"
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollThrottle]="50"
+          [scrollWindow]="true"
+          [infiniteScrollDisabled]="attempt || noMoreResults"
+          (scrolled)="onScroll()"
+        >
+          @for (item of items; track item.id) { @if(item.__typename ===
+          'BusinessSchema') {
+          <div class="w-full flex flex-col items-center justify-center">
+            <lib-business-card
+              class="my-3"
+              [width]="'w-60'"
+              [height]="'h-80'"
+              [business]="item"
+            ></lib-business-card>
+          </div>
+          } @else if(item.__typename === 'CatalogSchema') {
+          <div class="w-full flex flex-col items-center justify-center">
+            <lib-catalog-card
+              class="my-3"
+              [width]="'w-60'"
+              [height]="'h-80'"
+              [catalog]="item"
+            ></lib-catalog-card>
+          </div>
+          } @else if(item.__typename === 'ProductSchema') {
+          <div class="w-full flex flex-col items-center justify-center">
+            <lib-product-card
+              class="my-3"
+              [width]="'w-60'"
+              [height]="'h-80'"
+              [product]="item"
+            ></lib-product-card>
+          </div>
+          } }
+        </div>
+        } @if(!attempt) {
+        <div class="card flex flex-col items-center justify-center p-10 w-full">
+          <p-progress-spinner
+            strokeWidth="4"
+            [style]="{ width: '100px', height: '100px' }"
+          />
+        </div>
+        } @else if(items.length === 0) {
+        <div
+          class="card flex flex-col items-center justify-center mt-10 p-10 w-full"
+        >
+          <h3 class="text-2xl font-medium text-center w-6/10">
+            {{'general.noResults' | translate}}
+          </h3>
+        </div>
+        }
       </div>
     </div>
   </section>

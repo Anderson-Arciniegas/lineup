@@ -1,50 +1,153 @@
-<section ngSkipHydrations
-         [routerLink]="'/business-1/lineup/catalog-1/123'"
-         id="product-flip-{{index}}"
-         class="product-card shadow-lg  flex flex-col content-between justify-between cursor-pointer"
-         [ngClass]="[width, height]">
-
+<a [routerLink]="url">
+  <section
+    ngSkipHydrations
+    id="product-flip-{{product?.id}}"
+    class="product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+    [ngClass]="[width, height]"
+  >
     <div [ngClass]="[width, height]">
-        <img class="product-image"
-             (load)="imageLoaded = true"
-             [hidden]="!imageLoaded"
-             [ngClass]="[width, height]"
-             [src]="image"
-             alt="">
+      <img
+        class="product-image"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        [ngClass]="[width, height]"
+        [src]="image"
+        alt=""
+      />
 
-        <div [hidden]="imageLoaded"
-             [ngClass]="[width, height]"
-             class="flex flex-row items-center justify-center">
-            <p-progress-spinner strokeWidth="8"
-                                fill="transparent"
-                                animationDuration=".5s"
-                                [style]="{ width: '50px', height: '50px' }" />
+      <div
+        [hidden]="imageLoaded"
+        [ngClass]="[width, height]"
+        class="flex flex-row items-center justify-center"
+      >
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+    </div>
+
+    @if (!dashboardMode) {
+    <div [ngClass]="[width]" class="buttons-container">
+      <div
+        class="button-content flex flex-row w-full justify-between rounded-full gap-2"
+      >
+        <div
+          tabindex="-1"
+          (click)="$event.preventDefault(); $event.stopPropagation()"
+          (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+          (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+        >
+          <lib-button
+            class="card-like-button"
+            [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+            [width]="'w-11'"
+            [type]="'rounded'"
+            (action)="hasLiked ? unlikeProduct() : likeProduct()"
+          ></lib-button>
         </div>
-    </div>
 
-
-    <div [ngClass]="[width]"
-         class="button-content flex flex-row w-full justify-start">
-        <lib-button class="card-like-button"
-                    [icon]="'pi pi-heart'"
-                    [width]="'w-11'"
-                    [type]="'rounded'"></lib-button>
-    </div>
-
-    <div [ngClass]="[width]"
-         class="flip-box">
-        <div class="flip-inner h-12">
-            <div class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-center items-center">
-                <h2 class="text-white text-xs text-center font-medium">Televisor 65″ Samsung Neo QLED 4K QN90B</h2>
-
-            </div>
-
-            <div class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center">
-                <h2 class="text-white text-xs text-center font-medium">TuPuntoShop</h2>
-                <h2 class="text-white text-base text-center font-medium">200$</h2>
-
-            </div>
-
+        <div class="flex flex-row justify-center items-center gap-2">
+          <h2 class="text-white text-sm text-center font-semibold">
+            {{(product?.price | currency: product?.currency?.code : 'symbol' :
+            '1.0-2' : 'es')}}
+          </h2>
         </div>
+
+        <div
+          tabindex="-1"
+          (click)="$event.preventDefault(); $event.stopPropagation()"
+          (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+          (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+        >
+          <a
+            [routerLink]="'/'+ product?.business?.path"
+            [pTooltip]="product?.business?.name"
+            tooltipPosition="top"
+          >
+            <img
+              class="business-image"
+              [src]="businessImage"
+              alt="Business Image"
+            />
+          </a>
+        </div>
+      </div>
     </div>
-</section>
+    }
+
+    <div [ngClass]="[width]" class="flip-box">
+      <div class="flip-inner h-13">
+        <div
+          class="front info-translucid h-13 rounded-full py-1 px-3 flex flex-row justify-between items-center"
+        >
+          <h2
+            class="text-white text-sm font-medium w-full product-name"
+            [ngClass]="'max-' + [width]"
+          >
+            {{product?.title || 'Product Title'}}
+          </h2>
+          <i class="pi pi-angle-right text-white"></i>
+        </div>
+
+        <div
+          class="back info-translucid h-13 rounded-full py-1 px-3 flex flex-row justify-between items-center"
+        >
+          <!-- <h2 class="text-white text-xs text-center font-medium">
+            {{product?.business?.name || 'Business Name'}}
+          </h2>
+          @if (product?.price) {
+          <h2 class="text-white text-sm text-center font-medium">
+            {{(product?.price | currency: product?.currency?.code : 'symbol' :
+            '1.0-2' : 'es')}}
+          </h2>
+          } -->
+
+          <div
+            class="flex flex-row justify-center items-center w-full text-white gap-2"
+          >
+            <i class="pi pi-star-fill"></i>
+            <span class="text-sm font-medium text-center"> 4.8 </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</a>
+
+<!-- <div
+[ngClass]="[width]"
+class="flex flex-col justify-between items-center product-info h-full px-4 pt-1 pb-2"
+>
+<div class="w-full flex flex-col justify-start items-center gap-1">
+  <div class="flex flex-row justify-center items-center w-full">
+    <h2
+      class="text-xs font-medium text-center text-primary-700 business-name"
+      [ngClass]="[width]"
+    >
+      {{product?.business?.name || 'Business Name'}}
+    </h2>
+  </div>
+  <div class="flex flex-row justify-center items-center w-full">
+    <h2 class="text-sm font-semibold w-full max-h-10 product-title">
+      {{setTitle(product?.title) || 'Product Title'}}
+    </h2>
+  </div>
+  <div class="flex flex-row justify-start items-center w-full gap-2">
+    <i class="pi pi-star-fill" style="font-size: 1rem"></i>
+    <span class="text-md font-medium text-center text-primary-700">
+      4.8
+    </span>
+  </div>
+</div>
+<div class="flex flex-row justify-start items-center w-full">
+  @if (product?.price) {
+  <h2 class="text-xl text-center font-semibold">
+    {{(product?.price | currency: product?.currency?.code : 'symbol' :
+    '1.0-2' : 'es')}}
+  </h2>
+  }
+</div>
+</div> -->

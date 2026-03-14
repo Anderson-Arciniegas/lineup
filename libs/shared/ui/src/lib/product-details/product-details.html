@@ -1,33 +1,55 @@
-<p-panel [toggleable]="true" class="w-full">
-  <ng-template #header>
-    <div class="flex items-center gap-2">
-      <span class="font-bold">Detalles</span>
+<div class="w-full flex flex-col items-start justify-between gap-4">
+  <div class="w-full flex flex-row items-center justify-start gap-4 sm:gap-8">
+    <span class="font-bold text-3xl sm:text-4xl"
+      >{{ product.price | currency: product?.currency?.code : 'symbol' : '1.0-2'
+      : 'es' }}
+    </span>
+
+    <div class="w-full flex flex-row gap-3">
+      @if(href) {
+      <lib-button
+        icon="pi pi-whatsapp"
+        label="{{'general.contactUs' | translate}}"
+        [href]="href"
+        [target]="'_blank'"
+        type="rounded"
+      ></lib-button>
+      }
+      <lib-button
+        [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+        [width]="'w-13'"
+        [size]="'large'"
+        type="rounded"
+        (action)="hasLiked ? unlikeProduct() : likeProduct()"
+        color="secondary"
+      ></lib-button>
+      <lib-button
+        icon="pi pi-share-alt"
+        [width]="'w-13'"
+        [size]="'large'"
+        type="rounded"
+        color="secondary"
+        (click)="share()"
+      ></lib-button>
     </div>
-  </ng-template>
-  <div class="w-full flex flex-col gap-3 items-start justify-start">
-    @for (item of variations; track $index) {
-    <lib-product-variations
-      class="w-full flex flex-col gap-1 items-start justify-start"
-      [title]="item.title"
-      [variations]="item.variations"
-    >
-    </lib-product-variations>
-    }
   </div>
-</p-panel>
-<div class="w-full flex flex-row mt-1 gap-3">
-  <lib-button
-    icon="pi pi-whatsapp"
-    label="Contactanos"
-    [href]="href"
-    [target]="'_blank'"
-    [width]="'w-50'"
-    type="rounded"
-  ></lib-button>
-  <lib-button
-    icon="pi pi-heart"
-    [width]="'w-12'"
-    type="rounded"
-    color="secondary"
-  ></lib-button>
+  @if(product && product.variations && product.variations.length > 0) {
+  <p-panel [toggleable]="true" class="w-full">
+    <ng-template #header>
+      <div class="flex items-center gap-2">
+        <span class="font-bold">{{ 'general.details' | translate }}</span>
+      </div>
+    </ng-template>
+    <div class="w-full flex flex-col gap-3 items-start justify-start py-2">
+      @for (item of product.variations; track $index) {
+      <lib-product-variations
+        class="w-full flex flex-col gap-1 items-start justify-start"
+        [title]="item.title"
+        [options]="item.options"
+      >
+      </lib-product-variations>
+      }
+    </div>
+  </p-panel>
+  }
 </div>

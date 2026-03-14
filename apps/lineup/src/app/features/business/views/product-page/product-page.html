@@ -1,8 +1,11 @@
-<div class="w-full px-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col">
+<div class="w-full py-2 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col">
   <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+  @if (product) {
   <div class="w-full flex flex-col gap-6">
     <div class="w-full flex flex-row items-center justify-center">
-      <h3 class="text-3xl font-medium text-center">Baltimore Ravens Jerseys</h3>
+      <h3 class="text-3xl font-medium text-center">
+        {{product.title || 'Baltimore Ravens Jerseys'}}
+      </h3>
     </div>
 
     <div class="card w-10/10">
@@ -20,7 +23,13 @@
           <section
             class="flex flex-row items-center justify-center p-1 sm:py-3 sm:mx-2"
           >
-            <img class="carousel-image w-10/10" [src]="image" alt="" />
+            <p-image
+              [src]="image"
+              [preview]="true"
+              [appendTo]="'body'"
+              imageClass="carousel-image w-10/10"
+              alt=""
+            />
           </section>
 
           <!-- <div [hidden]="imageLoaded"
@@ -51,31 +60,23 @@
                         height="50px" />
         </div> -->
   </div>
-  <lib-product-info></lib-product-info>
-  <div class="w-full mt-4 gap-6 flex flex-row items-center justify-center">
+  <lib-product-info [product]="product"></lib-product-info>
+  } @if(attempt) {
+  <div class="card flex justify-center p-10 mt-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
+  <div class="w-full mt-10 gap-6 flex flex-row items-center justify-center">
     <div
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
     >
-      <lib-product-card
-        [index]="1"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="2"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="3"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
-      <lib-product-card
-        [index]="4"
-        [width]="'w-full'"
-        [height]="'h-70'"
-      ></lib-product-card>
+      <!-- <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
+      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
+      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
+      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card> -->
     </div>
   </div>
 </div>

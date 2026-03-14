@@ -1,0 +1,35 @@
+<div class="business-locations-modal flex flex-col gap-4">
+  @if (locations().length > 0) {
+  <div class="locations-list flex flex-col gap-2">
+    @for (location of locations(); track location.id) {
+    <button
+      type="button"
+      class="location-item flex flex-col gap-1 text-left"
+      (click)="openLocation(location)"
+    >
+      <span class="text-sm font-semibold">
+        #{{ location.id }} &nbsp;&nbsp; {{ location.name ?? '' }}
+      </span>
+      <span class="text-sm text-gray-800">
+        {{ getShortAddress(location.formattedAddress || location.address) ||
+        (location.formattedAddress || location.address) }}
+      </span>
+      <span class="text-xs text-gray-600">
+        {{ location.lat }}, {{ location.lng }}
+      </span>
+    </button>
+    }
+  </div>
+  } @else {
+  <p class="text-sm text-gray-600">{{ 'general.noLocations' | translate }}</p>
+  }
+
+  <div class="flex flex-row justify-center pt-2">
+    <lib-button
+      [label]="'general.close' | translate"
+      [width]="'w-30'"
+      variant="outlined"
+      (action)="close()"
+    ></lib-button>
+  </div>
+</div>

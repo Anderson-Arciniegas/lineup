@@ -1,0 +1,61 @@
+.add-location-modal {
+  min-width: 280px;
+  max-width: 560px;
+}
+
+.search-wrapper {
+  z-index: 1;
+}
+
+.predictions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  margin-top: 2px;
+  padding: 0;
+  list-style: none;
+  background: var(--p-surface-0);
+  border: 1px solid var(--p-border-color);
+  border-radius: var(--p-border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.predictions-list__item {
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  color: var(--p-text-color);
+  border-bottom: 1px solid var(--p-surface-200);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover,
+  &:focus {
+    background: var(--p-surface-100);
+  }
+}
+
+.map-container {
+  background: var(--p-surface-100);
+}
+
+.map-container.invisible {
+  visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+
+.map-skeleton {
+  min-height: 20rem;
+}
+
+.input {
+  outline: none;
+}

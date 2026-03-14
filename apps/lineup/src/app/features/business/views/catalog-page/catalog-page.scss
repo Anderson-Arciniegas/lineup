@@ -23,4 +23,26 @@
     outline: none;
     padding: 0 40px;
   }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 1rem;
+    width: 100%;
+    padding: 0 0.25rem 2.5rem;
+
+    @media screen and (max-width: 1535px) {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
+
+    @media (min-width: 640px) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      padding-left: 3.75rem;
+      padding-right: 3.75rem;
+    }
+  }
 }

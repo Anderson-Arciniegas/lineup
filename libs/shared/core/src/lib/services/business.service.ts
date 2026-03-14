@@ -1,8 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import {
   BUSINESS_LOGIN_MUTATION,
+  BUSINESS_LOGIN_WITH_GOOGLE_MUTATION,
   BUSINESS_LOGOUT_MUTATION,
   BUSINESS_REFRESH_TOKEN_MUTATION,
+  BUSINESS_REGISTER_WITH_GOOGLE_MUTATION,
+  CHANGE_BUSINESS_PASSWORD_MUTATION,
   CREATE_BUSINESS_MUTATION,
   GET_BUSINESS_BY_PATH,
   GET_MY_BUSINESS_QUERY,
@@ -14,8 +17,14 @@ import { map } from 'rxjs/operators';
 import {
   CreateBusinessInput,
   CreateBusinessResponse,
+  RegisterGoogleBusinessInput,
   UpdateBusinessInput,
 } from '../models/business.model';
+import {
+  ChangePasswordInput,
+  LoginGoogleInput,
+  LoginResponse,
+} from '../models/user.model';
 import { BusinessSchema } from '../schemas';
 
 @Injectable({
@@ -97,7 +106,7 @@ export class BusinessService {
           withCredentials: true,
         },
       })
-      .pipe(map((result) => result.data!.updateBusiness.business));
+      .pipe(map((result) => result.data.updateBusiness));
   }
 
   getBusinessByPath(path: string): Observable<any> {
@@ -112,6 +121,47 @@ export class BusinessService {
         },
       })
       .pipe(map((result) => result.data.findBusinessByPath));
+  }
+
+  changeBusinessPassword(data: ChangePasswordInput): Observable<boolean> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ changeBusinessPassword: boolean }>({
+        mutation: CHANGE_BUSINESS_PASSWORD_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.changeBusinessPassword));
+  }
+
+  loginWithGoogle(data: LoginGoogleInput): Observable<LoginResponse> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ loginWithGoogle: LoginResponse }>({
+        mutation: BUSINESS_LOGIN_WITH_GOOGLE_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.loginWithGoogle));
+  }
+
+  registerWithGoogle(
+    data: RegisterGoogleBusinessInput,
+  ): Observable<LoginResponse> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ registerWithGoogle: LoginResponse }>({
+        mutation: BUSINESS_REGISTER_WITH_GOOGLE_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.registerWithGoogle));
   }
 
   //   getUser(id: number): Observable<any> {

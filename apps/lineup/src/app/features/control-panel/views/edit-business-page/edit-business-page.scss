@@ -3,20 +3,8 @@
     width: 100% !important;
   }
 
-  .profile {
-    height: calc(100vh - 120px);
-    overflow-y: auto;
-  }
-
   .image-placeholder {
     overflow: hidden;
     border-radius: 25px;
-  }
-
-  @media screen and (max-width: 639px) {
-    .profile {
-      height: calc(100vh - 88px);
-      overflow-y: auto;
-    }
   }
 }

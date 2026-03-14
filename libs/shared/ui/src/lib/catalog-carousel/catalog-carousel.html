@@ -15,8 +15,9 @@
       autoplayInterval="8000"
     >
       <ng-template let-product #item>
-        <section>
+        <section class="w-full flex flex-col items-center justify-center">
           <lib-catalog-carousel-item
+            class="w-full"
             [product]="product"
           ></lib-catalog-carousel-item>
         </section>

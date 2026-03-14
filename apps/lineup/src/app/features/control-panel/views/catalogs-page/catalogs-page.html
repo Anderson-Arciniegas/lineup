@@ -1,0 +1,35 @@
+<section class="profile flex flex-col gap-10 py-5">
+  <h2 class="text-2xl font-semibold ps-4">
+    {{'general.catalogs' | translate}}
+  </h2>
+
+  <div class="flex flex-wrap justify-start items-center ps-8">
+    @if(!attempt || catalogs.length > 0) {
+    <div class="p-4">
+      <lib-create-catalog-card
+        [business]="business"
+        [width]="'w-52'"
+        [height]="'h-60'"
+      ></lib-create-catalog-card>
+    </div>
+    } @for (catalog of catalogs; track catalog.id) {
+    <div class="p-4">
+      <lib-catalog-card
+        [width]="'w-52'"
+        [height]="'h-60'"
+        [catalog]="catalog"
+        [dashboardMode]="true"
+      ></lib-catalog-card>
+    </div>
+    }
+  </div>
+
+  @if(attempt) {
+  <div class="card flex justify-center p-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
+</section>

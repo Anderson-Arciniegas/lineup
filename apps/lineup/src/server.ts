@@ -1,3 +1,4 @@
+import { getPlatform } from '@angular/core';
 import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
 import { getContext } from '@netlify/angular-runtime/context.mjs';
 
@@ -6,6 +7,13 @@ const angularAppEngine = new AngularAppEngine();
 export async function netlifyAppEngineHandler(
   request: Request,
 ): Promise<Response> {
+  // Evita NG0400: destruir cualquier plataforma previa antes de manejar la petición.
+  // Puede quedar una plataforma si una petición anterior falló o durante el descubrimiento de rutas.
+  const platform = getPlatform();
+  if (platform) {
+    platform.destroy();
+  }
+
   const context = getContext();
 
   // Example API endpoints can be defined here.

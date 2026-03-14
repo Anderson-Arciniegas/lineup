@@ -1,0 +1,84 @@
+@if (isInsideDynamicDialog()) {
+<div class="share-modal-content flex flex-col gap-6">
+  <div
+    class="share-modal-social-row flex flex-row flex-wrap justify-center gap-3"
+  >
+    @for (network of shareOptions; track network.id) {
+    <button
+      type="button"
+      class="share-modal-social-btn"
+      [attr.aria-label]="network.label"
+      (click)="shareOn(network)"
+    >
+      <i [class]="network.icon" class="share-modal-social-icon"></i>
+      <span class="share-modal-social-label">{{ network.label }}</span>
+    </button>
+    }
+  </div>
+
+  <div class="share-modal-url-row flex flex-row items-center gap-2 w-full">
+    <input
+      type="text"
+      class="share-modal-url-input"
+      [readonly]="true"
+      [value]="displayUrl()"
+      aria-label="URL para compartir"
+    />
+    <lib-button
+      [width]="'w-30'"
+      [icon]="copied() ? 'pi pi-check' : 'pi pi-copy'"
+      [label]="(copied() ? 'general.copied' : 'general.copy') | translate"
+      [color]="copied() ? 'success' : 'primary'"
+      size="small"
+      (action)="copyUrl()"
+    ></lib-button>
+  </div>
+</div>
+} @else {
+<p-dialog
+  [header]="'general.share' | translate"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(90vw, 420px)' }"
+  styleClass="share-modal-dialog"
+>
+  <div class="share-modal-content flex flex-col gap-6">
+    <div
+      class="share-modal-social-row flex flex-row flex-wrap justify-center gap-3"
+    >
+      @for (network of shareOptions; track network.id) {
+      <button
+        type="button"
+        class="share-modal-social-btn"
+        [attr.aria-label]="network.label"
+        (click)="shareOn(network)"
+      >
+        <i [class]="network.icon" class="share-modal-social-icon"></i>
+        <span class="share-modal-social-label">{{ network.label }}</span>
+      </button>
+      }
+    </div>
+
+    <div class="share-modal-url-row flex flex-row items-center gap-2 w-full">
+      <input
+        type="text"
+        class="share-modal-url-input"
+        [readonly]="true"
+        [value]="displayUrl()"
+        aria-label="URL para compartir"
+      />
+      <lib-button
+        [width]="'w-30'"
+        [icon]="copied() ? 'pi pi-check' : 'pi pi-copy'"
+        [label]="(copied() ? 'general.copied' : 'general.copy') | translate"
+        [color]="copied() ? 'success' : 'primary'"
+        size="small"
+        (action)="copyUrl()"
+      ></lib-button>
+    </div>
+  </div>
+</p-dialog>
+}

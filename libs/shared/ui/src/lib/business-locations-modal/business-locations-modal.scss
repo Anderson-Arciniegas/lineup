@@ -1,0 +1,31 @@
+.business-locations-modal {
+  min-width: 280px;
+}
+
+.locations-list {
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.location-item {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--p-surface-200);
+  border-radius: 0.75rem;
+  background: var(--p-surface-0);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+  cursor: pointer;
+}
+
+.location-item:hover,
+.location-item:focus-visible {
+  background: var(--p-primary-50);
+  border-color: var(--p-primary-300);
+}
+
+.location-item:active {
+  transform: scale(0.99);
+}
