@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { ProductSchema } from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProductDescription } from '../product-description/product-description';
 import { ProductDetails } from '../product-details/product-details';
@@ -10,10 +12,12 @@ import { ProductDetails } from '../product-details/product-details';
     CommonModule,
     SkeletonModule,
     ProductDescription,
-    ProductDetails
+    ProductDetails,
+    TranslateModule,
   ],
   templateUrl: './product-info.html',
   styleUrl: './product-info.scss',
 })
 export class ProductInfo {
+  @Input() product: ProductSchema;
 }

@@ -1,0 +1,18 @@
+.location-modal {
+  min-width: 280px;
+  max-width: 560px;
+}
+
+.map-container {
+  background: var(--p-surface-100);
+}
+
+.map-container.invisible {
+  visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+
+.map-skeleton {
+  min-height: 20rem;
+}

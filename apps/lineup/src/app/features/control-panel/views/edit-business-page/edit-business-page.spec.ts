@@ -1,10 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
 import { BusinessApiFileService, UtilsService } from '@lineup/core';
-import { of } from 'rxjs';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
+import { Apollo } from 'apollo-angular';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { BusinessService } from 'libs/shared/core/src/lib/services/business.service';
+import { of } from 'rxjs';
 import { EditBusinessPage } from './edit-business-page';
 
 describe('EditBusinessPage', () => {
@@ -18,13 +25,15 @@ describe('EditBusinessPage', () => {
           name: 'Test Business',
           email: 'test@business.com',
           path: 'test-business',
-          telephone: '(58) 499 999-9999',
+          telephone: '+58 (499) 999-9999',
         } as any),
     };
 
     const utilsServiceMock: Partial<UtilsService> = {
       blobToFile: (blob: Blob, fileName: string) =>
-        new File([blob], fileName, { type: (blob as any)?.type ?? 'image/png' }),
+        new File([blob], fileName, {
+          type: (blob as any)?.type ?? 'image/png',
+        }),
       getExtensionFile: () => 'png',
       compressImage: (base64: string) => of(base64),
     };
@@ -40,9 +49,18 @@ describe('EditBusinessPage', () => {
         TranslateService,
         TranslateStore,
         provideNoopAnimations(),
+        {
+          provide: Apollo,
+          useValue: { use: () => ({ query: () => of({ data: {} }), mutate: () => of({ data: {} }) }) },
+        },
+        MessageService,
+        DialogService,
         { provide: BusinessService, useValue: businessServiceMock },
         { provide: UtilsService, useValue: utilsServiceMock },
-        { provide: BusinessApiFileService, useValue: businessApiFileServiceMock },
+        {
+          provide: BusinessApiFileService,
+          useValue: businessApiFileServiceMock,
+        },
       ],
     })
       .overrideComponent(EditBusinessPage, {

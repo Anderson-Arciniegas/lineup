@@ -7,15 +7,30 @@ import {
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { BusinessCard, Button, CatalogCard, ProductCard } from '@lineup/ui';
+import {
+  BusinessCard,
+  Button,
+  CatalogCard,
+  ProductCard,
+  SearchBar,
+} from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
-import { ɵɵDir } from '@angular/cdk/scrolling';
+import { FormsModule } from '@angular/forms';
+import {
+  AppConfigService,
+  BusinessSchema,
+  CatalogSchema,
+  ProductSchema,
+  UserService,
+  UtilsService,
+} from '@lineup/core';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { Subscription } from 'rxjs';
 
 // gsap.registerPlugin(ScrollTrigger);
 @Component({
@@ -31,7 +46,8 @@ import { InputIcon } from 'primeng/inputicon';
     Carousel,
     ButtonModule,
     TranslateModule,
-    ɵɵDir,
+    FormsModule,
+    SearchBar,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -40,7 +56,6 @@ export class HomePage implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   responsiveOptions: any[] | undefined;
   responsiveOptionsCatalogs: any[] | undefined;
-
   tags = [
     'Accessories',
     'Technology',
@@ -52,78 +67,13 @@ export class HomePage implements OnInit, AfterViewInit {
     'Gaming',
   ];
 
-  products: any[] | undefined = [
-    {
-      id: 1,
-      name: 'Product 1',
-      image: 'product1.jpg',
-      price: 100,
-      inventoryStatus: 'in-stock',
-    },
-    {
-      id: 2,
-      name: 'Product 2',
-      image: 'product2.jpg',
-      price: 200,
-      inventoryStatus: 'out-of-stock',
-    },
-    {
-      id: 3,
-      name: 'Product 3',
-      image: 'product3.jpg',
-      price: 300,
-      inventoryStatus: 'low-stock',
-    },
-    {
-      id: 4,
-      name: 'Product 1',
-      image: 'product1.jpg',
-      price: 100,
-      inventoryStatus: 'in-stock',
-    },
-    {
-      id: 5,
-      name: 'Product 2',
-      image: 'product2.jpg',
-      price: 200,
-      inventoryStatus: 'out-of-stock',
-    },
-    {
-      id: 6,
-      name: 'Product 3',
-      image: 'product3.jpg',
-      price: 300,
-      inventoryStatus: 'low-stock',
-    },
-    {
-      id: 7,
-      name: 'Product 1',
-      image: 'product1.jpg',
-      price: 100,
-      inventoryStatus: 'in-stock',
-    },
-    {
-      id: 8,
-      name: 'Product 2',
-      image: 'product2.jpg',
-      price: 200,
-      inventoryStatus: 'out-of-stock',
-    },
-    {
-      id: 9,
-      name: 'Product 3',
-      image: 'product3.jpg',
-      price: 300,
-      inventoryStatus: 'low-stock',
-    },
-    {
-      id: 10,
-      name: 'Product 3',
-      image: 'product3.jpg',
-      price: 300,
-      inventoryStatus: 'low-stock',
-    },
-  ];
+  products: ProductSchema[] = [];
+  catalogs: CatalogSchema[] = [];
+  businesses: BusinessSchema[] = [];
+
+  private readonly _userService = inject(UserService);
+  private readonly _utils = inject(UtilsService);
+  private readonly _subscription = new Subscription();
 
   ngOnInit() {
     this.responsiveOptions = [
@@ -200,9 +150,70 @@ export class HomePage implements OnInit, AfterViewInit {
         numScroll: 1,
       },
     ];
+
+    this.getFeaturedBusinesses();
+    this.getFeaturedCatalogs();
+    this.getFeaturedProducts();
   }
 
   ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
+  }
+
+  private getFeaturedBusinesses(): void {
+    this._subscription.add(
+      this._userService.featuredBusinesses({ page: 1, limit: 10 }).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.businesses = [...this.businesses, ...response.items];
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
+        },
+      }),
+    );
+  }
+
+  private getFeaturedCatalogs(): void {
+    this._subscription.add(
+      this._userService.featuredCatalogs({ page: 1, limit: 10 }).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.catalogs = [...this.catalogs, ...response.items];
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
+        },
+      }),
+    );
+  }
+
+  private getFeaturedProducts(): void {
+    this._subscription.add(
+      this._userService.featuredProducts({ page: 1, limit: 10 }).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.products = [...this.products, ...response.items];
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
+        },
+      }),
+    );
+  }
+
+  onSearchSubmit(query: string): void {
+    if (query === '') return;
+
+    this._utils.navigate([AppConfigService.config.routes.search, query]);
   }
 }

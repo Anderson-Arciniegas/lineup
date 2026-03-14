@@ -1,8 +1,13 @@
 import { RolesCodesEnum } from '../enums';
 import { BusinessSchema } from '../schemas';
 
+export interface RegisterGoogleBusinessInput {
+  token: string;
+}
+
 export interface CreateBusinessInput {
   email: string;
+  emailValidated?: boolean;
   name: string;
   password: string;
   role: RolesCodesEnum;
@@ -26,4 +31,11 @@ export interface CreateBusinessResponse {
     status?: string;
     business: BusinessSchema;
   };
+}
+
+export interface PaginatedBusinesses {
+  items: BusinessSchema[];
+  limit: number;
+  page: number;
+  total: number;
 }

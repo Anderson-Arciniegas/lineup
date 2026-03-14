@@ -6,7 +6,9 @@
   .carousel-image {
     cursor: pointer;
     width: 100%;
+    min-height: 400px;
     height: 500px;
+    max-width: 600px;
     border: 15px solid var(--p-primary-50);
     border-radius: 50px;
     /* esquinas suaves */
@@ -23,6 +25,15 @@
       /* pequeño zoom */
       filter: brightness(1) contrast(1.1) saturate(1.2);
     }
+  }
+
+  .carousel-image-loading {
+    height: 500px;
+    width: 500px;
+    max-width: 600px;
+    border: 15px solid var(--p-primary-50);
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   @media screen and (max-width: 450px) {

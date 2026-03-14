@@ -24,17 +24,22 @@ export const AuthStore = signalStore(
   withState(initialState),
 
   // Computed signals (equivalente a selectors)
-  withComputed(({ user, business, isAuthenticated }) => ({
+  withComputed(({ user, business }) => ({
     isUserLoggedIn: () => user() !== null,
     isBusinessLoggedIn: () => business() !== null,
     currentAccount: () => business() ?? user(),
+    /** Solo puede existir una sesión: 'user' | 'business' | null */
+    sessionType: () =>
+      business() !== null ? 'business' : user() !== null ? 'user' : null,
   })),
 
   // Methods (equivalente a actions + reducers)
+  // Sesión única: al establecer user se limpia business y viceversa.
   withMethods((store) => ({
     setUser: (user: UserSchema) => {
       patchState(store, {
         user,
+        business: null,
         isAuthenticated: true,
       });
     },
@@ -42,13 +47,14 @@ export const AuthStore = signalStore(
     unsetUser: () => {
       patchState(store, {
         user: null,
-        isAuthenticated: false,
+        isAuthenticated: store.business() !== null,
       });
     },
 
     setBusiness: (business: BusinessSchema) => {
       patchState(store, {
         business,
+        user: null,
         isAuthenticated: true,
       });
     },
@@ -56,7 +62,7 @@ export const AuthStore = signalStore(
     unsetBusiness: () => {
       patchState(store, {
         business: null,
-        isAuthenticated: false,
+        isAuthenticated: store.user() !== null,
       });
     },
 

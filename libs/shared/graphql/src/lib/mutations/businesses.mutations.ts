@@ -1,7 +1,8 @@
 import { gql } from 'apollo-angular';
 import {
-  businessBasicSelection,
+  businessFullSelection,
   businessLoginResponseSelection,
+  businessLoginResponseWithUserSelection,
 } from '../selections/businesses.selection';
 
 /**
@@ -30,7 +31,7 @@ export const CREATE_BUSINESS_MUTATION = gql`
     createBusiness(data: $data) {
       code
       status
-      business ${businessBasicSelection}
+      business ${businessFullSelection}
     }
   }
 `;
@@ -40,7 +41,7 @@ export const CREATE_BUSINESS_MUTATION = gql`
  */
 export const UPDATE_BUSINESS_MUTATION = gql`
   mutation UpdateBusiness($data: UpdateBusinessInput!) {
-    updateBusiness(data: $data) ${businessBasicSelection}    
+    updateBusiness(data: $data) ${businessFullSelection}    
   }
 `;
 
@@ -51,5 +52,32 @@ export const BUSINESS_LOGOUT_MUTATION = gql`
       message
       status
     }
+  }
+`;
+
+/**
+ * Mutation para cambiar la contraseña del business
+ */
+export const CHANGE_BUSINESS_PASSWORD_MUTATION = gql`
+  mutation ChangeBusinessPassword($data: ChangePasswordInput!) {
+    changeBusinessPassword(data: $data)
+  }
+`;
+
+/**
+ * Mutation para iniciar sesión como business con Google
+ */
+export const BUSINESS_LOGIN_WITH_GOOGLE_MUTATION = gql`
+  mutation LoginWithGoogle($data: LoginGoogleInput!) {
+    loginWithGoogle(data: $data) ${businessLoginResponseWithUserSelection}
+  }
+`;
+
+/**
+ * Mutation para registrar business con Google
+ */
+export const BUSINESS_REGISTER_WITH_GOOGLE_MUTATION = gql`
+  mutation RegisterWithGoogle($data: RegisterGoogleBusinessInput!) {
+    registerWithGoogle(data: $data) ${businessLoginResponseWithUserSelection}
   }
 `;

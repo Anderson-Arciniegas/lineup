@@ -1,29 +1,20 @@
-import {
-  CommonModule,
-  Location
-} from '@angular/common';
-import {
-  Component,
-  inject,
-  Input
-} from '@angular/core';
-import { Button } from "../button/button";
+import { CommonModule, Location } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
+import { BusinessSchema } from '@lineup/core';
+import { Button } from '../button/button';
 
 @Component({
-    selector: 'lib-product-breadcrumb',
-    imports: [CommonModule, Button],
-    templateUrl: './product-breadcrumb.html',
-    styleUrl: './product-breadcrumb.scss',
+  selector: 'lib-product-breadcrumb',
+  imports: [CommonModule, Button],
+  templateUrl: './product-breadcrumb.html',
+  styleUrl: './product-breadcrumb.scss',
 })
 export class ProductBreadcrumb {
-    @Input() business: {
-        name: string;image: string
-    };
+  @Input() business: BusinessSchema;
 
-    private location = inject(Location);
+  private location = inject(Location);
 
-    goBack(): void {
-        this.location.back();
-    }
-
+  goBack(): void {
+    this.location.back();
+  }
 }

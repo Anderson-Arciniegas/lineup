@@ -1,27 +1,63 @@
-<section class="profile flex flex-col gap-10 py-5 sm:py-0">
+<section class="profile flex flex-col gap-10 py-5">
   <h2 class="text-2xl font-semibold ps-4">
     {{'general.socialMedias' | translate}}
   </h2>
 
-  <div class="flex flex-col gap-4 ps-10 w-11/12">
+  <div class="flex flex-col gap-4 ps-4 xl:ps-10 w-11/12">
     @for (socialMedia of socialMedias; track socialMedia.name) {
     <div
-      class="social-media-item flex flex-row justify-between items-center gap-8 p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300"
+      class="social-media-item flex flex-row justify-between items-center gap-8 p-2 sm:p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300 shadow"
       (click)="addSocialMediaModal(socialMedia)"
       (keyup.enter)="addSocialMediaModal(socialMedia)"
       tabindex="0"
       role="button"
     >
-      <div class="flex flex-row justify-start items-center gap-4">
-        <i [class]="socialMedia.icon" style="font-size: 2rem"></i>
-        <span class="font-medium">{{socialMedia.name}}</span>
+      <div class="flex flex-row justify-start items-center gap-2 sm:gap-4">
+        <img
+          [src]="socialMedia.image?.url"
+          alt="Social Media Icon"
+          class="w-10 h-10 rounded-xl"
+        />
+        <span class="font-medium text-sm sm:text-base"
+          >{{socialMedia.name}}</span
+        >
       </div>
 
-      <div class="flex flex-row justify-around items-center w-full gap-4">
-        <span>{{socialMedia.username}}</span>
-        <span>{{socialMedia.url}}</span>
+      <div
+        class="flex flex-row justify-around items-center gap-4 hidden md:flex"
+      >
+        <span>{{getSocialNetworkUrl(socialMedia.id)}}</span>
       </div>
+
+      @if(getSocialNetworkUrl(socialMedia.id)){
+      <lib-button
+        class="hidden sm:block"
+        [icon]="'pi pi-trash'"
+        [type]="'rounded'"
+        [size]="'large'"
+        variant="text"
+        width="w-13"
+        (action)="$event.stopPropagation();deleteSocialNetwork(socialMedia)"
+      ></lib-button>
+
+      <lib-button
+        class="sm:hidden block"
+        [icon]="'pi pi-trash'"
+        [type]="'rounded'"
+        variant="text"
+        width="w-11"
+        (action)="$event.stopPropagation();deleteSocialNetwork(socialMedia)"
+      ></lib-button>
+      }
     </div>
     }
   </div>
+  @if(attempt) {
+  <div class="flex justify-center p-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
 </section>

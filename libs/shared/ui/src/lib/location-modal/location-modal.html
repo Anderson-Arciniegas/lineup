@@ -1,0 +1,88 @@
+<div class="location-modal flex flex-col gap-5">
+  @if(myLocation) {
+  <div class="flex flex-row justify-between items-center gap-4">
+    <span class="text-base font-semibold">
+      #{{ location()?.id }} &nbsp;&nbsp; {{ location()?.name ?? '' }}
+    </span>
+    <div
+      class="flex flex-row justify-start items-center gap-2 md:gap-4 hidden md:flex"
+    >
+      <lib-button
+        [icon]="'pi pi-pencil'"
+        [type]="'rounded'"
+        width="w-11"
+        (action)="editLocation()"
+      ></lib-button>
+
+      <lib-button
+        [icon]="'pi pi-trash'"
+        [type]="'rounded'"
+        width="w-11"
+        (action)="deleteLocation()"
+      ></lib-button>
+    </div>
+  </div>
+  }@else {
+  <div class="flex flex-row justify-start items-center gap-4">
+    <span class="text-base font-semibold"> {{ location()?.name ?? '' }} </span>
+  </div>
+  }
+
+  <div class="flex flex-col gap-1">
+    <span class="text-sm font-semibold">
+      {{ 'general.address' | translate }}
+    </span>
+    <p class="text-base break-words">
+      {{ location()?.formattedAddress || location()?.address }}
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-sm font-semibold">
+      {{ 'general.coordinates' | translate }}
+    </span>
+    <p class="text-sm text-gray-700">
+      {{ location()?.lat }} , {{ location()?.lng }}
+    </p>
+  </div>
+
+  <div
+    class="map-wrapper relative rounded-xl overflow-hidden border border-primary-300"
+  >
+    @if (isMapReady() && location()) {
+    <button
+      type="button"
+      (click)="openInGoogleMaps()"
+      class="open-in-maps absolute top-2 right-2 z-[1] flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-md ring-1 ring-black/5 transition hover:bg-gray-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+      [attr.aria-label]="'locationModal.openInGoogleMaps' | translate"
+    >
+      <span class="pi pi-external-link" aria-hidden="true"></span>
+      {{ 'locationModal.openInGoogleMaps' | translate }}
+    </button>
+    } @if (isMapLoading()) {
+    <div
+      class="map-skeleton absolute inset-0 flex items-center justify-center bg-primary-100"
+    >
+      <span class="text-primary-700">
+        {{ 'locationModal.loadingMap' | translate }}
+      </span>
+    </div>
+    }
+    <div
+      #mapContainer
+      class="map-container w-full h-80 min-h-80"
+      [class.invisible]="!isMapReady()"
+      role="img"
+      aria-label="Google Maps"
+    ></div>
+  </div>
+
+  <div class="flex flex-row justify-center gap-4 pt-2">
+    <lib-button
+      [label]="'general.close' | translate"
+      [width]="'w-30'"
+      variant="outlined"
+      (click)="close()"
+    ></lib-button>
+  </div>
+</div>

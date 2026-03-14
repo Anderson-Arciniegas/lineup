@@ -91,6 +91,19 @@ export class UtilsService {
   }
 
   /**
+   * Replaces multiple consecutive spaces with a single space and trims the string.
+   * Use for normalizing user input before sending to the API (except for rich text like product description).
+   *
+   * @param {string} value
+   * @returns {string}
+   * @memberof UtilsService
+   */
+  normalizeSpaces(value: string): string {
+    if (value == null || typeof value !== 'string') return value;
+    return value.trim().replace(/\s{2,}/g, ' ');
+  }
+
+  /**
    * This method trim all controls in the form
    *
    * @param {FormGroup} formGroup
@@ -124,5 +137,10 @@ export class UtilsService {
         80,
       ),
     );
+  }
+
+  formatWhatsappPhone(phone: string, text: string) {
+    const href = `https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9]/g, '')}&text=${text}`;
+    return href;
   }
 }

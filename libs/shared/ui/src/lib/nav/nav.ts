@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input } from '@angular/core';
+import { Component, computed, inject, Input, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -26,7 +26,7 @@ import { Button } from '../button/button';
 export class Nav {
   @Input() navItems: any[];
   visible = false;
-
+  private platformId: object = inject(PLATFORM_ID);
   private _authStore = inject(AuthStore);
 
   // Computed signals - se actualizan automáticamente

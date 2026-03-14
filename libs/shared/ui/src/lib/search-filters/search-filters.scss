@@ -1,34 +1,34 @@
 ::ng-deep {
+  .search-filter {
+    border-radius: 30px !important;
+    font-weight: 400;
+    overflow: hidden !important;
+    // overflow-y: auto !important;
+    // max-height: 600px;
+  }
 
-    .search-filter {
-        border-radius: 30px !important;
-        overflow: hidden !important;
-        font-weight: 400;
+  .search-filter-head {
+    font-weight: 500;
+  }
+
+  .price-filter {
+    input {
+      border-radius: var(--border-radius);
+      border: 1px solid var(--p-primary-300);
+      height: 35px;
+      width: 100%;
+      outline: none;
+      padding: 0 15px;
     }
+  }
 
-    .search-filter-head {
-        font-weight: 500;
-    }
+  .search-filter-component {
+    max-width: 300px;
+  }
 
-    .price-filter {
-        input {
-            border-radius: var(--border-radius);
-            border: 1px solid var(--p-primary-200);
-            height: 35px;
-            max-width: 180px;
-            outline: none;
-            padding: 0 20px;
-        }
-    }
-
+  @media screen and (max-width: 1023px) {
     .search-filter-component {
-        max-width: 300px;
+      max-width: none;
     }
-
-    @media screen and (max-width: 1023px) {
-        .search-filter-component {
-            max-width: none;
-        }
-    }
-
+  }
 }

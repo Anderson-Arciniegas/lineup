@@ -3,7 +3,11 @@
     class="social-media-item flex flex-row justify-between items-center gap-8 p-2"
   >
     <div class="flex flex-row justify-start items-center gap-4">
-      <i [class]="socialMedia.icon" style="font-size: 2rem"></i>
+      <img
+        [src]="socialMedia.image?.url"
+        alt="Social Media Icon"
+        class="w-10 h-10 rounded-xl"
+      />
       <span class="font-medium">{{socialMedia.name}}</span>
     </div>
   </div>
@@ -12,7 +16,7 @@
     [formGroup]="socialMediaForm"
     class="flex flex-col items-start justify-center gap-3 w-full"
   >
-    <div class="flex flex-col items-start justify-center gap-1 w-full">
+    <!-- <div class="flex flex-col items-start justify-center gap-1 w-full">
       <label for="name" class="font-semibold"
         >{{'general.username' | translate}}:</label
       >
@@ -23,25 +27,54 @@
         class="input w-full h-11 rounded"
         placeholder="{{'general.username' | translate}}"
       />
-    </div>
-    <div class="flex flex-col items-start justify-center gap-1 w-full">
-      <label for="name" class="font-semibold"
+    </div> -->
+    @if (!whatsappMode) {
+    <div class="flex flex-col items-start justify-start gap-1 w-full h-24">
+      <label for="url" class="font-semibold"
         >{{'general.url' | translate}}:</label
       >
       <input
-        type="text"
-        id="name"
+        type="url"
+        id="url"
         formControlName="url"
+        [class.error]="isUrlInvalid"
         class="input w-full h-11 rounded"
-        placeholder="{{'general.url' | translate}}"
+        placeholder="https://example.com"
       />
+      @if (isUrlInvalid) {
+      <small class="text-red-500 text-sm">
+        @if (urlControl?.errors?.['required']) { {{'validation.urlRequired' |
+        translate}} } @else if (urlControl?.errors?.['invalidUrl']) {
+        {{'validation.invalidUrl' | translate}} }
+      </small>
+      }
     </div>
+    } @else {
+    <div
+      class="flex flex-col sm:flex-row gap-8 justify-between items-start w-full"
+    >
+      <p-floatlabel class="w-10/10">
+        <p-inputmask
+          class="w-10/10 font-medium block"
+          formControlName="phone"
+          id="phone"
+          autocomplete="off"
+          mask="+58 (499) 999-9999"
+          placeholder="+58 (499) 999-9999"
+        />
+        <label for="phone" class="font-medium"
+          >{{'general.phoneNumber' | translate}}</label
+        >
+      </p-floatlabel>
+    </div>
+    }
   </form>
 
   <div class="w-full">
     <lib-button
-      [label]="'Guardar'"
+      [label]="'general.save' | translate"
       [width]="'w-full'"
+      [loading]="attempt"
       (click)="saveSocialMedia()"
     ></lib-button>
   </div>

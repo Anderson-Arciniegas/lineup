@@ -3,6 +3,9 @@
  * Estas selecciones pueden ser usadas en queries y mutations para evitar duplicación
  */
 
+import { fileSelection } from './file.selection';
+import { stateSelection } from './state.selection';
+
 /**
  * Selección básica de roles de usuario
  */
@@ -44,6 +47,10 @@ export const userBasicSelection = `{
   provider
   status
   emailValidated
+  idState
+  imageCode
+  profileImage ${fileSelection}
+  state ${stateSelection}
   creationDate
   creationIp
   userRoles ${userRoleSelection}
@@ -74,15 +81,28 @@ export const userFullSelection = `{
     latitude
     longitude
   }
+  idState
+  imageCode
+  profileImage ${fileSelection}
+  files ${fileSelection}
+  state ${stateSelection}
   userRoles ${userRoleSelection}
 }`;
 
 /**
  * Selección de respuesta de login/refresh token
- * Incluye la estructura de respuesta con code, status y user
+ * Incluye la estructura de respuesta con code, message, status, user y business (Google login/register)
  */
 export const loginResponseSelection = `{
   code
+  message
   status
   user ${userBasicSelection}
+  business {
+    id
+    email
+    name
+    path
+    status
+  }
 }`;

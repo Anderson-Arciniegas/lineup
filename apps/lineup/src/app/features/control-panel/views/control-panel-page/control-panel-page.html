@@ -1,1 +1,91 @@
-<p>control-panel-page works!</p>
+<section class="profile flex flex-col gap-10 py-5">
+  <h2 class="text-2xl font-semibold ps-4">
+    {{'general.dashboard' | translate}}
+  </h2>
+
+  <h4 class="text-lg font-medium ps-4">
+    {{'general.welcomeToYourDashboard' | translate}}
+  </h4>
+
+  @if(business) {
+
+  <div class="flex flex-row gap-5 justify-center items-center w-full">
+    <div
+      class="card flex flex-col justify-center items-center gap-3 w-40 shadow"
+    >
+      <span class="text-lg font-semibold"
+        >{{'general.followers' | translate}}</span
+      >
+      <span class="text-lg font-semibold"> {{business.visits}} </span>
+    </div>
+    <div
+      class="card flex flex-col justify-center items-center gap-3 w-40 shadow"
+    >
+      <span class="text-lg font-semibold"
+        >{{'general.visits' | translate}}</span
+      >
+      <span class="text-lg font-semibold"> {{business.visits}} </span>
+    </div>
+    <div
+      class="card flex flex-col justify-center items-center gap-3 w-40 shadow"
+    >
+      <span class="text-lg font-semibold"
+        >{{'general.catalogs' | translate}}</span
+      >
+      <span class="text-lg font-semibold"> 6 </span>
+    </div>
+
+    <div
+      class="card flex flex-col justify-center items-center gap-3 w-40 shadow"
+    >
+      <span class="text-lg font-semibold"
+        >{{'general.products' | translate}}</span
+      >
+      <span class="text-lg font-semibold"> 9 </span>
+    </div>
+
+    <div
+      class="card flex flex-col justify-center items-center gap-3 w-40 shadow"
+    >
+      <span class="text-lg font-semibold">{{'general.sales' | translate}}</span>
+      <span class="text-lg font-semibold"> 9 </span>
+    </div>
+  </div>
+
+  <div class="flex flex-col justify-center items-start gap-3">
+    <span class="text-lg font-semibold ps-4"
+      >{{'general.popularProducts' | translate}}</span
+    >
+    <div class="w-full mt-10 gap-6 flex flex-row items-center justify-center">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
+      >
+        <lib-product-card
+          [width]="'w-full'"
+          [height]="'h-70'"
+        ></lib-product-card>
+        <lib-product-card
+          [width]="'w-full'"
+          [height]="'h-70'"
+        ></lib-product-card>
+        <lib-product-card
+          [width]="'w-full'"
+          [height]="'h-70'"
+        ></lib-product-card>
+        <lib-product-card
+          [width]="'w-full'"
+          [height]="'h-70'"
+        ></lib-product-card>
+      </div>
+    </div>
+  </div>
+
+  } @if(attempt) {
+  <div class="flex justify-center p-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  }
+</section>

@@ -1,20 +1,38 @@
+.catalogs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0 0.25rem 2.5rem;
+
+  @media (min-width: 640px) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+  }
+}
+
 .max-width {
-    max-width: 760px;
+  max-width: 760px;
 }
 
 .search {
-    width: 100%;
-    max-width: 770px;
-    height: 100px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 770px;
+  height: 100px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
 
-    @media screen and (max-width: 640px) {
-        max-width: 400px;
-        height: 70px;
-    }
+  @media screen and (max-width: 640px) {
+    max-width: 400px;
+    height: 70px;
+  }
 }
 
 .input {
-    border-radius: var(--border-radius);
+  border-radius: var(--border-radius);
 }

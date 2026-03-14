@@ -38,24 +38,26 @@ body {
   --p-progressspinner-color-two: var(--p-primary-400);
   --p-progressspinner-color-three: var(--p-primary-300);
   --p-progressspinner-color-four: var(--p-primary-200);
-  --p-tree-node-selected-background: var(--p-primary-100);
+  --p-tree-node-selected-background: var(--p-primary-700);
+  --p-tree-node-selected-color: var(--p-primary-50);
   --p-listbox-option-selected-focus-background: var(--p-primary-600);
   --p-listbox-option-selected-background: var(--p-primary-600);
-
-    --p-button-secondary-background: #ffffff;
-    --p-button-secondary-hover-background: var(--p-primary-200);
-    --p-button-secondary-active-background: var(--p-primary-200);
-    --p-button-secondary-border-color: var(--p-primary-200);
-    --p-button-secondary-hover-border-color: var(--p-primary-200);
-    --p-button-secondary-active-border-color: var(--p-primary-200);
-    --p-button-secondary-color: var(--p-primary-800);
-    --p-button-secondary-hover-color: var(--p-primary-800);
-    --p-button-secondary-active-color: var(--p-primary-800);
-    --p-button-text-secondary-hover-background: var(--p-primary-200);
-    --p-button-text-secondary-active-background: var(--p-primary-200);
-    --p-button-text-secondary-color: var(--p-primary-800);
-    //--p-button-secondary-focus-ring-color: transparent;
-    //--p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
+  --p-chip-padding-y: 0.325rem;
+  --p-tooltip-padding: 0.5rem;
+  --p-button-secondary-background: #ffffff;
+  --p-button-secondary-hover-background: var(--p-primary-200);
+  --p-button-secondary-active-background: var(--p-primary-200);
+  --p-button-secondary-border-color: var(--p-primary-200);
+  --p-button-secondary-hover-border-color: var(--p-primary-200);
+  --p-button-secondary-active-border-color: var(--p-primary-200);
+  --p-button-secondary-color: var(--p-primary-800);
+  --p-button-secondary-hover-color: var(--p-primary-800);
+  --p-button-secondary-active-color: var(--p-primary-800);
+  --p-button-text-secondary-hover-background: var(--p-primary-200);
+  --p-button-text-secondary-active-background: var(--p-primary-200);
+  --p-button-text-secondary-color: var(--p-primary-800);
+  //--p-button-secondary-focus-ring-color: transparent;
+  //--p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
 }
 
 // h1{
@@ -99,6 +101,11 @@ body {
   margin: auto;
 }
 
+/* Toast por encima de modales y overlays (DynamicDialog suele usar ~1100) */
+.p-toast {
+  z-index: 9999 !important;
+}
+
 .p-dialog-header-actions {
   .p-button {
     width: 40px !important;
@@ -139,6 +146,39 @@ body {
 
 .h-100vh-calc {
   height: calc(100vh - 80px);
+}
+
+.page {
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+
+  @media screen and (max-width: 639px) {
+    height: calc(100vh - 72px);
+  }
+}
+
+.p-image-mask .p-image-original {
+  max-width: 95vw !important;
+  max-height: 95vh !important;
+  min-width: 30vw !important;
+  min-height: 30vh !important;
+  object-fit: cover;
+  border-radius: 15px !important;
+}
+
+.p-card-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.p-image-preview:hover > .p-image-preview-mask {
+  opacity: 0.4 !important;
+  border-radius: 50px !important;
+}
+
+.p-tooltip-text {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
 }
 
 @media screen and (max-width: 639px) {

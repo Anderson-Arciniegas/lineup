@@ -1,4 +1,7 @@
-<a [routerLink]="'/business-1/lineup/catalog-1'" [ngClass]="[width, height]">
+<a
+  [routerLink]="catalog ? (dashboardMode ? (catalog.path) : ('/' + catalog.business.path + '/' + catalog.path)) : ('/business-1/catalog-1')"
+  [ngClass]="[width, height]"
+>
   <div
     class="catalog-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
   >
@@ -9,7 +12,10 @@
         class="catalog-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-2 hidden sm:flex"
       >
         <i class="pi pi-th-large" style="font-size: 0.8rem"></i>
-        <span class="font-semibold">99+</span>
+        <span class="font-semibold"
+          >{{catalog ? (catalog.productsCount > 99 ? '99+' :
+          catalog.productsCount) : '0'}}</span
+        >
       </div>
 
       @if (editMode) {
@@ -47,10 +53,12 @@
       </div>
     </div>
     <div
-      class="w-full text-center flex flex-rows items-center justify-between title-content"
+      class="w-full flex flex-row items-center justify-between title-content"
     >
-      <div class="flex flex-row items-center justify-start pl-2">
-        <span class="font-medium text-sm">Catalog Title</span>
+      <div class="flex flex-row items-center justify-start pl-2 w-9/10">
+        <span class="font-medium text-sm catalog-title w-full"
+          >{{catalog?.title || 'Catalog Title'}}</span
+        >
       </div>
       <div class="flex items-center justify-center">
         <i class="pi pi-angle-right text-xl"></i>
