@@ -9,19 +9,19 @@ import {
 } from '@angular/forms';
 import {
   BaseResponse,
-  BusinessEmailVerificationService,
+  BusinessEmailVerificationPrivateService,
   CreateVerificationCodeDto,
   SendVerificationCodeInput,
-  UserEmailVerificationService,
+  UserEmailVerificationPublicService,
   VerificationCodeChannelEnum,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputOtpModule } from 'primeng/inputotp';
 import { InputTextModule } from 'primeng/inputtext';
+import { Observable } from 'rxjs';
 import { Button } from '../button/button';
 
 export type VerificationCodeModalType = 'user' | 'business';
@@ -57,10 +57,10 @@ export class VerificationCodeModal implements OnInit {
   private readonly _ref = inject(DynamicDialogRef);
   private readonly _config = inject(DynamicDialogConfig);
   private readonly _userEmailVerificationService = inject(
-    UserEmailVerificationService,
+    UserEmailVerificationPublicService,
   );
   private readonly _businessEmailVerificationService = inject(
-    BusinessEmailVerificationService,
+    BusinessEmailVerificationPrivateService,
   );
   private readonly _messageService = inject(MessageService);
   private readonly _translate = inject(TranslateService);
@@ -105,7 +105,8 @@ export class VerificationCodeModal implements OnInit {
       severity: 'error',
       summary: this._translate.instant('general.error'),
       detail:
-        (err as { graphQLErrors?: Array<{ message?: string }> })?.graphQLErrors?.[0]?.message ??
+        (err as { graphQLErrors?: Array<{ message?: string }> })
+          ?.graphQLErrors?.[0]?.message ??
         (err as { message?: string })?.message ??
         this._translate.instant('verificationCodeModal.verificationFailed'),
       life: 5000,

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
-import { AppConfigService, UserSchema, UserService } from '@lineup/core';
+import { AppConfigService, UserSchema, UserPublicService } from '@lineup/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services';
@@ -13,7 +13,7 @@ export const UserAuthGuard: CanActivateFn = ():
   | boolean
   | UrlTree => {
   const auth = inject(AuthService);
-  const userService = inject(UserService);
+  const userService = inject(UserPublicService);
   const router = inject(Router);
   const loginUrl = router.createUrlTree([AppConfigService.config.routes.login]);
   const dashboardUrl = router.createUrlTree([

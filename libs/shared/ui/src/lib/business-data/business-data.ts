@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
+  BusinessPublicService,
   BusinessSchema,
   LocationSchema,
   SocialNetworkBusinessSchema,
-  SocialNetworkService,
-  UserService,
+  SocialNetworkPrivateService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -53,10 +53,10 @@ export class BusinessData implements OnInit, OnChanges {
   followers = 0;
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
-  private readonly _socialMediaService = inject(SocialNetworkService);
+  private readonly _socialMediaService = inject(SocialNetworkPrivateService);
   private readonly _utilsService = inject(UtilsService);
   private readonly _sanitizer = inject(DomSanitizer);
-  private readonly _userService = inject(UserService);
+  private readonly _businessPublicService = inject(BusinessPublicService);
   private _subscriptions = new Subscription();
 
   ngOnInit(): void {
@@ -142,19 +142,21 @@ export class BusinessData implements OnInit, OnChanges {
 
   /**
    * Formatea el número de seguidores al estilo redes sociales:
-   * - >= 1.000.000: 1M, 2M, 1.5M
-   * - >= 1.000: 1m, 2m, 1.5m
+   * - >= 1.000.000: 1 M, 2 M, 1.9 M (trunca a 1 decimal, sin redondear hacia arriba)
+   * - >= 1.000: 1 m, 2 m, 999.9 m (trunca a 1 decimal, sin redondear hacia arriba)
    * - < 1.000: valor sin formatear
    */
   formatFollowers(count: number): string {
     if (count == null || count < 0) return '0';
     if (count >= 1_000_000) {
       const value = count / 1_000_000;
-      return value % 1 === 0 ? `${value} M` : `${value.toFixed(1)} M`;
+      const display = value % 1 === 0 ? value : Math.floor(value * 10) / 10;
+      return `${display} M`;
     }
     if (count >= 1_000) {
       const value = count / 1_000;
-      return value % 1 === 0 ? `${value} m` : `${value.toFixed(1)} m`;
+      const display = value % 1 === 0 ? value : Math.floor(value * 10) / 10;
+      return `${display} m`;
     }
     return String(count);
   }
@@ -206,7 +208,7 @@ export class BusinessData implements OnInit, OnChanges {
   isFollowingBusiness() {
     console.log('hola');
     this._subscriptions.add(
-      this._userService.isFollowingBusiness(this.business.id).subscribe({
+      this._businessPublicService.isFollowingBusiness(this.business.id).subscribe({
         next: (response) => {
           this.following = response;
         },
@@ -223,7 +225,7 @@ export class BusinessData implements OnInit, OnChanges {
   followBusiness() {
     this.following = true;
     this._subscriptions.add(
-      this._userService.followBusiness(this.business.id).subscribe({
+      this._businessPublicService.followBusiness(this.business.id).subscribe({
         next: (response) => {
           console.log(response);
           this.following = true;
@@ -243,7 +245,7 @@ export class BusinessData implements OnInit, OnChanges {
   unfollowBusiness() {
     this.following = false;
     this._subscriptions.add(
-      this._userService.unfollowBusiness(this.business.id).subscribe({
+      this._businessPublicService.unfollowBusiness(this.business.id).subscribe({
         next: (response) => {
           console.log(response);
           this.following = false;

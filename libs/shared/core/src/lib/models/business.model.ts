@@ -16,12 +16,16 @@ export interface CreateBusinessInput {
 export interface UpdateBusinessInput {
   id: number;
   description?: string;
-  email?: string;
   imageCode?: string;
+  isOnline?: boolean;
   name?: string;
   path?: string;
   tags?: string[];
   telephone?: string;
+}
+
+export interface UpdateBusinessEmailInput {
+  email: string;
 }
 
 export interface CreateBusinessResponse {

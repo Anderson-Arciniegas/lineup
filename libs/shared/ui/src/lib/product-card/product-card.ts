@@ -9,7 +9,12 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthStore, ProductSchema, UserService } from '@lineup/core';
+import {
+  AuthStore,
+  CurrencySchema,
+  ProductPublicService,
+  ProductSchema,
+} from '@lineup/core';
 import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -20,6 +25,7 @@ import { Button } from '../button/button';
 
 @Component({
   selector: 'lib-product-card',
+  host: { 'attr.ngSkipHydration': '' },
   imports: [
     CommonModule,
     Button,
@@ -41,6 +47,8 @@ export class ProductCard implements AfterViewInit, OnInit {
   businessImage: string;
   imageLoaded: boolean;
   url: string;
+  price: number;
+  currency: CurrencySchema;
   hasLiked: boolean;
   images: string[] = [
     'assets/images/products/headphones-min.webp',
@@ -55,8 +63,14 @@ export class ProductCard implements AfterViewInit, OnInit {
   ];
 
   private readonly _authStore = inject(AuthStore);
-  private readonly _userService = inject(UserService);
+  private readonly _productPublicService = inject(ProductPublicService);
   private readonly _subscription = new Subscription();
+
+  /** Id único por instancia para el contenedor flip (DOM / GSAP). */
+  readonly cardFlipId = `product-flip-${
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
+  }`;
 
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -72,6 +86,8 @@ export class ProductCard implements AfterViewInit, OnInit {
       } else {
         this.url = `/business-1/catalog-1/123`;
       }
+      this.price = this.product.skus?.[0]?.price ?? null;
+      this.currency = this.product.skus?.[0]?.currency ?? null;
     } else {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
       this.url = `/business-1/catalog-1/123`;
@@ -82,9 +98,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     setTimeout(() => {
-      const flipBox = document.getElementById(
-        `product-flip-${this.product?.id}`,
-      );
+      const flipBox = document.getElementById(this.cardFlipId);
       const inner = flipBox.querySelector('.flip-inner');
 
       flipBox.addEventListener('mouseenter', () => {
@@ -111,7 +125,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = true;
     this._subscription.add(
-      this._userService.likeProduct(this.product.id).subscribe({
+      this._productPublicService.likeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = true;
@@ -131,7 +145,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = false;
     this._subscription.add(
-      this._userService.unlikeProduct(this.product.id).subscribe({
+      this._productPublicService.unlikeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = false;
@@ -150,7 +164,7 @@ export class ProductCard implements AfterViewInit, OnInit {
   hasLikedProduct(): void {
     if (this._authStore.isBusinessLoggedIn()) return;
     this._subscription.add(
-      this._userService.hasLikedProduct(this.product.id).subscribe({
+      this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = response;

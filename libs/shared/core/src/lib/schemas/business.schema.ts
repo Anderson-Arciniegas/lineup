@@ -20,6 +20,7 @@ export interface BusinessSchema {
   files: FileSchema[];
   followers: number;
   id: number;
+  isOnline?: boolean;
   image?: FileSchema;
   imageCode?: string;
   locations: LocationSchema[];

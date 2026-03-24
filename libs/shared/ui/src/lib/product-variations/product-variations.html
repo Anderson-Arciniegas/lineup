@@ -2,21 +2,16 @@
   <span class="font-medium font-medium text-left">{{title | translate}}:</span>
 </div>
 <div class="w-full flex flex-row flex-wrap items-center justify-start gap-2">
-  @for (item of optionLabels(); track item.option) { @if (item.option ===
-  selectedOption) {
-  <!-- <lib-button
-    [label]="item.option"
-    [width]="'min-w-20 w-auto'"
-    size="small"
-    type="rounded"
-    (action)="selectedOption = item.option"
-  ></lib-button> -->
+  @for (item of optionLabels(); track item.option) { @if
+  (normalizeOption(item.option) === normalizeOption(selectedOption)) {
 
   <div
-    class="min-w-20 w-auto bg-primary rounded-full py-2 px-3 text-white flex flex-row items-center justify-center cursor-pointer gap-2"
-    (click)="selectedOption = item.option"
-    (keydown.enter)="selectedOption = item.option"
-    (keydown.space)="selectedOption = item.option"
+    class="min-w-20 w-auto rounded-full py-2 px-3 text-white flex flex-row items-center justify-center gap-2 select-none"
+    [class.bg-gray-500]="outOfStock"
+    [class.bg-primary]="!outOfStock"
+    (click)="selectOption(item.option)"
+    (keydown.enter)="selectOption(item.option)"
+    (keydown.space)="selectOption(item.option)"
     tabindex="0"
     role="button"
   >
@@ -28,23 +23,15 @@
       ></div>
     </div>
     }
-    <span class="text-center">{{ item.label | translate }}</span>
+    <span class="text-center font-medium">{{ item.label | translate }}</span>
   </div>
   } @else {
-  <!-- <lib-button
-    [label]="item.option"
-    [width]="'min-w-20 w-auto'"
-    size="small"
-    color="secondary"
-    type="rounded"
-    (action)="selectedOption = item.option"
-  ></lib-button> -->
 
   <div
-    class="min-w-20 w-auto bg-primary-200 rounded-full py-2 px-3 flex flex-row items-center justify-center cursor-pointer gap-2"
-    (click)="selectedOption = item.option"
-    (keydown.enter)="selectedOption = item.option"
-    (keydown.space)="selectedOption = item.option"
+    class="min-w-20 w-auto bg-primary-200 rounded-full py-2 px-3 flex flex-row items-center justify-center cursor-pointer gap-2 select-none"
+    (click)="selectOption(item.option)"
+    (keydown.enter)="selectOption(item.option)"
+    (keydown.space)="selectOption(item.option)"
     tabindex="0"
     role="button"
   >
@@ -56,7 +43,7 @@
       ></div>
     </div>
     }
-    <span class="text-center">{{ item.label | translate }}</span>
+    <span class="text-center font-medium">{{ item.label | translate }}</span>
   </div>
   } }
 </div>

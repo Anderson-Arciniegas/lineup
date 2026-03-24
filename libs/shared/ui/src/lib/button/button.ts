@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'lib-button',
-  imports: [CommonModule, ButtonModule, RouterModule],
+  imports: [CommonModule, ButtonModule, RouterModule, TranslateModule],
   templateUrl: './button.html',
   styleUrl: './button.scss',
 })
@@ -17,7 +18,15 @@ export class Button {
   @Input() link: string;
   @Input() href: string;
   @Input() linkType = false;
-  @Input() color: 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast' = 'primary';
+  @Input() color:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'info'
+    | 'warn'
+    | 'help'
+    | 'danger'
+    | 'contrast' = 'primary';
   @Input() type: 'raised' | 'rounded';
   @Input() variant: 'text' | 'outlined';
   @Input() badge: string;

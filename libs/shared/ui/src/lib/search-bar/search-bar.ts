@@ -39,6 +39,6 @@ export class SearchBar implements OnInit {
   }
 
   onSearchSubmit() {
-    this.searchSubmit.emit(this.searchQuery);
+    this.searchSubmit.emit(this.searchQuery.trim());
   }
 }

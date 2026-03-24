@@ -1,0 +1,554 @@
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
+  <div
+    class="w-full flex flex-col gap-6 py-4 sm:py-6 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+  >
+    <div class="flex flex-col gap-1 w-full">
+      <h1 class="text-3xl font-semibold text-gray-800">
+        {{ 'general.statistics' | translate }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ 'statisticsPage.periodFilterHint' | translate }}
+      </p>
+    </div>
+
+    <div
+      class="flex flex-col lg:flex-row lg:flex-wrap gap-4 w-full items-start lg:items-end"
+    >
+      <div class="flex flex-col gap-2 w-full max-w-xs">
+        <label class="text-sm font-medium text-gray-700" for="stats-period">
+          {{ 'statisticsPage.periodLabel' | translate }}
+        </label>
+        <p-select
+          inputId="stats-period"
+          [(ngModel)]="periodMode"
+          [options]="periodOptions"
+          optionLabel="label"
+          optionValue="value"
+          (ngModelChange)="onPeriodModeChange()"
+          class="w-full"
+          styleClass="w-full"
+        />
+      </div>
+
+      @if (periodMode === StatisticsPeriodMode.CUSTOM) {
+      <div
+        class="flex flex-col sm:flex-row flex-wrap gap-4 w-full items-start sm:items-end"
+      >
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-gray-700" for="stats-from">
+            {{ 'statisticsPage.dateFrom' | translate }}
+          </label>
+          <p-datepicker
+            inputId="stats-from"
+            [(ngModel)]="customStartDate"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="w-full min-w-[200px]"
+          />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-gray-700" for="stats-to">
+            {{ 'statisticsPage.dateTo' | translate }}
+          </label>
+          <p-datepicker
+            inputId="stats-to"
+            [(ngModel)]="customEndDate"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="w-full min-w-[200px]"
+          />
+        </div>
+        <lib-button
+          icon="pi pi-check"
+          [label]="'statisticsPage.applyPeriod' | translate"
+          type="rounded"
+          (action)="applyCustomPeriod()"
+        ></lib-button>
+      </div>
+      }
+    </div>
+  </div>
+
+  @if (loading) {
+  <div class="w-full flex justify-center p-10 mt-4">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  } @else {
+
+  <div
+    class="w-full flex flex-col gap-4 py-4 sm:py-8 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+  >
+    <p-tabs [(value)]="activeStatisticsTab" [scrollable]="true">
+      <p-tablist>
+        <p-tab value="inventory">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-box"></i>
+            <span>{{ 'statisticsPage.inventorySection' | translate }}</span>
+          </span>
+        </p-tab>
+        <p-tab value="products">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-shopping-bag"></i>
+            <span>{{ 'statisticsPage.productSection' | translate }}</span>
+          </span>
+        </p-tab>
+        <p-tab value="catalogs">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-folder"></i>
+            <span>{{ 'statisticsPage.catalogSection' | translate }}</span>
+          </span>
+        </p-tab>
+        <p-tab value="discounts">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-tag"></i>
+            <span>{{ 'statisticsPage.discountSection' | translate }}</span>
+          </span>
+        </p-tab>
+        <p-tab value="engagement">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-users"></i>
+            <span>{{ 'statisticsPage.engagement' | translate }}</span>
+          </span>
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="inventory">
+          <div class="flex flex-col gap-4 pt-4">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full"
+            >
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-red-50 border border-red-100"
+              >
+                <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ inventory?.skusLowOrOutOfStockCount ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.lowStockSkus' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-rose-50 border border-rose-100"
+              >
+                <i class="pi pi-ban text-rose-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ inventory?.productsWithoutStockCount ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.productsWithoutStock' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-emerald-50 border border-emerald-100 md:col-span-2"
+              >
+                <i class="pi pi-shopping-cart text-emerald-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800"
+                  >{{ inventory?.salesCount?.total ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.salesInPeriod' | translate }}</span
+                >
+              </div>
+            </div>
+
+            <div class="w-full flex flex-col gap-3">
+              <h3 class="text-lg font-medium text-gray-700">
+                {{ 'statisticsPage.recentMovements' | translate }}
+              </h3>
+              @if ((inventory?.recentStockMovements?.length ?? 0) === 0) {
+              <div
+                class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+              >
+                {{ 'statisticsPage.noData' | translate }}
+              </div>
+              } @else {
+              <div class="flex flex-col gap-2">
+                @for (mv of inventory?.recentStockMovements ?? []; track mv.id)
+                {
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 border border-gray-200 rounded-xl bg-white"
+                >
+                  <span class="text-xs text-gray-400 font-mono"
+                    >#{{ mv.id }} · {{ mv.creationDate | date: 'short' }}</span
+                  >
+                  <div class="flex flex-row flex-wrap gap-4 items-center">
+                    <span
+                      class="font-semibold"
+                      [class.text-green-600]="mv.quantityDelta > 0"
+                      [class.text-red-600]="mv.quantityDelta < 0"
+                    >
+                      {{ mv.quantityDelta > 0 ? '+' : '' }}{{ mv.quantityDelta
+                      }}
+                    </span>
+                    <span class="text-sm text-gray-600">{{ mv.type }}</span>
+                  </div>
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="products">
+          <div class="flex flex-col gap-4 pt-4">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full"
+            >
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-violet-50 border border-violet-100"
+              >
+                <i class="pi pi-percentage text-violet-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800"
+                  >{{ (product?.visitToLikeRatio?.ratio ?? 0) | number: '1.2-2'
+                  }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.ratio' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-pink-50 border border-pink-100"
+              >
+                <i class="pi pi-heart text-pink-500 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800"
+                  >{{ product?.visitToLikeRatio?.totalLikes ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'general.likes' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-sky-50 border border-sky-100"
+              >
+                <i class="pi pi-eye text-sky-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800"
+                  >{{ product?.visitToLikeRatio?.totalVisits ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'general.visits' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-gray-50 border border-gray-200"
+              >
+                <i class="pi pi-star text-gray-500 text-2xl"></i>
+                <div class="flex flex-col gap-1 text-center">
+                  <span class="text-lg font-bold text-gray-800"
+                    >{{ product?.withoutRatingsCount ?? 0 }}</span
+                  >
+                  <span class="text-xs text-gray-500"
+                    >{{ 'statisticsPage.productsWithoutRatings' | translate
+                    }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-gray-50 border border-gray-200"
+            >
+              <div class="flex flex-col gap-1 flex-1">
+                <span class="text-sm text-gray-500"
+                  >{{ 'statisticsPage.productsWithoutVisits' | translate
+                  }}</span
+                >
+                <span class="text-xl font-semibold text-gray-800"
+                  >{{ product?.withoutVisitsCount ?? 0 }}</span
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.topByVisits' | translate }}
+                </h3>
+                @if ((product?.topByVisits?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (p of product?.topByVisits ?? []; track p.id) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-2 p-3 border border-gray-200 rounded-xl bg-white"
+                  >
+                    <span class="text-gray-800 font-medium">{{ p.title }}</span>
+                    <span class="text-sm text-gray-500">{{ p.visits }}</span>
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.topByLikes' | translate }}
+                </h3>
+                @if ((product?.topByLikes?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (p of product?.topByLikes ?? []; track p.id) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-2 p-3 border border-gray-200 rounded-xl bg-white"
+                  >
+                    <span class="text-gray-800 font-medium">{{ p.title }}</span>
+                    <span class="text-sm text-gray-500">{{ p.likes }}</span>
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.topByRating' | translate }}
+                </h3>
+                @if ((product?.topByRating?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (p of product?.topByRating ?? []; track p.id) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-2 p-3 border border-gray-200 rounded-xl bg-white"
+                  >
+                    <span class="text-gray-800 font-medium">{{ p.title }}</span>
+                    <span class="text-sm font-semibold text-amber-600"
+                      >{{ p.ratingAverage | number: '1.1-1' }}</span
+                    >
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="catalogs">
+          <div class="flex flex-col gap-4 pt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-cyan-50 border border-cyan-100 md:col-span-1"
+              >
+                <i class="pi pi-chart-line text-cyan-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800"
+                  >{{ catalog?.catalogVisitsOverTime?.total ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.catalogVisitsOverTime' | translate
+                  }}</span
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.topCatalogs' | translate }}
+                </h3>
+                @if ((catalog?.topByVisits?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (item of catalog?.topByVisits ?? []; track item.id) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-3 p-4 border border-gray-200 rounded-xl bg-white"
+                  >
+                    <span class="font-medium text-gray-800"
+                      >{{ item.title }}</span
+                    >
+                    <span class="text-sm text-gray-500">
+                      <span class="font-semibold text-gray-800"
+                        >{{ item.visits }}</span
+                      >
+                      {{ 'general.visits' | translate }}
+                    </span>
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.productsPerCatalog' | translate }}
+                </h3>
+                @if ((catalog?.productsPerCatalog?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (row of catalog?.productsPerCatalog ?? []; track
+                  row.label) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50"
+                  >
+                    <span class="text-gray-700">{{ row.label }}</span>
+                    <span class="font-semibold text-gray-900"
+                      >{{ row.count }}</span
+                    >
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="discounts">
+          <div class="flex flex-col gap-4 pt-4">
+            <div
+              class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-amber-50 border border-amber-100 w-full max-w-xs"
+            >
+              <i class="pi pi-clock text-amber-600 text-2xl"></i>
+              <span class="text-2xl font-bold text-gray-800"
+                >{{ discount?.expiringSoonCount ?? 0 }}</span
+              >
+              <span class="text-sm text-gray-500 text-center"
+                >{{ 'statisticsPage.expiringSoonCount' | translate }}</span
+              >
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.discountByStatus' | translate }}
+                </h3>
+                @if ((discount?.byStatus?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (row of discount?.byStatus ?? []; track row.label) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50"
+                  >
+                    <span class="text-gray-700">{{ row.label }}</span>
+                    <span class="font-semibold text-gray-900"
+                      >{{ row.count }}</span
+                    >
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <h3 class="text-lg font-medium text-gray-700">
+                  {{ 'statisticsPage.discountByType' | translate }}
+                </h3>
+                @if ((discount?.byType?.length ?? 0) === 0) {
+                <div
+                  class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+                >
+                  {{ 'statisticsPage.noData' | translate }}
+                </div>
+                } @else {
+                <div class="flex flex-col gap-2">
+                  @for (row of discount?.byType ?? []; track row.label) {
+                  <div
+                    class="flex flex-row items-center justify-between gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50"
+                  >
+                    <span class="text-gray-700">{{ row.label }}</span>
+                    <span class="font-semibold text-gray-900"
+                      >{{ row.count }}</span
+                    >
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="engagement">
+          <div class="flex flex-col gap-4 pt-4">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full"
+            >
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-indigo-50 border border-indigo-100"
+              >
+                <i class="pi pi-user-plus text-indigo-500 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ engagement?.newFollowers?.total ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.newFollowers' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-blue-50 border border-blue-100"
+              >
+                <i class="pi pi-eye text-blue-500 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ engagement?.visits?.visits?.total ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.businessVisits' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-teal-50 border border-teal-100"
+              >
+                <i class="pi pi-id-card text-teal-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ engagement?.visits?.visitsByAuthType?.identified ?? 0
+                  }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.visitsIdentified' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-slate-50 border border-slate-200"
+              >
+                <i class="pi pi-user text-slate-500 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ engagement?.visits?.visitsByAuthType?.anonymous ?? 0
+                  }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.visitsAnonymous' | translate }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+  }
+</div>

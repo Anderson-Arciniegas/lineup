@@ -3,13 +3,13 @@ import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   AuthStore,
+  BusinessPrivateService,
   BusinessSchema,
-  BusinessService,
+  CatalogPrivateService,
   CatalogSchema,
-  CatalogService,
+  ProductPrivateService,
   ProductSchema,
-  ProductService,
-  UserService,
+  UserPublicService,
   VisitTypeEnum,
 } from '@lineup/core';
 import {
@@ -60,11 +60,11 @@ export class CatalogPage implements OnInit {
 
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
-  private readonly _businessService = inject(BusinessService);
-  private readonly _catalogService = inject(CatalogService);
-  private readonly _productService = inject(ProductService);
+  private readonly _businessService = inject(BusinessPrivateService);
+  private readonly _catalogService = inject(CatalogPrivateService);
+  private readonly _productService = inject(ProductPrivateService);
   private readonly _authStore = inject(AuthStore);
-  private readonly _userService = inject(UserService);
+  private readonly _userService = inject(UserPublicService);
 
   private _subscription: Subscription = new Subscription();
 

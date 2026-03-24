@@ -13,7 +13,7 @@ import {
 import {
   SocialNetworkBusinessSchema,
   SocialNetworkSchema,
-  SocialNetworkService,
+  SocialNetworkPrivateService,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -46,7 +46,7 @@ export class AddSocialMediaModal implements OnInit {
   attempt: boolean;
   whatsappMode: boolean;
   private readonly _fb = inject(FormBuilder);
-  private readonly _socialNetworkService = inject(SocialNetworkService);
+  private readonly _socialNetworkService = inject(SocialNetworkPrivateService);
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
 

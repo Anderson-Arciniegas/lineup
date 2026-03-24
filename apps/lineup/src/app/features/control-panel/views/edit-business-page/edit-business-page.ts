@@ -4,15 +4,15 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   AuthStore,
-  BusinessApiFileService,
+  BusinessApiFilePrivateService,
   BusinessSchema,
+  BusinessPrivateService,
   DirectoriesEnum,
   UpdateBusinessInput,
   UtilsService,
 } from '@lineup/core';
 import { Button, ImageCropper } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { BusinessService } from 'libs/shared/core/src/lib/services/business.service';
 import { base64ToFile } from 'ngx-image-cropper';
 import { MessageService } from 'primeng/api';
 import { ChipModule } from 'primeng/chip';
@@ -60,9 +60,9 @@ export class EditBusinessPage implements OnInit {
   readonly maxNameLength = 30;
   private _utils = inject(UtilsService);
   private readonly _fb = inject(FormBuilder);
-  private readonly _businessService = inject(BusinessService);
+  private readonly _businessService = inject(BusinessPrivateService);
   private readonly _cdr = inject(ChangeDetectorRef);
-  private readonly _apiFileService = inject(BusinessApiFileService);
+  private readonly _apiFileService = inject(BusinessApiFilePrivateService);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
@@ -86,6 +86,7 @@ export class EditBusinessPage implements OnInit {
     ],
     phone: [''],
     description: ['', [Validators.maxLength(this.maxDescriptionLength)]],
+    isOnline: [false],
     tag: [''],
   });
 
@@ -202,6 +203,7 @@ export class EditBusinessPage implements OnInit {
         this.businessForm.value.phone ?? '',
       ),
       description: this.businessForm.value.description ?? '',
+      isOnline: this.businessForm.value.isOnline ?? false,
 
       tags:
         this.tags && this.tags.length > 0
@@ -247,6 +249,7 @@ export class EditBusinessPage implements OnInit {
             businessPath: business.path,
             phone: business.telephone,
             description: business.description ?? '',
+            isOnline: business.isOnline ?? false,
             tag: '',
           });
           this.tags = this.business.tags || [];

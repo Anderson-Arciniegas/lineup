@@ -4,8 +4,8 @@ import { RouterModule } from '@angular/router';
 import {
   AuthStore,
   CurrencySymbolPipe,
+  ProductPublicService,
   ProductSchema,
-  UserService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,7 +30,7 @@ export class CatalogCarouselItem implements AfterViewInit {
   private readonly _translate = inject(TranslateService);
   private readonly _utilsService = inject(UtilsService);
   private readonly _authStore = inject(AuthStore);
-  private readonly _userService = inject(UserService);
+  private readonly _productPublicService = inject(ProductPublicService);
 
   private readonly _subscription = new Subscription();
 
@@ -60,7 +60,7 @@ export class CatalogCarouselItem implements AfterViewInit {
     if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = true;
     this._subscription.add(
-      this._userService.likeProduct(this.product.id).subscribe({
+      this._productPublicService.likeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = true;
@@ -80,7 +80,7 @@ export class CatalogCarouselItem implements AfterViewInit {
     if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = false;
     this._subscription.add(
-      this._userService.unlikeProduct(this.product.id).subscribe({
+      this._productPublicService.unlikeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = false;
@@ -99,7 +99,7 @@ export class CatalogCarouselItem implements AfterViewInit {
   hasLikedProduct(): void {
     if (this._authStore.isBusinessLoggedIn()) return;
     this._subscription.add(
-      this._userService.hasLikedProduct(this.product.id).subscribe({
+      this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = response;

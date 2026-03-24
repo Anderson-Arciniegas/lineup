@@ -8,7 +8,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BusinessService, UserService } from '@lineup/core';
+import { BusinessPrivateService, UserPublicService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
@@ -34,9 +34,9 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
 
   protected translate = inject(TranslateService);
   private platformId: object = inject(PLATFORM_ID);
-  private _user = inject(UserService);
+  private _user = inject(UserPublicService);
   private _auth = inject(AuthService);
-  private _business = inject(BusinessService);
+  private _business = inject(BusinessPrivateService);
   private _subscription: Subscription = new Subscription();
 
   ngOnInit() {

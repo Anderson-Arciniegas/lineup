@@ -1,0 +1,270 @@
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
+  <lib-product-breadcrumb
+    [business]="business"
+    class="w-full"
+  ></lib-product-breadcrumb>
+
+  <div
+    class="w-full flex flex-col gap-10 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey max-w-5xl"
+  >
+    <div class="flex flex-row items-center justify-between gap-4 flex-wrap">
+      <h1 class="text-3xl font-medium">
+        {{ 'general.createDiscount' | translate }}
+      </h1>
+      <lib-button
+        type="rounded"
+        [label]="'general.cancel' | translate"
+        icon="pi pi-times"
+        [width]="'w-40'"
+        (action)="cancel()"
+      ></lib-button>
+    </div>
+
+    <form class="w-full flex flex-col gap-8" [formGroup]="discountForm">
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-scope">{{
+          'general.discountScope' | translate
+        }}</label>
+        <p-select
+          inputId="discount-scope"
+          formControlName="scope"
+          [options]="scopeOptions"
+          optionLabel="labelKey"
+          optionValue="value"
+          [placeholder]="'general.select' | translate"
+          class="w-full"
+          styleClass="w-full"
+        >
+          <ng-template pTemplate="selectedItem" let-selected>
+            @if (selected) {
+            <span>{{ selected.labelKey | translate }}</span>
+            }
+          </ng-template>
+          <ng-template let-option pTemplate="item">
+            {{ option.labelKey | translate }}
+          </ng-template>
+        </p-select>
+      </div>
+
+      @if (showCatalogField) {
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-catalog">{{
+          'general.catalog' | translate
+        }}</label>
+        <p-select
+          inputId="discount-catalog"
+          formControlName="idCatalog"
+          [options]="catalogs"
+          optionLabel="title"
+          optionValue="id"
+          [placeholder]="'general.selectCatalog' | translate"
+          [loading]="loadingCatalogs"
+          [filter]="true"
+          filterBy="title"
+          class="w-full"
+          styleClass="w-full"
+        />
+        @if (
+          discountForm.get('idCatalog')?.invalid &&
+          discountForm.get('idCatalog')?.touched
+        ) {
+        <small class="text-red-500 text-sm">{{
+          'validation.fieldRequired' | translate
+        }}</small>
+        }
+      </div>
+      }
+
+      @if (showProductField) {
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-product">{{
+          'general.product' | translate
+        }}</label>
+        <p-select
+          inputId="discount-product"
+          formControlName="idProduct"
+          [options]="products"
+          optionLabel="title"
+          optionValue="id"
+          [placeholder]="'general.selectProduct' | translate"
+          [loading]="loadingProducts"
+          [filter]="true"
+          filterBy="title"
+          class="w-full"
+          styleClass="w-full"
+        />
+        @if (
+          discountForm.get('idProduct')?.invalid &&
+          discountForm.get('idProduct')?.touched
+        ) {
+        <small class="text-red-500 text-sm">{{
+          'validation.fieldRequired' | translate
+        }}</small>
+        }
+      </div>
+      }
+
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-type">{{
+          'general.discountType' | translate
+        }}</label>
+        <p-select
+          inputId="discount-type"
+          formControlName="discountType"
+          [options]="typeOptions"
+          optionLabel="labelKey"
+          optionValue="value"
+          [placeholder]="'general.select' | translate"
+          class="w-full"
+          styleClass="w-full"
+        >
+          <ng-template pTemplate="selectedItem" let-selected>
+            @if (selected) {
+            <span>{{ selected.labelKey | translate }}</span>
+            }
+          </ng-template>
+          <ng-template let-option pTemplate="item">
+            {{ option.labelKey | translate }}
+          </ng-template>
+        </p-select>
+      </div>
+
+      @if (showCurrencyField) {
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-currency">{{
+          'general.currency' | translate
+        }}</label>
+        <p-select
+          inputId="discount-currency"
+          formControlName="idCurrency"
+          [options]="currencies"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'general.selectCurrency' | translate"
+          class="w-full"
+          styleClass="w-full"
+        >
+          <ng-template pTemplate="selectedItem" let-selected>
+            @if (selected) {
+            <div class="flex items-center gap-2">
+              @if (selected.icon) {
+              <i [class]="selected.icon" style="font-size: 1rem"></i>
+              }
+              <span>{{ selected.name }}</span>
+              @if (selected.code) {
+              <span class="text-color-secondary text-sm">({{ selected.code }})</span>
+              }
+            </div>
+            }
+          </ng-template>
+          <ng-template let-currency pTemplate="item">
+            <div class="flex items-center gap-2">
+              @if (currency.icon) {
+              <i [class]="currency.icon" style="font-size: 1rem"></i>
+              }
+              <span>{{ currency.name }}</span>
+              @if (currency.code) {
+              <span class="text-color-secondary text-sm"
+                >({{ currency.code }})</span
+              >
+              }
+            </div>
+          </ng-template>
+        </p-select>
+        @if (
+          discountForm.get('idCurrency')?.invalid &&
+          discountForm.get('idCurrency')?.touched
+        ) {
+        <small class="text-red-500 text-sm">{{
+          'validation.fieldRequired' | translate
+        }}</small>
+        }
+      </div>
+      }
+
+      <div class="w-full flex flex-col gap-2">
+        <label class="font-medium text-lg" for="discount-value">{{
+          'general.discountValue' | translate
+        }}</label>
+        <p-inputnumber
+          inputId="discount-value"
+          formControlName="value"
+          [min]="0.01"
+          [max]="
+            discountForm.get('discountType')?.value ===
+            DiscountTypeEnum.PERCENTAGE
+              ? 100
+              : undefined
+          "
+          [mode]="
+            discountForm.get('discountType')?.value ===
+            DiscountTypeEnum.PERCENTAGE
+              ? 'decimal'
+              : 'decimal'
+          "
+          [minFractionDigits]="0"
+          [maxFractionDigits]="2"
+          [placeholder]="'general.discountValuePlaceholder' | translate"
+          class="w-full"
+          styleClass="w-full"
+        />
+        @if (
+          discountForm.get('value')?.invalid &&
+          discountForm.get('value')?.touched
+        ) {
+        <small class="text-red-500 text-sm">{{
+          'validation.fieldRequired' | translate
+        }}</small>
+        }
+      </div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
+      >
+        <div class="w-full flex flex-col gap-2">
+          <label class="font-medium text-lg" for="discount-start">{{
+            'general.startDate' | translate
+          }}</label>
+          <input
+            pInputText
+            type="date"
+            id="discount-start"
+            formControlName="startDate"
+            class="w-full h-11"
+          />
+        </div>
+        <div class="w-full flex flex-col gap-2">
+          <label class="font-medium text-lg" for="discount-end">{{
+            'general.endDate' | translate
+          }}</label>
+          <input
+            pInputText
+            type="date"
+            id="discount-end"
+            formControlName="endDate"
+            class="w-full h-11"
+          />
+        </div>
+      </div>
+      @if (discountForm.errors?.['dateOrder'] && discountForm.touched) {
+      <small class="text-red-500 text-sm">{{
+        'general.discountInvalidDateRange' | translate
+      }}</small>
+      }
+
+      <div class="w-full flex flex-row items-center justify-center gap-4 pt-4">
+        <lib-button
+          icon="pi pi-check"
+          [label]="'general.save' | translate"
+          [width]="'w-60'"
+          type="rounded"
+          [loading]="isSubmitting"
+          [disabled]="isSubmitting"
+          (action)="submit()"
+        ></lib-button>
+      </div>
+    </form>
+  </div>
+</div>

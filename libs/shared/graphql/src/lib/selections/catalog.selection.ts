@@ -18,7 +18,6 @@ export const catalogSelection = `{
     title
     subtitle
     description
-    price
     likes
     productTags {
       idProduct

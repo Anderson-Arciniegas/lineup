@@ -69,6 +69,7 @@ export const businessFullSelection = `{
   }
   imageCode
   telephone
+  isOnline
   provider
   status
   tags
@@ -78,8 +79,8 @@ export const businessFullSelection = `{
     title
     subtitle
     description
-    price
     likes
+    skus { price }
     productTags {
       idProduct
       idTag
@@ -115,8 +116,8 @@ export const businessFullSelection = `{
       title
       subtitle
       description
-      price
       likes
+      skus { price }
       productTags {
         idProduct
         idTag
@@ -273,6 +274,7 @@ export const businessMyBusinessSelection = `{
   description
   tags
   telephone
+  isOnline
   image ${fileSelection}
 }`;
 

@@ -1,11 +1,13 @@
 <div class="w-full flex flex-col items-start justify-between gap-4">
-  <div class="w-full flex flex-row items-center justify-start gap-4 sm:gap-8">
+  <div
+    class="w-full flex flex-col md:flex-row items-center justify-center xl:justify-start gap-4 sm:gap-8"
+  >
+    @if(price && currency) {
     <span class="font-bold text-3xl sm:text-4xl"
-      >{{ product.price | currency: product?.currency?.code : 'symbol' : '1.0-2'
-      : 'es' }}
+      >{{ price | currency: currency?.code : 'symbol' : '1.0-2' : 'es' }}
     </span>
-
-    <div class="w-full flex flex-row gap-3">
+    }
+    <div class="flex flex-row gap-3">
       @if(href) {
       <lib-button
         icon="pi pi-whatsapp"
@@ -41,13 +43,21 @@
       </div>
     </ng-template>
     <div class="w-full flex flex-col gap-3 items-start justify-start py-2">
-      @for (item of product.variations; track $index) {
+      @for (item of productVariationsUnique; track item.title) {
       <lib-product-variations
         class="w-full flex flex-col gap-1 items-start justify-start"
         [title]="item.title"
         [options]="item.options"
+        [selectedOption]="getSelectedOption(item.title)"
+        [outOfStock]="outOfStock"
+        (selectedOptionChange)="onVariationOptionChange(item.title, $event)"
       >
       </lib-product-variations>
+      } @if (skuAvailabilityMessage) {
+      <div class="w-full flex items-center gap-2 pt-2">
+        <i class="pi pi-box"></i>
+        <span class="text-sm text-gray-600">{{ skuAvailabilityMessage }}</span>
+      </div>
       }
     </div>
   </p-panel>

@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
+  ProductPublicService,
   SearchResultItem,
   SearchTargetEnum,
-  UserService,
+  UserPublicService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -32,10 +33,11 @@ import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
 import {
-  Subject,
-  Subscription,
+  combineLatest,
   filter,
   finalize,
+  Subject,
+  Subscription,
   switchMap,
   tap,
 } from 'rxjs';
@@ -76,8 +78,11 @@ export class SearchPage implements OnInit {
   searchTypeFilter: SearchTargetEnum = SearchTargetEnum.ALL;
   searchLocationFilter: string;
   searchDeliveryFilter: string;
+  /** Desde `data.searchMode` de la ruta (`search` vs `tag`). */
+  searchMode: 'search' | 'tag' = 'search';
   private readonly searchTrigger$ = new Subject<void>();
-  private readonly _userService = inject(UserService);
+  private readonly _userService = inject(UserPublicService);
+  private readonly _productPublicService = inject(ProductPublicService);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _utils = inject(UtilsService);
   private readonly _dialogService = inject(DialogService);
@@ -86,7 +91,6 @@ export class SearchPage implements OnInit {
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
-    this.searchQuery = this._activatedRoute.snapshot.params['query'];
     this._subscription.add(
       this.searchTrigger$
         .pipe(
@@ -94,8 +98,17 @@ export class SearchPage implements OnInit {
           tap(() => {
             this.attempt = true;
           }),
-          switchMap(() =>
-            this._userService
+          switchMap(() => {
+            if (this.searchMode === 'tag') {
+              return this._productPublicService
+                .getAllByTag({ page: this.page, limit: 10 }, this.searchQuery)
+                .pipe(
+                  finalize(() => {
+                    this.attempt = false;
+                  }),
+                );
+            }
+            return this._userService
               .search(
                 { page: this.page, limit: 10, search: this.searchQuery },
                 this.searchTypeFilter as SearchTargetEnum,
@@ -104,8 +117,8 @@ export class SearchPage implements OnInit {
                 finalize(() => {
                   this.attempt = false;
                 }),
-              ),
-          ),
+              );
+          }),
         )
         .subscribe({
           next: (results) => {
@@ -124,9 +137,21 @@ export class SearchPage implements OnInit {
         }),
     );
 
-    if (this.searchQuery) {
-      this.getSearchResults();
-    }
+    this._subscription.add(
+      combineLatest([
+        this._activatedRoute.paramMap,
+        this._activatedRoute.data,
+      ]).subscribe(([params, data]) => {
+        this.searchQuery = params.get('query') ?? params.get('tag') ?? '';
+        this.searchMode = (data['searchMode'] as 'search' | 'tag') ?? 'search';
+        this.items = [];
+        this.noMoreResults = false;
+        this.page = 1;
+        if (this.searchQuery) {
+          this.getSearchResults();
+        }
+      }),
+    );
   }
 
   onSearchSubmit(query: string): void {

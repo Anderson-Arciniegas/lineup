@@ -19,7 +19,7 @@ import {
   CreateUserInput,
   PasswordValidation,
   RolesCodesEnum,
-  UserService,
+  UserPublicService,
 } from '@lineup/core';
 import { Button, VerificationCodeModal } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -52,7 +52,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   attempt = false;
   attemptGoogle = false;
   private readonly _fb = inject(FormBuilder);
-  private readonly _users = inject(UserService);
+  private readonly _users = inject(UserPublicService);
   private readonly _authService = inject(AuthService);
   private readonly _googleAuth = inject(GoogleAuthService);
   private readonly _dialogService = inject(DialogService);
