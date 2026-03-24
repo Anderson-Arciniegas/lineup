@@ -46,11 +46,11 @@ describe('ProductPanelPage', () => {
         },
         {
           provide: UtilsService,
-          useValue: { navigate: () => {} },
+          useValue: { navigate: jest.fn() },
         },
         {
           provide: Location,
-          useValue: { back: () => {} },
+          useValue: { back: jest.fn() },
         },
       ],
     }).compileComponents();

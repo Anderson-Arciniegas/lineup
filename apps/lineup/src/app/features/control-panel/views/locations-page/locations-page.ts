@@ -89,13 +89,15 @@ export class LocationsPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((response: any) => {
-      if (response.edit) {
-        this.addLocationModal(location);
-      } else if (response.delete) {
-        this.deleteLocation(location);
-      }
-    });
+    this.ref.onClose.subscribe(
+      (response: { edit?: boolean; delete?: boolean } | undefined) => {
+        if (response?.edit) {
+          this.addLocationModal(location);
+        } else if (response?.delete) {
+          this.deleteLocation(location);
+        }
+      },
+    );
   }
 
   addLocationModal(location?: LocationSchema) {

@@ -138,7 +138,7 @@ export class SocialMediasPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((newSocialMedia: any) => {
+    this.ref.onClose.subscribe((newSocialMedia: SocialNetworkBusinessSchema | undefined) => {
       if (newSocialMedia) {
         console.log(newSocialMedia);
         this.getMySocialNetworkBusinesses();
