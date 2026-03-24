@@ -26,7 +26,7 @@ describe('DiscountsPanelPage', () => {
         },
         {
           provide: UtilsService,
-          useValue: { navigate: () => {} },
+          useValue: { navigate: jest.fn() },
         },
       ],
     }).compileComponents();

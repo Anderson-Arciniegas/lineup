@@ -68,7 +68,7 @@ describe('UpdateProductSkuPage', () => {
         },
         {
           provide: UtilsService,
-          useValue: { navigate: () => {} },
+          useValue: { navigate: jest.fn() },
         },
       ],
     }).compileComponents();

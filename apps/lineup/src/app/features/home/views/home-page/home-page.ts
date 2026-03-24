@@ -36,6 +36,13 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { Subscription } from 'rxjs';
 
+/** PrimeNG Carousel `responsiveOptions` item shape */
+interface CarouselResponsiveOption {
+  breakpoint: string;
+  numVisible: number;
+  numScroll: number;
+}
+
 // gsap.registerPlugin(ScrollTrigger);
 @Component({
   selector: 'app-home-page',
@@ -58,8 +65,8 @@ import { Subscription } from 'rxjs';
 })
 export class HomePage implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
-  responsiveOptions: any[] | undefined;
-  productCollectionResponsiveOptions: any[] | undefined;
+  responsiveOptions: CarouselResponsiveOption[] | undefined;
+  productCollectionResponsiveOptions: CarouselResponsiveOption[] | undefined;
   tags: TagSchema[] = [];
 
   products: ProductSchema[] = [];
