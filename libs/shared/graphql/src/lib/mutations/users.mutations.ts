@@ -60,6 +60,15 @@ export const UPDATE_USER_MUTATION = gql`
 `;
 
 /**
+ * Mutation para actualizar el correo del usuario
+ */
+export const UPDATE_USER_EMAIL_MUTATION = gql`
+  mutation UpdateUserEmail($data: UpdateUserEmailInput!) {
+    updateUserEmail(data: $data) ${userBasicSelection}
+  }
+`;
+
+/**
  * Mutation para cambiar la contraseña del usuario
  */
 export const CHANGE_PASSWORD_MUTATION = gql`

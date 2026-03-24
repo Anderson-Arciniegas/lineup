@@ -1,5 +1,8 @@
 <div class="w-full py-2 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col">
-  <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+  <lib-product-breadcrumb
+    [business]="business"
+    [catalog]="product?.catalog"
+  ></lib-product-breadcrumb>
   @if (product) {
   <div class="w-full flex flex-col gap-6">
     <div class="w-full flex flex-row items-center justify-center">

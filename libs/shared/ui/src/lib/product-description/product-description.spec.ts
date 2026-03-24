@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
 import { ProductDescription } from './product-description';
 
 describe('ProductDescription', () => {
@@ -7,7 +9,12 @@ describe('ProductDescription', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductDescription],
+      imports: [ProductDescription, TranslateModule.forRoot()],
+      providers: [
+        DialogService,
+        TranslateService,
+        TranslateStore,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductDescription);

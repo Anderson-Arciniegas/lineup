@@ -1,0 +1,105 @@
+@let url = productUrl;
+<div
+  class="rating-item flex flex-col sm:flex-row gap-4 p-3 md:p-4"
+  [class.rating-item--link]="url"
+>
+  <div class="rating-item__media shrink-0">
+    @if (url) { @if (productImageUrl) {
+    <a
+      [routerLink]="url"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="rating-item__media-link"
+      [attr.aria-label]="
+          (rating.product?.title ?? '') + ' — ' + ('general.viewProduct' | translate)
+        "
+    >
+      <img
+        class="rating-item__image"
+        [src]="productImageUrl"
+        [alt]="rating.product?.title ?? ''"
+      />
+    </a>
+    } @else {
+    <a
+      [routerLink]="url"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="rating-item__media-link"
+      [attr.aria-label]="
+          (rating.product?.title ?? '') + ' — ' + ('general.viewProduct' | translate)
+        "
+    >
+      <div
+        class="rating-item__placeholder flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <i class="pi pi-image text-3xl text-gray-400"></i>
+      </div>
+    </a>
+    } } @else { @if (productImageUrl) {
+    <img
+      class="rating-item__image"
+      [src]="productImageUrl"
+      [alt]="rating.product?.title ?? ''"
+    />
+    } @else {
+    <div
+      class="rating-item__placeholder flex items-center justify-center"
+      aria-hidden="true"
+    >
+      <i class="pi pi-image text-3xl text-gray-400"></i>
+    </div>
+    } }
+  </div>
+
+  <div class="flex flex-col gap-2 flex-1 min-w-0">
+    <div
+      class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2"
+    >
+      <div class="min-w-0">
+        @if (url) {
+        <a
+          [routerLink]="url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rating-item__title font-semibold text-lg hover:underline line-clamp-2"
+        >
+          {{ rating.product?.title ?? ('general.product' | translate) }}
+        </a>
+        } @else {
+        <span class="font-semibold text-lg line-clamp-2">
+          {{ rating.product?.title ?? ('general.product' | translate) }}
+        </span>
+        } @if (rating.product?.business?.name) {
+        <p class="text-sm text-gray-500 truncate">
+          {{ rating.product?.business?.name }}
+        </p>
+        }
+      </div>
+      <div
+        class="flex flex-row gap-1 shrink-0"
+        role="img"
+        [attr.aria-label]="rating.stars + ' / 5'"
+      >
+        @for (star of stars; track star) {
+        <i
+          class="pi text-lg"
+          [class.pi-star-fill]="star <= rating.stars"
+          [class.pi-star]="star > rating.stars"
+          [class.text-yellow-400]="star <= rating.stars"
+          [class.text-gray-300]="star > rating.stars"
+        ></i>
+        }
+      </div>
+    </div>
+
+    @if (rating.comment) {
+    <p
+      class="text-sm text-gray-700 whitespace-pre-wrap break-words max-h-30 rating-comment"
+    >
+      {{ rating.comment }}
+    </p>
+    }
+  </div>
+</div>

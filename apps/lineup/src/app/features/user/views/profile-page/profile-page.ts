@@ -5,9 +5,9 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import type { StateSchema, UpdateUserInput, UserSchema } from '@lineup/core';
 import {
   DirectoriesEnum,
-  StatesService,
-  UserApiFileService,
-  UserService,
+  StatesPublicService,
+  UserApiFilePublicService,
+  UserPublicService,
   UtilsService,
 } from '@lineup/core';
 import { Button, ImageCropper } from '@lineup/ui';
@@ -42,10 +42,10 @@ const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 })
 export class ProfilePage implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly userService = inject(UserService);
-  private readonly statesService = inject(StatesService);
+  private readonly userService = inject(UserPublicService);
+  private readonly statesService = inject(StatesPublicService);
   private readonly messageService = inject(MessageService);
-  private readonly apiFileService = inject(UserApiFileService);
+  private readonly apiFileService = inject(UserApiFilePublicService);
   private readonly utilsService = inject(UtilsService);
   private readonly dialogService = inject(DialogService);
   private readonly translateService = inject(TranslateService);

@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { BusinessSchema, BusinessService, UserService } from '@lineup/core';
+import {
+  BusinessPublicService,
+  BusinessSchema,
+  BusinessPrivateService,
+} from '@lineup/core';
 import { BusinessCard } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -24,8 +28,8 @@ export class FavoritesPage implements OnInit {
   attempt = false;
   page = 1;
   noMoreResults = false;
-  private readonly _businessService = inject(BusinessService);
-  private readonly _userService = inject(UserService);
+  private readonly _businessService = inject(BusinessPrivateService);
+  private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
@@ -36,7 +40,7 @@ export class FavoritesPage implements OnInit {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
     this._subscription.add(
-      this._userService
+      this._businessPublicService
         .findFollowedBusinesses({ page: this.page, limit: 20 })
         .subscribe({
           next: (businesses) => {

@@ -6,11 +6,11 @@ import {
   AppConfigService,
   AuthStore,
   BusinessSchema,
-  BusinessService,
+  BusinessPrivateService,
   EncryptionService,
   StorageService,
   UserSchema,
-  UserService,
+  UserPublicService,
   UtilsService,
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
@@ -25,8 +25,8 @@ export class AuthService {
   private _storageService = inject(StorageService);
   private _encryptionService = inject(EncryptionService);
   private _platformId = inject(PLATFORM_ID);
-  private _user = inject(UserService);
-  private _business = inject(BusinessService);
+  private _user = inject(UserPublicService);
+  private _business = inject(BusinessPrivateService);
 
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this._platformId)) {

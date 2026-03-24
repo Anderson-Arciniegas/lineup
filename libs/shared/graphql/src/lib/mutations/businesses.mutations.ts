@@ -45,6 +45,15 @@ export const UPDATE_BUSINESS_MUTATION = gql`
   }
 `;
 
+/**
+ * Mutation para actualizar el email del business autenticado
+ */
+export const UPDATE_BUSINESS_EMAIL_MUTATION = gql`
+  mutation UpdateBusinessEmail($data: UpdateBusinessEmailInput!) {
+    updateBusinessEmail(data: $data) ${businessFullSelection}
+  }
+`;
+
 export const BUSINESS_LOGOUT_MUTATION = gql`
   mutation BusinessLogout {
     logout {

@@ -1,0 +1,55 @@
+<div class="flex flex-col gap-10 pt-4">
+  <p class="text-sm text-gray-600">
+    {{ 'updateEmailModal.description' | translate }}
+  </p>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="proceedToVerification()"
+    class="flex flex-col items-start justify-center gap-5 w-full"
+  >
+    <div class="flex flex-col items-start justify-start w-full">
+      <p-floatlabel class="w-full">
+        <input
+          pInputText
+          type="email"
+          formControlName="email"
+          id="updateEmail"
+          autocomplete="email"
+          class="w-full"
+        />
+        <label for="updateEmail" class="font-medium">
+          {{ 'general.email' | translate }}
+        </label>
+      </p-floatlabel>
+      @if (emailControl?.invalid && (emailControl?.dirty ||
+      emailControl?.touched)) {
+      <small class="text-red-500 text-sm">
+        @if (emailControl?.errors?.['required']) { {{ 'validation.fieldRequired'
+        | translate }} } @else if (emailControl?.errors?.['email']) { {{
+        'validation.invalidEmail' | translate }} }
+      </small>
+      }
+    </div>
+
+    <div
+      class="flex flex-col sm:flex-row justify-center items-center gap-4 w-full pt-2"
+    >
+      <lib-button
+        [label]="'general.cancel' | translate"
+        [width]="'w-35'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [buttonType]="'button'"
+        (action)="cancel()"
+      />
+      <lib-button
+        [label]="'general.save' | translate"
+        [width]="'w-35'"
+        [type]="'rounded'"
+        [loading]="attempt"
+        [buttonType]="'submit'"
+      />
+    </div>
+  </form>
+</div>

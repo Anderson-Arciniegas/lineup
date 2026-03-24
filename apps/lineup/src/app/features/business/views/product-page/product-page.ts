@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AuthStore,
   BusinessSchema,
-  BusinessService,
-  CatalogService,
+  BusinessPrivateService,
+  CatalogPrivateService,
   ProductSchema,
-  ProductService,
-  UserService,
+  ProductPrivateService,
+  UserPublicService,
   UtilsService,
   VisitTypeEnum,
 } from '@lineup/core';
@@ -55,15 +55,15 @@ export class ProductPage implements OnInit {
   attempt = false;
   responsiveOptions: any[] | undefined;
   myBusiness = false;
-  private readonly _businessService = inject(BusinessService);
+  private readonly _businessService = inject(BusinessPrivateService);
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
   private readonly _utils = inject(UtilsService);
   private readonly _activatedRoute = inject(ActivatedRoute);
-  private readonly _catalogService = inject(CatalogService);
-  private readonly _productService = inject(ProductService);
-  private readonly _userService = inject(UserService);
+  private readonly _catalogService = inject(CatalogPrivateService);
+  private readonly _productService = inject(ProductPrivateService);
+  private readonly _userService = inject(UserPublicService);
 
   private readonly _subscription = new Subscription();
 

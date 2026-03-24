@@ -1,0 +1,54 @@
+<div
+  class="discount-item flex flex-row justify-between items-center gap-8 p-3 md:p-4 hover:bg-primary-200 transition-all duration-300 cursor-default"
+>
+  <div class="flex flex-row justify-start items-center gap-3">
+    <span class="font-semibold">#{{ discount.id }}</span>
+
+    <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+      @if (discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+      <span class="font-medium text-sm md:text-base">
+        {{ discount.value }}%
+      </span>
+      } @else {
+      <span class="font-medium text-sm md:text-base">
+        {{ discount.value }} {{ discount.currency?.code | currencySymbol }}
+      </span>
+      }
+
+      <span class="hidden md:flex text-sm text-gray-500 font-medium">
+        {{ discount.scope }}
+      </span>
+
+      <span class="hidden md:flex text-sm font-medium">
+        {{ discount.catalog?.title }}
+      </span>
+    </div>
+  </div>
+
+  <div class="flex flex-row justify-end items-center gap-2 md:gap-4">
+    <span class="hidden sm:flex text-sm text-gray-500 font-medium">
+      Fin: {{ discount.endDate | date: 'dd/MM/yyyy' }}
+    </span>
+
+    <div class="flex flex-row items-center gap-2">
+      <lib-button
+        [icon]="'pi pi-pencil'"
+        [type]="'rounded'"
+        [size]="'large'"
+        variant="text"
+        width="w-13"
+        (action)="edit.emit(discount)"
+      ></lib-button>
+
+      <lib-button
+        [icon]="'pi pi-trash'"
+        [type]="'rounded'"
+        [size]="'large'"
+        variant="text"
+        width="w-13"
+        color="danger"
+        (action)="delete.emit(discount.id)"
+      ></lib-button>
+    </div>
+  </div>
+</div>

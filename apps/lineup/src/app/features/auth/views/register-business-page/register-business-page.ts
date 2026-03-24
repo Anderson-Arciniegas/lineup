@@ -16,7 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  BusinessService,
+  BusinessPrivateService,
   CreateBusinessInput,
   PasswordValidation,
   RolesCodesEnum,
@@ -52,7 +52,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   attempt = false;
   attemptGoogle = false;
   private readonly _fb = inject(FormBuilder);
-  private readonly _business = inject(BusinessService);
+  private readonly _business = inject(BusinessPrivateService);
   private readonly _authService = inject(AuthService);
   private readonly _googleAuth = inject(GoogleAuthService);
   private readonly _dialogService = inject(DialogService);

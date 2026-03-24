@@ -3,7 +3,7 @@ import { HttpEventType } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  BusinessApiFileService,
+  BusinessApiFilePrivateService,
   DirectoriesEnum,
   UtilsService,
 } from '@lineup/core';
@@ -36,7 +36,7 @@ export class CreateCatalogModal {
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
-  private readonly _apiFileService = inject(BusinessApiFileService);
+  private readonly _apiFileService = inject(BusinessApiFilePrivateService);
 
   createCatalog() {
     console.log(this.catalogName, this.imageUrl);

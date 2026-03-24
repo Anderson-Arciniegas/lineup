@@ -1,101 +1,100 @@
-<a [routerLink]="url">
-  <section
-    ngSkipHydrations
-    id="product-flip-{{product?.id}}"
-    class="product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
-    [ngClass]="[width, height]"
-  >
-    <div [ngClass]="[width, height]">
-      <img
-        class="product-image"
-        (load)="imageLoaded = true"
-        [hidden]="!imageLoaded"
-        [ngClass]="[width, height]"
-        [src]="image"
-        alt=""
+<div
+  [routerLink]="url"
+  [attr.id]="cardFlipId"
+  class="product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+  [ngClass]="[width, height]"
+>
+  <div [ngClass]="[width, height]">
+    <img
+      class="product-image"
+      (load)="imageLoaded = true"
+      [hidden]="!imageLoaded"
+      [ngClass]="[width, height]"
+      [src]="image"
+      alt=""
+    />
+
+    <div
+      [hidden]="imageLoaded"
+      [ngClass]="[width, height]"
+      class="flex flex-row items-center justify-center"
+    >
+      <p-progress-spinner
+        strokeWidth="8"
+        fill="transparent"
+        animationDuration=".5s"
+        [style]="{ width: '50px', height: '50px' }"
       />
+    </div>
+  </div>
 
+  @if (!dashboardMode) {
+  <div [ngClass]="[width]" class="buttons-container">
+    <div
+      class="button-content flex flex-row w-full justify-between rounded-full gap-2"
+    >
       <div
-        [hidden]="imageLoaded"
-        [ngClass]="[width, height]"
-        class="flex flex-row items-center justify-center"
+        tabindex="-1"
+        (click)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
-        <p-progress-spinner
-          strokeWidth="8"
-          fill="transparent"
-          animationDuration=".5s"
-          [style]="{ width: '50px', height: '50px' }"
-        />
+        <lib-button
+          class="card-like-button"
+          [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+          [width]="'w-11'"
+          [type]="'rounded'"
+          (action)="hasLiked ? unlikeProduct() : likeProduct()"
+        ></lib-button>
+      </div>
+
+      @if (price && currency) {
+      <div class="flex flex-row justify-center items-center gap-2">
+        <h2 class="text-white text-sm text-center font-semibold">
+          {{(price | currency: currency?.code : 'symbol' : '1.0-2' : 'es')}}
+        </h2>
+      </div>
+      }
+      <div
+        tabindex="-1"
+        (click)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+      >
+        <a
+          [routerLink]="'/'+ product?.business?.path"
+          [pTooltip]="product?.business?.name"
+          tooltipPosition="top"
+        >
+          <img
+            class="business-image"
+            [src]="businessImage"
+            alt="Business Image"
+          />
+        </a>
       </div>
     </div>
+  </div>
+  }
 
-    @if (!dashboardMode) {
-    <div [ngClass]="[width]" class="buttons-container">
+  <div [ngClass]="[width]" class="flip-box">
+    <div class="flip-inner h-12">
       <div
-        class="button-content flex flex-row w-full justify-between rounded-full gap-2"
+        class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
       >
-        <div
-          tabindex="-1"
-          (click)="$event.preventDefault(); $event.stopPropagation()"
-          (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-          (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+        <h2
+          class="text-white text-sm font-medium w-full product-name"
+          [ngClass]="'max-' + [width]"
         >
-          <lib-button
-            class="card-like-button"
-            [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-            [width]="'w-11'"
-            [type]="'rounded'"
-            (action)="hasLiked ? unlikeProduct() : likeProduct()"
-          ></lib-button>
-        </div>
-
-        <div class="flex flex-row justify-center items-center gap-2">
-          <h2 class="text-white text-sm text-center font-semibold">
-            {{(product?.price | currency: product?.currency?.code : 'symbol' :
-            '1.0-2' : 'es')}}
-          </h2>
-        </div>
-
-        <div
-          tabindex="-1"
-          (click)="$event.preventDefault(); $event.stopPropagation()"
-          (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-          (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
-        >
-          <a
-            [routerLink]="'/'+ product?.business?.path"
-            [pTooltip]="product?.business?.name"
-            tooltipPosition="top"
-          >
-            <img
-              class="business-image"
-              [src]="businessImage"
-              alt="Business Image"
-            />
-          </a>
-        </div>
+          {{product?.title || 'Product Title'}}
+        </h2>
+        <i class="pi pi-angle-right text-white"></i>
       </div>
-    </div>
-    }
 
-    <div [ngClass]="[width]" class="flip-box">
-      <div class="flip-inner h-13">
-        <div
-          class="front info-translucid h-13 rounded-full py-1 px-3 flex flex-row justify-between items-center"
-        >
-          <h2
-            class="text-white text-sm font-medium w-full product-name"
-            [ngClass]="'max-' + [width]"
-          >
-            {{product?.title || 'Product Title'}}
-          </h2>
-          <i class="pi pi-angle-right text-white"></i>
-        </div>
-
-        <div
-          class="back info-translucid h-13 rounded-full py-1 px-3 flex flex-row justify-between items-center"
-        >
-          <!-- <h2 class="text-white text-xs text-center font-medium">
+      <div
+        class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
+      >
+        <!-- <h2 class="text-white text-xs text-center font-medium">
             {{product?.business?.name || 'Business Name'}}
           </h2>
           @if (product?.price) {
@@ -105,17 +104,18 @@
           </h2>
           } -->
 
-          <div
-            class="flex flex-row justify-center items-center w-full text-white gap-2"
+        <div
+          class="flex flex-row justify-center items-center w-full text-white gap-2"
+        >
+          <i class="pi pi-star-fill"></i>
+          <span class="text-sm font-medium text-center"
+            >{{product?.ratingAverage | number:'1.0-1':'es-ES'}}</span
           >
-            <i class="pi pi-star-fill"></i>
-            <span class="text-sm font-medium text-center"> 4.8 </span>
-          </div>
         </div>
       </div>
     </div>
-  </section>
-</a>
+  </div>
+</div>
 
 <!-- <div
 [ngClass]="[width]"

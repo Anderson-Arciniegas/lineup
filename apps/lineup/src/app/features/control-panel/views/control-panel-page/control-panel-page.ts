@@ -3,8 +3,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import {
   AuthStore,
   BusinessSchema,
-  BusinessService,
-  CatalogService,
+  BusinessPrivateService,
+  CatalogPrivateService,
 } from '@lineup/core';
 import { ProductCard } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
@@ -21,8 +21,8 @@ export class ControlPanelPage implements OnInit {
   business: BusinessSchema;
   attempt = false;
   path: string;
-  private readonly _catalogService = inject(CatalogService);
-  private readonly _businessService = inject(BusinessService);
+  private readonly _catalogService = inject(CatalogPrivateService);
+  private readonly _businessService = inject(BusinessPrivateService);
   private readonly _authStore = inject(AuthStore);
 
   ngOnInit(): void {

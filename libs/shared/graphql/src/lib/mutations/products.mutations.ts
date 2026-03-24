@@ -1,5 +1,8 @@
 import { gql } from 'apollo-angular';
-import { productSelection } from '../selections/product.selection';
+import {
+  productSelection,
+  productSkuSelection,
+} from '../selections/product.selection';
 
 export const CREATE_PRODUCT_MUTATION = gql`
   mutation CreateProduct($data: CreateProductInput!) {
@@ -16,5 +19,17 @@ export const UPDATE_PRODUCT_MUTATION = gql`
 export const REMOVE_PRODUCT_MUTATION = gql`
   mutation RemoveProduct($id: Int!) {
     removeProduct(id: $id)
+  }
+`;
+
+export const ADJUST_STOCK_MUTATION = gql`
+  mutation AdjustStock($data: AdjustStockInput!) {
+    adjustStock(data: $data) ${productSkuSelection}
+  }
+`;
+
+export const UPDATE_PRODUCT_SKUS_MUTATION = gql`
+  mutation UpdateProductSkus($data: UpdateProductSkusInput!) {
+    updateProductSkus(data: $data) ${productSkuSelection}
   }
 `;

@@ -12,7 +12,7 @@
     border: 15px solid var(--p-primary-50);
     border-radius: 50px;
     /* esquinas suaves */
-    object-fit: cover;
+    object-fit: scale-down;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* sombra sutil */
     transition:

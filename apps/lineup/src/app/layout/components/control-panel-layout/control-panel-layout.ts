@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthStore, BusinessService } from '@lineup/core';
+import { AuthStore, BusinessPrivateService } from '@lineup/core';
 import { Nav, Sidebar } from '@lineup/ui';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -12,7 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './control-panel-layout.scss',
 })
 export class ControlPanelLayout implements OnInit {
-  private _business = inject(BusinessService);
+  private _business = inject(BusinessPrivateService);
   private _authStore = inject(AuthStore);
   private _auth = inject(AuthService);
 
@@ -44,6 +44,11 @@ export class ControlPanelLayout implements OnInit {
         label: 'general.catalogs',
         icon: 'pi pi-book',
         url: '/dashboard/catalogs',
+      },
+      {
+        label: 'general.discounts',
+        icon: 'pi pi-percentage',
+        url: '/dashboard/discounts',
       },
       {
         label: 'general.socialMedias',

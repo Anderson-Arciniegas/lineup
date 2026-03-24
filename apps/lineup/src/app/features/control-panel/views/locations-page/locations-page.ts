@@ -4,7 +4,7 @@ import {
   AuthStore,
   BusinessSchema,
   LocationSchema,
-  LocationsService,
+  LocationsPrivateService,
 } from '@lineup/core';
 import {
   AddLocationModal,
@@ -37,7 +37,7 @@ export class LocationsPage implements OnInit {
   private readonly _dialogService = inject(DialogService);
   private readonly _authStore = inject(AuthStore);
   private readonly _translate = inject(TranslateService);
-  private readonly _locationsService = inject(LocationsService);
+  private readonly _locationsService = inject(LocationsPrivateService);
 
   private _subscriptions = new Subscription();
 

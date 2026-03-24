@@ -1,65 +1,77 @@
-<section
-  ngSkipHydrations
-  class="product-card shadow-lg flex flex-row items-center gap-4 grid grid-cols-12 pr-4"
->
-  <div class="col-span-3 sm:col-span-2">
-    <a [routerLink]="url">
-      <img
-        class="product-image lg:w-25 lg:h-25 w-20 h-20"
-        (load)="imageLoaded = true"
-        [hidden]="!imageLoaded"
-        [src]="image"
-        alt=""
-      />
-    </a>
-    <div
-      [hidden]="imageLoaded"
-      class="flex flex-row items-center justify-center lg:w-25 lg:h-25 w-20 h-20"
-    >
-      <p-progress-spinner
-        strokeWidth="8"
-        fill="transparent"
-        animationDuration=".5s"
-        [style]="{ width: '50px', height: '50px' }"
-      />
-    </div>
-  </div>
-
-  <div class="col-span-7 sm:col-span-8 grid-cols-4 hidden md:grid">
-    <div class="col-span-3">
-      <a [routerLink]="url" class="text-sm font-medium">
-        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
-        {{product?.title || 'Televisor 65″ Samsung Neo QLED 4K QN90B'}}
-      </a>
-    </div>
-
-    <div class="flex flex-row justify-end items-center">
-      <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | currency: product?.currency?.code : 'symbol'
-        :'1.0-2' : 'es')}}
-      </span>
-    </div>
-  </div>
-
-  <div class="col-span-7 sm:col-span-8 flex flex-col md:hidden gap-1">
-    <div class="w-full flex flex-row items-start justify-start">
-      <p class="text-sm font-medium">
-        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
-        {{setLabel(product?.title || "Televisor 65″ Samsung Neo QLED 4KQN90B")}}
-      </p>
-    </div>
-
-    <div class="w-full flex flex-row justify-end items-end">
-      <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | currency: product?.currency?.code : 'symbol'
-        :'1.0-2' : 'es')}}
-      </span>
-    </div>
-  </div>
-
-  <div
-    class="flex flex-row justify-end items-center gap-3 col-span-2 hidden lg:flex"
+<a [routerLink]="url">
+  <section
+    ngSkipHydrations
+    class="product-card shadow-lg flex flex-row items-center gap-2 sm:gap-4 grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 sm:pr-4"
   >
+    <div class="col-span-1 sm:col-span-2">
+      <a>
+        <img
+          class="product-image lg:w-25 lg:h-25 w-20 h-20"
+          (load)="imageLoaded = true"
+          [hidden]="!imageLoaded"
+          [src]="image"
+          alt=""
+        />
+      </a>
+      <div
+        [hidden]="imageLoaded"
+        class="flex flex-row items-center justify-center lg:w-25 lg:h-25 w-20 h-20"
+      >
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+    </div>
+
+    <div
+      class="col-span-7 sm:col-span-5 md:col-span-9 lg:col-span-9 grid-cols-4 hidden md:grid"
+    >
+      <div class="col-span-3">
+        <span class="text-sm font-medium">
+          <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
+          {{setLabel(product?.title, 40)}}
+        </span>
+      </div>
+
+      @if (price && currency) {
+      <div class="flex flex-row justify-end items-center">
+        <span class="text-base text-center font-medium whitespace-nowrap">
+          {{(price | currency: currency?.code : 'symbol' :'1.0-2' : 'es')}}
+        </span>
+      </div>
+      }
+    </div>
+
+    <div class="col-span-2 sm:col-span-5 flex flex-col md:hidden gap-1">
+      <div class="w-full flex flex-row items-start justify-start">
+        <span class="text-sm font-medium">
+          <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
+          {{setLabel(product?.title)}}
+        </span>
+      </div>
+
+      @if (price && currency) {
+      <div class="sm:flex hidden w-full flex flex-row justify-end items-end">
+        <span class="text-base text-center font-medium whitespace-nowrap">
+          {{(price | currency: currency?.code : 'symbol' :'1.0-2' : 'es')}}
+        </span>
+      </div>
+      }
+    </div>
+
+    <!-- <div
+    class="flex flex-row justify-end items-center gap-3 col-span-3 hidden lg:flex"
+  >
+    <lib-button
+      [icon]="'pi pi-warehouse'"
+      [width]="'w-11'"
+      [type]="'rounded'"
+      [link]="inventoryUrl"
+    ></lib-button>
+
     <lib-button
       [icon]="'pi pi-pencil'"
       [width]="'w-11'"
@@ -75,19 +87,23 @@
       [loading]="attemptDelete"
       (action)="deleteProduct()"
     ></lib-button>
-  </div>
+  </div> -->
 
-  <div class="flex lg:hidden flex-row justify-center items-center col-span-2">
-    <lib-button
-      [icon]="'pi pi-ellipsis-v'"
-      [size]="'small'"
-      [width]="'w-9'"
-      [color]="'secondary'"
-      [type]="'rounded'"
-      (action)="op.toggle($event)"
-    ></lib-button>
-    <p-popover #op>
-      <p-menu [model]="items" />
-    </p-popover>
-  </div>
-</section>
+    <div
+      class="flex flex-row justify-center items-center col-span-1"
+      (click)="$event.stopPropagation();"
+      (keydown.enter)="$event.stopPropagation();"
+      (keydown.space)="$event.stopPropagation();"
+      tabindex="0"
+      role="button"
+    >
+      <lib-button
+        [icon]="'pi pi-ellipsis-v'"
+        [width]="'w-11'"
+        [type]="'rounded'"
+        (action)="menu.toggle($event)"
+      ></lib-button>
+    </div>
+  </section>
+</a>
+<p-menu [model]="items" [popup]="true" #menu />

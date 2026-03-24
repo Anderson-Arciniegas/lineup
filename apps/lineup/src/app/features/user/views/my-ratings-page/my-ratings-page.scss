@@ -1,0 +1,13 @@
+::ng-deep {
+  .my-ratings {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  @media screen and (max-width: 639px) {
+    .my-ratings {
+      height: calc(100vh - 88px);
+      overflow-y: auto;
+    }
+  }
+}

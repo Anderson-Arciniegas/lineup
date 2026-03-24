@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import {
   SocialNetworkBusinessSchema,
-  SocialNetworkService,
+  SocialNetworkPrivateService,
   UtilsService,
 } from '@lineup/core';
 import { AddSocialMediaModal, Button, ConfirmationModal } from '@lineup/ui';
@@ -27,7 +27,7 @@ export class SocialMediasPage implements OnInit {
   ref: DynamicDialogRef | undefined;
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
-  private readonly _socialMediaService = inject(SocialNetworkService);
+  private readonly _socialMediaService = inject(SocialNetworkPrivateService);
   private readonly _messageService = inject(MessageService);
   private readonly _utilsService = inject(UtilsService);
   private _subscriptions = new Subscription();

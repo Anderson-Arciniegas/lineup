@@ -1,0 +1,36 @@
+<section class="profile flex flex-col gap-10 py-5">
+  <div class="flex flex-col justify-start items-start sm:flex-row sm:justify-between sm:items-center gap-4 px-4">
+    <h2 class="text-2xl font-semibold self-start">
+      {{ 'general.discounts' | translate }}
+    </h2>
+
+    <lib-button
+      [type]="'rounded'"
+      [icon]="'pi pi-plus'"
+      [label]="'general.create' | translate"
+      (action)="onCreateDiscount()"
+    ></lib-button>
+  </div>
+
+  <div class="flex flex-col gap-4 md:ps-10 w-11/12">
+    @for (discount of discounts; track discount.id) {
+    <lib-discount-item
+      [discount]="discount"
+      (edit)="onEditDiscount($event)"
+      (delete)="onDeleteDiscount($event)"
+    ></lib-discount-item>
+    }
+
+    @if(!loading && discounts.length === 0) {
+    <div class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600">
+      No hay descuentos activos.
+    </div>
+    }
+  </div>
+
+  @if(loading) {
+  <div class="flex justify-center p-10">
+    <p-progress-spinner strokeWidth="4" [style]="{ width: '100px', height: '100px' }" />
+  </div>
+  }
+</section>

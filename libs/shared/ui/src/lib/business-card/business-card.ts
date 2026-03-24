@@ -33,11 +33,13 @@ export class BusinessCard implements OnInit {
     if (count == null || count < 0) return '0';
     if (count >= 1_000_000) {
       const value = count / 1_000_000;
-      return value % 1 === 0 ? `${value} M` : `${value.toFixed(1)} M`;
+      const display = value % 1 === 0 ? value : Math.floor(value * 10) / 10;
+      return `${display} M`;
     }
     if (count >= 1_000) {
       const value = count / 1_000;
-      return value % 1 === 0 ? `${value} m` : `${value.toFixed(1)} m`;
+      const display = value % 1 === 0 ? value : Math.floor(value * 10) / 10;
+      return `${display} m`;
     }
     return String(count);
   }
