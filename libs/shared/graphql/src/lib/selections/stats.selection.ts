@@ -54,7 +54,9 @@ export const discountStatsSelection = `
       count
       label
     }
-    expiringSoonCount
+    expiringSoon {
+      ${timeSeriesStatsFields}
+    }
   }
 `;
 

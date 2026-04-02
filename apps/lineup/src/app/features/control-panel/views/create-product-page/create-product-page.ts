@@ -89,26 +89,6 @@ export class CreateProductPage implements OnInit {
   isDragging = false;
   urls: string[] = [];
   imgCodes: string[] = [];
-  // price = 0;
-  // currencies: {
-  //   id: number;
-  //   name?: string;
-  //   icon?: string;
-  //   code?: string;
-  //   status?: string;
-  // }[] = [
-  //   { name: 'general.noPrice', icon: 'pi pi-ban', id: 0 },
-  //   { icon: 'pi pi-dollar', id: 1 },
-  //   { icon: 'pi pi-money-bill', id: 2 },
-  //   { icon: 'pi pi-euro', id: 3 },
-  // ];
-  // selectedCurrency: {
-  //   id: number;
-  //   name?: string;
-  //   icon?: string;
-  //   code?: string;
-  //   status?: string;
-  // } | null = null;
 
   catalog: CatalogSchema | null = null;
   isSubmitting = false;

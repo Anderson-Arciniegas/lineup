@@ -21,7 +21,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { finalize, map, take } from 'rxjs';
 
-const MAX_NAME_LENGTH = 20;
+const MAX_NAME_LENGTH = 30;
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
 @Component({
@@ -139,6 +139,9 @@ export class ProfilePage implements OnInit {
   }
 
   onSubmit(): void {
+    console.log(this.profileForm.value);
+    console.log(this.profileForm.valid);
+    console.log(this.profileForm.get('idState')?.value);
     if (this.profileForm.invalid || this.saving) return;
 
     const raw = this.profileForm.getRawValue();

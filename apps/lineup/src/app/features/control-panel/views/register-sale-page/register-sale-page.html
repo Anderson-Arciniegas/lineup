@@ -1,0 +1,407 @@
+<div class="w-full py-4 sm:py-5 px-2 sm:px-4 gap-8 flex flex-col items-center">
+  <div
+    class="w-full flex flex-col gap-6 py-4 sm:py-6 sm:px-4 lg:px-10 2xl:px-14 rounded-lg border-grey xl:container"
+  >
+    <div class="flex flex-col gap-1 w-full">
+      <h1 class="text-3xl font-semibold text-gray-800">
+        {{ 'general.registerSale' | translate }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ 'registerSalePage.subtitle' | translate }}
+      </p>
+    </div>
+
+    @if (loadingCatalogs) {
+    <div class="w-full flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '80px', height: '80px' }"
+      />
+    </div>
+    } @else {
+    <div class="flex flex-col gap-2 w-full max-w-sm">
+      <label class="text-sm font-medium text-gray-700" for="sale-catalog">
+        {{ 'general.catalog' | translate }}
+      </label>
+      <p-select
+        inputId="sale-catalog"
+        [options]="catalogs"
+        [(ngModel)]="selectedCatalogId"
+        optionLabel="title"
+        optionValue="id"
+        [placeholder]="'registerSalePage.selectCatalogPlaceholder' | translate"
+        [filter]="true"
+        filterBy="title"
+        class="w-full"
+        styleClass="w-full"
+        (ngModelChange)="onCatalogChange()"
+      />
+    </div>
+
+    @if (selectedCatalog) {
+    <p-panel
+      [header]="'registerSalePage.searchPanel' | translate"
+      [toggleable]="true"
+      class="w-full"
+    >
+      <div
+        class="flex flex-col sm:flex-row gap-4 w-full items-stretch sm:items-end"
+      >
+        <div
+          class="flex-1 flex items-center bg-primary-50 gap-2 px-3 py-2 rounded-lg w-full"
+        >
+          <p-iconfield class="w-full">
+            <p-inputicon class="pi pi-search" />
+            <input
+              type="text"
+              class="w-full input font-medium"
+              pInputText
+              [(ngModel)]="searchText"
+              (ngModelChange)="onSearchInput()"
+              [placeholder]="'registerSalePage.searchPlaceholder' | translate"
+            />
+          </p-iconfield>
+        </div>
+      </div>
+
+      @if (loadingProducts) {
+      <div class="w-full flex justify-center p-8">
+        <p-progress-spinner
+          strokeWidth="4"
+          [style]="{ width: '56px', height: '56px' }"
+        />
+      </div>
+      } @else if (products.length === 0) {
+      <p class="text-sm text-gray-500 py-4">
+        {{ 'registerSalePage.noProducts' | translate }}
+      </p>
+      } @else {
+      <ul
+        class="flex flex-col gap-2 mt-4 max-h-80 overflow-y-auto border border-gray-100 rounded-lg divide-y divide-gray-100"
+      >
+        @for (product of products; track trackByProduct($index, product)) {
+        <li
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-white"
+        >
+          <div class="flex flex-col gap-1 min-w-0">
+            <span class="font-medium text-gray-800 truncate"
+              >#{{ product.id }} — {{ product.title }}</span
+            >
+            @if (product.productTags?.length) {
+            <div class="flex flex-wrap gap-1">
+              @for (pt of product.productTags; track pt.idTag) { @if
+              (pt.tag?.name) {
+              <span
+                class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                >{{ pt.tag.name }}</span
+              >
+              } }
+            </div>
+            }
+          </div>
+          <lib-button
+            [label]="
+              isInCart(product.id)
+                ? ('registerSalePage.inCart' | translate)
+                : ('registerSalePage.addToCart' | translate)
+            "
+            type="rounded"
+            size="small"
+            [icon]="isInCart(product.id) ? 'pi pi-check' : 'pi pi-plus'"
+            [disabled]="isInCart(product.id)"
+            (action)="addToCart(product)"
+          />
+        </li>
+        }
+      </ul>
+      }
+    </p-panel>
+
+    <p-panel
+      [header]="'registerSalePage.cartPanel' | translate"
+      [toggleable]="true"
+      class="w-full"
+    >
+      @if (cart.length === 0) {
+      <p class="text-sm text-gray-500">
+        {{ 'registerSalePage.cartEmptyHint' | translate }}
+      </p>
+      } @else {
+      <div class="flex flex-col gap-6">
+        @for (entry of cart; track entry.productId) {
+        <div
+          class="border border-gray-200 rounded-lg p-4 flex flex-col gap-3 bg-gray-50/50"
+        >
+          <div class="flex flex-row items-start justify-between gap-2">
+            <div
+              class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4"
+            >
+              <span class="font-semibold text-gray-800"
+                >#{{ entry.product.id }} {{ entry.product.title }}</span
+              >
+
+              <lib-button
+                icon="pi pi-external-link"
+                width="w-34"
+                size="small"
+                [label]="'general.inventory' | translate"
+                type="rounded"
+                [target]="'_blank'"
+                [link]="navigateToInventory(entry.product)"
+              ></lib-button>
+            </div>
+            <lib-button
+              icon="pi pi-trash"
+              type="rounded"
+              color="danger"
+              width="w-11"
+              variant="text"
+              (action)="removeCartEntry(entry.productId)"
+            />
+          </div>
+
+          @for (line of entry.lines; track $index; let lineIndex = $index) {
+          <div
+            class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end border-t border-gray-300 pt-3 first:border-t-0 first:pt-0"
+          >
+            @if ((entry.product.skus?.length ?? 0) > 1) {
+            <div class="md:col-span-6 flex flex-col gap-1">
+              <label
+                for="sku-{{ entry.productId }}-{{ lineIndex }}"
+                class="text-xs font-medium text-gray-600"
+                >{{ 'registerSalePage.sku' | translate }}</label
+              >
+              <p-select
+                [inputId]="'sku-' + entry.productId + '-' + lineIndex"
+                [options]="availableSkusForLine(entry, lineIndex)"
+                [(ngModel)]="line.idProductSku"
+                optionLabel="skuCode"
+                optionValue="id"
+                [placeholder]="'registerSalePage.selectSku' | translate"
+                class="w-full"
+                styleClass="w-full"
+              >
+                <ng-template let-sku #item>
+                  <span class="text-sm">{{ skuLabel(sku) }}</span>
+                </ng-template>
+                <ng-template let-sku #selectedItem>
+                  @if (sku) {
+                  <span class="text-sm">{{ skuLabel(sku) }}</span>
+                  }
+                </ng-template>
+              </p-select>
+            </div>
+            } @else {
+            <div class="md:col-span-6 flex flex-col gap-1">
+              <span class="text-xs text-gray-500"
+                >{{ 'registerSalePage.singleSku' | translate }}</span
+              >
+              <span class="text-sm font-medium text-gray-800"
+                >{{ entry.product.skus?.[0] ? skuLabel(entry.product.skus[0]) :
+                '—' }}</span
+              >
+            </div>
+            }
+
+            <div class="md:col-span-4 flex flex-col gap-1">
+              <label
+                for="quantity-{{ entry.productId }}-{{ lineIndex }}"
+                class="text-xs font-medium text-gray-600"
+                >{{ 'registerSalePage.quantity' | translate }}</label
+              >
+              <p-inputnumber
+                [(ngModel)]="line.quantity"
+                [min]="1"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                inputStyleClass="w-full"
+                styleClass="w-full max-w-40"
+              />
+            </div>
+
+            <div class="md:col-span-2 flex flex-row gap-1 justify-end">
+              @if ((entry.product.skus?.length ?? 0) > 1) {
+              <lib-button
+                icon="pi pi-plus"
+                type="rounded"
+                variant="text"
+                width="w-11"
+                [disabled]="entry.lines.length >= (entry.product.skus?.length ?? 0)"
+                (action)="addSkuLine(entry)"
+              />
+              @if (entry.lines.length > 1) {
+              <lib-button
+                icon="pi pi-minus"
+                type="rounded"
+                width="w-11"
+                variant="text"
+                color="danger"
+                (action)="removeSkuLine(entry, lineIndex)"
+              />
+              } }
+            </div>
+          </div>
+
+          <!-- Precio + descuento aplicado (si existe) -->
+          @if (findSku(entry.product, line.idProductSku); as selectedSku) { @if
+          (lineTotals(entry, line); as t) {
+          <div
+            class="mt-2 grid grid-cols-1 md:grid-cols-12 gap-2 text-sm bg-white rounded-lg border border-gray-100 p-3"
+          >
+            <div class="md:col-span-6 flex flex-col gap-0.5 min-w-0">
+              <span class="text-xs text-gray-500"
+                >{{ 'registerSalePage.sku' | translate }}</span
+              >
+              <span class="font-medium text-gray-800 truncate"
+                >{{ skuLabel(selectedSku) }}</span
+              >
+              @if (getProductDiscount(entry.product)) {
+              <span class="text-xs text-amber-700">
+                {{ 'general.discount' | translate }}: @if
+                (getProductDiscount(entry.product)!.discountType ===
+                DiscountTypeEnum.PERCENTAGE) {
+                <span class="font-medium"
+                  >-{{ getProductDiscount(entry.product)!.value }}%</span
+                >
+                } @else {
+                <span class="font-medium">
+                  -{{ getProductDiscount(entry.product)!.value }} {{
+                  getProductDiscount(entry.product)!.currency?.code }}
+                </span>
+                }
+              </span>
+              }
+            </div>
+
+            <div class="md:col-span-2 flex flex-col items-end gap-0.5">
+              <span class="text-xs text-gray-500 text-right"
+                >{{ 'general.price' | translate }}</span
+              >
+              @if (t.unitOriginal !== null && selectedSku.currency?.code) {
+              <span
+                class="text-gray-600"
+                [class.line-through]="
+                  skuShowsDiscountedPrice(selectedSku, getProductDiscount(entry.product))
+                "
+              >
+                {{ t.unitOriginal | currency: selectedSku.currency.code :
+                'symbol' : '1.0-2' : 'es' }}
+              </span>
+              } @else {
+              <span class="text-gray-400">—</span>
+              }
+            </div>
+
+            <div class="md:col-span-2 flex flex-col items-end gap-0.5">
+              <span class="text-xs text-gray-500 text-right"
+                >{{ 'general.priceWithDiscount' | translate }}</span
+              >
+              @if (t.unitFinal !== null && selectedSku.currency?.code) {
+              <span
+                class="font-semibold"
+                [class.text-emerald-700]="
+                  skuShowsDiscountedPrice(selectedSku, getProductDiscount(entry.product))
+                "
+                [class.text-gray-800]="
+                  !skuShowsDiscountedPrice(selectedSku, getProductDiscount(entry.product))
+                "
+              >
+                {{ t.unitFinal | currency: selectedSku.currency.code : 'symbol'
+                : '1.0-2' : 'es' }}
+              </span>
+              } @else if (getProductDiscount(entry.product)) {
+              <span class="text-gray-400">—</span>
+              } @else {
+              <span class="text-gray-400">—</span>
+              }
+            </div>
+
+            <div class="md:col-span-2 flex flex-col items-end gap-0.5">
+              <span class="text-xs text-gray-500 text-right"
+                >{{ 'general.total' | translate }}</span
+              >
+              @if (t.subtotalFinal !== null && selectedSku.currency?.code) {
+              <span class="font-semibold text-gray-900">
+                {{ t.subtotalFinal | currency: selectedSku.currency.code :
+                'symbol' : '1.0-2' : 'es' }}
+              </span>
+              } @else {
+              <span class="text-gray-400">—</span>
+              }
+            </div>
+          </div>
+          } } @if ( stockWarning( findSku(entry.product, line.idProductSku),
+          line.quantity ) ) {
+          <p class="text-xs text-amber-700 flex items-center gap-1">
+            <i class="pi pi-exclamation-triangle"></i>
+            {{ 'registerSalePage.stockWarning' | translate }}
+          </p>
+          } }
+        </div>
+        }
+
+        <!-- Resumen tipo factura -->
+        @if (cart.length > 0) {
+        <div class="border-t border-gray-200 pt-4">
+          <div class="flex flex-col gap-2 max-w-xl ml-auto">
+            <h3 class="text-base font-semibold text-gray-800">
+              {{ 'general.total' | translate }}
+            </h3>
+            <div
+              class="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100"
+            >
+              @for (t of invoiceTotalsByCurrency(); track t.currencyCode) {
+              <div class="p-3 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div class="sm:col-span-3">
+                  <span class="text-xs text-gray-500"
+                    >{{ 'general.currency' | translate }}</span
+                  >
+                  <div class="font-medium text-gray-800">
+                    {{ t.currencyCode }}
+                  </div>
+                </div>
+                <div class="sm:col-span-3 text-right">
+                  <span class="text-xs text-gray-500">Subtotal</span>
+                  <div class="text-gray-800 font-medium">
+                    {{ t.subtotal | currency: t.currencyCode : 'symbol' :
+                    '1.0-2' : 'es' }}
+                  </div>
+                </div>
+                <div class="sm:col-span-3 text-right">
+                  <span class="text-xs text-gray-500">Descuento</span>
+                  <div class="text-amber-700 font-medium">
+                    {{ t.discount | currency: t.currencyCode : 'symbol' :
+                    '1.0-2' : 'es' }}
+                  </div>
+                </div>
+                <div class="sm:col-span-3 text-right">
+                  <span class="text-xs text-gray-500">Total</span>
+                  <div class="text-gray-900 font-semibold">
+                    {{ t.total | currency: t.currencyCode : 'symbol' : '1.0-2' :
+                    'es' }}
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="flex flex-row justify-end pt-2">
+          <lib-button
+            [label]="'registerSalePage.submitSale' | translate"
+            icon="pi pi-check"
+            type="rounded"
+            color="success"
+            [loading]="submittingSale"
+            [disabled]="submittingSale"
+            (action)="registerSale()"
+          />
+        </div>
+      </div>
+      }
+    </p-panel>
+    } }
+  </div>
+</div>

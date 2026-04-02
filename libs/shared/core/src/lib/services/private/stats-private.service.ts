@@ -28,13 +28,13 @@ export class StatsPrivateService {
   private apollo = inject(Apollo);
 
   businessEngagementStats(
-    timePeriod?: TimePeriodInput | null
+    timePeriod: TimePeriodInput
   ): Observable<EngagementStatsSchema> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ businessEngagementStats: EngagementStatsSchema }>({
         query: BUSINESS_ENGAGEMENT_STATS_QUERY,
-        variables: { timePeriod: timePeriod ?? null },
+        variables: { timePeriod },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -43,15 +43,12 @@ export class StatsPrivateService {
       .pipe(map((result) => result.data.businessEngagementStats));
   }
 
-  catalogStats(
-    timePeriod?: TimePeriodInput | null,
-    limit?: number
-  ): Observable<CatalogStatsSchema> {
+  catalogStats(timePeriod: TimePeriodInput): Observable<CatalogStatsSchema> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ catalogStats: CatalogStatsSchema }>({
         query: CATALOG_STATS_QUERY,
-        variables: { limit, timePeriod: timePeriod ?? null },
+        variables: { timePeriod },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -60,12 +57,12 @@ export class StatsPrivateService {
       .pipe(map((result) => result.data.catalogStats));
   }
 
-  discountStats(days?: number | null): Observable<DiscountStatsSchema> {
+  discountStats(timePeriod: TimePeriodInput): Observable<DiscountStatsSchema> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ discountStats: DiscountStatsSchema }>({
         query: DISCOUNT_STATS_QUERY,
-        variables: { days: days ?? null },
+        variables: { timePeriod },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -75,15 +72,14 @@ export class StatsPrivateService {
   }
 
   inventoryStats(
-    timePeriod?: TimePeriodInput | null,
-    limit?: number,
+    timePeriod: TimePeriodInput,
     threshold?: number
   ): Observable<InventoryStatsSchema> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ inventoryStats: InventoryStatsSchema }>({
         query: INVENTORY_STATS_QUERY,
-        variables: { limit, threshold, timePeriod: timePeriod ?? null },
+        variables: { threshold, timePeriod },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -92,15 +88,12 @@ export class StatsPrivateService {
       .pipe(map((result) => result.data.inventoryStats));
   }
 
-  productStats(
-    timePeriod?: TimePeriodInput | null,
-    limit?: number
-  ): Observable<ProductStatsSchema> {
+  productStats(timePeriod: TimePeriodInput): Observable<ProductStatsSchema> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ productStats: ProductStatsSchema }>({
         query: PRODUCT_STATS_QUERY,
-        variables: { limit, timePeriod: timePeriod ?? null },
+        variables: { timePeriod },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,

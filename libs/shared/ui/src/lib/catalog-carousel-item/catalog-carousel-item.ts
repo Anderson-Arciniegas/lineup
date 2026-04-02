@@ -3,9 +3,13 @@ import { AfterViewInit, Component, inject, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   AuthStore,
+  BcvOfficialRatesSchema,
+  CurrencySchema,
   CurrencySymbolPipe,
+  DiscountSchema,
   ProductPublicService,
   ProductSchema,
+  RatesPrivateService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,19 +27,29 @@ import { ShareModal } from '../share-modal/share-modal';
 })
 export class CatalogCarouselItem implements AfterViewInit {
   @Input() product: ProductSchema;
+  @Input() useLightText?: boolean;
   imageLoaded = false;
   hasLiked = false;
+  price: number;
+  originalPrice: number;
+  currency: CurrencySchema;
+  rates: BcvOfficialRatesSchema;
   ref: DynamicDialogRef | undefined;
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _utilsService = inject(UtilsService);
   private readonly _authStore = inject(AuthStore);
   private readonly _productPublicService = inject(ProductPublicService);
-
+  private readonly _ratesService = inject(RatesPrivateService);
   private readonly _subscription = new Subscription();
 
   ngAfterViewInit(): void {
     this.hasLikedProduct();
+
+    this.price = this.product.skus?.[0].price ?? null;
+    this.originalPrice = this.product.skus?.[0].price ?? null;
+    this.currency = this.product.skus?.[0]?.currency ?? null;
+    this.getRates();
   }
 
   share() {
@@ -103,6 +117,22 @@ export class CatalogCarouselItem implements AfterViewInit {
         next: (response) => {
           console.log(response);
           this.hasLiked = response;
+        },
+      }),
+    );
+  }
+
+  getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          this.rates = rates;
+          this.price = this._utilsService.formatPriceWithDiscount(
+            this.product.skus?.[0] ?? null,
+            (this.product.discountProduct?.discount as DiscountSchema) ?? null,
+            this.rates ?? null,
+          );
+          this.currency = this.product.skus?.[0]?.currency ?? null;
         },
       }),
     );

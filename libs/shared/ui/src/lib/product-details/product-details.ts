@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import {
   Component,
   inject,
@@ -7,15 +6,22 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AuthStore,
   BASIC_COLORS,
   BASIC_SIZES,
+  BcvOfficialRatesSchema,
   CurrencySchema,
+  DiscountSchema,
+  DiscountSchemaFields,
+  DiscountTypeEnum,
   ProductPublicService,
   ProductSchema,
   ProductSkuSchema,
+  RatesPrivateService,
   SocialNetworkPrivateService,
+  StatusEnum,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -58,9 +64,8 @@ export class ProductDetails implements OnChanges {
   ref: DynamicDialogRef | undefined;
   hasLiked = false;
   href: string;
-  price: number;
-  currency: CurrencySchema;
   outOfStock: boolean;
+  rates: BcvOfficialRatesSchema;
   private readonly _socialMediaService = inject(SocialNetworkPrivateService);
   private readonly _messageService = inject(MessageService);
   private readonly _utilsService = inject(UtilsService);
@@ -68,6 +73,7 @@ export class ProductDetails implements OnChanges {
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _ratesService = inject(RatesPrivateService);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
@@ -86,10 +92,121 @@ export class ProductDetails implements OnChanges {
     if (this.product) {
       this.getSocialNetworkBusinesses();
       this.hasLikedProduct();
-
-      this.price = this.product.skus?.[0]?.price ?? null;
-      this.currency = this.product.skus?.[0]?.currency ?? null;
+      this.getRates();
     }
+  }
+
+  /**
+   * Precio mostrado según el SKU que corresponde a las variaciones seleccionadas
+   * (o el primer SKU si aún no hay selección completa).
+   * Con descuento activo usa {@link UtilsService.formatPriceWithDiscount}.
+   */
+  get price(): number | null {
+    return this.getEffectivePriceDetails()?.salePrice ?? null;
+  }
+
+  /** Precio de lista del SKU (sin descuento); solo para mostrar tachado si hay oferta. */
+  get originalListPrice(): number | null {
+    const d = this.getEffectivePriceDetails();
+    return d?.showDiscount ? d.listPrice : null;
+  }
+
+  /** Mostrar precio original tachado junto al precio promocional. */
+  get showDiscountUi(): boolean {
+    return this.getEffectivePriceDetails()?.showDiscount ?? false;
+  }
+
+  /**
+   * Precio de venta, precio de lista y si aplica UI de descuento (lista mayor que venta).
+   */
+  private getEffectivePriceDetails():
+    | { salePrice: number; listPrice: number; showDiscount: boolean }
+    | null {
+    const sku = this.getSkuForPricing();
+    if (sku == null || sku.price == null) return null;
+    const listPrice = sku.price;
+    const discount = this.getProductDiscount();
+    if (!this.isDiscountActiveNow(discount)) {
+      return { salePrice: listPrice, listPrice, showDiscount: false };
+    }
+    const needsRatesForFixed =
+      discount.discountType === DiscountTypeEnum.FIXED &&
+      sku.idCurrency !== discount.idCurrency;
+    if (needsRatesForFixed && !this.rates) {
+      return { salePrice: listPrice, listPrice, showDiscount: false };
+    }
+    const computed = this._utilsService.formatPriceWithDiscount(
+      sku,
+      discount as DiscountSchema,
+      this.rates ?? ({ dollar: 1, euro: 1 } as BcvOfficialRatesSchema),
+    );
+    const salePrice = computed ?? listPrice;
+    const showDiscount = salePrice < listPrice;
+    return { salePrice, listPrice, showDiscount };
+  }
+
+  get currency(): CurrencySchema | null {
+    const sku = this.getSkuForPricing();
+    return sku?.currency ?? null;
+  }
+
+  private getProductDiscount(): DiscountSchemaFields | undefined {
+    const dp = this.product?.discountProduct as
+      | { discount?: DiscountSchemaFields }
+      | undefined;
+    return dp?.discount;
+  }
+
+  private isDiscountActiveNow(
+    discount: DiscountSchemaFields | undefined,
+  ): discount is DiscountSchemaFields {
+    return !!discount && discount.status === StatusEnum.ACTIVE;
+  }
+
+  /**
+   * SKU que coincide con todas las variaciones seleccionadas; `undefined` si falta
+   * alguna opción o no hay coincidencia.
+   */
+  private findResolvedSkuForVariations(): ProductSkuSchema | undefined {
+    const product = this.product;
+    if (!product?.skus?.length) return undefined;
+    const variations = product.variations ?? [];
+    if (!variations.length) return undefined;
+
+    const selectedValues = variations
+      .map((v) => this.selectedOptionsByVariationTitle[v.title])
+      .filter((v): v is string => typeof v === 'string' && v.length > 0);
+
+    if (selectedValues.length !== variations.length) return undefined;
+
+    const skus = product.skus;
+    return skus.find((sku) => {
+      const skuValues = Object.values(sku.variationOptions ?? {})
+        .filter(
+          (v): v is string | number =>
+            v != null && (typeof v === 'string' || typeof v === 'number'),
+        )
+        .map((v) => String(v));
+      if (skuValues.length !== selectedValues.length) return false;
+      return selectedValues.every((selected) => skuValues.includes(selected));
+    });
+  }
+
+  /**
+   * SKU cuyo precio/moneda se muestran: el resuelto por variaciones o el primero.
+   */
+  private getSkuForPricing(): ProductSkuSchema | null {
+    const product = this.product;
+    if (!product?.skus?.length) return null;
+    const skus = product.skus;
+    const variations = product.variations ?? [];
+
+    if (!variations.length) {
+      return skus[0] ?? null;
+    }
+
+    const resolved = this.findResolvedSkuForVariations();
+    return resolved ?? skus[0] ?? null;
   }
 
   onVariationOptionChange(variationTitle: string, option: string): void {
@@ -127,7 +244,8 @@ export class ProductDetails implements OnChanges {
     for (const variation of variations) {
       defaults[variation.title] = variation.options?.[0] ?? null;
       const defaultValue = defaults[variation.title];
-      if (defaultValue != null) this.selectedOptionsByVariationTitle[variation.title] = defaultValue;
+      if (defaultValue != null)
+        this.selectedOptionsByVariationTitle[variation.title] = defaultValue;
     }
 
     const queryParamMap = this._activatedRoute.snapshot.queryParamMap;
@@ -153,7 +271,8 @@ export class ProductDetails implements OnChanges {
             } else {
               const fallback = defaults[variation.title];
               if (fallback != null) {
-                this.selectedOptionsByVariationTitle[variation.title] = fallback;
+                this.selectedOptionsByVariationTitle[variation.title] =
+                  fallback;
               }
             }
           }
@@ -206,7 +325,9 @@ export class ProductDetails implements OnChanges {
     const variationOptions = sku.variationOptions ?? {};
 
     // Caso 1: la key existe con el mismo nombre de la variación.
-    const direct = (variationOptions as Record<string, unknown>)[variationTitle];
+    const direct = (variationOptions as Record<string, unknown>)[
+      variationTitle
+    ];
     if (direct != null) {
       const directStr = String(direct);
       if (allowedOptions.includes(directStr)) return directStr;
@@ -297,27 +418,7 @@ export class ProductDetails implements OnChanges {
     if (!variations.length) return null;
     if (!this.product?.skus?.length) return null;
 
-    const selectedValues = variations
-      .map((v) => this.selectedOptionsByVariationTitle[v.title])
-      .filter((v): v is string => typeof v === 'string' && v.length > 0);
-
-    // Hasta que el usuario no haya seleccionado una opción en todas las variaciones
-    // no mostramos disponibilidad.
-    if (selectedValues.length !== variations.length) return null;
-
-    const skus = this.product.skus ?? [];
-    const matchedSku = skus.find((sku) => {
-      const skuValues = Object.values(sku.variationOptions ?? {})
-        .filter(
-          (v): v is string | number =>
-            v != null && (typeof v === 'string' || typeof v === 'number'),
-        )
-        .map((v) => String(v));
-
-      if (skuValues.length !== selectedValues.length) return false;
-      return selectedValues.every((selected) => skuValues.includes(selected));
-    }) as ProductSkuSchema | undefined;
-
+    const matchedSku = this.findResolvedSkuForVariations();
     if (!matchedSku) return null;
 
     // En runtime puede venir `quantity` como `null` aunque el tipo del modelo
@@ -469,6 +570,24 @@ export class ProductDetails implements OnChanges {
         next: (response) => {
           console.log(response);
           this.hasLiked = response;
+        },
+      }),
+    );
+  }
+
+  private getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          console.log(rates);
+          this.rates = rates;
+          
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('Rates fetched');
         },
       }),
     );

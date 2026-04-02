@@ -19,12 +19,13 @@ export const BusinessAuthGuard: CanActivateFn = ():
   const profileUrl = router.createUrlTree([AppConfigService.config.routes.profile]);
 
   if (auth.userValue) {
-    return of(profileUrl);
+    return profileUrl;
   }
   if (auth.businessValue) {
-    return of(true);
+    return true;
   }
 
+  // No confiar solo en storage: la cookie puede haber expirado en el servidor.
   return business.myBusiness().pipe(
     map((businessData: unknown) => {
       if (businessData) {

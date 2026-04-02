@@ -66,13 +66,25 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
   readonly DiscountTypeEnum = DiscountTypeEnum;
 
   readonly scopeOptions: { labelKey: string; value: DiscountScopeEnum }[] = [
-    { labelKey: 'general.discountScopeBusiness', value: DiscountScopeEnum.BUSINESS },
-    { labelKey: 'general.discountScopeCatalog', value: DiscountScopeEnum.CATALOG },
-    { labelKey: 'general.discountScopeProduct', value: DiscountScopeEnum.PRODUCT },
+    {
+      labelKey: 'general.discountScopeBusiness',
+      value: DiscountScopeEnum.BUSINESS,
+    },
+    {
+      labelKey: 'general.discountScopeCatalog',
+      value: DiscountScopeEnum.CATALOG,
+    },
+    {
+      labelKey: 'general.discountScopeProduct',
+      value: DiscountScopeEnum.PRODUCT,
+    },
   ];
 
   readonly typeOptions: { labelKey: string; value: DiscountTypeEnum }[] = [
-    { labelKey: 'general.discountTypePercentage', value: DiscountTypeEnum.PERCENTAGE },
+    {
+      labelKey: 'general.discountTypePercentage',
+      value: DiscountTypeEnum.PERCENTAGE,
+    },
     { labelKey: 'general.discountTypeFixed', value: DiscountTypeEnum.FIXED },
   ];
 
@@ -255,7 +267,7 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
     this.discountForm.patchValue({ idProduct: null }, { emitEvent: false });
     this._subscriptions.add(
       this._productService
-        .getAllByCatalog(idCatalog, { page: 1, limit: 500 })
+        .getAllByCatalogPaginated(idCatalog, { page: 1, limit: 500 })
         .subscribe({
           next: (res) => {
             this.products = res.items ?? [];
@@ -306,7 +318,9 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
   }
 
   get showCurrencyField(): boolean {
-    return this.discountForm.get('discountType')?.value === DiscountTypeEnum.FIXED;
+    return (
+      this.discountForm.get('discountType')?.value === DiscountTypeEnum.FIXED
+    );
   }
 
   private toIsoStart(dateStr: string): string {

@@ -12,8 +12,9 @@ import {
 import { RouterLink } from '@angular/router';
 import {
   AppConfigService,
+  BcvOfficialRatesSchema,
   CurrencySchema,
-  CurrencySymbolPipe,
+  DiscountSchema,
   ProductPrivateService,
   ProductSchema,
   UtilsService,
@@ -38,7 +39,6 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
     ButtonModule,
     RouterLink,
     ProgressSpinnerModule,
-    CurrencySymbolPipe,
     PopoverModule,
     MenuModule,
   ],
@@ -47,7 +47,7 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 })
 export class ProductItem implements OnInit {
   @Input() product: ProductSchema;
-  @Input() dashboardMode: boolean;
+  @Input() rates: BcvOfficialRatesSchema;
   @Output() productDeletionEvent = new EventEmitter<number>();
   ref: DynamicDialogRef | undefined;
   image: string;
@@ -70,6 +70,7 @@ export class ProductItem implements OnInit {
   attemptDelete: boolean;
   items: MenuItem[] | undefined;
   price: number;
+  originalPrice: number;
   currency: CurrencySchema;
 
   private _subscription = new Subscription();
@@ -93,7 +94,12 @@ export class ProductItem implements OnInit {
       this.url = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
       this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.edit}`;
       this.inventoryUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.inventory}`;
-      this.price = this.product.skus?.[0]?.price ?? 0;
+      this.price = this._utils.formatPriceWithDiscount(
+        this.product.skus?.[0] ?? null,
+        (this.product.discountProduct?.discount as DiscountSchema) ?? null,
+        this.rates ?? null,
+      );
+      this.originalPrice = this.product.skus?.[0]?.price ?? null;
       this.currency = this.product.skus?.[0]?.currency ?? null;
     }
     this.items = [
@@ -101,7 +107,7 @@ export class ProductItem implements OnInit {
         label: this._translate.instant('general.viewProduct'),
         icon: 'pi pi-external-link',
         command: () => {
-          const url = `${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
+          const url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
           window.open(url, '_blank');
         },
       },
@@ -185,8 +191,6 @@ export class ProductItem implements OnInit {
 
   setLabel(title: string | null | undefined, maxLength = 20): string {
     const t = title ?? '';
-    return t.length > maxLength
-      ? t.substring(0, maxLength) + '...'
-      : t;
+    return t.length > maxLength ? t.substring(0, maxLength) + '...' : t;
   }
 }

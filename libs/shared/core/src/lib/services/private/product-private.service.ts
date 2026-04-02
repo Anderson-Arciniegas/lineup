@@ -5,11 +5,15 @@ import {
   CREATE_PRODUCT_MUTATION,
   FIND_ALL_PRODUCTS_QUERY,
   FIND_ONE_PRODUCT_QUERY,
+  GET_ALL_BY_CATALOG_PAGINATED_QUERY,
   GET_ALL_BY_CATALOG_QUERY,
   GET_ALL_BY_TAG_QUERY,
+  GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
   GET_STOCK_BY_PRODUCT_QUERY,
   GET_STOCK_HISTORY_QUERY,
+  REGISTER_SALE_MUTATION,
   REMOVE_PRODUCT_MUTATION,
+  TOGGLE_PRODUCT_IS_PRIMARY_MUTATION,
   UPDATE_PRODUCT_MUTATION,
   UPDATE_PRODUCT_SKUS_MUTATION,
 } from '@libs/graphql';
@@ -22,6 +26,7 @@ import {
   CreateProductInput,
   InfinityScrollInput,
   PaginatedProducts,
+  RegisterPurchaseInput,
   UpdateProductInput,
   UpdateProductSkusInput,
 } from '../../models/product.model';
@@ -55,13 +60,16 @@ export class ProductPrivateService {
 
   getAllByCatalog(
     idCatalog: number,
-    pagination: InfinityScrollInput,
-  ): Observable<PaginatedProducts> {
+    search?: string | null,
+  ): Observable<ProductSchema[]> {
     return this.apollo
       .use(ApiClient.BUSINESS)
-      .query<{ getAllByCatalog: PaginatedProducts }>({
+      .query<{ getAllByCatalog: ProductSchema[] }>({
         query: GET_ALL_BY_CATALOG_QUERY,
-        variables: { idCatalog, pagination },
+        variables: {
+          idCatalog,
+          ...(search != null && search !== '' ? { search } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -70,21 +78,63 @@ export class ProductPrivateService {
       .pipe(map((result) => result.data.getAllByCatalog));
   }
 
+  getAllByCatalogPaginated(
+    idCatalog: number,
+    pagination: InfinityScrollInput,
+  ): Observable<PaginatedProducts> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ getAllByCatalogPaginated: PaginatedProducts }>({
+        query: GET_ALL_BY_CATALOG_PAGINATED_QUERY,
+        variables: { idCatalog, pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllByCatalogPaginated));
+  }
+
   getAllByTag(
     pagination: InfinityScrollInput,
     tagNameOrSlug: string,
+    options?: {
+      idBusiness?: number | null;
+      idProducts?: number[] | null;
+    },
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ getAllByTag: PaginatedProducts }>({
         query: GET_ALL_BY_TAG_QUERY,
-        variables: { pagination, tagNameOrSlug },
+        variables: {
+          pagination,
+          tagNameOrSlug,
+          ...(options?.idBusiness != null ? { idBusiness: options.idBusiness } : {}),
+          ...(options?.idProducts != null ? { idProducts: options.idProducts } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
         },
       })
       .pipe(map((result) => result.data.getAllByTag));
+  }
+
+  getAllPrimaryProductsByBusiness(
+    idBusiness: number,
+  ): Observable<ProductSchema[]> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ getAllPrimaryProductsByBusiness: ProductSchema[] }>({
+        query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
+        variables: { idBusiness: Math.trunc(idBusiness) },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllPrimaryProductsByBusiness));
   }
 
   findOneProduct(id: number): Observable<ProductSchema> {
@@ -217,6 +267,28 @@ export class ProductPrivateService {
       );
   }
 
+  registerSale(
+    data: RegisterPurchaseInput[],
+  ): Observable<ProductSkuSchema[]> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .mutate<{ registerSale: ProductSkuSchema[] }>({
+        mutation: REGISTER_SALE_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(
+        map((result) => {
+          if (!result.data) {
+            throw new Error('No data returned from mutation');
+          }
+          return result.data.registerSale;
+        }),
+      );
+  }
+
   updateProductSkus(
     data: UpdateProductSkusInput,
   ): Observable<ProductSkuSchema[]> {
@@ -235,6 +307,26 @@ export class ProductPrivateService {
             throw new Error('No data returned from mutation');
           }
           return result.data.updateProductSkus;
+        }),
+      );
+  }
+
+  toggleProductIsPrimary(idProduct: number): Observable<ProductSchema> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .mutate<{ toggleProductIsPrimary: ProductSchema }>({
+        mutation: TOGGLE_PRODUCT_IS_PRIMARY_MUTATION,
+        variables: { idProduct: Math.trunc(idProduct) },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(
+        map((result) => {
+          if (!result.data) {
+            throw new Error('No data returned from mutation');
+          }
+          return result.data.toggleProductIsPrimary;
         }),
       );
   }

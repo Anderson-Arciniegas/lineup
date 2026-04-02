@@ -1,8 +1,11 @@
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
+import localeEs from '@angular/common/locales/es';
 import {
   ApplicationConfig,
   importProvidersFrom,
   inject,
+  LOCALE_ID,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -27,6 +30,9 @@ import {
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { appRoutes } from './app.routes';
+
+registerLocaleData(localeEs, 'es');
+registerLocaleData(localeEs, 'es-ES');
 
 const MyPreset = definePreset(Lara, {
   semantic: {
@@ -68,6 +74,7 @@ const MyPreset = definePreset(Lara, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: 'es-ES' },
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({

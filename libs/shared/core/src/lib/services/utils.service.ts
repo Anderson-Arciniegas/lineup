@@ -4,6 +4,12 @@ import { FormGroup } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
 import { DOC_ORIENTATION, NgxImageCompressService } from 'ngx-image-compress';
 import { from, Observable } from 'rxjs';
+import { DiscountTypeEnum } from '../enums';
+import {
+  BcvOfficialRatesSchema,
+  DiscountSchema,
+  ProductSkuSchema,
+} from '../schemas';
 @Injectable({
   providedIn: 'root',
 })
@@ -142,5 +148,40 @@ export class UtilsService {
   formatWhatsappPhone(phone: string, text: string) {
     const href = `https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9]/g, '')}&text=${text}`;
     return href;
+  }
+
+  //dollar = 1
+  //bs = 2
+  //euro = 3
+
+  formatPriceWithDiscount(
+    sku: ProductSkuSchema,
+    discount: DiscountSchema,
+    rates: BcvOfficialRatesSchema,
+  ) {
+    if (!sku.price) return null;
+    if (!discount) return sku.price;
+
+    if (discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+      return sku.price - (sku.price * discount.value) / 100;
+    }
+
+    if (sku.idCurrency === discount.idCurrency) {
+      return sku.price - discount.value;
+    } else if (sku.idCurrency === 1 && discount.idCurrency === 2) {
+      return sku.price - discount.value / rates.dollar;
+    } else if (sku.idCurrency === 1 && discount.idCurrency === 3) {
+      return sku.price - (rates.euro / rates.dollar) * discount.value;
+    } else if (sku.idCurrency === 2 && discount.idCurrency === 3) {
+      return sku.price - rates.euro * discount.value;
+    } else if (sku.idCurrency === 2 && discount.idCurrency === 1) {
+      return sku.price - rates.dollar * discount.value;
+    } else if (sku.idCurrency === 3 && discount.idCurrency === 1) {
+      return sku.price - (rates.dollar / rates.euro) * discount.value;
+    } else if (sku.idCurrency === 3 && discount.idCurrency === 2) {
+      return sku.price - discount.value / rates.euro;
+    }
+
+    return sku.price;
   }
 }

@@ -4,8 +4,8 @@
 
 .img-box {
   position: relative;
-  height: 160px;
   border-radius: 25px;
+  height: 160px;
   img {
     height: 100%;
     width: 160px;
@@ -13,6 +13,18 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border-radius: 25px;
     object-fit: cover;
+  }
+
+  @media screen and (max-width: 767px) {
+    height: 90px;
+    img {
+      height: 100%;
+      width: 90px;
+      border: 5px solid var(--p-primary-50);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 25px;
+      object-fit: cover;
+    }
   }
 }
 
@@ -24,7 +36,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -41,4 +54,43 @@
 
 .business-description {
   white-space: pre-line;
+}
+
+.business-data--brand-light-text {
+  color: rgba(255, 255, 255, 1);
+
+  .text-gray-600,
+  .text-gray-500 {
+    color: rgba(255, 255, 255, 1) !important;
+  }
+
+  /* Iconos sueltos; los .pi dentro de lib-button los corrige el bloque siguiente. */
+  .pi {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  a:not(.p-button) {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  /* No teñir Prime / lib-button (iconos y etiquetas deben seguir el tema del botón). */
+  lib-button {
+    color: revert-layer;
+  }
+
+  lib-button .pi,
+  lib-button ::ng-deep .pi,
+  lib-button ::ng-deep .p-button,
+  lib-button ::ng-deep .p-button .p-button-label {
+    color: revert-layer;
+  }
+}
+
+.business-data--brand-dark-text {
+  color: rgba(15, 23, 42, 0.92);
+
+  .text-gray-600,
+  .text-gray-500 {
+    color: rgba(51, 65, 85, 0.95) !important;
+  }
 }

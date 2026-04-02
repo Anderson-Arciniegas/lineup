@@ -11,11 +11,12 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
+  AuthStore,
   BusinessApiFilePrivateService,
-  BusinessSchema,
   BusinessPrivateService,
-  CatalogSchema,
+  BusinessSchema,
   CatalogPrivateService,
+  CatalogSchema,
   CreateCatalogInput,
   DirectoriesEnum,
   UpdateCatalogInput,
@@ -27,6 +28,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
+import { ColorPickerModule } from 'primeng/colorpicker';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -55,6 +57,7 @@ import { map, Subscription } from 'rxjs';
     MenuModule,
     ChipModule,
     ReactiveFormsModule,
+    ColorPickerModule,
   ],
   templateUrl: './create-catalog-page.html',
   styleUrl: './create-catalog-page.scss',
@@ -76,6 +79,7 @@ export class CreateCatalogPage implements OnInit {
   tags: string[] = [];
   attempt = false;
   maxLengthCatalogName = 50;
+  readonly defaultCatalogHexColor = '#ffffff';
 
   private readonly _subscription: Subscription = new Subscription();
   private readonly _utils = inject(UtilsService);
@@ -88,18 +92,17 @@ export class CreateCatalogPage implements OnInit {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _messageService = inject(MessageService);
+  private readonly _authStore = inject(AuthStore);
 
   ngOnInit() {
-    this.path = this._activatedRoute.snapshot.params['business'];
-    console.log(this.path);
-
-    this.getBusiness();
+    this.business = this._authStore.business();
 
     this.createCatalogForm = this._formBuilder.group({
       catalogName: [
         '',
         [Validators.required, Validators.maxLength(this.maxLengthCatalogName)],
       ],
+      hexColor: [this.defaultCatalogHexColor],
       tag: [''],
     });
 
@@ -107,6 +110,10 @@ export class CreateCatalogPage implements OnInit {
     if (this.catalogPath) {
       this.getCatalog();
     }
+  }
+
+  setColor($event: any): void {
+    this.createCatalogForm.get('hexColor')?.setValue($event.value);
   }
 
   private getBusiness(): void {
@@ -137,6 +144,7 @@ export class CreateCatalogPage implements OnInit {
     this.imageUrl = this.catalog.image.url || '';
     this.createCatalogForm.patchValue({
       catalogName: this.catalog.title,
+      hexColor: this.catalog.hexColor || this.defaultCatalogHexColor,
     });
   }
 
@@ -144,10 +152,7 @@ export class CreateCatalogPage implements OnInit {
     const tagValue = this._utils.normalizeSpaces(
       this.createCatalogForm.get('tag')?.value ?? '',
     );
-    if (
-      this.tags.includes(tagValue.toLowerCase()) ||
-      this.tags.length >= 10
-    ) {
+    if (this.tags.includes(tagValue.toLowerCase()) || this.tags.length >= 10) {
       return;
     }
     if (tagValue) {
@@ -168,7 +173,7 @@ export class CreateCatalogPage implements OnInit {
     }
 
     this.attempt = true;
-    const { catalogName } = this.createCatalogForm.value;
+    const { catalogName, hexColor } = this.createCatalogForm.value;
     const titleNormalized = this._utils.normalizeSpaces(catalogName ?? '');
     const tagsNormalized =
       this.tags && this.tags.length > 0
@@ -181,6 +186,7 @@ export class CreateCatalogPage implements OnInit {
         title: titleNormalized,
         tags: tagsNormalized,
         imageCode: this.imgCode,
+        hexColor: typeof hexColor === 'string' ? hexColor : undefined,
       };
 
       this._subscription.add(
@@ -214,6 +220,7 @@ export class CreateCatalogPage implements OnInit {
         title: titleNormalized,
         tags: tagsNormalized,
         imageCode: this.imgCode,
+        hexColor: typeof hexColor === 'string' ? hexColor : undefined,
       };
 
       this._subscription.add(

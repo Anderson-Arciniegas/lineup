@@ -1,9 +1,9 @@
-<section class="profile flex flex-col gap-10 py-5">
-  <h2 class="text-2xl font-semibold ps-4">
+<section class="page flex flex-col gap-10 py-5 justify-start items-center">
+  <h2 class="text-2xl font-semibold ps-4 w-full">
     {{'general.socialMedias' | translate}}
   </h2>
 
-  <div class="flex flex-col gap-4 ps-4 xl:ps-10 w-11/12">
+  <div class="flex flex-col gap-4 w-11/12">
     @for (socialMedia of socialMedias; track socialMedia.name) {
     <div
       class="social-media-item flex flex-row justify-between items-center gap-8 p-2 sm:p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300 shadow"

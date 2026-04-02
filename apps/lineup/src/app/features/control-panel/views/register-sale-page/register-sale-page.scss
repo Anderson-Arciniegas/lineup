@@ -1,0 +1,11 @@
+.page {
+  .p-select {
+    width: 100%;
+  }
+}
+
+::ng-deep {
+  .p-panel-icons {
+    width: 44px !important;
+  }
+}

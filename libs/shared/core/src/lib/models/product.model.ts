@@ -60,6 +60,12 @@ export interface AdjustStockInput {
   quantityDelta: number;
 }
 
+export interface RegisterPurchaseInput {
+  idProductSku: number;
+  notes?: string;
+  quantity: number;
+}
+
 export interface UpdateProductSkuItemInput {
   id: number;
   idCurrency?: number;

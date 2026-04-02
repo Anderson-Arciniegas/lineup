@@ -12,8 +12,8 @@ import {
 } from '@angular/forms';
 import {
   SocialNetworkBusinessSchema,
-  SocialNetworkSchema,
   SocialNetworkPrivateService,
+  SocialNetworkSchema,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -73,7 +73,10 @@ export class AddSocialMediaModal implements OnInit {
     console.log(this.businessSocialNetwork);
     console.log(this.socialMedia);
 
-    if (this.socialMedia.name === 'WhatsApp') {
+    if (
+      this.socialMedia.name === 'WhatsApp' ||
+      this.socialMedia.name === 'Telegram'
+    ) {
       this.socialMediaForm = this._fb.group({
         phone: ['', [Validators.required]],
       });

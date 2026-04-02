@@ -4,9 +4,11 @@ import {
   FIND_ALL_PRODUCTS_QUERY,
   FIND_LIKED_PRODUCTS_QUERY,
   FIND_ONE_PRODUCT_QUERY,
+  GET_ALL_BY_CATALOG_PAGINATED_QUERY,
   GET_ALL_BY_CATALOG_QUERY,
   GET_ALL_BY_TAG_QUERY,
   GET_ALL_BY_TAGS_QUERY,
+  GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
   GET_MAIN_TAGS_QUERY,
   HAS_LIKED_PRODUCT_QUERY,
   LIKE_PRODUCT_MUTATION,
@@ -31,7 +33,7 @@ export class ProductPublicService {
   private apollo = inject(Apollo);
 
   featuredProducts(
-    pagination: InfinityScrollInput
+    pagination: InfinityScrollInput,
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
@@ -47,7 +49,7 @@ export class ProductPublicService {
   }
 
   findAllProducts(
-    pagination: InfinityScrollInput
+    pagination: InfinityScrollInput,
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
@@ -63,7 +65,7 @@ export class ProductPublicService {
   }
 
   findLikedProducts(
-    pagination: InfinityScrollInput
+    pagination: InfinityScrollInput,
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
@@ -94,13 +96,16 @@ export class ProductPublicService {
 
   getAllByCatalog(
     idCatalog: number,
-    pagination: InfinityScrollInput
-  ): Observable<PaginatedProducts> {
+    search?: string | null,
+  ): Observable<ProductSchema[]> {
     return this.apollo
       .use('userAPI')
-      .query<{ getAllByCatalog: PaginatedProducts }>({
+      .query<{ getAllByCatalog: ProductSchema[] }>({
         query: GET_ALL_BY_CATALOG_QUERY,
-        variables: { idCatalog, pagination },
+        variables: {
+          idCatalog,
+          ...(search != null && search !== '' ? { search } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -109,15 +114,41 @@ export class ProductPublicService {
       .pipe(map((result) => result.data.getAllByCatalog));
   }
 
+  getAllByCatalogPaginated(
+    idCatalog: number,
+    pagination: InfinityScrollInput,
+  ): Observable<PaginatedProducts> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ getAllByCatalogPaginated: PaginatedProducts }>({
+        query: GET_ALL_BY_CATALOG_PAGINATED_QUERY,
+        variables: { idCatalog, pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllByCatalogPaginated));
+  }
+
   getAllByTag(
     pagination: InfinityScrollInput,
-    tagNameOrSlug: string
+    tagNameOrSlug: string,
+    options?: {
+      idBusiness?: number | null;
+      idProducts?: number[] | null;
+    },
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
       .query<{ getAllByTag: PaginatedProducts }>({
         query: GET_ALL_BY_TAG_QUERY,
-        variables: { pagination, tagNameOrSlug },
+        variables: {
+          pagination,
+          tagNameOrSlug,
+          ...(options?.idBusiness != null ? { idBusiness: options.idBusiness } : {}),
+          ...(options?.idProducts != null ? { idProducts: options.idProducts } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -128,19 +159,44 @@ export class ProductPublicService {
 
   getAllByTags(
     pagination: InfinityScrollInput,
-    tagNamesOrSlugs: string[]
+    tagNamesOrSlugs: string[],
+    options?: {
+      idBusiness?: number | null;
+      idProducts?: number[] | null;
+    },
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
       .query<{ getAllByTags: PaginatedProducts }>({
         query: GET_ALL_BY_TAGS_QUERY,
-        variables: { pagination, tagNamesOrSlugs },
+        variables: {
+          pagination,
+          tagNamesOrSlugs,
+          ...(options?.idBusiness != null ? { idBusiness: options.idBusiness } : {}),
+          ...(options?.idProducts != null ? { idProducts: options.idProducts } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
         },
       })
       .pipe(map((result) => result.data.getAllByTags));
+  }
+
+  getAllPrimaryProductsByBusiness(
+    idBusiness: number,
+  ): Observable<ProductSchema[]> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ getAllPrimaryProductsByBusiness: ProductSchema[] }>({
+        query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
+        variables: { idBusiness: Math.trunc(idBusiness) },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllPrimaryProductsByBusiness));
   }
 
   productCollections(): Observable<ProductCollectionSchema[]> {
@@ -194,7 +250,14 @@ export class ProductPublicService {
           withCredentials: true,
         },
       })
-      .pipe(map((result) => result.data!.likeProduct));
+      .pipe(
+        map((result) => {
+          if (!result.data) {
+            throw new Error('No data returned from mutation');
+          }
+          return result.data.likeProduct;
+        }),
+      );
   }
 
   unlikeProduct(idProduct: number): Observable<boolean> {
@@ -207,6 +270,13 @@ export class ProductPublicService {
           withCredentials: true,
         },
       })
-      .pipe(map((result) => result.data!.unlikeProduct));
+      .pipe(
+        map((result) => {
+          if (!result.data) {
+            throw new Error('No data returned from mutation');
+          }
+          return result.data.unlikeProduct;
+        }),
+      );
   }
 }

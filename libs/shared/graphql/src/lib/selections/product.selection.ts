@@ -81,13 +81,17 @@ export const productBasicSelection = `{
   id
   idCatalog
   idCreationBusiness
+  creationDate
   title
   subtitle
   description
+  hasVariations
+  isPrimary
   likes
   visits
   ratingAverage
   status
+  price
   productFiles ${productFileSelection}
   business ${businessBasicSelection}
   catalog ${catalogSelection}
@@ -112,6 +116,7 @@ export const discountProductSelection = `{
     value
     discountType
     status
+    currency ${currencySelection}
   }
   id
   idCreationBusiness
@@ -190,12 +195,16 @@ export const productSelection = `{
   id
   idCatalog
   idCreationBusiness
+  creationDate
   title
   subtitle
   description
+  hasVariations
+  isPrimary
   likes
   visits
   ratingAverage
+  price
   discountProduct ${discountProductSelection}
   productTags ${productTagSelection}
   status

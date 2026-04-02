@@ -24,8 +24,14 @@ export const FIND_ONE_PRODUCT_QUERY = gql`
 `;
 
 export const GET_ALL_BY_CATALOG_QUERY = gql`
-  query GetAllByCatalog($idCatalog: Int!, $pagination: InfinityScrollInput!) {
-    getAllByCatalog(idCatalog: $idCatalog, pagination: $pagination) {
+  query GetAllByCatalog($idCatalog: Int!, $search: String) {
+    getAllByCatalog(idCatalog: $idCatalog, search: $search) ${productSelection}
+  }
+`;
+
+export const GET_ALL_BY_CATALOG_PAGINATED_QUERY = gql`
+  query GetAllByCatalogPaginated($idCatalog: Int!, $pagination: InfinityScrollInput!) {
+    getAllByCatalogPaginated(idCatalog: $idCatalog, pagination: $pagination) {
       items ${productSelection}
       limit
       page
@@ -41,8 +47,18 @@ export const GET_MAIN_TAGS_QUERY = gql`
 `;
 
 export const GET_ALL_BY_TAG_QUERY = gql`
-  query GetAllByTag($pagination: InfinityScrollInput!, $tagNameOrSlug: String!) {
-    getAllByTag(pagination: $pagination, tagNameOrSlug: $tagNameOrSlug) {
+  query GetAllByTag(
+    $idBusiness: Int
+    $idProducts: [Int!]
+    $pagination: InfinityScrollInput!
+    $tagNameOrSlug: String!
+  ) {
+    getAllByTag(
+      idBusiness: $idBusiness
+      idProducts: $idProducts
+      pagination: $pagination
+      tagNameOrSlug: $tagNameOrSlug
+    ) {
       items ${productSelection}
       limit
       page
@@ -52,13 +68,29 @@ export const GET_ALL_BY_TAG_QUERY = gql`
 `;
 
 export const GET_ALL_BY_TAGS_QUERY = gql`
-  query GetAllByTags($pagination: InfinityScrollInput!, $tagNamesOrSlugs: [String!]!) {
-    getAllByTags(pagination: $pagination, tagNamesOrSlugs: $tagNamesOrSlugs) {
+  query GetAllByTags(
+    $idBusiness: Int
+    $idProducts: [Int!]
+    $pagination: InfinityScrollInput!
+    $tagNamesOrSlugs: [String!]!
+  ) {
+    getAllByTags(
+      idBusiness: $idBusiness
+      idProducts: $idProducts
+      pagination: $pagination
+      tagNamesOrSlugs: $tagNamesOrSlugs
+    ) {
       items ${productSelection}
       limit
       page
       total
     }
+  }
+`;
+
+export const GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY = gql`
+  query GetAllPrimaryProductsByBusiness($idBusiness: Int!) {
+    getAllPrimaryProductsByBusiness(idBusiness: $idBusiness) ${productSelection}
   }
 `;
 

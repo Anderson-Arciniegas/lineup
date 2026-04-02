@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   FEATURED_CATALOGS_QUERY,
   FIND_CATALOGS_BY_BUSINESS_ID_QUERY,
+  FIND_ONE_CATALOG_BY_PATH_QUERY,
   FIND_ONE_CATALOG_QUERY,
 } from '@libs/graphql';
 import { Apollo } from 'apollo-angular';
@@ -17,7 +18,7 @@ export class CatalogPublicService {
   private apollo = inject(Apollo);
 
   featuredCatalogs(
-    pagination: InfinityScrollInput
+    pagination: InfinityScrollInput,
   ): Observable<PaginatedCatalogs> {
     return this.apollo
       .use('userAPI')
@@ -34,7 +35,7 @@ export class CatalogPublicService {
 
   findCatalogsByBusinessId(
     idBusiness: number,
-    pagination: InfinityScrollInput
+    pagination: InfinityScrollInput,
   ): Observable<PaginatedCatalogs> {
     return this.apollo
       .use('userAPI')
@@ -61,5 +62,19 @@ export class CatalogPublicService {
         },
       })
       .pipe(map((result) => result.data.findOneCatalog));
+  }
+
+  findOneCatalogByPath(path: string): Observable<CatalogSchema> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ findOneCatalogByPath: CatalogSchema }>({
+        query: FIND_ONE_CATALOG_BY_PATH_QUERY,
+        variables: { path },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.findOneCatalogByPath));
   }
 }

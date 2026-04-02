@@ -1,7 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { ProductPrivateService, RatingPublicService, UtilsService } from '@lineup/core';
+import {
+  ProductPrivateService,
+  RatesPrivateService,
+  RatingPublicService,
+  UtilsService,
+} from '@lineup/core';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -51,6 +56,13 @@ describe('ProductPanelPage', () => {
         {
           provide: Location,
           useValue: { back: jest.fn() },
+        },
+        {
+          provide: RatesPrivateService,
+          useValue: {
+            findBcvOfficialRates: () =>
+              of({ dollar: 1, euro: 1, sourceDate: '2024-01-01' }),
+          },
         },
       ],
     }).compileComponents();

@@ -5,6 +5,7 @@ export const catalogSelection = `{
   id
   idCreationBusiness
   title
+  hexColor
   imageCode
   status
   tags
@@ -13,6 +14,7 @@ export const catalogSelection = `{
   modificationBusiness ${businessBasicSelection}
   path
   productsCount
+  visits
   products {
     id
     title

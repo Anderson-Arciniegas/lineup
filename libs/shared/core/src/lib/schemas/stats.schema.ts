@@ -1,3 +1,5 @@
+import { StockMovementTypeEnum } from '../enums';
+
 export interface TimeSeriesDataPointSchema {
   period: string;
   value: number;
@@ -44,14 +46,14 @@ export interface CatalogStatsSchema {
 export interface DiscountStatsSchema {
   byStatus: FrequencyDataPointSchema[];
   byType: FrequencyDataPointSchema[];
-  expiringSoonCount: number;
+  expiringSoon: TimeSeriesStatsSchema;
 }
 
 export interface StockMovementStatItemSchema {
   creationDate: string;
   id: number;
   quantityDelta: number;
-  type: string;
+  type: StockMovementTypeEnum;
 }
 
 export interface InventoryStatsSchema {

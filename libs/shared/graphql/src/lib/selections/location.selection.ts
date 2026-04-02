@@ -12,6 +12,7 @@ const locationBusinessSelection = `{
   image { directory extension name url }
   imageCode
   telephone
+  hexColor
   provider
   status
   tags

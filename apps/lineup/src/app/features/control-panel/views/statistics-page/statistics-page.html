@@ -44,7 +44,7 @@
             inputId="stats-from"
             [(ngModel)]="customStartDate"
             [showIcon]="true"
-            dateFormat="dd/mm/yy"
+            [dateFormat]="statsDatePickerFormat"
             class="w-full min-w-[200px]"
           />
         </div>
@@ -56,7 +56,7 @@
             inputId="stats-to"
             [(ngModel)]="customEndDate"
             [showIcon]="true"
-            dateFormat="dd/mm/yy"
+            [dateFormat]="statsDatePickerFormat"
             class="w-full min-w-[200px]"
           />
         </div>
@@ -176,7 +176,8 @@
                   class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 border border-gray-200 rounded-xl bg-white"
                 >
                   <span class="text-xs text-gray-400 font-mono"
-                    >#{{ mv.id }} · {{ mv.creationDate | date: 'short' }}</span
+                    >#{{ mv.id }} · {{ mv.creationDate | localeDate: 'short'
+                    }}</span
                   >
                   <div class="flex flex-row flex-wrap gap-4 items-center">
                     <span
@@ -187,7 +188,9 @@
                       {{ mv.quantityDelta > 0 ? '+' : '' }}{{ mv.quantityDelta
                       }}
                     </span>
-                    <span class="text-sm text-gray-600">{{ mv.type }}</span>
+                    <span class="text-sm text-gray-600"
+                      >{{ mv.type | stockMovementType }}</span
+                    >
                   </div>
                 </div>
                 }
@@ -430,7 +433,7 @@
             >
               <i class="pi pi-clock text-amber-600 text-2xl"></i>
               <span class="text-2xl font-bold text-gray-800"
-                >{{ discount?.expiringSoonCount ?? 0 }}</span
+                >{{ discount?.expiringSoon?.total ?? 0 }}</span
               >
               <span class="text-sm text-gray-500 text-center"
                 >{{ 'statisticsPage.expiringSoonCount' | translate }}</span

@@ -1,9 +1,9 @@
 export * from './audit-operation.enum';
 export * from './color-name.enum';
 export * from './color-value.enum';
+export * from './directories.enum';
 export * from './discount-scope.enum';
 export * from './discount-type.enum';
-export * from './directories.enum';
 export * from './language.enum';
 export * from './providers.enum';
 export * from './roles-codes.enum';
@@ -14,3 +14,4 @@ export * from './stock-movement-type.enum';
 export * from './time-period-granularity.enum';
 export * from './verification-code-channel.enum';
 export * from './visit-type.enum';
+export * from './week-day.enum';

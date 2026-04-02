@@ -34,6 +34,7 @@ import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 
 /** PrimeNG Carousel `responsiveOptions` item shape */
@@ -59,6 +60,7 @@ interface CarouselResponsiveOption {
     TranslateModule,
     FormsModule,
     SearchBar,
+    ProgressSpinner,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
@@ -73,6 +75,10 @@ export class HomePage implements OnInit, AfterViewInit {
   catalogs: CatalogSchema[] = [];
   businesses: BusinessSchema[] = [];
   productCollections: ProductCollectionSchema[] = [];
+  catalogsAttempt: boolean;
+  productsAttempt: boolean;
+  businessesAttempt: boolean;
+  collectionsAttempt: boolean;
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _catalogPublicService = inject(CatalogPublicService);
   private readonly _productPublicService = inject(ProductPublicService);
@@ -167,6 +173,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private getFeaturedBusinesses(): void {
+    this.businessesAttempt = true;
     this._subscription.add(
       this._businessPublicService
         .featuredBusinesses({ page: 1, limit: 10 })
@@ -174,9 +181,11 @@ export class HomePage implements OnInit, AfterViewInit {
           next: (response) => {
             console.log(response);
             this.businesses = [...this.businesses, ...response.items];
+            this.businessesAttempt = false;
           },
           error: (error) => {
             console.error(error);
+            this.businessesAttempt = false;
           },
           complete: () => {
             console.log('complete');
@@ -186,6 +195,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private getFeaturedCatalogs(): void {
+    this.catalogsAttempt = true;
     this._subscription.add(
       this._catalogPublicService
         .featuredCatalogs({ page: 1, limit: 10 })
@@ -193,9 +203,11 @@ export class HomePage implements OnInit, AfterViewInit {
           next: (response) => {
             console.log(response);
             this.catalogs = [...this.catalogs, ...response.items];
+            this.catalogsAttempt = false;
           },
           error: (error) => {
             console.error(error);
+            this.catalogsAttempt = false;
           },
           complete: () => {
             console.log('complete');
@@ -205,6 +217,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private getFeaturedProducts(): void {
+    this.productsAttempt = true;
     this._subscription.add(
       this._productPublicService
         .featuredProducts({ page: 1, limit: 10 })
@@ -212,9 +225,11 @@ export class HomePage implements OnInit, AfterViewInit {
           next: (response) => {
             console.log(response);
             this.products = [...this.products, ...response.items];
+            this.productsAttempt = false;
           },
           error: (error) => {
             console.error(error);
+            this.productsAttempt = false;
           },
           complete: () => {
             console.log('complete');
@@ -224,14 +239,17 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private getProductCollections(): void {
+    this.collectionsAttempt = true;
     this._subscription.add(
       this._productPublicService.productCollections().subscribe({
         next: (response) => {
           this.productCollections = [...this.productCollections, ...response];
           console.log(this.productCollections);
+          this.collectionsAttempt = false;
         },
         error: (error) => {
           console.error(error);
+          this.collectionsAttempt = false;
         },
         complete: () => {
           console.log('complete');

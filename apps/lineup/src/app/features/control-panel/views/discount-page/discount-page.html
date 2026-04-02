@@ -1,1 +1,277 @@
-<p>discount-page works!</p>
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
+  <lib-product-breadcrumb
+    [business]="business"
+    class="w-full"
+  ></lib-product-breadcrumb>
+
+  <div
+    class="w-full flex flex-col gap-8 py-4 sm:py-8 px-4 sm:px-10 xl:px-18 rounded-lg border border-gray-200 max-w-5xl"
+  >
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+    >
+      <h1 class="text-2xl sm:text-3xl font-medium">
+        {{ 'general.discount' | translate }} #{{ discount?.id ?? '—' }}
+      </h1>
+
+      <div class="flex flex-row flex-wrap items-center gap-2">
+        @if (discount) {
+        <lib-button
+          type="rounded"
+          [label]="'general.edit' | translate"
+          icon="pi pi-pencil"
+          [width]="'w-40'"
+          (action)="onEdit()"
+        ></lib-button>
+        <lib-button
+          type="rounded"
+          [label]="'general.delete' | translate"
+          icon="pi pi-trash"
+          [width]="'w-40'"
+          color="danger"
+          (action)="onDelete()"
+        ></lib-button>
+        }
+      </div>
+    </div>
+
+    @if (loading) {
+    <div class="flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else if (errorMessage) {
+    <div
+      class="p-6 rounded-xl bg-red-50 border border-red-200 text-red-800"
+      role="alert"
+    >
+      {{ errorMessage }}
+    </div>
+    } @else if (discount) {
+    <div class="flex flex-col gap-10">
+      <section class="flex flex-col gap-4">
+        <h2 class="text-lg font-semibold text-gray-800">
+          {{ 'general.discounts' | translate }}
+        </h2>
+        <dl
+          class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm sm:text-base"
+        >
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.discountScope' | translate }}
+            </dt>
+            <dd>{{ scopeLabelKey(discount.scope) | translate }}</dd>
+          </div>
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.discountType' | translate }}
+            </dt>
+            <dd>{{ typeLabelKey(discount.discountType) | translate }}</dd>
+          </div>
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.discountValue' | translate }}
+            </dt>
+            <dd>
+              @if (discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+              <span>{{ discount.value }}%</span>
+              } @else {
+              <span
+                >{{ discount.value }} {{ discount.currency?.code |
+                currencySymbol }}</span
+              >
+              }
+            </dd>
+          </div>
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.status' | translate }}
+            </dt>
+            <dd>{{ discount.status }}</dd>
+          </div>
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.startDate' | translate }}
+            </dt>
+            <dd>{{ discount.startDate | localeDate: 'date' }}</dd>
+          </div>
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.endDate' | translate }}
+            </dt>
+            <dd>{{ discount.endDate | localeDate: 'date' }}</dd>
+          </div>
+          @if (discount.creationDate) {
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.creationDate' | translate }}
+            </dt>
+            <dd>{{ discount.creationDate | localeDate: 'datetime' }}</dd>
+          </div>
+          } @if (discount.modificationDate) {
+          <div class="flex flex-col gap-1">
+            <dt class="text-gray-500 font-medium">
+              {{ 'general.modificationDate' | translate }}
+            </dt>
+            <dd>{{ discount.modificationDate | localeDate: 'datetime' }}</dd>
+          </div>
+          }
+        </dl>
+      </section>
+
+      @if (discount.catalog) {
+      <section class="flex flex-col gap-4">
+        <h2 class="text-lg font-semibold text-gray-800">
+          {{ 'general.catalog' | translate }}
+        </h2>
+
+        <div
+          class="flex flex-col lg:flex-row gap-6 p-4 rounded-xl bg-gray-50 border border-gray-200"
+        >
+          @if (discount.catalog.image?.url) {
+          <div
+            class="shrink-0 w-full lg:w-64 h-48 rounded-lg overflow-hidden bg-gray-200"
+          >
+            <img
+              [src]="discount.catalog.image.url"
+              [alt]="discount.catalog.title"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          }
+
+          <div class="flex flex-col gap-3 min-w-0 flex-1">
+            <h3 class="text-xl font-semibold">{{ discount.catalog.title }}</h3>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <div class="flex flex-col gap-0.5">
+                <dt class="text-gray-500">ID</dt>
+                <dd>{{ discount.catalog.id }}</dd>
+              </div>
+              <div class="flex flex-col gap-0.5">
+                <dt class="text-gray-500">
+                  {{ 'general.status' | translate }}
+                </dt>
+                <dd>{{ discount.catalog.status }}</dd>
+              </div>
+              @if (discount.catalog.path) {
+              <div class="flex flex-col gap-0.5 sm:col-span-2">
+                <dt class="text-gray-500">URL / path</dt>
+                <dd class="break-all">{{ discount.catalog.path }}</dd>
+              </div>
+              } @if (discount.catalog.productsCount !== null) {
+              <div class="flex flex-col gap-0.5">
+                <dt class="text-gray-500">
+                  {{ 'general.products' | translate }}
+                </dt>
+                <dd>{{ discount.catalog.productsCount }}</dd>
+              </div>
+              } @if (discount.catalog.business?.name) {
+              <div class="flex flex-col gap-0.5 sm:col-span-2">
+                <dt class="text-gray-500">
+                  {{ 'general.business' | translate }}
+                </dt>
+                <dd>{{ discount.catalog.business.name }}</dd>
+              </div>
+              }
+            </dl>
+
+            @if (discount.catalog.tags?.length) {
+            <div class="flex flex-col gap-2">
+              <span class="text-sm text-gray-500 font-medium"
+                >{{ 'general.tags' | translate }}</span
+              >
+              <div class="flex flex-wrap gap-2">
+                @for (tag of discount.catalog.tags; track tag) {
+                <span
+                  class="inline-flex px-2 py-1 rounded-md bg-primary-100 text-primary-900 text-xs font-medium"
+                  >{{ tag }}</span
+                >
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        @if (discount.catalog.products?.length) {
+        <div class="flex flex-col gap-3">
+          <h3 class="text-base font-semibold text-gray-800">
+            {{ 'general.products' | translate }}
+          </h3>
+          <ul class="flex flex-col gap-2">
+            @for (product of discount.catalog.products; track product.id) {
+            <li
+              class="p-4 rounded-lg border border-gray-200 bg-white flex flex-col gap-1"
+            >
+              <span class="font-medium">{{ product.title }}</span>
+              @if (product.subtitle) {
+              <span class="text-sm text-gray-600">{{ product.subtitle }}</span>
+              } @if (product.description) {
+              <p class="text-sm text-gray-700 line-clamp-3">
+                {{ product.description }}
+              </p>
+              }
+              <div class="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
+                <span>ID: {{ product.id }}</span>
+                <span
+                  >{{ 'general.status' | translate }}: {{ product.status
+                  }}</span
+                >
+              </div>
+              @if (product.productTags?.length) {
+              <div class="flex flex-wrap gap-1 mt-2">
+                @for (pt of product.productTags; track pt.idProduct + '-' +
+                pt.idTag) { @if (pt.tag?.name) {
+                <span
+                  class="inline-flex px-2 py-0.5 rounded bg-gray-100 text-gray-800 text-xs"
+                  >{{ pt.tag.name }}</span
+                >
+                } }
+              </div>
+              }
+            </li>
+            }
+          </ul>
+        </div>
+        }
+      </section>
+      } @if (discount.discountProducts?.length) {
+      <section class="flex flex-col gap-3">
+        <h2 class="text-lg font-semibold text-gray-800">
+          {{ 'general.discountLinkedProducts' | translate }}
+        </h2>
+        <ul class="flex flex-col gap-2">
+          @for ( dp of discount.discountProducts; track dp.id ) {
+          <li
+            class="p-4 rounded-lg border border-gray-200 bg-white flex flex-col gap-1"
+          >
+            @if (dp.product) {
+            <span class="font-medium">{{ dp.product.title }}</span>
+            @if (dp.product.subtitle) {
+            <span class="text-sm text-gray-600">{{ dp.product.subtitle }}</span>
+            }
+            <div class="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
+              <span
+                >{{ 'general.productId' | translate }}: {{ dp.product.id
+                }}</span
+              >
+            </div>
+            } @else {
+            <span class="text-sm text-gray-600"
+              >{{ 'general.product' | translate }} #{{ dp.idProduct }}</span
+            >
+            }
+          </li>
+          }
+        </ul>
+      </section>
+      }
+    </div>
+    }
+  </div>
+</div>

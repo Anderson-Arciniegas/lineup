@@ -1,6 +1,23 @@
+/* Solo el título; lib-product-info mantiene botones sin herencia de color de marca. */
+.product-page__brand-text {
+  &--light h3 {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  &--dark h3 {
+    color: rgba(15, 23, 42, 0.92);
+  }
+}
+
 ::ng-deep {
   .p-carousel-indicator-button {
     border-radius: 50% !important;
+  }
+
+  .light-mode {
+    .p-button-text.p-button-secondary {
+      color: var(--p-primary-50) !important;
+    }
   }
 
   .carousel-image {
@@ -11,8 +28,9 @@
     max-width: 600px;
     border: 15px solid var(--p-primary-50);
     border-radius: 50px;
+    aspect-ratio: 1/1;
     /* esquinas suaves */
-    object-fit: scale-down;
+    object-fit: cover;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* sombra sutil */
     transition:
@@ -36,9 +54,21 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
+  @media screen and (max-width: 639px) {
+    .carousel-image {
+      max-height: 350px !important;
+      width: 100%;
+      min-height: 350px !important;
+      border: 5px solid var(--p-primary-50);
+    }
+  }
+
   @media screen and (max-width: 450px) {
     .carousel-image {
-      height: 300px;
+      max-height: 250px !important;
+      width: 100%;
+
+      min-height: 250px !important;
       border: 5px solid var(--p-primary-50);
     }
   }

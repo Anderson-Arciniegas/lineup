@@ -3,17 +3,20 @@ import {
   AfterViewInit,
   Component,
   inject,
-  Inject,
   Input,
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   AuthStore,
+  BcvOfficialRatesSchema,
   CurrencySchema,
+  DiscountSchema,
   ProductPublicService,
   ProductSchema,
+  RatesPrivateService,
+  UtilsService,
 } from '@lineup/core';
 import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
@@ -25,15 +28,14 @@ import { Button } from '../button/button';
 
 @Component({
   selector: 'lib-product-card',
-  host: { 'attr.ngSkipHydration': '' },
   imports: [
     CommonModule,
     Button,
     CardModule,
     ButtonModule,
-    RouterLink,
     ProgressSpinnerModule,
     TooltipModule,
+    RouterLink,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
@@ -48,6 +50,7 @@ export class ProductCard implements AfterViewInit, OnInit {
   imageLoaded: boolean;
   url: string;
   price: number;
+  originalPrice: number;
   currency: CurrencySchema;
   hasLiked: boolean;
   images: string[] = [
@@ -62,8 +65,14 @@ export class ProductCard implements AfterViewInit, OnInit {
     'assets/images/products/laptop.webp',
   ];
 
+  rates: BcvOfficialRatesSchema;
+
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly _authStore = inject(AuthStore);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _utilsService = inject(UtilsService);
+  private readonly _ratesService = inject(RatesPrivateService);
+  private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
 
   /** Id único por instancia para el contenedor flip (DOM / GSAP). */
@@ -71,11 +80,6 @@ export class ProductCard implements AfterViewInit, OnInit {
     globalThis.crypto?.randomUUID?.() ??
     `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
   }`;
-
-  constructor(
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
-  ) {}
 
   ngOnInit(): void {
     if (this.product) {
@@ -86,8 +90,12 @@ export class ProductCard implements AfterViewInit, OnInit {
       } else {
         this.url = `/business-1/catalog-1/123`;
       }
-      this.price = this.product.skus?.[0]?.price ?? null;
+      this.price = this.product.skus?.[0].price ?? null;
+      this.originalPrice = this.product.skus?.[0].price ?? null;
       this.currency = this.product.skus?.[0]?.currency ?? null;
+      if (isPlatformBrowser(this.platformId)) {
+        this.getRates();
+      }
     } else {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
       this.url = `/business-1/catalog-1/123`;
@@ -178,5 +186,27 @@ export class ProductCard implements AfterViewInit, OnInit {
       ? (title[49] === ' ' ? title.substring(0, 49) : title.substring(0, 50)) +
           '...'
       : title;
+  }
+
+  navigateToBusiness(): void {
+    if (this.product?.business?.path) {
+      this._router.navigate([`/${this.product.business.path}`]);
+    }
+  }
+
+  getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          this.rates = rates;
+          this.price = this._utilsService.formatPriceWithDiscount(
+            this.product.skus?.[0] ?? null,
+            (this.product.discountProduct?.discount as DiscountSchema) ?? null,
+            this.rates ?? null,
+          );
+          this.currency = this.product.skus?.[0]?.currency ?? null;
+        },
+      }),
+    );
   }
 }

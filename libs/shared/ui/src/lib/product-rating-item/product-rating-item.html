@@ -1,0 +1,51 @@
+<div
+  class="flex flex-col gap-2 p-4 border border-gray-200 rounded-xl bg-white"
+>
+  <div
+    class="flex flex-row items-center justify-between flex-wrap gap-2"
+  >
+    <div class="flex flex-row items-center gap-3 min-w-0 flex-1">
+      @if (creatorProfileImageUrl) {
+      <img
+        class="product-rating-item__avatar shrink-0"
+        [src]="creatorProfileImageUrl"
+        [alt]="creatorDisplayName || ('general.user' | translate)"
+        width="40"
+        height="40"
+      />
+      } @else {
+      <div
+        class="product-rating-item__avatar-placeholder shrink-0 flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <i class="pi pi-user text-gray-400"></i>
+      </div>
+      }
+      <span class="text-sm font-medium text-gray-700 truncate">
+        {{
+          creatorDisplayName || ('general.user' | translate)
+        }}
+      </span>
+    </div>
+    <div
+      class="flex flex-row gap-1 shrink-0"
+      role="img"
+      [attr.aria-label]="rating.stars + ' / 5'"
+    >
+      @for (star of stars; track star) {
+      <i
+        class="pi text-sm"
+        [class.pi-star-fill]="star <= rating.stars"
+        [class.pi-star]="star > rating.stars"
+        [class.text-yellow-400]="star <= rating.stars"
+        [class.text-gray-300]="star > rating.stars"
+      ></i>
+      }
+    </div>
+  </div>
+  @if (rating.comment) {
+  <p class="text-sm text-gray-600 whitespace-pre-wrap break-words">
+    {{ rating.comment }}
+  </p>
+  }
+</div>

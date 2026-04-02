@@ -5,6 +5,7 @@ export * from './business-api-file-private.service';
 export * from './locations-private.service';
 export * from './catalog-private.service';
 export * from './product-private.service';
+export * from './rates-private.service';
 export * from './currency-private.service';
 export * from './discount-private.service';
 export * from './social-network-private.service';

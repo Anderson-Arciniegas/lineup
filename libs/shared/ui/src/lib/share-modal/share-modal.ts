@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -8,10 +7,10 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Button } from '../button/button';
-
 export type ShareNetwork =
   | 'instagram'
   | 'whatsapp'
@@ -30,7 +29,7 @@ interface ShareOption {
 @Component({
   selector: 'lib-share-modal',
   standalone: true,
-  imports: [CommonModule, DialogModule, TranslateModule, Button],
+  imports: [DialogModule, TranslateModule, Button, QRCodeComponent],
   templateUrl: './share-modal.html',
   styleUrl: './share-modal.scss',
 })
@@ -94,12 +93,6 @@ export class ShareModal {
       getShareUrl: (url) =>
         `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent('Observa este producto')}&body=${encodeURIComponent(url)}`,
     },
-    // {
-    //   id: 'instagram',
-    //   icon: 'pi pi-instagram',
-    //   label: 'Instagram',
-    //   getShareUrl: () => 'https://www.instagram.com/',
-    // },
   ];
 
   copyUrl(): void {
@@ -113,13 +106,11 @@ export class ShareModal {
   }
 
   shareOn(network: ShareOption): void {
-    const urlToShare = this.displayUrl();
-    const shareUrl =
-      network.id === 'instagram'
-        ? network.getShareUrl(urlToShare)
-        : network.getShareUrl(urlToShare);
-    if (typeof window !== 'undefined') {
-      window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    }
+    if (typeof window === 'undefined') return;
+    window.open(
+      network.getShareUrl(this.displayUrl()),
+      '_blank',
+      'noopener,noreferrer',
+    );
   }
 }

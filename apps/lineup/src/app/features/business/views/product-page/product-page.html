@@ -1,17 +1,26 @@
-<div class="w-full py-2 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col">
+<section
+  class="product-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-8 flex flex-col min-h-screen"
+  [style.background]="pageBackgroundGradient || null"
+>
   <lib-product-breadcrumb
     [business]="business"
     [catalog]="product?.catalog"
+    [publicMode]="true"
+    [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
   @if (product) {
   <div class="w-full flex flex-col gap-6">
-    <div class="w-full flex flex-row items-center justify-center">
-      <h3 class="text-3xl font-medium text-center">
-        {{product.title || 'Baltimore Ravens Jerseys'}}
+    <div
+      class="w-full flex flex-row items-center justify-center px-4"
+      [class.product-page__brand-text--light]="brandToneLight"
+      [class.product-page__brand-text--dark]="brandToneDark"
+    >
+      <h3 class="text-xl md:text-3xl font-medium text-center">
+        {{ product.title || 'Baltimore Ravens Jerseys' }}
       </h3>
     </div>
 
-    <div class="card w-10/10">
+    <div [class.light-mode]="brandToneLight" class="card w-10/10">
       <p-carousel
         [value]="images"
         [numVisible]="3"
@@ -82,4 +91,4 @@
       <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card> -->
     </div>
   </div>
-</div>
+</section>

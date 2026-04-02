@@ -8,7 +8,11 @@ import {
   DiscountPrivateService,
   ProductPrivateService,
 } from '@lineup/core';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { CreateDiscountPage } from './create-discount-page';
@@ -19,7 +23,11 @@ describe('CreateDiscountPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateDiscountPage, TranslateModule.forRoot(), RouterTestingModule.withRoutes([])],
+      imports: [
+        CreateDiscountPage,
+        TranslateModule.forRoot(),
+        RouterTestingModule.withRoutes([]),
+      ],
       providers: [
         TranslateService,
         TranslateStore,
@@ -47,7 +55,7 @@ describe('CreateDiscountPage', () => {
         {
           provide: ProductPrivateService,
           useValue: {
-            getAllByCatalog: () => of({ items: [] }),
+            getAllByCatalogPaginated: () => of({ items: [] }),
           },
         },
         {

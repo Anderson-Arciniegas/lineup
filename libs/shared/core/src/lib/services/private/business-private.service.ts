@@ -6,20 +6,26 @@ import {
   BUSINESS_REFRESH_TOKEN_MUTATION,
   BUSINESS_REGISTER_WITH_GOOGLE_MUTATION,
   CHANGE_BUSINESS_PASSWORD_MUTATION,
+  CREATE_BUSINESS_HOURS_MUTATION,
   CREATE_BUSINESS_MUTATION,
+  FIND_ALL_MY_BUSINESS_HOURS_QUERY,
   GET_BUSINESS_BY_PATH,
   GET_MY_BUSINESS_QUERY,
+  REMOVE_BUSINESS_HOUR_MUTATION,
   UPDATE_BUSINESS_EMAIL_MUTATION,
+  UPDATE_BUSINESS_HOUR_MUTATION,
   UPDATE_BUSINESS_MUTATION,
 } from '@libs/graphql';
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
+  CreateBusinessHoursInput,
   CreateBusinessInput,
   CreateBusinessResponse,
   RegisterGoogleBusinessInput,
   UpdateBusinessEmailInput,
+  UpdateBusinessHourInput,
   UpdateBusinessInput,
 } from '../../models/business.model';
 import {
@@ -27,7 +33,7 @@ import {
   LoginGoogleInput,
   LoginResponse,
 } from '../../models/user.model';
-import { BusinessSchema } from '../../schemas';
+import { BusinessHourSchema, BusinessSchema } from '../../schemas';
 
 @Injectable({
   providedIn: 'root',
@@ -177,6 +183,62 @@ export class BusinessPrivateService {
         },
       })
       .pipe(map((result) => result.data!.registerWithGoogle));
+  }
+
+  createBusinessHours(
+    data: CreateBusinessHoursInput,
+  ): Observable<BusinessHourSchema[]> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ createBusinessHours: BusinessHourSchema[] }>({
+        mutation: CREATE_BUSINESS_HOURS_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.createBusinessHours));
+  }
+
+  updateBusinessHour(
+    data: UpdateBusinessHourInput,
+  ): Observable<BusinessHourSchema> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ updateBusinessHour: BusinessHourSchema }>({
+        mutation: UPDATE_BUSINESS_HOUR_MUTATION,
+        variables: { data },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.updateBusinessHour));
+  }
+
+  findAllMyBusinessHours(): Observable<BusinessHourSchema[]> {
+    return this.apollo
+      .use('businessAPI')
+      .query<{ findAllMyBusinessHours: BusinessHourSchema[] }>({
+        query: FIND_ALL_MY_BUSINESS_HOURS_QUERY,
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.findAllMyBusinessHours));
+  }
+
+  removeBusinessHour(id: number): Observable<boolean> {
+    return this.apollo
+      .use('businessAPI')
+      .mutate<{ removeBusinessHour: boolean }>({
+        mutation: REMOVE_BUSINESS_HOUR_MUTATION,
+        variables: { id },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data!.removeBusinessHour));
   }
 
   //   getUser(id: number): Observable<any> {

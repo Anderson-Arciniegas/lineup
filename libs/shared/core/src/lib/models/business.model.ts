@@ -1,4 +1,4 @@
-import { RolesCodesEnum } from '../enums';
+import { RolesCodesEnum, WeekDayEnum } from '../enums';
 import { BusinessSchema } from '../schemas';
 
 export interface RegisterGoogleBusinessInput {
@@ -16,6 +16,7 @@ export interface CreateBusinessInput {
 export interface UpdateBusinessInput {
   id: number;
   description?: string;
+  hexColor?: string;
   imageCode?: string;
   isOnline?: boolean;
   name?: string;
@@ -42,4 +43,23 @@ export interface PaginatedBusinesses {
   limit: number;
   page: number;
   total: number;
+}
+
+export interface CreateBusinessHourItemInput {
+  closesAtMinute: number;
+  dayOfWeek: WeekDayEnum;
+  opensAtMinute: number;
+  slotOrder: number;
+}
+
+export interface CreateBusinessHoursInput {
+  slots: CreateBusinessHourItemInput[];
+}
+
+export interface UpdateBusinessHourInput {
+  closesAtMinute?: number;
+  dayOfWeek?: WeekDayEnum;
+  id: number;
+  opensAtMinute?: number;
+  slotOrder?: number;
 }

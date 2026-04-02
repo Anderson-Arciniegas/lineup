@@ -54,6 +54,7 @@ export const userBasicSelection = `{
   creationDate
   creationIp
   userRoles ${userRoleSelection}
+  profileImage ${fileSelection}
 }`;
 
 /**
