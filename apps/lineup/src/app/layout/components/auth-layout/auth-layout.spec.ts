@@ -1,4 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
 import { AuthLayout } from './auth-layout';
 
 describe('AuthLayout', () => {
@@ -7,7 +13,8 @@ describe('AuthLayout', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthLayout],
+      imports: [AuthLayout, RouterModule.forRoot([]), TranslateModule.forRoot()],
+      providers: [TranslateService, TranslateStore],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AuthLayout);

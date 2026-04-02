@@ -3,6 +3,12 @@
     border-radius: 50% !important;
   }
 
+  .light-mode {
+    .p-button-text.p-button-secondary {
+      color: var(--p-primary-50) !important;
+    }
+  }
+
   .carousel-image {
     cursor: pointer;
     width: 500px;

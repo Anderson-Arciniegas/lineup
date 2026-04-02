@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthStore, BusinessService } from '@lineup/core';
+import { AuthStore, BusinessPrivateService } from '@lineup/core';
 import { Nav, Sidebar } from '@lineup/ui';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -12,7 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './control-panel-layout.scss',
 })
 export class ControlPanelLayout implements OnInit {
-  private _business = inject(BusinessService);
+  private _business = inject(BusinessPrivateService);
   private _authStore = inject(AuthStore);
   private _auth = inject(AuthService);
 
@@ -46,6 +46,11 @@ export class ControlPanelLayout implements OnInit {
         url: '/dashboard/catalogs',
       },
       {
+        label: 'general.discounts',
+        icon: 'pi pi-percentage',
+        url: '/dashboard/discounts',
+      },
+      {
         label: 'general.socialMedias',
         icon: 'pi pi-instagram',
         url: '/dashboard/social-medias',
@@ -56,15 +61,25 @@ export class ControlPanelLayout implements OnInit {
         url: '/dashboard/locations',
       },
       {
-        label: 'general.followers',
-        icon: 'pi pi-heart',
-        url: '/dashboard/followers',
+        label: 'general.inventory',
+        icon: 'pi pi-warehouse',
+        url: '/dashboard/inventory',
+      },
+      {
+        label: 'general.registerSale',
+        icon: 'pi pi-shopping-cart',
+        url: '/dashboard/register-sale',
       },
 
       {
         label: 'general.statistics',
         icon: 'pi pi-chart-bar',
         url: '/dashboard/statistics',
+      },
+      {
+        label: 'general.businessHours',
+        icon: 'pi pi-clock',
+        url: '/dashboard/business-hours',
       },
       {
         label: 'general.settings',

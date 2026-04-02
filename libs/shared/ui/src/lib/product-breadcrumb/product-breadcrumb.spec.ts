@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ProductBreadcrumb } from './product-breadcrumb';
 
 describe('ProductBreadcrumb', () => {
@@ -7,7 +9,8 @@ describe('ProductBreadcrumb', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductBreadcrumb],
+      imports: [ProductBreadcrumb, TranslateModule.forRoot()],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductBreadcrumb);

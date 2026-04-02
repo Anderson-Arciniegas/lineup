@@ -1,81 +1,121 @@
 # Lineup
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Monorepo [Nx](https://nx.dev) con aplicaciones web y móvil para **catálogos y vitrinas de negocios**: exploración pública de negocios y productos, panel de administración para dueños (catálogos, productos, descuentos, ubicaciones, estadísticas, inventario, etc.) e interfaz de usuario final.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## Stack principal
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+| Área | Tecnología |
+|------|------------|
+| Framework | Angular 20 (componentes standalone, signals donde aplica) |
+| Monorepo | Nx 21 |
+| API | GraphQL ([Apollo Client](https://www.apollographql.com/docs/react/) / `apollo-angular`) |
+| UI | [PrimeNG](https://primeng.org/) 20, [Tailwind CSS](https://tailwindcss.com/) 4 |
+| Estado | NgRx (store, effects, signals) |
+| i18n | `@ngx-translate` |
+| Web | **SSR** con `@angular/ssr` y Express (`server.ts` / `main.server.ts`) |
+| Móvil | Ionic + [Capacitor](https://capacitorjs.com/) 7 |
+| E2E | Playwright |
+| Tests unitarios | Jest |
 
-## Finish your CI setup
+## Estructura del workspace
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/v0ajyZljfs)
+| Proyecto | Descripción |
+|----------|-------------|
+| `lineup` | Aplicación web principal (`apps/lineup`): landing, negocios, catálogos, productos, autenticación, perfil y panel de control. |
+| `mobile` | Shell Ionic (`apps/mobile`) para empaquetado nativo con Capacitor. |
+| `lineup-e2e` / `mobile-e2e` | Pruebas end-to-end con Playwright. |
 
-## Run tasks
+**Librerías compartidas** (`libs/shared/`):
 
-To run the dev server for your app, use:
+- `core` — modelos, esquemas, servicios y utilidades de dominio.
+- `graphql` — consultas, mutaciones y selecciones GraphQL.
+- `ui` — componentes de presentación y estilos globales (`_styles.scss`).
+- `i18n` — cadenas y módulo de traducción.
+- `assets` — fuentes y recursos estáticos reutilizables.
+- `environments` — configuración centralizada (`@lineup/envs`) y proxy de desarrollo.
+
+## Requisitos
+
+- **Node.js** compatible con Angular 20 (recomendado: última LTS actual).
+- **npm** (el lockfile del repo es `package-lock.json`).
+
+## Instalación
 
 ```sh
-npx nx serve lineup
+npm install
 ```
 
-To create a production bundle:
+`postinstall` instala los navegadores necesarios para Playwright.
+
+## Desarrollo
+
+Servidor de desarrollo de la app web **lineup** (puerto 4200, escucha en todas las interfaces):
 
 ```sh
-npx nx build lineup
+npm run start:dev:lineup
 ```
 
-To see all available targets to run for a project, run:
+Equivalente con Nx:
+
+```sh
+npx nx serve lineup --configuration=development --host=0.0.0.0 --port=4200
+```
+
+La app `lineup` usa un **proxy HTTP** definido en `libs/shared/environments/proxy.conf.json` para redirigir rutas `/api/*` al backend en desarrollo. Los endpoints GraphQL y archivos también se configuran desde la librería `@lineup/envs` (`libs/shared/environments`).
+
+App **mobile**:
+
+```sh
+npx nx serve mobile
+```
+
+## Build
+
+```sh
+npm run build:prod:lineup
+```
+
+Salida: `dist/apps/lineup` (incluye artefactos de servidor para SSR según la configuración del proyecto).
+
+Previsualizar el build de producción con servidor estático local:
+
+```sh
+npm run start:prod:lineup
+```
+
+## Pruebas y calidad
+
+```sh
+# Proyecto concreto
+npx nx run lineup:test
+npx nx run lineup:lint
+npx nx run lineup-e2e:e2e
+
+# Lint, test, build y e2e afectados por cambios (útil en CI)
+npm run test:all
+```
+
+Ver targets disponibles de un proyecto:
 
 ```sh
 npx nx show project lineup
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## Configuración y secretos
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+La configuración de URLs de API, claves de servicios externos y semillas criptográficas vive en `libs/shared/environments`. **No subas claves reales a repositorios públicos**; usa valores de desarrollo o variables de entorno según tu flujo de despliegue.
 
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+## Grafo de dependencias entre proyectos
 
 ```sh
-npx nx g @nx/angular:app demo
+npx nx graph
 ```
 
-To generate a new library, use:
+## Documentación Nx
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+- [Tutorial monorepo Angular](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial)
+- [Ejecutar tareas](https://nx.dev/features/run-tasks)
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+---
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Repositorio privado de desarrollo (`private: true` en `package.json`).

@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.product-rating-item__avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.product-rating-item__avatar-placeholder {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: var(--p-surface-100, #f4f4f5);
+  border: 1px solid var(--p-surface-200, #e4e4e7);
+}

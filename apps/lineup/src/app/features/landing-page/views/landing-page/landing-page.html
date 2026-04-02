@@ -18,6 +18,7 @@
       <lib-button
         label="{{'landingPage.join' | translate}}"
         [type]="'rounded'"
+        [link]="'/register'"
         [width]="'w-60'"
       ></lib-button>
     </div>
@@ -52,6 +53,7 @@
         label="{{'landingPage.explore' | translate}}"
         [type]="'rounded'"
         [width]="'w-60'"
+        [link]="'/'"
       ></lib-button>
     </div>
   </div>
@@ -113,7 +115,7 @@
               </div>
             </div>
           </div>
-          <img class="services-image" src="https://picsum.photos/200" alt="" />
+          <!-- <img class="services-image" src="https://picsum.photos/200" alt="" /> -->
         </div>
       </div>
       <div class="flex flex-col items-start justify-center gap-6">
@@ -164,14 +166,14 @@
               </div>
             </div>
           </div>
-          <img class="services-image" src="https://picsum.photos/200" alt="" />
+          <!-- <img class="services-image" src="https://picsum.photos/200" alt="" /> -->
         </div>
       </div>
     </div>
   </div>
 </section>
 <section
-  class="flex flex-row items-start justify-center bg-primary-50 p-5 md:p-15"
+  class="flex flex-row items-start justify-center bg-primary-50 p-5 md:p-15 mb-20"
 >
   <div class="flex flex-col items-center justify-start gap-10 w-8/10 lg:w-6/10">
     <p class="italic text-3xl md:text-5xl text-primary-300 text-center">
@@ -191,9 +193,11 @@
 
     <div class="w-8/10 flex flex-row items-center justify-center mt-5">
       <lib-button
-        label="info@elineup.com"
+        label="lineup@lineup.com.ve"
         [type]="'rounded'"
         [width]="'w-60'"
+        [href]="'https://mail.google.com/mail/?view=cm&fs=1&to=lineup@lineup.com.ve'"
+        [target]="'_blank'"
       ></lib-button>
     </div>
   </div>

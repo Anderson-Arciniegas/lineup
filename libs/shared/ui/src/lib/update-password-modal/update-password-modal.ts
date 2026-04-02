@@ -9,7 +9,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { BusinessService, UserService } from '@lineup/core';
+import { BusinessPrivateService, UserPublicService } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
@@ -59,8 +59,8 @@ export class UpdatePasswordModal implements OnInit {
   private readonly _fb = inject(FormBuilder);
   private readonly _ref = inject(DynamicDialogRef);
   private readonly _config = inject(DynamicDialogConfig);
-  private readonly _userService = inject(UserService);
-  private readonly _businessService = inject(BusinessService);
+  private readonly _userService = inject(UserPublicService);
+  private readonly _businessService = inject(BusinessPrivateService);
   private readonly _messageService = inject(MessageService);
   private readonly _translate = inject(TranslateService);
 

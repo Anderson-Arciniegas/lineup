@@ -1,6 +1,6 @@
-<section class="profile flex flex-col gap-10 py-5">
+<section class="page flex flex-col gap-10 py-5 justify-start items-center">
   <div
-    class="flex flex-col justify-start items-start sm:flex-row sm:justify-between sm:items-center gap-4 px-4"
+    class="flex flex-col justify-start items-start sm:flex-row sm:justify-between sm:items-center gap-4 ps-4 pe-10 w-full"
   >
     <h2 class="text-2xl font-semibold self-start">
       {{'general.locations' | translate}}
@@ -14,7 +14,7 @@
     ></lib-button>
   </div>
 
-  <div class="flex flex-col gap-4 md:ps-10 w-11/12">
+  <div class="flex flex-col gap-4 w-11/12">
     @for (location of locations; track location.id) {
     <div
       class="location-item flex flex-row justify-between items-center gap-8 p-3 md:p-4 cursor-pointer hover:bg-primary-200 transition-all duration-300"
@@ -55,9 +55,12 @@
         ></lib-button>
       </div>
     </div>
+    } @if(!attempt && locations.length === 0) {
+    <div class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600">
+      <span class="font-medium">{{'general.noLocations' | translate}}</span>
+    </div>
     }
   </div>
-
   @if(attempt) {
   <div class="flex justify-center p-10">
     <p-progress-spinner

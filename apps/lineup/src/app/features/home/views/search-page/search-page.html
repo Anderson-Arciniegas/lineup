@@ -1,5 +1,5 @@
 <section
-  class="py-8 md:pt-12 px-2 sm:px-0 xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start w-full"
+  class="pt-8 md:pt-12 pb-30 px-2 sm:px-0 xl:px-5 2xl:px-8 flex flex-col gap-4 sm:gap-8 items-center justify-start w-full"
 >
   <section class="w-10/10 flex flex-col gap-10 items-center justify-start">
     <lib-search-bar
@@ -111,8 +111,8 @@
           <div class="w-full flex flex-col items-center justify-center">
             <lib-business-card
               class="my-3"
-              [width]="'w-60'"
-              [height]="'h-80'"
+              [width]="'w-65'"
+              [height]="'h-100'"
               [business]="item"
             ></lib-business-card>
           </div>
@@ -120,8 +120,8 @@
           <div class="w-full flex flex-col items-center justify-center">
             <lib-catalog-card
               class="my-3"
-              [width]="'w-60'"
-              [height]="'h-80'"
+              [width]="'w-65'"
+              [height]="'h-100'"
               [catalog]="item"
             ></lib-catalog-card>
           </div>
@@ -129,14 +129,14 @@
           <div class="w-full flex flex-col items-center justify-center">
             <lib-product-card
               class="my-3"
-              [width]="'w-60'"
-              [height]="'h-80'"
+              [width]="'w-65'"
+              [height]="'h-100'"
               [product]="item"
             ></lib-product-card>
           </div>
           } }
         </div>
-        } @if(!attempt) {
+        } @if(attempt) {
         <div class="card flex flex-col items-center justify-center p-10 w-full">
           <p-progress-spinner
             strokeWidth="4"

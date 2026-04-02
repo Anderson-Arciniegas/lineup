@@ -1,9 +1,10 @@
 <section
+  [routerLink]="url"
   ngSkipHydrations
-  class="product-card shadow-lg flex flex-row items-center gap-4 grid grid-cols-12 pr-4"
+  class="product-card shadow-lg flex flex-row items-center gap-2 sm:gap-4 grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 sm:pr-4 cursor-pointer"
 >
-  <div class="col-span-3 sm:col-span-2">
-    <a [routerLink]="url">
+  <div class="col-span-1 sm:col-span-2">
+    <a>
       <img
         class="product-image lg:w-25 lg:h-25 w-20 h-20"
         (load)="imageLoaded = true"
@@ -25,69 +26,65 @@
     </div>
   </div>
 
-  <div class="col-span-7 sm:col-span-8 grid-cols-4 hidden md:grid">
-    <div class="col-span-3">
-      <a [routerLink]="url" class="text-sm font-medium">
-        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
-        {{product?.title || 'Televisor 65″ Samsung Neo QLED 4K QN90B'}}
-      </a>
-    </div>
-
-    <div class="flex flex-row justify-end items-center">
-      <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | currency: product?.currency?.code : 'symbol'
-        :'1.0-2' : 'es')}}
-      </span>
-    </div>
-  </div>
-
-  <div class="col-span-7 sm:col-span-8 flex flex-col md:hidden gap-1">
-    <div class="w-full flex flex-row items-start justify-start">
-      <p class="text-sm font-medium">
-        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
-        {{setLabel(product?.title || "Televisor 65″ Samsung Neo QLED 4KQN90B")}}
-      </p>
-    </div>
-
-    <div class="w-full flex flex-row justify-end items-end">
-      <span class="text-base text-center font-medium whitespace-nowrap">
-        {{(product?.price | currency: product?.currency?.code : 'symbol'
-        :'1.0-2' : 'es')}}
-      </span>
-    </div>
-  </div>
-
   <div
-    class="flex flex-row justify-end items-center gap-3 col-span-2 hidden lg:flex"
+    class="col-span-7 sm:col-span-5 md:col-span-9 lg:col-span-9 grid-cols-4 hidden md:grid"
   >
-    <lib-button
-      [icon]="'pi pi-pencil'"
-      [width]="'w-11'"
-      [type]="'rounded'"
-      [link]="editUrl"
-    ></lib-button>
+    <div class="col-span-3">
+      <span class="text-sm font-medium">
+        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
+        {{setLabel(product?.title, 40)}}
+      </span>
+    </div>
 
-    <lib-button
-      [icon]="'pi pi-trash'"
-      [width]="'w-11'"
-      [color]="'danger'"
-      [type]="'rounded'"
-      [loading]="attemptDelete"
-      (action)="deleteProduct()"
-    ></lib-button>
+    @if (price && currency) {
+    <div class="flex flex-col justify-center items-end">
+      @if(originalPrice > price) {
+      <span class="text-gray-600 text-xs text-center font-medium line-through">
+        {{(originalPrice | currency: currency?.code : 'symbol' : '1.0-2' :
+        'es')}}
+      </span>
+      }
+      <span class="text-base text-center font-medium whitespace-nowrap">
+        {{(price | currency: currency?.code : 'symbol' :'1.0-2' : 'es')}}
+      </span>
+    </div>
+    }
   </div>
 
-  <div class="flex lg:hidden flex-row justify-center items-center col-span-2">
+  <div class="col-span-2 sm:col-span-5 flex flex-col md:hidden gap-1">
+    <div class="w-full flex flex-row items-start justify-start">
+      <span class="text-sm font-medium">
+        <span class="text-gray-500">#{{product?.id || '123'}} &nbsp;</span>
+        {{setLabel(product?.title)}}
+      </span>
+    </div>
+
+    @if (price && currency) {
+    <div class="sm:flex hidden w-full flex flex-col justify-center items-end">
+      @if(originalPrice > price) {
+      <span class="text-gray-600 text-xs text-center font-medium line-through">
+        {{(originalPrice | currency: currency?.code : 'symbol' : '1.0-2' :
+        'es')}}
+      </span>
+      }
+      <span class="text-base text-center font-medium whitespace-nowrap">
+        {{(price | currency: currency?.code : 'symbol' :'1.0-2' : 'es')}}
+      </span>
+    </div>
+    }
+  </div>
+
+  <div class="flex flex-row justify-center items-center col-span-1">
     <lib-button
+      (click)="$event.stopPropagation(); $event.preventDefault();"
+      (keydown.enter)="$event.stopPropagation(); $event.preventDefault();"
+      (keydown.space)="$event.stopPropagation(); $event.preventDefault();"
+      tabindex="0"
       [icon]="'pi pi-ellipsis-v'"
-      [size]="'small'"
-      [width]="'w-9'"
-      [color]="'secondary'"
+      [width]="'w-11'"
       [type]="'rounded'"
-      (action)="op.toggle($event)"
+      (action)="menu.toggle($event)"
     ></lib-button>
-    <p-popover #op>
-      <p-menu [model]="items" />
-    </p-popover>
   </div>
 </section>
+<p-menu [model]="items" [popup]="true" #menu />

@@ -34,7 +34,7 @@ export class UserLayout implements OnInit {
         url: '/profile/favorites',
       },
       {
-        label: 'general.myRatings',
+        label: 'general.ratings',
         icon: 'pi pi-star',
         url: '/profile/my-ratings',
       },

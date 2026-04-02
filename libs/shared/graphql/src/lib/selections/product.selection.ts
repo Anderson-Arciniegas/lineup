@@ -13,6 +13,17 @@ export const tagSelection = `{
 }`;
 
 /**
+ * TagSchema con negocio creador (p. ej. getMainTags)
+ */
+export const tagMainSelection = `{
+  id
+  idCreationBusiness
+  name
+  slug
+  creationBusiness ${businessBasicSelection}
+}`;
+
+/**
  * Selección para ProductTagSchema
  */
 export const productTagSelection = `{
@@ -64,27 +75,103 @@ export const productReactionSelection = `{
 }`;
 
 /**
- * Selección para ProductSchema
+ * Selección mínima de ProductSchema (sin listas anidadas) para usar dentro de ProductSku y evitar ciclos
  */
-export const productSelection = `{
+export const productBasicSelection = `{
   id
   idCatalog
   idCreationBusiness
-  idCurrency
+  creationDate
   title
   subtitle
   description
-  price
+  hasVariations
+  isPrimary
   likes
-  productTags ${productTagSelection}
+  visits
+  ratingAverage
   status
+  price
+  productFiles ${productFileSelection}
   business ${businessBasicSelection}
   catalog ${catalogSelection}
-  currency ${currencySelection}
   modificationBusiness ${businessBasicSelection}
-  productFiles ${productFileSelection}
-  reactions ${productReactionSelection}
-  variations ${productVariationSelection}
+}`;
+
+/**
+ * Selección para DiscountProductSchema
+ */
+export const discountProductSelection = `{
+  creationBusiness ${businessBasicSelection}
+  creationDate
+  discount {
+    id
+    idCatalog
+    idCreationBusiness
+    idCurrency
+    creationDate
+    modificationDate
+    startDate
+    endDate
+    value
+    discountType
+    status
+    currency ${currencySelection}
+  }
+  id
+  idCreationBusiness
+  idDiscount
+  idProduct
+  modificationDate
+}`;
+
+/**
+ * Selección para ProductSearchIndexSchema
+ */
+export const productSearchIndexSelection = `{
+  id
+  idBusiness
+  idCatalog
+  idProduct
+  likes
+  locationsText
+  price
+  ratingAverage
+  searchVector
+  visits
+  business ${businessBasicSelection}
+  catalog ${catalogSelection}
+  product ${productBasicSelection}
+}`;
+
+/**
+ * Selección para ProductVisitSchema
+ */
+export const productVisitSelection = `{
+  id
+  idCreationUser
+  idProduct
+  creationUser ${userBasicSelection}
+  product ${productBasicSelection}
+}`;
+
+/**
+ * Selección para ProductSkuSchema
+ */
+export const productSkuSelection = `{
+  id
+  idCreationBusiness
+  idProduct
+  price
+  idCurrency
+  currency ${currencySelection}
+  quantity
+  skuCode
+  status
+  variationOptions
+  business ${businessBasicSelection}
+  modificationBusiness ${businessBasicSelection}
+  product ${productBasicSelection}
 }`;
 
 /**
@@ -98,13 +185,71 @@ export const productRatingSelection = `{
   status
   comment
   creationUser ${userBasicSelection}
-  product ${productSelection}
+  product ${productBasicSelection}
+}`;
+
+/**
+ * Selección para ProductSchema
+ */
+export const productSelection = `{
+  id
+  idCatalog
+  idCreationBusiness
+  creationDate
+  title
+  subtitle
+  description
+  hasVariations
+  isPrimary
+  likes
+  visits
+  ratingAverage
+  price
+  discountProduct ${discountProductSelection}
+  productTags ${productTagSelection}
+  status
+  business ${businessBasicSelection}
+  catalog ${catalogSelection}
+  modificationBusiness ${businessBasicSelection}
+  productFiles ${productFileSelection}
+  productSearchIndexes ${productSearchIndexSelection}
+  productVisits ${productVisitSelection}
+  ratings ${productRatingSelection}
+  reactions ${productReactionSelection}
+  skus ${productSkuSelection}
+  variations ${productVariationSelection}
+}`;
+
+/**
+ * Selección para ProductCollectionSchema
+ */
+export const productCollectionSelection = `{
+  id
+  title
+  products ${productSelection}
 }`;
 
 /**
  * Selección de producto para búsqueda (alias en description para evitar conflicto de tipos en union)
  */
 export const productSearchSelection = productSelection.replace(
-  /\n {2}description\n {2}price/,
-  '\n  productDescription: description\n  price',
+  /\n {2}description\n/,
+  '\n  productDescription: description\n',
 );
+
+/**
+ * Selección para StockMovementSchema
+ */
+export const stockMovementSelection = `{
+  id
+  idCreationBusiness
+  idProductSku
+  creationDate
+  newQuantity
+  notes
+  previousQuantity
+  quantityDelta
+  type
+  business ${businessBasicSelection}
+  productSku ${productSkuSelection}
+}`;

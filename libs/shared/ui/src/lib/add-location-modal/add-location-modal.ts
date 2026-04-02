@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { LocationSchema, LocationsService } from '@lineup/core';
+import { LocationSchema, LocationsPrivateService } from '@lineup/core';
 import { environment } from '@lineup/envs';
 import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
@@ -121,7 +121,7 @@ export class AddLocationModal implements OnInit {
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly locationsService = inject(LocationsService);
+  private readonly locationsService = inject(LocationsPrivateService);
 
   mapContainer = viewChild<ElementRef<HTMLElement>>('mapContainer');
   selectedLocation = signal<SelectedLocation | null>(null);

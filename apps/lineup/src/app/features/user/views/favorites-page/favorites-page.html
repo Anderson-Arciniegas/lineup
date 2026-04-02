@@ -1,5 +1,5 @@
 <section
-  class="favorites flex flex-col gap-6 py-5"
+  class="favorites flex flex-col gap-6 py-5 justify-start items-center"
   infiniteScroll
   [infiniteScrollDistance]="2"
   [infiniteScrollThrottle]="50"
@@ -7,11 +7,12 @@
   [infiniteScrollDisabled]="attempt || noMoreResults"
   (scrolled)="onScroll()"
 >
-  <h2 class="text-2xl font-semibold ps-4">
-    {{ 'general.myFavoriteBusinesses' | translate }}
+  <h2 class="text-2xl font-semibold ps-4 w-full">
+    {{ 'general.myFavorites' | translate }}
   </h2>
 
-  <div class="flex flex-col gap-8 px-0 xl:px-8 py-8 justify-start items-center">
+  <div class="flex flex-col gap-8 w-11/12 max-w-screen-2xl">
+    @if (businesses.length > 0) {
     <div class="w-full products-grid mb-10">
       @for (business of businesses; track business.id) {
       <div class="w-full flex flex-col items-center justify-center">
@@ -23,12 +24,20 @@
       </div>
       }
     </div>
-    @if(attempt) {
+    } @if(attempt) {
     <div class="flex justify-center p-10">
       <p-progress-spinner
         strokeWidth="4"
         [style]="{ width: '100px', height: '100px' }"
       />
+    </div>
+    } @if(!attempt && businesses.length === 0) {
+    <div
+      class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 w-full"
+    >
+      <span class="font-medium"
+        >{{'general.myFavoritesEmpty' | translate}}</span
+      >
     </div>
     }
   </div>

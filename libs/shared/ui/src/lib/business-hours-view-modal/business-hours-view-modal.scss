@@ -1,0 +1,39 @@
+.day-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgb(229 231 235);
+  border-radius: 14px;
+  background: white;
+}
+
+.day-row__day {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgb(17 24 39);
+}
+
+.day-row__hours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.slot {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(55 65 81);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgb(243 244 246);
+}
+
+@media (max-width: 420px) {
+  .day-row {
+    grid-template-columns: 1fr;
+  }
+}
+

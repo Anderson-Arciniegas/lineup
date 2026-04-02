@@ -1,0 +1,306 @@
+<div class="w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
+  <div
+    class="w-full flex flex-col gap-6 py-4 sm:py-6 md:px-10 xl:px-18 rounded-lg border-grey xl:container"
+  >
+    <div
+      class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 w-full"
+    >
+      <div class="flex flex-col gap-1 min-w-0">
+        <h1 class="text-3xl font-semibold text-gray-800">
+          {{ 'general.inventory' | translate }}
+        </h1>
+        <p class="text-sm text-gray-500">
+          {{ 'inventoryPage.selectCatalogHint' | translate }}
+        </p>
+      </div>
+      <lib-button
+        label="general.registerSale"
+        icon="pi pi-shopping-cart"
+        type="rounded"
+        [link]="registerSalePath"
+      />
+    </div>
+
+    @if (loadingCatalogs) {
+    <div class="w-full flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '80px', height: '80px' }"
+      />
+    </div>
+    } @else {
+    <div class="flex flex-col gap-2 w-full max-w-sm">
+      <label class="text-sm font-medium text-gray-700" for="inventory-catalog">
+        {{ 'general.catalog' | translate }}
+      </label>
+      <p-select
+        inputId="inventory-catalog"
+        [options]="catalogs"
+        [(ngModel)]="selectedCatalogId"
+        optionLabel="title"
+        optionValue="id"
+        [placeholder]="'inventoryPage.selectCatalogPlaceholder' | translate"
+        [filter]="true"
+        filterBy="title"
+        class="w-full"
+        styleClass="w-full"
+        (ngModelChange)="onCatalogChange()"
+      />
+    </div>
+
+    @if (selectedCatalog) {
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 w-full"
+    >
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-3 lg:p-5 rounded-xl bg-blue-50 border border-blue-100"
+      >
+        <i class="pi pi-box text-blue-600 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800">{{ totalSkus }}</span>
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'inventoryPage.totalSkus' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-3 lg:p-5 rounded-xl bg-emerald-50 border border-emerald-100"
+      >
+        <i class="pi pi-check-circle text-emerald-600 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800"
+          >{{ healthyStockSkusCount }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'inventoryPage.healthyStock' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-3 lg:p-5 rounded-xl bg-slate-50 border border-slate-200"
+      >
+        <i class="pi pi-question-circle text-slate-500 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800"
+          >{{ stockNotRegisteredSkusCount }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'inventoryPage.stockNotRegistered' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-3 lg:p-5 rounded-xl bg-amber-50 border border-amber-100"
+      >
+        <i class="pi pi-exclamation-circle text-amber-600 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800"
+          >{{ lowStockSkusCount }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'inventoryPage.lowStockRange' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-3 lg:p-5 rounded-xl bg-rose-50 border border-rose-100"
+      >
+        <i class="pi pi-times-circle text-rose-600 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800"
+          >{{ outOfStockSkusCount }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'inventoryPage.outOfStock' | translate }}</span
+        >
+      </div>
+    </div>
+
+    <div
+      class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200"
+    >
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-gray-500"
+          >{{ 'inventoryPage.selectedCatalog' | translate }}</span
+        >
+        <span class="text-xl font-semibold text-gray-800"
+          >{{ selectedCatalog.title }}</span
+        >
+      </div>
+      <div class="text-sm text-gray-600">
+        {{ 'inventoryPage.totalInventoryUnits' | translate }}:
+        <span class="font-semibold text-gray-900">{{ totalUnits }}</span>
+      </div>
+    </div>
+
+    @if (loadingProducts || loadingStock) {
+    <div class="w-full flex justify-center p-8">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '80px', height: '80px' }"
+      />
+    </div>
+    } @else if (products.length === 0) {
+    <div
+      class="w-full p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+    >
+      {{ 'inventoryPage.catalogWithoutProducts' | translate }}
+    </div>
+    } @else {
+    <div class="w-full flex flex-col gap-4">
+      @for (product of products; track trackByProduct($index, product)) {
+      <p-panel
+        [toggleable]="true"
+        toggler="header"
+        [collapsed]="!isProductExpanded(product.id)"
+        (onBeforeToggle)="toggleProductExpansion(product.id)"
+        styleClass="inventory-product-panel rounded-xl border border-gray-200 bg-white overflow-hidden"
+      >
+        <ng-template pTemplate="header" class="px-3 sm:px-4">
+          <div
+            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 w-full cursor-pointer"
+            role="button"
+            tabindex="0"
+          >
+            <div class="flex flex-row">
+              <h3 class="text-base sm:text-lg font-semibold text-gray-800">
+                <span class="text-md sm:text-lg font-medium">
+                  {{ product.id }}#</span
+                >&nbsp;{{ product.title }}
+              </h3>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs sm:text-sm pe-0 lg:pe-2">
+              <span
+                class="px-2 py-1 rounded bg-blue-100 text-blue-800 font-medium min-w-[90px] text-center"
+              >
+                {{ 'inventoryPage.skusLabel' | translate }}: {{
+                getProductSkus(product.id).length }}
+              </span>
+              <span
+                class="px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-medium min-w-[90px] text-center"
+              >
+                {{ 'inventoryPage.unitsLabel' | translate }}: {{
+                getProductTotalUnits(product.id) }}
+              </span>
+              <span
+                class="px-2 py-1 rounded bg-slate-100 text-slate-800 font-medium min-w-[120px] text-center"
+              >
+                {{ 'inventoryPage.stockNotRegisteredShortLabel' | translate }}:
+                {{ getProductStockNotRegisteredSkus(product.id) }}
+              </span>
+              <span
+                class="px-2 py-1 rounded bg-amber-100 text-amber-800 font-medium min-w-[110px] text-center"
+              >
+                {{ 'inventoryPage.lowLabel' | translate }}: {{
+                getProductLowStockSkus(product.id) }}
+              </span>
+              <span
+                class="px-2 py-1 rounded bg-rose-100 text-rose-800 font-medium min-w-[110px] text-center"
+              >
+                {{ 'inventoryPage.outOfStockLabel' | translate }}: {{
+                getProductOutOfStockSkus(product.id) }}
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        @if (getProductSkus(product.id).length === 0) {
+        <div class="p-4 text-sm text-gray-500">
+          {{ 'inventoryPage.noInventorySkus' | translate }}
+        </div>
+        } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[680px]">
+            <thead>
+              <tr class="text-left border-b border-gray-200 bg-white">
+                <th class="p-3 text-xs font-semibold text-gray-500 uppercase">
+                  {{ 'general.sku' | translate }}
+                </th>
+                <th class="p-3 text-xs font-semibold text-gray-500 uppercase">
+                  {{ 'general.variations' | translate }}
+                </th>
+                <th class="p-3 text-xs font-semibold text-gray-500 uppercase">
+                  {{ 'inventoryPage.quantity' | translate }}
+                </th>
+                <th class="p-3 text-xs font-semibold text-gray-500 uppercase">
+                  {{ 'general.status' | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (sku of getProductSkus(product.id); track trackBySku($index,
+              sku)) {
+              <tr class="border-b border-gray-100">
+                <td class="p-3 text-sm text-gray-800 font-medium">
+                  {{ sku.skuCode }}
+                </td>
+                <td class="p-3 text-sm text-gray-600">
+                  @if (sku.variationOptions && (sku.variationOptions |
+                  keyvalue).length > 0) {
+                  <div class="flex flex-wrap gap-1">
+                    @for (variation of sku.variationOptions | keyvalue; track
+                    variation.key) {
+                    <span
+                      class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs"
+                    >
+                      {{ variation.key | translate }}: {{ variation.value }}
+                    </span>
+                    }
+                  </div>
+                  } @else {
+                  <span class="text-gray-400"
+                    >{{ 'inventoryPage.notAvailable' | translate }}</span
+                  >
+                  }
+                </td>
+                <td class="p-3 text-sm font-semibold text-gray-800">
+                  @if (isSkuStockNotRegistered(sku.quantity)) {
+                  <span class="text-slate-500 font-medium"
+                    >{{ 'inventoryPage.stockNotRegistered' | translate }}</span
+                  >
+                  } @else { {{ sku.quantity }} }
+                </td>
+                <td class="p-3 text-sm">
+                  @if (isSkuStockNotRegistered(sku.quantity)) {
+                  <span
+                    class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs font-medium"
+                    >{{ 'inventoryPage.stockNotRegistered' | translate }}</span
+                  >
+                  } @else if (isSkuOutOfStock(sku.quantity)) {
+                  <span
+                    class="px-2 py-1 rounded bg-rose-100 text-rose-700 text-xs font-medium"
+                    >{{ 'inventoryPage.outOfStock' | translate }}</span
+                  >
+                  } @else if ( sku.quantity !== null && sku.quantity <=
+                  lowStockThreshold ) {
+                  <span
+                    class="px-2 py-1 rounded bg-amber-100 text-amber-700 text-xs font-medium"
+                    >{{ 'inventoryPage.lowStock' | translate }}</span
+                  >
+                  } @else {
+                  <span
+                    class="px-2 py-1 rounded bg-emerald-100 text-emerald-700 text-xs font-medium"
+                    >{{ 'inventoryPage.available' | translate }}</span
+                  >
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+        <div class="w-full flex flex-row justify-end items-center mt-2">
+          <lib-button
+            icon="pi pi-external-link"
+            width="w-36"
+            size="small"
+            [label]="'general.inventory' | translate"
+            type="rounded"
+            [target]="'_blank'"
+            [link]="navigateToInventory(product.id)"
+          ></lib-button>
+        </div>
+      </p-panel>
+      }
+    </div>
+    } } @else {
+    <div
+      class="w-full p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+    >
+      {{ 'inventoryPage.noCatalogsAvailable' | translate }}
+    </div>
+    } }
+  </div>
+</div>

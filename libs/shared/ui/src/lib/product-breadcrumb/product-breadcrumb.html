@@ -1,29 +1,101 @@
-<div class="flex flex-row items-center justify-start gap-3 sm:gap-8">
-  <div class="flex flex-row items-center justify-start">
-    <div class="flex flex-row items-center justify-center">
-      <lib-button
-        [icon]="'pi pi-arrow-left'"
-        [width]="'w-13'"
-        [color]="'secondary'"
-        [variant]="'text'"
-        [size]="'large'"
-        [type]="'rounded'"
-        (action)="goBack()"
-      ></lib-button>
+<div class="flex flex-row items-center justify-between gap-3 sm:gap-5 h-14">
+  <div class="flex flex-row items-center justify-start gap-3">
+    <div class="flex flex-row items-center justify-start">
+      <div class="flex flex-row items-center justify-center">
+        <lib-button
+          [icon]="'pi pi-arrow-left'"
+          [width]="'w-13'"
+          [color]="'secondary'"
+          [variant]="useLightText ? null : 'text'"
+          [size]="'large'"
+          [type]="'rounded'"
+          (action)="goBack()"
+        ></lib-button>
+      </div>
     </div>
+    @if (publicMode) {
+    <div class="hidden sm:flex flex-row items-center justify-start gap-3">
+      @if (business) {
+      <a
+        class="flex flex-row items-center justify-center gap-3"
+        [routerLink]="['/', business.path]"
+      >
+        <div
+          class="flex flex-row items-center justify-center w-10 md:w-14 h-10 md:h-14 rounded"
+        >
+          <img
+            class="w-full h-full object-cover rounded business-image"
+            [src]="business.image?.url"
+            alt="Shop Icon"
+          />
+        </div>
+        <h3
+          [class.text-white]="useLightText"
+          class="hidden sm:block text-sm md:text-base font-medium"
+        >
+          {{ business.name }}
+        </h3>
+      </a>
+      } @if (catalog) {
+      <div
+        [class.text-white]="useLightText"
+        class="flex flex-row items-center justify-center gap-3"
+      >
+        <i class="pi pi-angle-right text-xl"></i>
+      </div>
+
+      <a
+        class="flex flex-row items-center justify-center gap-3"
+        [routerLink]="['/', business.path, catalog.path]"
+      >
+        <h3
+          [class.text-white]="useLightText"
+          class="text-sm md:text-base font-medium"
+        >
+          {{ catalog.title }}
+        </h3>
+      </a>
+      }
+    </div>
+    }
   </div>
-  @if (business) {
-  <div class="flex flex-row items-center justify-center gap-3">
-    <div
-      class="flex flex-row items-center justify-center w-10 sm:w-14 h-10 sm:h-14 rounded"
-    >
-      <img
-        class="w-full h-full object-cover rounded business-image"
-        [src]="business.image?.url"
-        alt="Shop Icon"
-      />
-    </div>
-    <h3 class="text-sm sm:text-xl font-medium">{{ business.name }}</h3>
+
+  @if (publicMode) {
+  <div class="flex flex-row items-center justify-end gap-3">
+    <lib-button
+      class="flex"
+      [link]="'/'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-search"
+      width="w-11"
+    ></lib-button>
+
+    @if (!logged()) {
+    <lib-button
+      [link]="'/login'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-user"
+      width="w-11"
+    ></lib-button>
+    }@else if (!businessMode()) {
+    <lib-button
+      [link]="'/profile'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-user"
+      width="w-11"
+    ></lib-button>
+    }@else if (businessMode()) {
+    <lib-button
+      [link]="'/dashboard'"
+      [type]="'rounded'"
+      color="secondary"
+      icon="pi pi-home"
+      width="w-11"
+    ></lib-button>
+    }
   </div>
   }
 </div>

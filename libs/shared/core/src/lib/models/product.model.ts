@@ -6,22 +6,42 @@ export interface ProductImageInput {
   order: number;
 }
 
+export interface PriceCurrencyInput {
+  idCurrency?: number;
+  price?: number;
+}
+
+export interface ProductVariationOptionInput {
+  value: string;
+}
+
+export interface CreateProductVariationOptionInput {
+  value: string;
+}
+
+export interface CreateProductVariationInput {
+  options: CreateProductVariationOptionInput[];
+  title: string;
+}
+
 export interface ProductVariationInput {
   id?: number;
-  options: string[];
+  options: ProductVariationOptionInput[];
   title: string;
+}
+
+export interface InitialStockItemInput {
+  notes?: string;
+  quantityDelta: number;
 }
 
 export interface CreateProductInput {
   description: string;
   idCatalog: number;
   images: ProductImageInput[];
-  price?: number;
   subtitle: string;
-  tags: string[];
   title: string;
-  idCurrency: number;
-  variations?: ProductVariationInput[];
+  variations?: CreateProductVariationInput[];
 }
 
 export interface UpdateProductInput {
@@ -29,12 +49,32 @@ export interface UpdateProductInput {
   id: number;
   idCatalog: number;
   images?: ProductImageInput[];
-  price?: number;
   subtitle: string;
-  tags: string[];
   title: string;
-  idCurrency: number;
   variations?: ProductVariationInput[];
+}
+
+export interface AdjustStockInput {
+  idProductSku: number;
+  notes?: string;
+  quantityDelta: number;
+}
+
+export interface RegisterPurchaseInput {
+  idProductSku: number;
+  notes?: string;
+  quantity: number;
+}
+
+export interface UpdateProductSkuItemInput {
+  id: number;
+  idCurrency?: number;
+  price?: number;
+  quantity?: number;
+}
+
+export interface UpdateProductSkusInput {
+  skus: UpdateProductSkuItemInput[];
 }
 
 export interface PaginatedProducts {

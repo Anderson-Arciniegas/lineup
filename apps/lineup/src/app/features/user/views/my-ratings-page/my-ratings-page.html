@@ -1,1 +1,37 @@
-<p>my-ratings-page works!</p>
+<section
+  class="my-ratings flex flex-col gap-6 py-5 justify-start items-center"
+  infiniteScroll
+  [infiniteScrollDistance]="2"
+  [infiniteScrollThrottle]="50"
+  [scrollWindow]="false"
+  [infiniteScrollDisabled]="attempt || noMoreResults"
+  (scrolled)="onScroll()"
+>
+  <h2 class="text-2xl font-semibold ps-4 w-full">
+    {{ 'general.myRatings' | translate }}
+  </h2>
+
+  <div class="flex flex-col gap-8 w-11/12 max-w-screen-2xl">
+    @if (ratings.length > 0) {
+    <div class="flex flex-col gap-4 mb-6">
+      @for (rating of ratings; track rating.id) {
+      <lib-rating-item [rating]="rating" />
+      }
+    </div>
+    } @if (attempt) {
+    <div class="flex flex-col items-center justify-center p-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+
+    } @if(!attempt && ratings.length === 0) {
+    <div
+      class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 w-full"
+    >
+      <span class="font-medium">{{'general.myRatingsEmpty' | translate}}</span>
+    </div>
+    }
+  </div>
+</section>

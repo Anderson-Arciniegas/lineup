@@ -48,7 +48,7 @@ a {
 }
 
 .image {
-  border-radius: var(--border-radius) !important;
+  border-radius: 24px !important;
   transition: transform 0.3s ease-in-out;
   object-fit: cover;
   aspect-ratio: 1/1;

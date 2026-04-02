@@ -1,0 +1,203 @@
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
+  @if (business) {
+  <lib-product-breadcrumb
+    [business]="business"
+    class="w-full"
+  ></lib-product-breadcrumb>
+  } @if (attempt) {
+  <div class="item flex justify-center p-10 mt-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  } @else {
+  <form
+    [formGroup]="skuProductForm"
+    class="w-full flex flex-col items-center justify-start gap-8 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+  >
+    <div class="flex flex-row items-center justify-start w-full">
+      <h2 class="text-3xl font-medium">
+        {{ 'general.updateProductInventory' | translate }}
+      </h2>
+    </div>
+
+    <div class="flex flex-row items-center justify-center w-full gap-4">
+      <img class="product-image" [src]="image" alt="" />
+      <span class="text-3xl text-gray-600">#{{product.id}}</span>
+      <span class="text-2xl">{{product.title}}</span>
+    </div>
+
+    @if ((product?.skus?.length ?? 0) > 1) {
+    <div
+      formGroupName="general"
+      class="w-full flex flex-col gap-4 p-4 border border-gray-200 rounded-lg max-w-5xl bg-gray-50"
+    >
+      <h2 class="text-lg font-semibold text-gray-800">
+        {{ 'general.generalValues' | translate }}
+      </h2>
+      <p class="text-sm text-gray-600">
+        {{ 'general.applyGeneralToAllSkus' | translate }}
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full items-end">
+        <div class="flex flex-col gap-2">
+          <label for="general-currency" class="font-medium">
+            {{ 'general.generalCurrency' | translate }}
+          </label>
+          <p-select
+            id="general-currency"
+            formControlName="idCurrency"
+            [options]="currencies"
+            optionLabel="name"
+            optionValue="id"
+            [placeholder]="'general.selectCurrency' | translate"
+            class="w-full"
+            styleClass="w-full"
+          >
+            <ng-template #selectedItem let-selectedOption>
+              @if (selectedOption) {
+              <div class="flex items-center gap-2">
+                <i [class]="selectedOption.icon" style="font-size: 1rem"></i>
+                <div>{{ selectedOption.name | translate }}</div>
+              </div>
+              }
+            </ng-template>
+            <ng-template let-currency #item>
+              <div class="flex items-center gap-2">
+                <i [class]="currency.icon" style="font-size: 1rem"></i>
+                <div>{{ currency.name | translate }}</div>
+              </div>
+            </ng-template>
+          </p-select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="general-price" class="font-medium">
+            {{ 'general.generalPrice' | translate }}
+          </label>
+          <p-inputnumber
+            id="general-price"
+            formControlName="price"
+            mode="decimal"
+            locale="es-ES"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            [min]="0"
+            [placeholder]="'general.price' | translate"
+            inputStyleClass="w-full"
+          />
+        </div>
+        <div class="flex flex-col gap-2">
+          <lib-button
+            [label]="'general.applyToAllSkus' | translate"
+            [width]="'w-full'"
+            type="rounded"
+            icon="pi pi-arrow-down"
+            (action)="applyGeneralToAllSkus()"
+          ></lib-button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div formArrayName="skus" class="w-full flex flex-col gap-5 max-w-5xl">
+      @for (skuControl of skusFormArray.controls; track
+      skuControl.get('id')?.value; let i = $index) {
+      <div
+        [formGroupName]="i"
+        class="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg"
+      >
+        <div
+          class="flex flex-col md:flex-row items-start sm:items-center justify-start sm:justify-between w-full"
+        >
+          @if ((product?.skus?.length ?? 0) > 1) {
+          <h4 class="text-lg font-medium text-gray-700">
+            {{ 'general.variation' | translate }}: &nbsp; {{getSkuOptions(i)}}
+          </h4>
+          }
+          <h4 class="text-lg font-medium text-gray-700">
+            {{ 'general.sku' | translate }}: &nbsp; {{
+            product?.skus?.[i]?.skuCode ?? ('general.sku' | translate) + ' ' +
+            (i + 1) }}
+          </h4>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+          <div class="flex flex-col gap-2">
+            <label [for]="'currency-' + i" class="font-medium">
+              {{ 'general.currency' | translate }}
+            </label>
+            <p-select
+              [id]="'currency-' + i"
+              formControlName="idCurrency"
+              [options]="currencies"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'general.selectCurrency' | translate"
+              class="w-full"
+              styleClass="w-full"
+            >
+              <ng-template #selectedItem let-selectedOption>
+                @if (selectedOption) {
+                <div class="flex items-center gap-2">
+                  <i [class]="selectedOption.icon" style="font-size: 1rem"></i>
+                  <div>{{ selectedOption.name | translate }}</div>
+                </div>
+                }
+              </ng-template>
+              <ng-template let-currency #item>
+                <div class="flex items-center gap-2">
+                  <i [class]="currency.icon" style="font-size: 1rem"></i>
+                  <div>{{ currency.name | translate }}</div>
+                </div>
+              </ng-template>
+            </p-select>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label [for]="'price-' + i" class="font-medium">
+              {{ 'general.price' | translate }}
+            </label>
+            <p-inputnumber
+              [id]="'price-' + i"
+              formControlName="price"
+              mode="decimal"
+              locale="es-ES"
+              [disabled]="skuControl.get('idCurrency')?.value === 0"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              [min]="0"
+              [placeholder]="'general.price' | translate"
+              inputStyleClass="w-full"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label [for]="'stock-' + i" class="font-medium">
+              {{ 'general.stock' | translate }}
+            </label>
+            <p-inputnumber
+              [id]="'stock-' + i"
+              formControlName="quantity"
+              [min]="0"
+              [placeholder]="'general.stock' | translate"
+              inputStyleClass="w-full"
+            />
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="w-full flex flex-row item-center justify-center pt-4">
+      <lib-button
+        [label]="('general.save' | translate)"
+        [width]="'w-60'"
+        type="rounded"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || skuProductForm.invalid"
+        (action)="updateProductSku()"
+      ></lib-button>
+    </div>
+  </form>
+  }
+</div>

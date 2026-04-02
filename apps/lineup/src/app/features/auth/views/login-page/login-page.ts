@@ -16,7 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BusinessService, UserService } from '@lineup/core';
+import { BusinessPrivateService, UserPublicService } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -47,8 +47,8 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
   attemptGoogle = false;
   private readonly _fb = inject(FormBuilder);
   private readonly _authService = inject(AuthService);
-  private readonly _users = inject(UserService);
-  private readonly _business = inject(BusinessService);
+  private readonly _users = inject(UserPublicService);
+  private readonly _business = inject(BusinessPrivateService);
   private readonly _googleAuth = inject(GoogleAuthService);
   @Inject(PLATFORM_ID) private _platform: any;
 

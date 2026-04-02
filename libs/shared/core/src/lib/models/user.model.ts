@@ -40,6 +40,10 @@ export interface UpdateUserInput {
   username?: string;
 }
 
+export interface UpdateUserEmailInput {
+  email: string;
+}
+
 export interface ChangePasswordInput {
   currentPassword: string;
   newPassword: string;

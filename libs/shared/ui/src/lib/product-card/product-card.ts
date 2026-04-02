@@ -3,13 +3,21 @@ import {
   AfterViewInit,
   Component,
   inject,
-  Inject,
   Input,
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { AuthStore, ProductSchema, UserService } from '@lineup/core';
+import { Router, RouterLink } from '@angular/router';
+import {
+  AuthStore,
+  BcvOfficialRatesSchema,
+  CurrencySchema,
+  DiscountSchema,
+  ProductPublicService,
+  ProductSchema,
+  RatesPrivateService,
+  UtilsService,
+} from '@lineup/core';
 import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -25,9 +33,9 @@ import { Button } from '../button/button';
     Button,
     CardModule,
     ButtonModule,
-    RouterLink,
     ProgressSpinnerModule,
     TooltipModule,
+    RouterLink,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
@@ -41,6 +49,9 @@ export class ProductCard implements AfterViewInit, OnInit {
   businessImage: string;
   imageLoaded: boolean;
   url: string;
+  price: number;
+  originalPrice: number;
+  currency: CurrencySchema;
   hasLiked: boolean;
   images: string[] = [
     'assets/images/products/headphones-min.webp',
@@ -54,14 +65,21 @@ export class ProductCard implements AfterViewInit, OnInit {
     'assets/images/products/laptop.webp',
   ];
 
+  rates: BcvOfficialRatesSchema;
+
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly _authStore = inject(AuthStore);
-  private readonly _userService = inject(UserService);
+  private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _utilsService = inject(UtilsService);
+  private readonly _ratesService = inject(RatesPrivateService);
+  private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
 
-  constructor(
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
-  ) {}
+  /** Id único por instancia para el contenedor flip (DOM / GSAP). */
+  readonly cardFlipId = `product-flip-${
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
+  }`;
 
   ngOnInit(): void {
     if (this.product) {
@@ -71,6 +89,12 @@ export class ProductCard implements AfterViewInit, OnInit {
         this.businessImage = this.product.business.image?.url;
       } else {
         this.url = `/business-1/catalog-1/123`;
+      }
+      this.price = this.product.skus?.[0].price ?? null;
+      this.originalPrice = this.product.skus?.[0].price ?? null;
+      this.currency = this.product.skus?.[0]?.currency ?? null;
+      if (isPlatformBrowser(this.platformId)) {
+        this.getRates();
       }
     } else {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
@@ -82,9 +106,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     setTimeout(() => {
-      const flipBox = document.getElementById(
-        `product-flip-${this.product?.id}`,
-      );
+      const flipBox = document.getElementById(this.cardFlipId);
       const inner = flipBox.querySelector('.flip-inner');
 
       flipBox.addEventListener('mouseenter', () => {
@@ -111,7 +133,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = true;
     this._subscription.add(
-      this._userService.likeProduct(this.product.id).subscribe({
+      this._productPublicService.likeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = true;
@@ -131,7 +153,7 @@ export class ProductCard implements AfterViewInit, OnInit {
     if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = false;
     this._subscription.add(
-      this._userService.unlikeProduct(this.product.id).subscribe({
+      this._productPublicService.unlikeProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = false;
@@ -150,7 +172,7 @@ export class ProductCard implements AfterViewInit, OnInit {
   hasLikedProduct(): void {
     if (this._authStore.isBusinessLoggedIn()) return;
     this._subscription.add(
-      this._userService.hasLikedProduct(this.product.id).subscribe({
+      this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
           console.log(response);
           this.hasLiked = response;
@@ -164,5 +186,27 @@ export class ProductCard implements AfterViewInit, OnInit {
       ? (title[49] === ' ' ? title.substring(0, 49) : title.substring(0, 50)) +
           '...'
       : title;
+  }
+
+  navigateToBusiness(): void {
+    if (this.product?.business?.path) {
+      this._router.navigate([`/${this.product.business.path}`]);
+    }
+  }
+
+  getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          this.rates = rates;
+          this.price = this._utilsService.formatPriceWithDiscount(
+            this.product.skus?.[0] ?? null,
+            (this.product.discountProduct?.discount as DiscountSchema) ?? null,
+            this.rates ?? null,
+          );
+          this.currency = this.product.skus?.[0]?.currency ?? null;
+        },
+      }),
+    );
   }
 }
