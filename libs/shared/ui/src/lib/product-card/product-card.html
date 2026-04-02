@@ -1,7 +1,8 @@
-<div
+@if(product) {
+<a
   [routerLink]="url"
   [attr.id]="cardFlipId"
-  class="product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+  class="bg-white product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
   [ngClass]="[width, height]"
 >
   <div [ngClass]="[width, height]">
@@ -49,7 +50,13 @@
       </div>
 
       @if (price && currency) {
-      <div class="flex flex-row justify-center items-center gap-2">
+      <div class="flex flex-col justify-center items-center">
+        @if(originalPrice > price) {
+        <h2 class="text-gray-200 text-xs text-center font-medium line-through">
+          {{(originalPrice | currency: currency?.code : 'symbol' : '1.0-2' :
+          'es')}}
+        </h2>
+        }
         <h2 class="text-white text-sm text-center font-semibold">
           {{(price | currency: currency?.code : 'symbol' : '1.0-2' : 'es')}}
         </h2>
@@ -61,17 +68,20 @@
         (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
         (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
-        <a
-          [routerLink]="'/'+ product?.business?.path"
+        <span
+          tabindex="0"
           [pTooltip]="product?.business?.name"
           tooltipPosition="top"
+          (click)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
+          (keydown.enter)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
+          (keydown.space)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
         >
           <img
             class="business-image"
             [src]="businessImage"
             alt="Business Image"
           />
-        </a>
+        </span>
       </div>
     </div>
   </div>
@@ -109,14 +119,14 @@
         >
           <i class="pi pi-star-fill"></i>
           <span class="text-sm font-medium text-center"
-            >{{product?.ratingAverage | number:'1.0-1':'es-ES'}}</span
+            >{{product?.ratingAverage | number:'1.0-1':'es'}}</span
           >
         </div>
       </div>
     </div>
   </div>
-</div>
-
+</a>
+}
 <!-- <div
 [ngClass]="[width]"
 class="flex flex-col justify-between items-center product-info h-full px-4 pt-1 pb-2"

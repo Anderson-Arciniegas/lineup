@@ -21,12 +21,13 @@ export const UserAuthGuard: CanActivateFn = ():
   ]);
 
   if (auth.businessValue) {
-    return of(dashboardUrl);
+    return dashboardUrl;
   }
   if (auth.userValue) {
-    return of(true);
+    return true;
   }
 
+  // No confiar solo en storage: la cookie puede haber expirado en el servidor.
   return userService.getMe().pipe(
     map((userData: unknown) => {
       if (userData) {

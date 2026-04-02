@@ -1,5 +1,5 @@
 <section
-  class="flex flex-col gap-6 sm:gap-10 items-center justify-start w-full my-1 py-1 container"
+  class="flex flex-col gap-6 sm:gap-10 items-center justify-start w-full my-1 pt-1 pb-30 container"
 >
   <section
     class="py-6 sm:py-8 sm:py-14 px-4 box-border w-full flex flex-col gap-14 items-center justify-start"
@@ -9,19 +9,19 @@
     >
       <div class="w-full flex flex-col gap-2 px-2 md:px-12 lg:px-18">
         <div>
-          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+          <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
             {{ 'searchPage.discoverLocalBusinessesAndCuratedCatalogs' |
             translate}}
           </h2>
         </div>
         <div>
-          <h3 class="text-lg text-lg md:text-xl lg:text-3xl">
+          <h3 class="text-md md:text-xl lg:text-3xl">
             {{ 'searchPage.findTheProductsYouLoveFastAndEasy' | translate}}
           </h3>
         </div>
       </div>
       <div class="flex flex-col items-center justify-center w-full gap-6">
-        <div class="w-full">
+        <div class="hidden sm:block w-full">
           <div class="flex flex-wrap gap-2 w-full items-center justify-center">
             @for (tag of tags; track $index) {
             <lib-button
@@ -48,7 +48,8 @@
     </div>
   </section>
 
-  @for (productCollection of productCollections; track productCollection.id) {
+  @if(!collectionsAttempt) { @for (productCollection of productCollections;
+  track productCollection.id) {
   <div
     class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border"
   >
@@ -59,16 +60,14 @@
       <p-carousel
         [value]="productCollection.products"
         [circular]="true"
-        [numVisible]="6"
-        [numScroll]="1"
         [responsiveOptions]="productCollectionResponsiveOptions"
         [showIndicators]="true"
       >
         <ng-template let-product #item>
           <div class="flex flex-row items-center justify-center my-2 sm:my-4">
             <lib-product-card
-              class="cursor-pointer w-55 md:w-65"
-              [width]="'w-55 md:w-65'"
+              class="cursor-pointer w-54 md:w-65"
+              [width]="'w-54 md:w-65'"
               [height]="'h-80 md:h-100'"
               [product]="product"
             ></lib-product-card>
@@ -77,18 +76,24 @@
       </p-carousel>
     </div>
   </div>
-  }
+  } @if(collectionsAttempt) {
+  <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  } }
 
   <div class="flex flex-col items-start justify-center w-full px-4 box-border">
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
+    @if(!businessesAttempt) {
     <div class="card w-10/10">
       <p-carousel
         [value]="businesses"
         [circular]="true"
-        [numVisible]="6"
-        [numScroll]="1"
         [responsiveOptions]="responsiveOptions"
         [showIndicators]="true"
       >
@@ -104,16 +109,23 @@
         </ng-template>
       </p-carousel>
     </div>
+    } @if(businessesAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    }
   </div>
   <div class="flex flex-col items-start justify-center w-full px-4 box-border">
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
+    @if(!catalogsAttempt) {
     <div class="card w-10/10">
       <p-carousel
         [value]="catalogs"
-        [numVisible]="6"
-        [numScroll]="1"
         [circular]="true"
         [responsiveOptions]="responsiveOptions"
         [showIndicators]="true"
@@ -128,20 +140,16 @@
             ></lib-catalog-card>
           </div>
         </ng-template>
-        <ng-template let-catalog #item>
-          <div
-            class="flex flex-row items-center justify-center my-2 sm:my-4 w-full"
-          >
-            <lib-catalog-card
-              class="cursor-pointer w-45 sm:w-60"
-              [width]="'w-45 sm:w-60'"
-              [height]="'h-50 sm:h-60'"
-              [catalog]="catalog"
-            ></lib-catalog-card>
-          </div>
-        </ng-template>
       </p-carousel>
     </div>
+    } @if(catalogsAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    }
   </div>
 
   <div
@@ -162,5 +170,14 @@
       </div>
       }
     </div>
+
+    @if(productsAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    }
   </div>
 </section>

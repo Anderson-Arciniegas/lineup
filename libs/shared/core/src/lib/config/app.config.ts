@@ -18,6 +18,7 @@ export const appRoutes: AppRoutes = {
   lineup: 'lineup',
   catalogs: 'catalogs',
   inventory: 'inventory',
+  registerSale: 'register-sale',
   settings: 'settings',
   socialMedias: 'social-medias',
   locations: 'locations',
@@ -25,6 +26,7 @@ export const appRoutes: AppRoutes = {
   discounts: 'discounts',
   statistics: 'statistics',
   tag: 'tag',
+  businessHours: 'business-hours',
 };
 
 export const languagesList: Language[] = [
@@ -69,6 +71,7 @@ export interface AppRoutes {
   lineup: string;
   catalogs: string;
   inventory: string;
+  registerSale: string;
   settings: string;
   socialMedias: string;
   locations: string;
@@ -76,4 +79,5 @@ export interface AppRoutes {
   discounts: string;
   statistics: string;
   tag: string;
+  businessHours: string;
 }

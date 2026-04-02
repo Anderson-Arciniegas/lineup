@@ -1,3 +1,5 @@
+export * from './bcv-official-rates.schema';
+export * from './business-hour.schema';
 export * from './business-follower.schema';
 export * from './business-role.schema';
 export * from './business.schema';

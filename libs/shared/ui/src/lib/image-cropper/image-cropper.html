@@ -4,7 +4,7 @@
   <!-- file input puede estar fuera del modal o dentro; se deja visible para disparar el modal -->
   @if (!imageChangedEvent) {
   <div
-    class="file-upload border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 h-60 flex w-full items-center justify-center"
+    class="file-upload border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 max-w-100 h-70 md:h-80 flex w-full items-center justify-center"
     tabindex="0"
     (click)="fileInput.click()"
     (keyup.enter)="fileInput.click()"

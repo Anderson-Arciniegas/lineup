@@ -1,60 +1,204 @@
 @if (business) {
 <div
-  class="flex flex-col md:flex-row items-center md:items-start justify-center gap-4 md:gap-6 pb-5 w-full max-w-3xl"
+  class="flex flex-col items-start justify-start gap-2 w-full max-w-3xl px-4 pb-5"
+  [class.business-data--brand-light-text]="useLightText === true"
+  [class.business-data--brand-dark-text]="useLightText === false"
 >
-  <div class="flex flex-col items-center justify-center img-box">
-    <img [src]="business?.image?.url" alt="Shop Icon" />
-  </div>
-  <div class="flex flex-col items-center md:items-start justify-center gap-2">
-    <div
-      class="flex flex-col sm:flex-row items-center justify-start gap-2 sm:gap-4"
-    >
-      <div class="flex flex-row items-center justify-center gap-4">
-        <h3 class="text-2xl font-semibold">{{business?.name}}</h3>
-      </div>
+  <div
+    class="flex flex-row items-start justify-start sm:justify-center gap-2 md:gap-6 w-full"
+  >
+    <div class="flex flex-col items-center justify-center img-box min-w-25">
+      <img [src]="business?.image?.url" alt="Shop Icon" />
+    </div>
+    <div class="flex flex-col items-center md:items-start justify-center gap-2">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-4 w-full"
+      >
+        <div class="flex flex-row items-center justify-start w-full sm:w-auto">
+          <h3 class="text-base sm:text-lg md:text-2xl font-semibold">
+            {{business?.name}}
+          </h3>
+        </div>
 
-      <div class="flex flex-row items-center justify-start gap-4">
-        <div class="flex flex-row items-center justify-start">
-          <div
-            [pTooltip]="(followers ?? 0) | number: '1.0-2':'es'"
-            tooltipPosition="top"
-            class="flex items-center justify-center gap-2 min-w-11"
-          >
-            <i class="pi pi-user" style="font-size: 1rem"></i>
-            <span class="cursor-default"
-              >{{ formatFollowers(followers ?? 0) }}</span
+        <div class="flex flex-row items-center justify-start gap-4">
+          <div class="flex flex-row items-center justify-start">
+            <div
+              [pTooltip]="(followers ?? 0) | number: '1.0-2':'es'"
+              tooltipPosition="top"
+              class="flex items-center justify-center gap-2 min-w-11"
             >
+              <i class="pi pi-user" style="font-size: 1rem"></i>
+              <span class="cursor-default"
+                >{{ formatFollowers(followers ?? 0) }}</span
+              >
+            </div>
           </div>
-        </div>
 
-        @if (myBusiness) {
-        <div class="flex flex-row items-center justify-center">
-          <lib-button
-            [icon]="'pi pi-pencil'"
-            [label]="'general.edit' | translate"
-            [type]="'rounded'"
-            [size]="'small'"
-            [link]="'/dashboard/edit'"
-          ></lib-button>
-        </div>
-        }@else {
-        <div class="flex flex-row items-center justify-start h-10">
-          <div>
+          @if (myBusiness) {
+          <div class="flex flex-row items-center justify-center">
+            <!-- <lib-button
+              [icon]="'pi pi-pencil'"
+              [label]="'general.edit' | translate"
+              [type]="'rounded'"
+              [width]="'w-25'"
+              [size]="'small'"
+              [link]="'/dashboard/edit'"
+            ></lib-button> -->
+
             <lib-button
-              \
-              [label]="following ? ('general.following' | translate) : ('general.follow' | translate)"
-              [color]="following ? 'secondary' : 'primary'"
+              [icon]="'pi pi-palette'"
+              [label]="'general.editColor' | translate"
               [type]="'rounded'"
               [size]="'small'"
-              [width]="'w-30'"
-              (action)="following ? unfollowBusiness() : followBusiness()"
+              (action)="op.toggle($event)"
+            ></lib-button>
+
+            <p-popover #op>
+              <div class="flex flex-col gap-4 w-70">
+                <div class="flex flex-col items-center gap-4">
+                  <label for="cp-hex" class="mb-2 text-md font-medium">
+                    {{ 'general.selectTheMainColorOfYourBusiness' | translate }}
+                  </label>
+                  <div
+                    class="w-full flex flex-row items-center justify-center gap-3"
+                  >
+                    <input
+                      pInputText
+                      class="w-40"
+                      [(ngModel)]="color"
+                      (ngModelChange)="setColor()"
+                      pSize="small"
+                      autocomplete="off"
+                    />
+                    <p-colorpicker
+                      class="border-2 border-gray-500 rounded-lg"
+                      (onChange)="setColor()"
+                      [(ngModel)]="color"
+                      inputId="cp-hex"
+                    />
+                  </div>
+
+                  <div
+                    class="flex flex-row items-center justify-center gap-4 mt-4"
+                  >
+                    <lib-button
+                      [icon]="'pi pi-undo'"
+                      [type]="'rounded'"
+                      [color]="'secondary'"
+                      [width]="'w-11'"
+                      (action)="resetColor()"
+                    ></lib-button>
+                    <lib-button
+                      [label]="'general.save' | translate"
+                      [type]="'rounded'"
+                      [size]="'small'"
+                      [color]="'primary'"
+                      [width]="'w-25'"
+                      [loading]="attemptColor"
+                      (action)="saveColor()"
+                    ></lib-button>
+                  </div>
+                </div>
+              </div>
+            </p-popover>
+          </div>
+          }@else {
+          <div class="flex flex-row items-center justify-start h-10">
+            <div>
+              <lib-button
+                [label]="following ? ('general.following' | translate) : ('general.follow' | translate)"
+                [color]="following ? 'secondary' : 'primary'"
+                [type]="'rounded'"
+                [size]="'small'"
+                [width]="'w-30'"
+                (action)="following ? unfollowBusiness() : followBusiness()"
+              ></lib-button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div
+        class="hidden sm:flex flex-col items-center md:items-start justify-center gap-2"
+      >
+        @if (business?.description) {
+        <div class="flex flex-row w-full">
+          <p class="business-description text-gray-600 font-medium text-sm">
+            {{ business.description }}
+          </p>
+        </div>
+        }
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-start w-full gap-3"
+        >
+          @if (business?.locations.length > 1) {
+          <p-chip
+            (click)="openLocationsModal()"
+            class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+            [label]=" 'general.locations' | translate"
+            icon="pi pi-map-marker"
+          />
+          }@else if (business?.locations.length === 1) {
+          <p-chip
+            (click)="openLocationModal(business?.locations[0])"
+            class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+            [label]=" getAddress(business?.locations[0].name)"
+            icon="pi pi-map-marker"
+          />
+          } @if (businessHoursSummaryLabel; as hoursLabel) {
+          <!-- <p-chip
+            class="py-2 px-4 text-base font-medium cursor-default rounded-full"
+            [label]="hoursLabel"
+            icon="pi pi-clock"
+          /> -->
+          <div
+            class="flex flex-row items-center justify-start gap-2 text-gray-600"
+          >
+            <i class="pi pi-clock"></i>
+            <span class="text-md font-medium">{{hoursLabel}}</span>
+          </div>
+          } @else if (shouldShowBusinessHoursChip) {
+          <p-chip
+            (click)="openBusinessHoursModal()"
+            class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+            [label]="'general.schedule' | translate"
+            icon="pi pi-clock"
+          />
+          }
+        </div>
+        <div class="flex flex-row items-center justify-start gap-3 w-full">
+          @for (socialNetwork of businessSocialNetworks; track socialNetwork.id)
+          {
+          <div class="img-social-media">
+            <a
+              [href]="getSocialNetworkUrl(socialNetwork.socialNetwork.id)"
+              target="_blank"
+            >
+              <img
+                [src]="socialNetwork.socialNetwork.image?.url"
+                [alt]="socialNetwork.socialNetwork.name"
+                [title]="socialNetwork.socialNetwork.name"
+              />
+            </a>
+          </div>
+          }
+          <div class="flex flex-row items-center justify-center">
+            <lib-button
+              [icon]="'pi pi-share-alt'"
+              [width]="'w-11'"
+              [color]="'secondary'"
+              [type]="'rounded'"
+              (action)="share()"
             ></lib-button>
           </div>
         </div>
-        }
       </div>
     </div>
-
+  </div>
+  <div
+    class="flex sm:hidden flex-col items-center md:items-start justify-center gap-2 w-full"
+  >
     @if (business?.description) {
     <div class="flex flex-row w-full">
       <p class="business-description text-gray-600 text-sm">
@@ -62,8 +206,43 @@
       </p>
     </div>
     }
-
-    <div class="flex flex-row items-center content-center justify-center gap-3">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-start w-full gap-3"
+    >
+      @if (business?.locations.length > 1) {
+      <p-chip
+        (click)="openLocationsModal()"
+        class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+        [label]=" 'general.locations' | translate"
+        icon="pi pi-map-marker"
+      />
+      }@else if (business?.locations.length === 1) {
+      <p-chip
+        (click)="openLocationModal(business?.locations[0])"
+        class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded rounded-full"
+        [label]=" getAddress(business?.locations[0].name)"
+        icon="pi pi-map-marker"
+      />
+      } @if (businessHoursSummaryLabel; as hoursLabel) {
+      <!-- <p-chip
+        class="py-2 px-4 text-base font-medium cursor-default rounded-full"
+        [label]="hoursLabel"
+        icon="pi pi-clock"
+      /> -->
+      <div class="flex flex-row items-center justify-start gap-2 text-gray-600">
+        <i class="pi pi-clock"></i>
+        <span class="text-sm font-medium">{{hoursLabel}}</span>
+      </div>
+      } @else if (shouldShowBusinessHoursChip) {
+      <p-chip
+        (click)="openBusinessHoursModal()"
+        class="py-2 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+        [label]="'general.schedule' | translate"
+        icon="pi pi-clock"
+      />
+      }
+    </div>
+    <div class="flex flex-row items-center justify-start gap-3 w-full">
       @for (socialNetwork of businessSocialNetworks; track socialNetwork.id) {
       <div class="img-social-media">
         <a
@@ -88,27 +267,9 @@
         ></lib-button>
       </div>
     </div>
-    <div
-      class="flex flex-col md:flex-row sm:flex-wrap items-center content-center gap-2 sm:gap-0 px-4 md:px-0"
-    >
-      @if (business?.locations.length > 1) {
-      <p-chip
-        (click)="openLocationsModal()"
-        class="py-1 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300"
-        [label]=" 'general.locations' | translate"
-        icon="pi pi-map-marker"
-      />
-      }@else if (business?.locations.length === 1) {
-      <p-chip
-        (click)="openLocationModal(business?.locations[0])"
-        class="py-1 px-4 text-base font-medium cursor-pointer hover:bg-primary-200 transition-all duration-300"
-        [label]=" getAddress(business?.locations[0].name)"
-        icon="pi pi-map-marker"
-      />
-      }
-    </div>
   </div>
 </div>
+
 } @else {
 <div
   class="flex flex-col md:flex-row items-center justify-center gap-6 px-3 pb-5 w-full max-w-3xl"

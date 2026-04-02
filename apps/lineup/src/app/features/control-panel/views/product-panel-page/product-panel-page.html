@@ -11,18 +11,19 @@
   } @else if (product) {
 
   <div
-    class="w-full flex flex-col gap-8 py-4 sm:py-8 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+    class="w-full flex flex-col gap-8 py-4 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <!-- Acciones superiores -->
     <div
       class="flex flex-row flex-wrap items-center justify-between w-full gap-3"
     >
       <lib-button
-        icon="pi pi-arrow-left"
-        [label]="'general.back' | translate"
-        type="rounded"
-        color="secondary"
-        variant="text"
+        [icon]="'pi pi-arrow-left'"
+        [width]="'w-13'"
+        [color]="'secondary'"
+        [variant]="'text'"
+        [size]="'large'"
+        [type]="'rounded'"
         (action)="goBack()"
       ></lib-button>
       <div class="flex flex-row gap-3 flex-wrap">
@@ -70,7 +71,7 @@
 
       <div class="flex flex-col gap-2 flex-1">
         <div class="flex flex-row items-center gap-3 flex-wrap">
-          <span class="text-gray-400 text-base font-mono"
+          <span class="text-gray-600 font-mono text-2xl"
             >#{{ product.id }}</span
           >
           <p-tag [value]="product.status" severity="success"></p-tag>
@@ -86,6 +87,17 @@
           {{ product.catalog.title }}
         </span>
         }
+
+        <div class="card flex flex-row justify-start items-center gap-3">
+          <p-toggleswitch
+            [(ngModel)]="isPrimaryToggle"
+            [disabled]="togglingPrimary"
+            (ngModelChange)="onIsPrimaryToggle($event)"
+          />
+          <span class="text-sm text-gray-600">{{
+            'general.primaryProduct' | translate
+          }}</span>
+        </div>
       </div>
     </div>
 
@@ -137,6 +149,89 @@
       </div>
     </div>
 
+    @if (appliedProductDiscount) {
+    <div
+      class="w-full flex flex-col gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/80"
+    >
+      <h2 class="text-xl font-semibold text-gray-800">
+        {{ 'general.discount' | translate }}
+        <span class="text-gray-500 font-normal text-base font-mono ml-2"
+          >#{{ appliedProductDiscount.id }}</span
+        >
+      </h2>
+      <dl
+        class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm sm:text-base"
+      >
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.discountType' | translate }}
+          </dt>
+          <dd>
+            {{ discountTypeLabelKey(appliedProductDiscount.discountType) |
+            translate }}
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.discountValue' | translate }}
+          </dt>
+          <dd>
+            @if ( appliedProductDiscount.discountType ===
+            DiscountTypeEnum.PERCENTAGE ) {
+            <span>{{ appliedProductDiscount.value }}%</span>
+            } @else {
+            <span
+              >{{ appliedProductDiscount.value }} {{
+              appliedProductDiscount.currency?.code | currencySymbol }}</span
+            >
+            }
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.status' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.status }}</dd>
+        </div>
+        @if (appliedProductDiscount.creationDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.creationDate' | translate }}
+          </dt>
+          <dd>
+            {{ appliedProductDiscount.creationDate | localeDate: 'datetime' }}
+          </dd>
+        </div>
+
+        } @if (appliedProductDiscount.startDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.startDate' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.startDate | localeDate: 'date' }}</dd>
+        </div>
+        } @if (appliedProductDiscount.endDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.endDate' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.endDate | localeDate: 'date' }}</dd>
+        </div>
+        } @if (appliedProductDiscount.modificationDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.modificationDate' | translate }}
+          </dt>
+          <dd>
+            {{ appliedProductDiscount.modificationDate | localeDate: 'datetime'
+            }}
+          </dd>
+        </div>
+        }
+      </dl>
+    </div>
+    }
+
     <!-- Sección de inventario / SKUs -->
     @if ((product.skus?.length ?? 0) > 0) {
     <div class="w-full flex flex-col gap-4">
@@ -159,16 +254,36 @@
             }
           </div>
           <div class="flex flex-row items-center gap-6 flex-wrap">
-            <div class="flex flex-col items-center gap-1 min-w-16">
-              <span class="text-xs text-gray-400"
+            <div
+              class="flex flex-col items-end gap-1 min-w-[8.5rem] sm:min-w-36"
+            >
+              @if (skuShowsDiscountedPrice(sku)) {
+              <!-- <span class="text-xs text-gray-400 self-end">{{
+                'general.priceWithDiscount' | translate
+              }}</span> -->
+              <span class="font-semibold text-emerald-700">
+                {{ getSkuDiscountedPrice(sku)! | currency: sku.currency!.code :
+                'symbol' : '1.0-2' : 'es' }}
+              </span>
+              <!-- <span class="text-xs text-gray-400 self-end">{{
+                'general.originalPrice' | translate
+              }}</span> -->
+              <span class="text-sm text-gray-500 line-through"
+                >{{ sku.price | currency: sku.currency!.code : 'symbol' :
+                '1.0-2' : 'es' }}</span
+              >
+              } @else if (sku.price !== null && sku.currency) {
+              <span class="text-xs text-gray-400 self-end"
                 >{{ 'general.price' | translate }}</span
               >
-              @if (sku.price !== null && sku.currency) {
               <span class="font-semibold text-gray-800">
                 {{ sku.price | currency: sku.currency.code : 'symbol' : '1.0-2'
                 : 'es' }}
               </span>
               } @else {
+              <span class="text-xs text-gray-400 self-end"
+                >{{ 'general.price' | translate }}</span
+              >
               <span class="text-gray-400">—</span>
               }
             </div>
@@ -195,7 +310,7 @@
     <div class="w-full flex flex-col gap-4">
       <h2 class="text-xl font-semibold text-gray-800">
         {{ 'general.ratings' | translate }} @if (ratings.length > 0) {
-        <span class="text-gray-400 font-normal text-base ml-2"
+        <span class="text-gray-600 font-normal text-base ml-2"
           >({{ ratings.length }})</span
         >
         }
@@ -213,34 +328,7 @@
       } @else {
       <div class="flex flex-col gap-3">
         @for (rating of ratings; track rating.id) {
-        <div
-          class="flex flex-col gap-2 p-4 border border-gray-200 rounded-xl bg-white"
-        >
-          <div
-            class="flex flex-row items-center justify-between flex-wrap gap-2"
-          >
-            <div class="flex flex-row items-center gap-2">
-              <i class="pi pi-user text-gray-400"></i>
-              <span class="text-sm font-medium text-gray-700">
-                {{ rating.creationUser?.username}}
-              </span>
-            </div>
-            <div class="flex flex-row gap-1">
-              @for (star of getStarArray(); track star) {
-              <i
-                class="pi text-sm"
-                [class.pi-star-fill]="star <= rating.stars"
-                [class.pi-star]="star > rating.stars"
-                [class.text-yellow-400]="star <= rating.stars"
-                [class.text-gray-300]="star > rating.stars"
-              ></i>
-              }
-            </div>
-          </div>
-          @if (rating.comment) {
-          <p class="text-sm text-gray-600">{{ rating.comment }}</p>
-          }
-        </div>
+        <lib-product-rating-item [rating]="rating" />
         }
       </div>
       }

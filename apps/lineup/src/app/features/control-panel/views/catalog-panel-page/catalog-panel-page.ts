@@ -3,12 +3,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
+  BcvOfficialRatesSchema,
   BusinessPrivateService,
   BusinessSchema,
   CatalogPrivateService,
   CatalogSchema,
   ProductPrivateService,
   ProductSchema,
+  RatesPrivateService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -62,6 +64,7 @@ export class CatalogPanelPage implements OnInit {
   page = 1;
   noMoreResults = false;
   productsAttempt = false;
+  rates: BcvOfficialRatesSchema;
   ref: DynamicDialogRef | undefined;
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessService = inject(BusinessPrivateService);
@@ -70,6 +73,7 @@ export class CatalogPanelPage implements OnInit {
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private readonly _productService = inject(ProductPrivateService);
+  private readonly _ratesService = inject(RatesPrivateService);
   private readonly _utils = inject(UtilsService);
   private _subscription: Subscription = new Subscription();
 
@@ -80,6 +84,7 @@ export class CatalogPanelPage implements OnInit {
       this.getBusiness();
     }
     this.getCatalog();
+    this.getRates();
   }
 
   getBusiness(): void {
@@ -128,7 +133,7 @@ export class CatalogPanelPage implements OnInit {
     this.productsAttempt = true;
     this._subscription.add(
       this._productService
-        .getAllByCatalog(this.catalog.id, {
+        .getAllByCatalogPaginated(this.catalog.id, {
           page: this.page,
           limit: 100,
         })
@@ -213,5 +218,18 @@ export class CatalogPanelPage implements OnInit {
   deleteProduct(id: number): void {
     console.log(id);
     this.products = this.products.filter((product) => product.id !== id);
+  }
+
+  getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          this.rates = rates;
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      }),
+    );
   }
 }

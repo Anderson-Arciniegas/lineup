@@ -3,9 +3,25 @@
     class="w-full flex flex-col md:flex-row items-center justify-center xl:justify-start gap-4 sm:gap-8"
   >
     @if(price && currency) {
-    <span class="font-bold text-3xl sm:text-4xl"
-      >{{ price | currency: currency?.code : 'symbol' : '1.0-2' : 'es' }}
-    </span>
+    <div
+      class="flex flex-col items-center md:items-end gap-0.5 sm:gap-1"
+      [class.md:flex-row]="showDiscountUi"
+      [class.md:items-baseline]="showDiscountUi"
+      [class.md:gap-3]="showDiscountUi"
+    >
+      @if (showDiscountUi) {
+      <span
+        class="product-details__original-price text-lg sm:text-xl line-through font-medium"
+        >{{ originalListPrice | currency: currency?.code : 'symbol' : '1.0-2' :
+        'es' }}</span
+      >
+      }
+      <span
+        class="font-bold text-3xl sm:text-4xl"
+        [class.text-primary]="showDiscountUi"
+        >{{ price | currency: currency?.code : 'symbol' : '1.0-2' : 'es' }}
+      </span>
+    </div>
     }
     <div class="flex flex-row gap-3">
       @if(href) {

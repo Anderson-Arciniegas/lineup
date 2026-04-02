@@ -2,6 +2,7 @@ import type {
   BusinessSchema,
   CatalogSchema,
   CurrencySchema,
+  DiscountSchema,
   FileSchema,
   UserSchema,
 } from '.';
@@ -26,6 +27,16 @@ export interface ProductTagSchema {
 
 export interface DiscountProductSchema {
   id: number;
+  discount?: DiscountSchema;
+  idDiscount?: number;
+  idProduct?: number;
+  idCreationBusiness?: number;
+  creationBusiness?: BusinessSchema;
+  creationDate?: string;
+  modificationBusiness?: BusinessSchema;
+  modificationDate?: string;
+  status?: StatusEnum;
+  product?: ProductSchema;
   __typename?: 'DiscountProductSchema';
 }
 
@@ -65,13 +76,16 @@ export interface ProductCollectionSchema {
 export interface ProductSchema {
   business?: BusinessSchema;
   catalog?: CatalogSchema;
+  creationDate?: string;
   currency?: CurrencySchema;
   description: string;
   discountProduct?: DiscountProductSchema;
+  hasVariations: boolean;
   id: number;
   idCatalog: number;
   idCreationBusiness: number;
   idCurrency?: number;
+  isPrimary: boolean;
   likes: number;
   modificationBusiness?: BusinessSchema;
   price?: number;
@@ -151,7 +165,7 @@ export interface ProductSkuSchema {
   product?: ProductSchema;
   currency?: CurrencySchema;
   idCurrency?: number;
-  quantity: number;
+  quantity: number | null;
   skuCode: string;
   status: StatusEnum;
   variationOptions: Record<string, unknown>;

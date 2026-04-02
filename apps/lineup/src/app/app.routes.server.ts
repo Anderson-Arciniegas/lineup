@@ -1,9 +1,38 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
-  // Rutas que usan Server para evitar errores de getPrerenderParams con parámetros dinámicos/catch-all
+  // Rutas autenticadas: siempre client-side para evitar que los guards
+  // corran en el servidor sin contexto de auth (causaría flash de login).
+  {
+    path: 'login',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'register',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'register/**',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'dashboard',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'dashboard/**',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'profile',
+    renderMode: RenderMode.Client,
+  },
   {
     path: 'profile/**',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'tag/:tag',
     renderMode: RenderMode.Server,
   },
   {
@@ -17,18 +46,6 @@ export const serverRoutes: ServerRoute[] = [
   {
     path: ':business',
     renderMode: RenderMode.Server,
-  },
-  {
-    path: ':business/edit',
-    renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => [
-      {
-        business: 'business-1',
-      },
-      {
-        business: 'business-2',
-      },
-    ],
   },
   {
     path: ':business/:catalogPath',

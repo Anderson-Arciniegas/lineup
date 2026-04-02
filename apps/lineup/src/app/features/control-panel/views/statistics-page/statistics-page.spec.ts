@@ -39,7 +39,7 @@ describe('StatisticsPage', () => {
               of({
                 byStatus: [],
                 byType: [],
-                expiringSoonCount: 0,
+                expiringSoon: { total: 0, data: [] },
               }),
             inventoryStats: () =>
               of({
@@ -73,5 +73,14 @@ describe('StatisticsPage', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('distingue stock no registrado (null) de agotado (0) para quantity de SKU', () => {
+    expect(component.isSkuStockNotRegistered(null)).toBe(true);
+    expect(component.isSkuStockNotRegistered(undefined)).toBe(true);
+    expect(component.isSkuStockNotRegistered(0)).toBe(false);
+    expect(component.isSkuOutOfStock(0)).toBe(true);
+    expect(component.isSkuOutOfStock(null)).toBe(false);
+    expect(component.isSkuOutOfStock(5)).toBe(false);
   });
 });

@@ -1,5 +1,6 @@
-<div
-  class="discount-item flex flex-row justify-between items-center gap-8 p-3 md:p-4 hover:bg-primary-200 transition-all duration-300 cursor-default"
+<a
+  [routerLink]="[discount.id]"
+  class="discount-item flex flex-row justify-between items-center gap-8 p-3 hover:bg-primary-200 transition-all duration-300 cursor-pointer"
 >
   <div class="flex flex-row justify-start items-center gap-3">
     <span class="font-semibold">#{{ discount.id }}</span>
@@ -19,18 +20,32 @@
         {{ discount.scope }}
       </span>
 
+      @if (discount.catalog) {
       <span class="hidden md:flex text-sm font-medium">
         {{ discount.catalog?.title }}
       </span>
+      } @else if (discount.discountProducts && discount.discountProducts.length
+      > 0 && discount.scope === DiscountScopeEnum.PRODUCT) {
+      <span class="hidden md:flex text-sm font-medium">
+        {{ setLabel(discount.discountProducts[0].product?.title) }}
+      </span>
+      }
     </div>
   </div>
 
   <div class="flex flex-row justify-end items-center gap-2 md:gap-4">
     <span class="hidden sm:flex text-sm text-gray-500 font-medium">
-      Fin: {{ discount.endDate | date: 'dd/MM/yyyy' }}
+      Fin: {{ discount.endDate | localeDate: 'date' }}
     </span>
 
-    <div class="flex flex-row items-center gap-2">
+    <div
+      class="flex flex-row items-center gap-2"
+      (click)="$event.stopPropagation(); $event.preventDefault();"
+      (keydown.enter)="$event.stopPropagation(); $event.preventDefault();"
+      (keydown.space)="$event.stopPropagation(); $event.preventDefault();"
+      tabindex="0"
+      role="button"
+    >
       <lib-button
         [icon]="'pi pi-pencil'"
         [type]="'rounded'"
@@ -51,4 +66,4 @@
       ></lib-button>
     </div>
   </div>
-</div>
+</a>

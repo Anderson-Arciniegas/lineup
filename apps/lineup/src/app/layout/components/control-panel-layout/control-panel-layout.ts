@@ -61,15 +61,25 @@ export class ControlPanelLayout implements OnInit {
         url: '/dashboard/locations',
       },
       {
-        label: 'general.followers',
-        icon: 'pi pi-heart',
-        url: '/dashboard/followers',
+        label: 'general.inventory',
+        icon: 'pi pi-warehouse',
+        url: '/dashboard/inventory',
+      },
+      {
+        label: 'general.registerSale',
+        icon: 'pi pi-shopping-cart',
+        url: '/dashboard/register-sale',
       },
 
       {
         label: 'general.statistics',
         icon: 'pi pi-chart-bar',
         url: '/dashboard/statistics',
+      },
+      {
+        label: 'general.businessHours',
+        icon: 'pi pi-clock',
+        url: '/dashboard/business-hours',
       },
       {
         label: 'general.settings',

@@ -8,6 +8,7 @@ import { AccountTypePage } from '../features/auth/views/account-type-page/accoun
 import { LoginPage } from '../features/auth/views/login-page/login-page';
 import { RegisterBusinessPage } from '../features/auth/views/register-business-page/register-business-page';
 import { RegisterUserPage } from '../features/auth/views/register-user-page/register-user-page';
+import { BusinessHoursPage } from '../features/control-panel/views/business-hours-page/business-hours-page';
 import { BusinessSettingsPage } from '../features/control-panel/views/business-settings-page/business-settings-page';
 import { CatalogPanelPage } from '../features/control-panel/views/catalog-panel-page/catalog-panel-page';
 import { CatalogsPage } from '../features/control-panel/views/catalogs-page/catalogs-page';
@@ -18,8 +19,10 @@ import { CreateProductPage } from '../features/control-panel/views/create-produc
 import { DiscountPage } from '../features/control-panel/views/discount-page/discount-page';
 import { DiscountsPanelPage } from '../features/control-panel/views/discounts-panel-page/discounts-panel-page';
 import { EditBusinessPage } from '../features/control-panel/views/edit-business-page/edit-business-page';
+import { InventoryPage } from '../features/control-panel/views/inventory-page/inventory-page';
 import { LocationsPage } from '../features/control-panel/views/locations-page/locations-page';
 import { ProductPanelPage } from '../features/control-panel/views/product-panel-page/product-panel-page';
+import { RegisterSalePage } from '../features/control-panel/views/register-sale-page/register-sale-page';
 import { SocialMediasPage } from '../features/control-panel/views/social-medias-page/social-medias-page';
 import { StatisticsPage } from '../features/control-panel/views/statistics-page/statistics-page';
 import { UpdateProductSkuPage } from '../features/control-panel/views/update-product-sku-page/update-product-sku-page';
@@ -117,6 +120,14 @@ export const layoutRoutes: Routes = [
         ],
       },
       {
+        path: AppConfigService.config.routes.inventory,
+        component: InventoryPage,
+      },
+      {
+        path: AppConfigService.config.routes.registerSale,
+        component: RegisterSalePage,
+      },
+      {
         path: AppConfigService.config.routes.statistics,
         component: StatisticsPage,
       },
@@ -157,6 +168,10 @@ export const layoutRoutes: Routes = [
             ],
           },
         ],
+      },
+      {
+        path: AppConfigService.config.routes.businessHours,
+        component: BusinessHoursPage,
       },
       {
         path: AppConfigService.config.routes.settings,

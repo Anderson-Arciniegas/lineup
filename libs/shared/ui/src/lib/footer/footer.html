@@ -1,0 +1,117 @@
+<footer
+  class="w-full bg-primary-50 border-t border-primary-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.06)]"
+>
+  <div
+    class="container mx-auto flex flex-col gap-10 py-10 px-5 lg:px-9 lg:flex-row lg:items-start lg:justify-between xl:gap-12"
+  >
+    <div class="flex flex-col gap-4 items-start max-w-xs xl:max-w-md">
+      <a routerLink="/" class="flex flex-row items-center gap-3">
+        <img
+          src="assets/images/lineup.png"
+          alt="Lineup logo"
+          class="h-12 sm:h-14 object-contain cursor-pointer"
+        />
+      </a>
+      <p class="text-sm leading-relaxed text-primary-700">
+        {{ 'footer.tagline' | translate }}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="font-semibold text-primary-800 tracking-wide">
+        {{ 'footer.navigation' | translate }}
+      </span>
+      <nav
+        class="flex flex-col gap-1 items-start"
+        [attr.aria-label]="'footer.navigation' | translate"
+      >
+        <lib-button
+          [link]="'/'"
+          variant="text"
+          color="secondary"
+          [label]="'general.explore'"
+        ></lib-button>
+        <lib-button
+          [link]="'/info'"
+          variant="text"
+          color="secondary"
+          [label]="'general.information'"
+        ></lib-button>
+        @if(!logged()) {
+        <lib-button
+          [link]="'/login'"
+          variant="text"
+          color="secondary"
+          [label]="'general.login'"
+        ></lib-button>
+        } @else if (!businessMode()) {
+        <lib-button
+          [link]="'/profile'"
+          variant="text"
+          color="secondary"
+          [label]="'general.profile'"
+        ></lib-button>
+        } @else if (businessMode()) {
+        <lib-button
+          [link]="'/dashboard'"
+          variant="text"
+          color="secondary"
+          [label]="'general.dashboard'"
+        ></lib-button>
+        }
+      </nav>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="font-semibold text-primary-800 tracking-wide">
+        {{ 'footer.contact' | translate }}
+      </span>
+      <p class="text-sm text-primary-700 max-w-xs">
+        {{ 'footer.contactHint' | translate }}
+      </p>
+      <lib-button
+        [label]="'footer.contactButton'"
+        [type]="'rounded'"
+        color="secondary"
+        icon="pi pi-envelope"
+        [href]="gmailComposeUrl"
+        [target]="'_blank'"
+        width="w-full sm:w-auto"
+      ></lib-button>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-col justify-start items-start gap-4 container mx-auto px-5 lg:px-9"
+  >
+    <span class="text-sm font-semibold text-primary-800 tracking-wide">
+      {{ 'footer.createdBy' | translate }}
+    </span>
+    <div
+      class="flex flex-col sm:flex-row items-start justify-start sm:gap-8 gap-4"
+    >
+      <a
+        [href]="anderGitHubUrl"
+        target="_blank"
+        class="flex flex-row items-center justify-start gap-2"
+      >
+        <i class="pi pi-github text-2xl text-primary-600"></i>
+        <span class="text-sm text-primary-600">Anderson Arciniegas</span>
+      </a>
+      <a
+        [href]="omarGitHubUrl"
+        target="_blank"
+        class="flex flex-row items-center justify-start gap-2"
+      >
+        <i class="pi pi-github text-2xl text-primary-600"></i>
+        <span class="text-sm text-primary-600">Omar Gonzalez</span>
+      </a>
+    </div>
+  </div>
+
+  <div
+    class="border-t border-primary-100 py-8 px-3 md:px-4 lg:px-9 text-center text-xs text-primary-600"
+  >
+    {{ 'footer.copyright' | translate: { year: currentYear } }}
+  </div>
+</footer>

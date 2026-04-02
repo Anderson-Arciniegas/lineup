@@ -1,3 +1,50 @@
+/* Solo tipografía de marca: no envuelve lib-button ni tarjetas (como business-page + business-data). */
+.catalog-page__brand-text {
+  &--light h3 {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  &--dark h3 {
+    color: rgba(15, 23, 42, 0.92);
+  }
+}
+
+/* Estilos del select de vista sobre el degradado; sin color heredado hacia lib-button. */
+// .catalog-page__toolbar {
+//   &--on-dark-brand {
+//     ::ng-deep {
+//       .p-togglebutton:not(.p-togglebutton-checked) {
+//         color: rgba(255, 255, 255, 0.9);
+//         border-color: rgba(255, 255, 255, 0.35);
+//         background: rgba(255, 255, 255, 0.1);
+//       }
+
+//       .p-togglebutton.p-togglebutton-checked {
+//         background: rgba(255, 255, 255, 0.22) !important;
+//         border-color: rgba(255, 255, 255, 0.4) !important;
+//         color: rgba(255, 255, 255, 0.98) !important;
+//       }
+//     }
+//   }
+
+//   &--on-light-brand {
+//     /* PrimeNG aplica el tema por defecto; anula overrides del bloque oscuro. */
+//     ::ng-deep {
+//       .p-togglebutton:not(.p-togglebutton-checked) {
+//         color: revert-layer;
+//         border-color: revert-layer;
+//         background: revert-layer;
+//       }
+
+//       .p-togglebutton.p-togglebutton-checked {
+//         background: var(--p-primary-800) !important;
+//         border-color: var(--p-primary-800) !important;
+//         color: var(--p-primary-50) !important;
+//       }
+//     }
+//   }
+// }
+
 ::ng-deep {
   .max-width {
     max-width: 760px;
@@ -44,5 +91,11 @@
       padding-left: 3.75rem;
       padding-right: 3.75rem;
     }
+  }
+
+  .p-togglebutton.p-togglebutton-checked {
+    background: var(--p-primary-800) !important;
+    border-color: var(--p-primary-800) !important;
+    color: var(--p-primary-50) !important;
   }
 }

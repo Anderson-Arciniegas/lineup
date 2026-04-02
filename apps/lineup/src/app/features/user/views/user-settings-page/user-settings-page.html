@@ -3,15 +3,17 @@
     {{'general.settings' | translate}}
   </h2>
 
-  <div class="flex flex-col gap-8 px-2 xl:px-8 py-8 justify-start items-center">
+  <div
+    class="flex flex-col gap-8 px-2 xl:px-8 py-2 lg:py-8 justify-start items-center"
+  >
     <div
-      class="flex flex-wrap flex-row sm:flex-nowrap justify-between items-center w-9/10 md:w-6/10 gap-3"
+      class="flex flex-wrap flex-row sm:flex-nowrap justify-between items-center w-full md:w-6/10 gap-3"
     >
       <div class="flex flex-col gap-3 justify-start items-start">
         <h4 class="text-lg font-semibold">
           {{'general.password' | translate}}
         </h4>
-        <p class="ps-10 font-semibold">**********</p>
+        <p class="ps-4 md:ps-10 font-semibold">**********</p>
       </div>
       <lib-button
         [label]="'general.changePassword' | translate"
@@ -24,13 +26,15 @@
     </div>
   </div>
 
-  <div class="flex flex-col gap-8 px-2 xl:px-8 py-8 justify-start items-center">
+  <div
+    class="flex flex-col gap-8 px-2 xl:px-8 py-2 lg:py-8 justify-start items-center"
+  >
     <div
-      class="flex flex-wrap flex-row sm:flex-nowrap justify-between items-center w-9/10 md:w-6/10 gap-3"
+      class="flex flex-wrap flex-row sm:flex-nowrap justify-between items-center w-full md:w-6/10 gap-3"
     >
       <div class="flex flex-col gap-3 justify-start items-start">
         <h4 class="text-lg font-semibold">{{ 'general.email' | translate }}</h4>
-        <p class="ps-10 font-semibold">{{ email }}</p>
+        <p class="ps-4 md:ps-10 font-medium">{{ email }}</p>
       </div>
       @if (canChangeEmail) {
       <lib-button

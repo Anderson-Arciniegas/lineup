@@ -28,8 +28,20 @@ export const ADJUST_STOCK_MUTATION = gql`
   }
 `;
 
+export const REGISTER_SALE_MUTATION = gql`
+  mutation RegisterSale($data: [RegisterPurchaseInput!]!) {
+    registerSale(data: $data) ${productSkuSelection}
+  }
+`;
+
 export const UPDATE_PRODUCT_SKUS_MUTATION = gql`
   mutation UpdateProductSkus($data: UpdateProductSkusInput!) {
     updateProductSkus(data: $data) ${productSkuSelection}
+  }
+`;
+
+export const TOGGLE_PRODUCT_IS_PRIMARY_MUTATION = gql`
+  mutation ToggleProductIsPrimary($idProduct: Int!) {
+    toggleProductIsPrimary(idProduct: $idProduct) ${productSelection}
   }
 `;

@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.day-chip {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(209 213 219); /* gray-300 */
+  background: rgb(249 250 251); /* gray-50 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 80ms ease;
+}
+
+.day-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.day-chip:not(:disabled):hover {
+  background: rgb(239 246 255); /* light */
+  border-color: rgb(147 197 253);
+}
+
+.day-chip:active {
+  transform: scale(0.98);
+}
+
+.day-chip--selected {
+  background: rgb(219 234 254);
+  border-color: rgb(59 130 246); /* blue-500 */
+}
+
+.day-chip__text {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgb(55 65 81); /* gray-700 */
+}
+

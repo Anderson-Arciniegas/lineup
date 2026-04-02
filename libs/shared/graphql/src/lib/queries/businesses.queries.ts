@@ -1,6 +1,7 @@
 import { gql } from 'apollo-angular';
 import {
   businessFullSelection,
+  businessHourSelection,
   businessMyBusinessSelection,
 } from '../selections/businesses.selection';
 
@@ -42,5 +43,14 @@ export const FIND_ALL_BUSINESSES_QUERY = gql`
 export const FIND_ONE_BUSINESS_QUERY = gql`
   query FindOneBusiness($id: Int!) {
     findOneBusiness(id: $id) ${businessFullSelection}
+  }
+`;
+
+/**
+ * Horarios del negocio autenticado
+ */
+export const FIND_ALL_MY_BUSINESS_HOURS_QUERY = gql`
+  query FindAllMyBusinessHours {
+    findAllMyBusinessHours ${businessHourSelection}
   }
 `;

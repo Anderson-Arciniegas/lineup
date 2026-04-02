@@ -1,0 +1,100 @@
+<div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-2">
+    <span class="text-sm font-semibold text-gray-700">
+      {{ 'businessHoursModal.days' | translate }}
+    </span>
+
+    <div class="flex gap-2 flex-row flex-wrap">
+      @for (day of orderedWeekDays; track day) {
+      <button
+        type="button"
+        class="day-chip cursor-pointer"
+        [class.day-chip--selected]="isDaySelected(day)"
+        [disabled]="isEditMode"
+        [attr.aria-pressed]="isDaySelected(day)"
+        [attr.aria-label]="(weekDayLabel(day) | translate) + ''"
+        (click)="toggleDayByClick(day)"
+      >
+        <span class="day-chip__text">{{ weekDayShortLabel(day) }}</span>
+      </button>
+      }
+    </div>
+
+    @if (daysError(); as err) {
+    <span class="text-xs font-medium text-red-600">{{ err | translate }}</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="opensAt" class="text-sm font-semibold text-gray-700">
+          {{ 'businessHoursModal.opensAt' | translate }}
+        </label>
+        <p-datepicker
+          [ngModel]="opensAtPicker()"
+          (ngModelChange)="onOpensAtPickerChange($event)"
+          [showTime]="true"
+          [timeOnly]="true"
+          [readonlyInput]="true"
+          hourFormat="12"
+          styleClass="w-full"
+          inputStyleClass="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-primary-500"
+        ></p-datepicker>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="closesAt" class="text-sm font-semibold text-gray-700">
+          {{ 'businessHoursModal.closesAt' | translate }}
+        </label>
+        <p-datepicker
+          [ngModel]="closesAtPicker()"
+          (ngModelChange)="onClosesAtPickerChange($event)"
+          [showTime]="true"
+          [timeOnly]="true"
+          [readonlyInput]="true"
+          hourFormat="12"
+          styleClass="w-full"
+          inputStyleClass="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-primary-500"
+        ></p-datepicker>
+      </div>
+    </div>
+
+    @if (timeError(); as timeErr) {
+    <span class="text-xs font-medium text-red-600"
+      >{{ timeErr | translate }}</span
+    >
+    }
+  </div>
+
+  <div
+    class="flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-3 pt-2 mt-10 sm:mt-25"
+  >
+    @if (isEditMode) {
+    <lib-button
+      [label]="'general.delete' | translate"
+      [type]="'rounded'"
+      [icon]="'pi pi-trash'"
+      [color]="'danger'"
+      [disabled]="attempt()"
+      (action)="remove()"
+    ></lib-button>
+    }
+
+    <div class="flex flex-row gap-3 justify-end items-center w-full">
+      <lib-button
+        [label]="'general.cancel' | translate"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        (action)="cancel()"
+      ></lib-button>
+
+      <lib-button
+        [label]="submitLabel"
+        [type]="'rounded'"
+        [disabled]="!canSubmit()"
+        (action)="submit()"
+      ></lib-button>
+    </div>
+  </div>
+</div>

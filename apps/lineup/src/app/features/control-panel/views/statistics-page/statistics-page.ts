@@ -12,8 +12,10 @@ import {
   DiscountStatsSchema,
   EngagementStatsSchema,
   InventoryStatsSchema,
+  LocaleDatePipe,
   ProductStatsSchema,
   StatsPrivateService,
+  StockMovementTypeTranslatePipe,
   TimePeriodGranularityEnum,
   TimePeriodInput,
 } from '@lineup/core';
@@ -41,10 +43,12 @@ export enum StatisticsPeriodMode {
     FormsModule,
     Button,
     TranslateModule,
+    LocaleDatePipe,
     ProgressSpinner,
     SelectModule,
     DatePicker,
     TabsModule,
+    StockMovementTypeTranslatePipe,
   ],
   templateUrl: './statistics-page.html',
   styleUrl: './statistics-page.scss',
@@ -68,6 +72,13 @@ export class StatisticsPage implements OnInit, OnDestroy {
   customStartDate: Date | null = null;
   customEndDate: Date | null = null;
 
+  /** PrimeNG: `dd/mm/yy` (ES) vs `mm/dd/yy` (EN). */
+  get statsDatePickerFormat(): string {
+    return (this._translate.currentLang ?? 'es') === 'en'
+      ? 'mm/dd/yy'
+      : 'dd/mm/yy';
+  }
+
   private readonly _location = inject(Location);
   private readonly _statsService = inject(StatsPrivateService);
   private readonly _cdr = inject(ChangeDetectorRef);
@@ -76,34 +87,35 @@ export class StatisticsPage implements OnInit, OnDestroy {
   private readonly _subscription = new Subscription();
   private readonly _reload$ = new Subject<void>();
 
-  private static readonly TOP_LIMIT = 10;
+  /** Si `resolveTimePeriod()` es `null` (p. ej. «Todo»), todas las queries usan este periodo. */
+  private static readonly DEFAULT_REQUIRED_TIME_PERIOD: TimePeriodInput = {
+    granularity: TimePeriodGranularityEnum.ALL,
+  };
 
   ngOnInit(): void {
     this.buildPeriodOptions();
+    this._subscription.add(
+      this._translate.onLangChange.subscribe(() => {
+        this.buildPeriodOptions();
+        this._cdr.markForCheck();
+      }),
+    );
     this._subscription.add(
       this._reload$
         .pipe(
           switchMap(() => {
             this.loading = true;
             this._cdr.markForCheck();
-            const timePeriod = this.resolveTimePeriod();
-            const discountDays = this.resolveDiscountDays();
+            const timePeriod =
+              this.resolveTimePeriod() ??
+              StatisticsPage.DEFAULT_REQUIRED_TIME_PERIOD;
             return forkJoin({
               engagement:
                 this._statsService.businessEngagementStats(timePeriod),
-              catalog: this._statsService.catalogStats(
-                timePeriod,
-                StatisticsPage.TOP_LIMIT,
-              ),
-              discount: this._statsService.discountStats(discountDays),
-              inventory: this._statsService.inventoryStats(
-                timePeriod,
-                StatisticsPage.TOP_LIMIT,
-              ),
-              product: this._statsService.productStats(
-                timePeriod,
-                StatisticsPage.TOP_LIMIT,
-              ),
+              catalog: this._statsService.catalogStats(timePeriod),
+              discount: this._statsService.discountStats(timePeriod),
+              inventory: this._statsService.inventoryStats(timePeriod),
+              product: this._statsService.productStats(timePeriod),
             });
           }),
         )
@@ -195,20 +207,20 @@ export class StatisticsPage implements OnInit, OnDestroy {
   }
 
   /**
-   * Solo `granularity` para DAY / WEEK / MONTH (el backend calcula el rango).
-   * Solo `startDate` y `endDate` para rango personalizado (sin granularity).
-   * `null` para «Todo».
+   * `null` en «Todo» (se sustituye por `DEFAULT_REQUIRED_TIME_PERIOD` al llamar al API).
+   * Granularidades alineadas con `TimePeriodGranularityEnum` del API;
+   * rango personalizado con `granularity: RANGE` y fechas ISO.
    */
   private resolveTimePeriod(): TimePeriodInput | null {
     switch (this.periodMode) {
       case StatisticsPeriodMode.ALL:
         return null;
       case StatisticsPeriodMode.DAY:
-        return { granularity: TimePeriodGranularityEnum.DAY };
+        return { granularity: TimePeriodGranularityEnum.TODAY };
       case StatisticsPeriodMode.WEEK:
-        return { granularity: TimePeriodGranularityEnum.WEEK };
+        return { granularity: TimePeriodGranularityEnum.LAST_WEEK };
       case StatisticsPeriodMode.MONTH:
-        return { granularity: TimePeriodGranularityEnum.MONTH };
+        return { granularity: TimePeriodGranularityEnum.LAST_MONTH };
       case StatisticsPeriodMode.CUSTOM: {
         if (!this.customStartDate || !this.customEndDate) {
           return null;
@@ -216,6 +228,7 @@ export class StatisticsPage implements OnInit, OnDestroy {
         const start = this.startOfDay(new Date(this.customStartDate));
         const end = this.endOfDay(new Date(this.customEndDate));
         return {
+          granularity: TimePeriodGranularityEnum.RANGE,
           startDate: start.toISOString(),
           endDate: end.toISOString(),
         };
@@ -223,34 +236,6 @@ export class StatisticsPage implements OnInit, OnDestroy {
       default:
         return null;
     }
-  }
-
-  private resolveDiscountDays(): number | undefined | null {
-    if (this.periodMode === StatisticsPeriodMode.ALL) {
-      return null;
-    }
-    if (this.periodMode === StatisticsPeriodMode.CUSTOM) {
-      if (!this.customStartDate || !this.customEndDate) {
-        return null;
-      }
-      const start = this.startOfDay(new Date(this.customStartDate));
-      const end = this.startOfDay(new Date(this.customEndDate));
-      const diffDays =
-        Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) +
-        1;
-      return Math.max(1, diffDays);
-    }
-    if (this.periodMode === StatisticsPeriodMode.DAY) {
-      return 1;
-    }
-    if (this.periodMode === StatisticsPeriodMode.WEEK) {
-      return 7;
-    }
-    if (this.periodMode === StatisticsPeriodMode.MONTH) {
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    }
-    return null;
   }
 
   private startOfDay(d: Date): Date {
@@ -263,5 +248,17 @@ export class StatisticsPage implements OnInit, OnDestroy {
     const x = new Date(d);
     x.setHours(23, 59, 59, 999);
     return x;
+  }
+
+  /**
+   * Alineado con `InventoryPage`: `quantity` ausente o `null` → stock no registrado (no es agotado).
+   */
+  isSkuStockNotRegistered(quantity: number | null | undefined): boolean {
+    return quantity == null;
+  }
+
+  /** Solo cantidad `0` es agotado; `null` no cuenta como agotado. */
+  isSkuOutOfStock(quantity: number | null | undefined): boolean {
+    return quantity === 0;
   }
 }

@@ -43,6 +43,29 @@
           maxLengthCatalogName }}
         </small>
       </div>
+      <div class="flex flex-col items-start justify-center gap-2 w-full">
+        <label for="catalogHexColor" class="font-medium text-lg"
+          >{{ 'general.catalogColor' | translate }}:</label
+        >
+
+        <div class="w-full flex flex-row items-center justify-start gap-3">
+          <input
+            pInputText
+            class="w-40"
+            formControlName="hexColor"
+            name="hexColor"
+            pSize="small"
+            autocomplete="off"
+          />
+          <p-colorpicker
+            class="border-2 border-gray-500 rounded-lg"
+            formControlName="hexColor"
+            name="hexColor"
+            (onChange)="setColor($event)"
+            inputId="cp-hex"
+          />
+        </div>
+      </div>
       <div class="flex flex-col items-start justify-start gap-2 w-full">
         <label for="image" class="font-medium w-full text-lg"
           >{{'general.imageUpload' | translate}}:</label

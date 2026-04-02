@@ -1,49 +1,88 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import {
   AuthStore,
-  BusinessSchema,
   BusinessPrivateService,
-  CatalogPrivateService,
+  BusinessSchema,
+  EngagementStatsSchema,
+  InventoryStatsSchema,
+  ProductStatsSchema,
+  StatsPrivateService,
+  StockMovementTypeTranslatePipe,
+  TimePeriodGranularityEnum,
+  TimePeriodInput,
 } from '@lineup/core';
-import { ProductCard } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { Card } from 'primeng/card';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-control-panel-page',
-  imports: [CommonModule, TranslateModule, ProgressSpinner, Card, ProductCard],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    ProgressSpinner,
+    StockMovementTypeTranslatePipe,
+  ],
   templateUrl: './control-panel-page.html',
   styleUrl: './control-panel-page.scss',
 })
 export class ControlPanelPage implements OnInit {
-  business: BusinessSchema;
+  business?: BusinessSchema;
+  engagement?: EngagementStatsSchema;
+  inventory?: InventoryStatsSchema;
+  product?: ProductStatsSchema;
+
   attempt = false;
-  path: string;
-  private readonly _catalogService = inject(CatalogPrivateService);
+  path = '';
+
   private readonly _businessService = inject(BusinessPrivateService);
+  private readonly _statsService = inject(StatsPrivateService);
   private readonly _authStore = inject(AuthStore);
+  private readonly _defaultTimePeriod: TimePeriodInput = {
+    granularity: TimePeriodGranularityEnum.LAST_MONTH,
+  };
+
+  constructor() {
+    effect(() => {
+      const business = this._authStore.business();
+      const path = business?.path;
+
+      if (!path || path === this.path) return;
+
+      this.path = path;
+      this.getBusiness();
+    });
+  }
 
   ngOnInit(): void {
-    this.path = this._authStore.business().path;
-
+    const business = this._authStore.business();
+    if (!business?.path) return;
+    this.path = business.path;
     this.getBusiness();
   }
 
   getBusiness(): void {
     if (this.attempt) return;
     this.attempt = true;
-    this._businessService.getBusinessByPath(this.path).subscribe({
+    forkJoin({
+      business: this._businessService.getBusinessByPath(this.path),
+      engagement: this._statsService.businessEngagementStats(
+        this._defaultTimePeriod,
+      ),
+      inventory: this._statsService.inventoryStats(this._defaultTimePeriod),
+      product: this._statsService.productStats(this._defaultTimePeriod),
+    }).subscribe({
       next: (business) => {
-        console.log(business);
-        this.business = business;
+        this.business = business.business;
+        this.engagement = business.engagement;
+        this.inventory = business.inventory;
+        this.product = business.product;
       },
       error: (error) => {
         console.error(error);
       },
       complete: () => {
-        console.log('complete');
         this.attempt = false;
       },
     });

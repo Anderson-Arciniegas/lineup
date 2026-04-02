@@ -1,12 +1,12 @@
-import { CommonModule, Location } from '@angular/common';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
   Injectable,
-  PLATFORM_ID,
-  inject,
   Input,
+  PLATFORM_ID,
+  computed,
+  inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -15,8 +15,8 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
+import { AuthStore, BusinessSchema, CatalogSchema } from '@lineup/core';
 import { filter } from 'rxjs/operators';
-import { BusinessSchema, CatalogSchema } from '@lineup/core';
 import { Button } from '../button/button';
 
 function pathSegments(url: string): string[] {
@@ -105,11 +105,20 @@ export class ProductBreadcrumb {
   @Input() business?: BusinessSchema | null;
   @Input() catalog?: CatalogSchema | null;
   @Input() path?: string | null;
-
+  @Input() useLightText?: boolean;
+  @Input() publicMode?: boolean;
+  private _authStore = inject(AuthStore);
   private location = inject(Location);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
   private navTracker = inject(ProductBreadcrumbNavTracker);
+
+  logged = computed(
+    () =>
+      this._authStore.isUserLoggedIn() || this._authStore.isBusinessLoggedIn(),
+  );
+
+  businessMode = computed(() => this._authStore.isBusinessLoggedIn());
 
   goBack(): void {
     if (

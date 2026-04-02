@@ -1,18 +1,53 @@
 <section
-  class="flex flex-col items-center justify-center w-full py-2 sm:py-10 px-2 sm:px-10"
+  class="business-page-root flex flex-col items-center justify-start w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 min-h-screen"
+  [style.background]="pageBackgroundGradient || null"
 >
-  <lib-product-breadcrumb class="w-10/10"></lib-product-breadcrumb>
+  <lib-product-breadcrumb
+    class="w-10/10"
+    [publicMode]="true"
+    [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
+  ></lib-product-breadcrumb>
   <div
-    class="container flex flex-col items-center justify-center gap-4 sm:gap-8 w-full"
+    class="container flex flex-col items-center justify-start gap-4 sm:gap-8 w-full"
   >
     <lib-business-data
       [business]="business"
       [myBusiness]="myBusiness"
+      [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
+      (colorChange)="setColor($event)"
     ></lib-business-data>
-    <div class="w-full flex flex-col items-center justify-center gap-6">
-      <!-- <div class="w-full px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46">
-        <h2 class="text-4xl font-semibold text-center sm:text-left">LineUps</h2>
-      </div> -->
+    <div class="w-full flex flex-col items-center justify-center gap-10">
+      <div
+        [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+        class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+      >
+        <i class="pi pi-crown text-3xl"></i>
+        <h2 class="text-2xl md:text-3xl font-semibold text-left">
+          {{'general.ourMainProducts' | translate}}
+        </h2>
+      </div>
+      <div class="w-full products-grid">
+        @for (product of products; track product.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-product-card
+            [width]="'w-65'"
+            [height]="'h-100'"
+            [product]="product"
+          />
+        </div>
+        }
+      </div>
+    </div>
+    <div class="w-full flex flex-col items-center justify-center gap-10">
+      <div
+        [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+        class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+      >
+        <i class="pi pi-book text-3xl"></i>
+        <h2 class="text-2xl md:text-3xl font-semibold text-left">
+          {{'general.ourCatalogs' | translate}}
+        </h2>
+      </div>
       <div
         class="catalogs-grid"
         infiniteScroll
@@ -42,6 +77,17 @@
         </div>
         }
       </div>
+
+      @if(attempt) {
+      <div class="flex flex-col justify-center items-center w-full">
+        <div class="card flex justify-center p-10">
+          <p-progress-spinner
+            strokeWidth="4"
+            [style]="{ width: '100px', height: '100px' }"
+          />
+        </div>
+      </div>
+      }
     </div>
   </div>
 </section>
