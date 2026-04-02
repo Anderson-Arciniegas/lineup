@@ -47,39 +47,19 @@ export const serverRoutes: ServerRoute[] = [
     path: ':business',
     renderMode: RenderMode.Server,
   },
+  // SSR en tiempo de petición: estas vistas llaman a GraphQL en ngOnInit;
+  // el prerender en build no tiene API fiable y acaba en timeout.
   {
     path: ':business/:catalogPath',
-    renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => [
-      {
-        business: 'business-1',
-        catalogPath: 'catalog-1',
-      },
-      {
-        business: 'business-2',
-        catalogPath: 'catalog-2',
-      },
-    ],
+    renderMode: RenderMode.Server,
   },
   {
     path: ':business/:catalogPath/:idProduct',
-    renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => [
-      {
-        business: 'business-1',
-        catalogPath: 'catalog-1',
-        idProduct: '1',
-      },
-      {
-        business: 'business-2',
-        catalogPath: 'catalog-2',
-        idProduct: '2',
-      },
-    ],
+    renderMode: RenderMode.Server,
   },
 
   {
     path: '**',
-    renderMode: RenderMode.Prerender,
+    renderMode: RenderMode.Server,
   },
 ];
