@@ -1,12 +1,14 @@
 import type { CatalogSchema } from '../schemas';
 
 export interface CreateCatalogInput {
+  hexColor?: string;
   imageCode?: string;
   tags?: string[];
   title: string;
 }
 
 export interface UpdateCatalogInput {
+  hexColor?: string;
   idCatalog: number;
   imageCode?: string;
   tags?: string[];

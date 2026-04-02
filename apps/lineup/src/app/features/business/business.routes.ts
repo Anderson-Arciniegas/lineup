@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
-import { AppConfigService } from '../../config/services/app-config.service';
+import { AppConfigService } from '@lineup/core';
+import { BusinessAuthGuard } from '../../core/guards/business-auth.guard';
+import { CreateCatalogPage } from '../control-panel/views/create-catalog-page/create-catalog-page';
+import { CreateProductPage } from '../control-panel/views/create-product-page/create-product-page';
+import { UpdateProductSkuPage } from '../control-panel/views/update-product-sku-page/update-product-sku-page';
 import { BusinessPage } from './views/business-page/business-page';
-import { CreateCatalogPage } from './views/create-catalog-page/create-catalog-page';
-import { CreateProductPage } from './views/create-product-page/create-product-page';
 
 export const businessRoutes: Routes = [
   {
@@ -42,7 +44,18 @@ export const businessRoutes: Routes = [
           ),
       },
       {
+        canActivate: [BusinessAuthGuard],
         path: AppConfigService.config.routes.createProduct,
+        component: CreateProductPage,
+      },
+      {
+        canActivate: [BusinessAuthGuard],
+        path: ':idProduct/' + AppConfigService.config.routes.inventory,
+        component: UpdateProductSkuPage,
+      },
+      {
+        canActivate: [BusinessAuthGuard],
+        path: ':idProduct/' + AppConfigService.config.routes.edit,
         component: CreateProductPage,
       },
       {

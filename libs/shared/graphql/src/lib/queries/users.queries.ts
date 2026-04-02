@@ -8,6 +8,7 @@ import {
   catalogSelection,
 } from '../selections/catalog.selection';
 import {
+  productCollectionSelection,
   productRatingSelection,
   productSearchSelection,
   productSelection,
@@ -162,5 +163,28 @@ export const MY_PRODUCT_RATINGS_QUERY = gql`
 export const MY_PRODUCT_RATING_QUERY = gql`
   query MyProductRating($idProduct: Int!) {
     myProductRating(idProduct: $idProduct) ${productRatingSelection}
+  }
+`;
+
+/**
+ * Query para obtener valoraciones de un producto (paginadas)
+ */
+export const PRODUCT_RATINGS_QUERY = gql`
+  query ProductRatings($idProduct: Int!, $pagination: InfinityScrollInput!) {
+    productRatings(idProduct: $idProduct, pagination: $pagination) {
+      items ${productRatingSelection}
+      limit
+      page
+      total
+    }
+  }
+`;
+
+/**
+ * Query para obtener colecciones de productos
+ */
+export const PRODUCT_COLLECTIONS_QUERY = gql`
+  query ProductCollections {
+    productCollections ${productCollectionSelection}
   }
 `;

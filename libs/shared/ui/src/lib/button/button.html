@@ -2,7 +2,7 @@
 <p-button
   class="inline-block"
   [ngClass]="[width, fontSize]"
-  [label]="label"
+  [label]="(label | translate)"
   [icon]="icon ? icon : null"
   [loading]="loading"
   [severity]="color"
@@ -19,7 +19,7 @@
   <p-button
     class="inline-block"
     [ngClass]="[width, fontSize]"
-    [label]="label"
+    [label]="label | translate"
     [icon]="icon ? icon : null"
     [loading]="loading"
     [link]="linkType"
@@ -37,7 +37,7 @@
   <p-button
     class="inline-block"
     [ngClass]="[width, fontSize]"
-    [label]="label"
+    [label]="label | translate"
     [icon]="icon ? icon : null"
     [loading]="loading"
     [link]="linkType"

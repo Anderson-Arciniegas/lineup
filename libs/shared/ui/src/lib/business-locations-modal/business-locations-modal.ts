@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   computed,
   inject,
   signal,
@@ -25,7 +24,7 @@ import { LocationModal } from '../location-modal/location-modal';
   styleUrl: './business-locations-modal.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BusinessLocationsModal implements OnInit {
+export class BusinessLocationsModal {
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
   private readonly dialogService = inject(DialogService);
@@ -47,14 +46,15 @@ export class BusinessLocationsModal implements OnInit {
       : this.translate.instant('general.locations');
   });
 
-  ngOnInit(): void {
+  constructor() {
     const dataLocations = this.config.data?.locations as
       | LocationSchema[]
       | undefined;
 
     this.locations.set(Array.isArray(dataLocations) ? [...dataLocations] : []);
 
-    // PrimeNG DynamicDialog usa `header` del config; lo seteamos aquí para no depender del opener.
+    // Asignar el header en el constructor para que esté disponible antes del primer
+    // ciclo de change detection de DynamicDialogComponent y evitar NG0100.
     this.config.header = this.title();
   }
 

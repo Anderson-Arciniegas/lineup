@@ -32,8 +32,34 @@ export const businessBasicSelection = `{
   status
   businessRoles ${businessRoleSelection}
   telephone
+  hexColor
   image ${fileSelection}
   path
+}`;
+
+/**
+ * Horarios de negocio sin relación `business` anidada (uso bajo BusinessSchema)
+ */
+export const businessHourPlainSelection = `{
+  id
+  idBusiness
+  dayOfWeek
+  opensAtMinute
+  closesAtMinute
+  slotOrder
+}`;
+
+/**
+ * BusinessHourSchema completo (incluye business anidado)
+ */
+export const businessHourSelection = `{
+  id
+  idBusiness
+  dayOfWeek
+  opensAtMinute
+  closesAtMinute
+  slotOrder
+  business ${businessBasicSelection}
 }`;
 
 /**
@@ -69,17 +95,20 @@ export const businessFullSelection = `{
   }
   imageCode
   telephone
+  isOnline
+  hexColor
   provider
   status
   tags
   locations ${locationFullSelection}
+  businessHours ${businessHourPlainSelection}
   products {
     id
     title
     subtitle
     description
-    price
     likes
+    skus { price }
     productTags {
       idProduct
       idTag
@@ -99,24 +128,26 @@ export const businessFullSelection = `{
       image { directory extension name url }
       imageCode
       telephone
+      hexColor
       provider
       status
       tags
     }
-    catalog { id title }
+    catalog { id title hexColor }
   }
   catalogs {
     id
     idCreationBusiness
     title
+    hexColor
     status
     products {
       id
       title
       subtitle
       description
-      price
       likes
+      skus { price }
       productTags {
         idProduct
         idTag
@@ -136,11 +167,12 @@ export const businessFullSelection = `{
         image { directory extension name url }
         imageCode
         telephone
+        hexColor
         provider
         status
         tags
       }
-      catalog { id title }
+      catalog { id title hexColor }
     }
     modificationBusiness {
       id
@@ -152,6 +184,7 @@ export const businessFullSelection = `{
       image { directory extension name url }
       imageCode
       telephone
+      hexColor
       provider
       status
       tags
@@ -168,6 +201,7 @@ export const businessFullSelection = `{
       image { directory extension name url idCreationUser }
       imageCode
       telephone
+      hexColor
       provider
       status
       tags
@@ -273,7 +307,10 @@ export const businessMyBusinessSelection = `{
   description
   tags
   telephone
+  isOnline
+  hexColor
   image ${fileSelection}
+  businessHours ${businessHourPlainSelection}
 }`;
 
 /**

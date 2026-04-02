@@ -1,0 +1,338 @@
+<div
+  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
+>
+  @if (loading) {
+  <div class="w-full flex justify-center p-10 mt-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  } @else if (product) {
+
+  <div
+    class="w-full flex flex-col gap-8 py-4 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+  >
+    <!-- Acciones superiores -->
+    <div
+      class="flex flex-row flex-wrap items-center justify-between w-full gap-3"
+    >
+      <lib-button
+        [icon]="'pi pi-arrow-left'"
+        [width]="'w-13'"
+        [color]="'secondary'"
+        [variant]="'text'"
+        [size]="'large'"
+        [type]="'rounded'"
+        (action)="goBack()"
+      ></lib-button>
+      <div class="flex flex-row gap-3 flex-wrap">
+        <lib-button
+          icon="pi pi-pencil"
+          width="w-38"
+          [label]="'general.edit' | translate"
+          type="rounded"
+          color="warn"
+          (action)="navigateToEdit()"
+        ></lib-button>
+        <lib-button
+          icon="pi pi-box"
+          width="w-38"
+          [label]="'general.inventory' | translate"
+          type="rounded"
+          (action)="navigateToInventory()"
+        ></lib-button>
+        <lib-button
+          icon="pi pi-trash"
+          width="w-38"
+          [label]="'general.delete' | translate"
+          type="rounded"
+          color="danger"
+          (action)="deleteProduct()"
+        ></lib-button>
+      </div>
+    </div>
+
+    <!-- Cabecera del producto -->
+    <div class="flex flex-col md:flex-row items-start gap-6 w-full">
+      @if (productImage) {
+      <img
+        [src]="productImage"
+        [alt]="product.title"
+        class="w-32 h-32 sm:w-44 sm:h-44 object-cover rounded-2xl flex-shrink-0 border border-gray-200 shadow-sm"
+      />
+      } @else {
+      <div
+        class="w-32 h-32 sm:w-44 sm:h-44 bg-gray-100 rounded-2xl flex-shrink-0 flex items-center justify-center border border-gray-200"
+      >
+        <i class="pi pi-image text-4xl text-gray-300"></i>
+      </div>
+      }
+
+      <div class="flex flex-col gap-2 flex-1">
+        <div class="flex flex-row items-center gap-3 flex-wrap">
+          <span class="text-gray-600 font-mono text-2xl"
+            >#{{ product.id }}</span
+          >
+          <p-tag [value]="product.status" severity="success"></p-tag>
+        </div>
+        <h1 class="text-3xl font-semibold text-gray-800">
+          {{ product.title }}
+        </h1>
+        @if (product.subtitle) {
+        <p class="text-lg text-gray-500">{{ product.subtitle }}</p>
+        } @if (product.catalog) {
+        <span class="text-sm text-gray-400 flex items-center gap-1">
+          <i class="pi pi-folder"></i>
+          {{ product.catalog.title }}
+        </span>
+        }
+
+        <div class="card flex flex-row justify-start items-center gap-3">
+          <p-toggleswitch
+            [(ngModel)]="isPrimaryToggle"
+            [disabled]="togglingPrimary"
+            (ngModelChange)="onIsPrimaryToggle($event)"
+          />
+          <span class="text-sm text-gray-600">{{
+            'general.primaryProduct' | translate
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-blue-50 border border-blue-100"
+      >
+        <i class="pi pi-eye text-blue-500 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800 text-center"
+          >{{ product.visits }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'general.visits' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-red-50 border border-red-100"
+      >
+        <i class="pi pi-heart text-red-400 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800 text-center"
+          >{{ product.likes }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'general.likes' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-yellow-50 border border-yellow-100"
+      >
+        <i class="pi pi-star text-yellow-500 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800 text-center"
+          >{{ product.ratingAverage | number: '1.1-1' }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'general.ratingAverage' | translate }}</span
+        >
+      </div>
+      <div
+        class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-green-50 border border-green-100"
+      >
+        <i class="pi pi-box text-green-500 text-2xl"></i>
+        <span class="text-2xl font-bold text-gray-800 text-center"
+          >{{ totalStock }}</span
+        >
+        <span class="text-sm text-gray-500 text-center"
+          >{{ 'general.totalStock' | translate }}</span
+        >
+      </div>
+    </div>
+
+    @if (appliedProductDiscount) {
+    <div
+      class="w-full flex flex-col gap-4 p-5 rounded-xl border border-amber-200 bg-amber-50/80"
+    >
+      <h2 class="text-xl font-semibold text-gray-800">
+        {{ 'general.discount' | translate }}
+        <span class="text-gray-500 font-normal text-base font-mono ml-2"
+          >#{{ appliedProductDiscount.id }}</span
+        >
+      </h2>
+      <dl
+        class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm sm:text-base"
+      >
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.discountType' | translate }}
+          </dt>
+          <dd>
+            {{ discountTypeLabelKey(appliedProductDiscount.discountType) |
+            translate }}
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.discountValue' | translate }}
+          </dt>
+          <dd>
+            @if ( appliedProductDiscount.discountType ===
+            DiscountTypeEnum.PERCENTAGE ) {
+            <span>{{ appliedProductDiscount.value }}%</span>
+            } @else {
+            <span
+              >{{ appliedProductDiscount.value }} {{
+              appliedProductDiscount.currency?.code | currencySymbol }}</span
+            >
+            }
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.status' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.status }}</dd>
+        </div>
+        @if (appliedProductDiscount.creationDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.creationDate' | translate }}
+          </dt>
+          <dd>
+            {{ appliedProductDiscount.creationDate | localeDate: 'datetime' }}
+          </dd>
+        </div>
+
+        } @if (appliedProductDiscount.startDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.startDate' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.startDate | localeDate: 'date' }}</dd>
+        </div>
+        } @if (appliedProductDiscount.endDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.endDate' | translate }}
+          </dt>
+          <dd>{{ appliedProductDiscount.endDate | localeDate: 'date' }}</dd>
+        </div>
+        } @if (appliedProductDiscount.modificationDate) {
+        <div class="flex flex-col gap-1">
+          <dt class="text-gray-500 font-medium">
+            {{ 'general.modificationDate' | translate }}
+          </dt>
+          <dd>
+            {{ appliedProductDiscount.modificationDate | localeDate: 'datetime'
+            }}
+          </dd>
+        </div>
+        }
+      </dl>
+    </div>
+    }
+
+    <!-- Sección de inventario / SKUs -->
+    @if ((product.skus?.length ?? 0) > 0) {
+    <div class="w-full flex flex-col gap-4">
+      <h2 class="text-xl font-semibold text-gray-800">
+        {{ 'general.inventory' | translate }}
+      </h2>
+      <div class="flex flex-col gap-3">
+        @for (sku of product.skus; track sku.id) {
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
+          <div class="flex flex-col gap-1">
+            <span class="font-mono text-xs text-gray-400"
+              >{{ sku.skuCode }}</span
+            >
+            @if ((product.skus?.length ?? 0) > 1) {
+            <span class="text-base font-medium text-gray-700">
+              {{ getSkuVariationLabel(sku) }}
+            </span>
+            }
+          </div>
+          <div class="flex flex-row items-center gap-6 flex-wrap">
+            <div
+              class="flex flex-col items-end gap-1 min-w-[8.5rem] sm:min-w-36"
+            >
+              @if (skuShowsDiscountedPrice(sku)) {
+              <!-- <span class="text-xs text-gray-400 self-end">{{
+                'general.priceWithDiscount' | translate
+              }}</span> -->
+              <span class="font-semibold text-emerald-700">
+                {{ getSkuDiscountedPrice(sku)! | currency: sku.currency!.code :
+                'symbol' : '1.0-2' : 'es' }}
+              </span>
+              <!-- <span class="text-xs text-gray-400 self-end">{{
+                'general.originalPrice' | translate
+              }}</span> -->
+              <span class="text-sm text-gray-500 line-through"
+                >{{ sku.price | currency: sku.currency!.code : 'symbol' :
+                '1.0-2' : 'es' }}</span
+              >
+              } @else if (sku.price !== null && sku.currency) {
+              <span class="text-xs text-gray-400 self-end"
+                >{{ 'general.price' | translate }}</span
+              >
+              <span class="font-semibold text-gray-800">
+                {{ sku.price | currency: sku.currency.code : 'symbol' : '1.0-2'
+                : 'es' }}
+              </span>
+              } @else {
+              <span class="text-xs text-gray-400 self-end"
+                >{{ 'general.price' | translate }}</span
+              >
+              <span class="text-gray-400">—</span>
+              }
+            </div>
+            <div class="flex flex-col items-center gap-1 min-w-16">
+              <span class="text-xs text-gray-400"
+                >{{ 'general.stock' | translate }}</span
+              >
+              <span
+                class="font-bold text-xl"
+                [class.text-green-600]="sku.quantity > 0"
+                [class.text-red-500]="sku.quantity === 0"
+              >
+                {{ sku.quantity }}
+              </span>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Sección de calificaciones -->
+    <div class="w-full flex flex-col gap-4">
+      <h2 class="text-xl font-semibold text-gray-800">
+        {{ 'general.ratings' | translate }} @if (ratings.length > 0) {
+        <span class="text-gray-600 font-normal text-base ml-2"
+          >({{ ratings.length }})</span
+        >
+        }
+      </h2>
+
+      @if (ratings.length === 0) {
+      <div
+        class="flex flex-col items-center justify-center p-10 border border-gray-200 rounded-xl bg-gray-50 gap-3"
+      >
+        <i class="pi pi-star text-3xl text-gray-300"></i>
+        <p class="text-gray-400 text-sm">
+          {{ 'general.noRatings' | translate }}
+        </p>
+      </div>
+      } @else {
+      <div class="flex flex-col gap-3">
+        @for (rating of ratings; track rating.id) {
+        <lib-product-rating-item [rating]="rating" />
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

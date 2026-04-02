@@ -9,9 +9,11 @@ import type {
 } from '.';
 import type { ProvidersEnum, StatusEnum } from '../enums';
 import { BusinessFollowerSchema } from './business-follower.schema';
+import type { BusinessHourSchema } from './business-hour.schema';
 
 export interface BusinessSchema {
   businessFollowers: BusinessFollowerSchema[];
+  businessHours?: BusinessHourSchema[];
   businessRoles: BusinessRoleSchema[];
   catalogs: CatalogSchema[];
   description?: string;
@@ -19,7 +21,9 @@ export interface BusinessSchema {
   emailValidated: boolean;
   files: FileSchema[];
   followers: number;
+  hexColor?: string;
   id: number;
+  isOnline?: boolean;
   image?: FileSchema;
   imageCode?: string;
   locations: LocationSchema[];

@@ -23,6 +23,8 @@ import { CatalogCarouselItem } from '../catalog-carousel-item/catalog-carousel-i
 })
 export class CatalogCarousel implements OnInit, AfterViewInit {
   @Input() products: ProductSchema[] = [];
+  @Input() predefinedColor: boolean;
+  @Input() useLightText?: boolean;
   @Output() setColor = new EventEmitter<string>();
   responsiveOptions: any[] | undefined;
 
@@ -77,20 +79,26 @@ export class CatalogCarousel implements OnInit, AfterViewInit {
   }
 
   onPage($event: any) {
-    const img = new Image();
-    img.crossOrigin = 'anonymous'; // ← ESTO ES CRÍTICO
-    img.src = this.products[$event.page].productFiles[0].file?.url || '';
+    console.log(this.predefinedColor);
+    if (!this.predefinedColor) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // ← ESTO ES CRÍTICO
+      img.src =
+        this.products[$event.page].productFiles[0].file?.url +
+          '?t=' +
+          Date.now() || '';
 
-    img.onload = async () => {
-      const fac = new FastAverageColor();
+      img.onload = async () => {
+        const fac = new FastAverageColor();
 
-      fac.getColorAsync(img).then((color) => {
-        const rgba = color.rgba.replace(/[\d.]+\)$/g, '0.5)');
-        this.bgColor = rgba;
-        console.log(this.bgColor);
-        this.setColor.emit(this.bgColor);
-        this._cdr.detectChanges();
-      });
-    };
+        fac.getColorAsync(img).then((color) => {
+          const rgba = color.rgba.replace(/[\d.]+\)$/g, '0.5)');
+          this.bgColor = rgba;
+          console.log(this.bgColor);
+          this.setColor.emit(this.bgColor);
+          this._cdr.detectChanges();
+        });
+      };
+    }
   }
 }

@@ -4,7 +4,7 @@ import {
   AuthStore,
   BusinessSchema,
   CatalogSchema,
-  CatalogService,
+  CatalogPrivateService,
 } from '@lineup/core';
 import { Button, CatalogCard, CreateCatalogCard } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -33,7 +33,7 @@ export class CatalogsPage implements OnInit {
   noMoreResults = false;
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
-  private readonly _catalogService = inject(CatalogService);
+  private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _authStore = inject(AuthStore);
 
   private _subscriptions = new Subscription();

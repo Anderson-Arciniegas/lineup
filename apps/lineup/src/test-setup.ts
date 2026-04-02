@@ -1,5 +1,20 @@
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 
+// PrimeNG Tabs (and other components) use ResizeObserver; Jest/jsdom may not provide it.
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe(): void {
+      return;
+    }
+    unobserve(): void {
+      return;
+    }
+    disconnect(): void {
+      return;
+    }
+  };
+}
+
 // Polyfill for URL.createObjectURL and URL.revokeObjectURL in Jest environment
 if (typeof URL.createObjectURL === 'undefined') {
   global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');

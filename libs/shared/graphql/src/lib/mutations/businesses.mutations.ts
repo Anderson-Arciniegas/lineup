@@ -1,6 +1,7 @@
 import { gql } from 'apollo-angular';
 import {
   businessFullSelection,
+  businessHourSelection,
   businessLoginResponseSelection,
   businessLoginResponseWithUserSelection,
 } from '../selections/businesses.selection';
@@ -45,6 +46,15 @@ export const UPDATE_BUSINESS_MUTATION = gql`
   }
 `;
 
+/**
+ * Mutation para actualizar el email del business autenticado
+ */
+export const UPDATE_BUSINESS_EMAIL_MUTATION = gql`
+  mutation UpdateBusinessEmail($data: UpdateBusinessEmailInput!) {
+    updateBusinessEmail(data: $data) ${businessFullSelection}
+  }
+`;
+
 export const BUSINESS_LOGOUT_MUTATION = gql`
   mutation BusinessLogout {
     logout {
@@ -79,5 +89,32 @@ export const BUSINESS_LOGIN_WITH_GOOGLE_MUTATION = gql`
 export const BUSINESS_REGISTER_WITH_GOOGLE_MUTATION = gql`
   mutation RegisterWithGoogle($data: RegisterGoogleBusinessInput!) {
     registerWithGoogle(data: $data) ${businessLoginResponseWithUserSelection}
+  }
+`;
+
+/**
+ * Crear horarios del negocio autenticado
+ */
+export const CREATE_BUSINESS_HOURS_MUTATION = gql`
+  mutation CreateBusinessHours($data: CreateBusinessHoursInput!) {
+    createBusinessHours(data: $data) ${businessHourSelection}
+  }
+`;
+
+/**
+ * Actualizar un horario del negocio
+ */
+export const UPDATE_BUSINESS_HOUR_MUTATION = gql`
+  mutation UpdateBusinessHour($data: UpdateBusinessHourInput!) {
+    updateBusinessHour(data: $data) ${businessHourSelection}
+  }
+`;
+
+/**
+ * Eliminar un horario del negocio
+ */
+export const REMOVE_BUSINESS_HOUR_MUTATION = gql`
+  mutation RemoveBusinessHour($id: Int!) {
+    removeBusinessHour(id: $id)
   }
 `;

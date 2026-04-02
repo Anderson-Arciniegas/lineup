@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ProductSchema, ProductService, UserService } from '@lineup/core';
+import { ProductPublicService, ProductSchema } from '@lineup/core';
 import { ProductCard } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -24,8 +24,7 @@ export class WishlistPage implements OnInit {
   attempt = false;
   page = 1;
   noMoreResults = false;
-  private readonly _productService = inject(ProductService);
-  private readonly _userService = inject(UserService);
+  private readonly _productPublicService = inject(ProductPublicService);
   private readonly _subscription = new Subscription();
 
   ngOnInit(): void {
@@ -36,7 +35,7 @@ export class WishlistPage implements OnInit {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
     this._subscription.add(
-      this._userService
+      this._productPublicService
         .findLikedProducts({ page: this.page, limit: 20 })
         .subscribe({
           next: (products) => {

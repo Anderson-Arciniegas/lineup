@@ -1,29 +1,152 @@
 <section
-  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-10 gap-5 flex flex-col"
-  [ngStyle]="{'background': bgColor}"
+  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen"
+  [style.background]="pageBackgroundGradient || null"
 >
-  <lib-product-breadcrumb [business]="business"></lib-product-breadcrumb>
+  <lib-product-breadcrumb
+    [business]="business"
+    [catalog]="catalog"
+    [publicMode]="true"
+    [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
+  ></lib-product-breadcrumb>
   @if (catalog) {
-  <div>
-    <h3 class="text-4xl text-center font-medium">
-      {{catalog.title || 'Catalogo'}}
+  <div
+    class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
+    [class.catalog-page__brand-text--light]="brandToneLight"
+  >
+    <h3 class="text-2xl md:text-4xl text-center font-medium">
+      {{ catalog.title || 'Catalogo' }}
     </h3>
-  </div>
-  <div class="w-full flex flex-col items-center gap-10 md:gap-20">
-    @if (products.length > 0) {
-    <div class="flex flex-row items-center justify-center w-10/10">
-      <lib-catalog-carousel
-        [products]="products"
-        class="w-10/10"
-        (setColor)="setColor($event)"
-      >
-      </lib-catalog-carousel>
+
+    @if (myBusiness) {
+    <div class="flex flex-row items-center justify-center">
+      <!-- <lib-button
+          [icon]="'pi pi-pencil'"
+          [label]="'general.edit' | translate"
+          [type]="'rounded'"
+          [width]="'w-25'"
+          [size]="'small'"
+          [link]="'/dashboard/edit'"
+        ></lib-button> -->
+
+      <lib-button
+        [icon]="'pi pi-palette'"
+        [label]="'general.editColor' | translate"
+        [type]="'rounded'"
+        [size]="'small'"
+        (action)="op.toggle($event)"
+      ></lib-button>
+
+      <p-popover #op>
+        <div class="flex flex-col gap-4 w-70">
+          <div class="flex flex-col items-center gap-4">
+            <label for="cp-hex" class="mb-2 text-md font-medium">
+              {{ 'general.selectTheMainColorOfYourBusiness' | translate }}
+            </label>
+            <div class="w-full flex flex-row items-center justify-center gap-3">
+              <input
+                pInputText
+                class="w-40"
+                [(ngModel)]="color"
+                (ngModelChange)="setColor(color)"
+                pSize="small"
+                autocomplete="off"
+              />
+              <p-colorpicker
+                class="border-2 border-gray-500 rounded-lg"
+                (onChange)="setColor(color)"
+                [(ngModel)]="color"
+                inputId="cp-hex"
+              />
+            </div>
+
+            <lib-button
+              class="mt-4"
+              [label]="'general.save' | translate"
+              [type]="'rounded'"
+              [size]="'small'"
+              [color]="'primary'"
+              [width]="'w-25'"
+              [loading]="attemptColor"
+              (action)="saveColor()"
+            ></lib-button>
+          </div>
+        </div>
+      </p-popover>
     </div>
-    <div class="flex flex-row items-center justify-center w-full w-full">
-      <lib-search-bar
-        class="w-full max-w-200"
-        (searchSubmit)="onSearchSubmit($event)"
-      ></lib-search-bar>
+    }
+  </div>
+  <div
+    class="catalog-page__toolbar w-full flex flex-row items-center justify-center sm:justify-end gap-5 mt-4 lg:mt-0"
+    [class.catalog-page__toolbar--on-dark-brand]="brandToneLight"
+    [class.catalog-page__toolbar--on-light-brand]="brandToneDark"
+  >
+    <p-selectbutton
+      [options]="layoutOptions"
+      [(ngModel)]="layoutMode"
+      optionValue="value"
+      optionLabel="label"
+      (ngModelChange)="onLayoutModeChange($event)"
+    >
+      <ng-template #item let-item>
+        <i [class]="item.icon"></i>
+      </ng-template>
+    </p-selectbutton>
+    <lib-button
+      class="hidden sm:block"
+      [icon]="'pi pi-download'"
+      [color]="'primary'"
+      [type]="'rounded'"
+      [label]="'general.download' | translate"
+      (action)="downloadCatalog()"
+    ></lib-button>
+    <lib-button
+      class="hidden sm:block"
+      icon="pi pi-share-alt"
+      [label]="'general.share' | translate"
+      type="rounded"
+      color="secondary"
+      (click)="share()"
+    ></lib-button>
+    <lib-button
+      class="block sm:hidden"
+      [icon]="'pi pi-download'"
+      [color]="'primary'"
+      [type]="'rounded'"
+      [width]="'w-11'"
+      (action)="downloadCatalog()"
+    ></lib-button>
+    <lib-button
+      class="block sm:hidden"
+      icon="pi pi-share-alt"
+      [width]="'w-11'"
+      type="rounded"
+      color="secondary"
+      (click)="share()"
+    ></lib-button>
+  </div>
+
+  @if (layoutMode === 'Grid') {
+  <div class="w-full flex flex-col items-center gap-6 md:gap-20">
+    @if (products.length > 0) {
+    <div class="w-full flex flex-col items-center gap-6 md:gap-6">
+      <div class="flex flex-row items-center justify-center w-10/10">
+        <lib-catalog-carousel
+          [products]="products"
+          [predefinedColor]="business.hexColor || catalog.hexColor ? true : false"
+          class="w-10/10"
+          [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
+          (setColor)="setColor($event)"
+        >
+        </lib-catalog-carousel>
+      </div>
+      <div
+        class="flex flex-row items-center justify-center w-full w-full mb-6 md:mb-0"
+      >
+        <lib-search-bar
+          class="w-full max-w-200"
+          (searchSubmit)="onSearchSubmit($event)"
+        ></lib-search-bar>
+      </div>
     </div>
     }
     <div
@@ -54,8 +177,38 @@
       }
     </div>
   </div>
+  }@else {
+  <div class="w-full flex flex-col items-center gap-10 md:gap-20 pt-5">
+    @if (products.length > 0) {
+    <div class="flex flex-row items-center justify-center w-full w-full">
+      <lib-search-bar
+        class="w-full max-w-200"
+        (searchSubmit)="onSearchSubmit($event)"
+      ></lib-search-bar>
+    </div>
+    }
+    <div
+      class="container w-full flex flex-col gap-5"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      [scrollWindow]="true"
+      [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
+      (scrolled)="onScroll()"
+    >
+      @for (product of products; track product.id) {
+      <div class="w-full flex flex-row items-center justify-center">
+        <lib-product-expanded-item
+          class="w-full"
+          [product]="product"
+          [reverse]="$index % 2 !== 0"
+        />
+      </div>
+      }
+    </div>
+  </div>
 
-  } @if(attempt || productsAttempt) {
+  } } @if(attempt || productsAttempt) {
   <div class="flex flex-col justify-center items-center w-full">
     <div class="card flex justify-center p-10">
       <p-progress-spinner

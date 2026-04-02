@@ -2,8 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
-import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
+import { of } from 'rxjs';
 import { BusinessPage } from './business-page';
 
 describe('BusinessPage', () => {
@@ -32,6 +33,10 @@ describe('BusinessPage', () => {
                 },
                 { provide: Apollo, useValue: mockApollo },
                 DialogService,
+                {
+                  provide: MessageService,
+                  useValue: { add: jest.fn() },
+                },
                 TranslateService,
                 TranslateStore,
             ],

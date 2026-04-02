@@ -1,3 +1,8 @@
 a {
   height: fit-content;
 }
+
+/* Evita heredar el color del contenedor (p. ej. texto claro sobre degradado de marca). */
+:host {
+  color: revert-layer;
+}

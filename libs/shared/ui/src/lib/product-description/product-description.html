@@ -1,12 +1,25 @@
-<div class="flex flex-col w-full gap-5 pt-15">
-  <!-- <div>
-    <span class="font-bold text-xl md:text-4xl"
-      >{{ product.price | currency: product?.currency?.code : 'symbol' : '1.0-2'
-      : 'es' }}
-    </span>
-  </div> -->
+<div class="flex flex-col w-full gap-5 pt-5">
+  <div class="w-full flex flex-row justify-start items-center gap-6">
+    <div class="flex flex-row justify-start items-center gap-2">
+      <i class="pi pi-star-fill text-yellow-500" style="font-size: 2rem"></i>
+
+      <span class="text-xl font-medium"
+        >{{product.ratingAverage | number:'1.0-1':'es'}}
+      </span>
+      <!-- <span class="text-sm font-medium"
+        >({{product.ratings?.length || 0}})</span
+      > -->
+    </div>
+
+    <lib-button
+      size="small"
+      width="w-25"
+      [label]="'general.rate'"
+      (action)="openRateModal()"
+    ></lib-button>
+  </div>
   <div class="w-full flex flex-col gap-1">
-    <div class="flex flex-col gap-2 w-full sm:w-11/12">
+    <div class="flex flex-col gap-2 w-full lg:w-11/12">
       <div class="product-description__content" [innerHTML]="description"></div>
     </div>
   </div>
@@ -16,9 +29,5 @@
       [tags]="tags"
     >
     </lib-product-tags>
-    <!-- <h3 class="text-3xl font-medium">Baltimore Ravens Jerseys</h3> -->
-    <!-- <span class="font-medium text-gray-600">
-        Jersey de fútbol americano Nike Dri-FIT de la NFL Elite para hombre
-    </span> -->
   </div>
 </div>

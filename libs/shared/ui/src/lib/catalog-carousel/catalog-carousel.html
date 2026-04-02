@@ -1,4 +1,5 @@
 <div
+  [class.light-mode]="useLightText"
   class="flex flex-col items-start justify-center w-10/10 max-h-screen rounded-xl"
 >
   @if(products && products.length > 0) {
@@ -19,6 +20,7 @@
           <lib-catalog-carousel-item
             class="w-full"
             [product]="product"
+            [useLightText]="useLightText"
           ></lib-catalog-carousel-item>
         </section>
       </ng-template>

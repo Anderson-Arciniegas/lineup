@@ -12,9 +12,11 @@ import {
 import { RouterLink } from '@angular/router';
 import {
   AppConfigService,
-  CurrencySymbolPipe,
+  BcvOfficialRatesSchema,
+  CurrencySchema,
+  DiscountSchema,
+  ProductPrivateService,
   ProductSchema,
-  ProductService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,7 +39,6 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
     ButtonModule,
     RouterLink,
     ProgressSpinnerModule,
-    CurrencySymbolPipe,
     PopoverModule,
     MenuModule,
   ],
@@ -46,13 +47,14 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 })
 export class ProductItem implements OnInit {
   @Input() product: ProductSchema;
-  @Input() dashboardMode: boolean;
+  @Input() rates: BcvOfficialRatesSchema;
   @Output() productDeletionEvent = new EventEmitter<number>();
   ref: DynamicDialogRef | undefined;
   image: string;
   imageLoaded: boolean;
   url: string;
   editUrl: string;
+  inventoryUrl: string;
   images: string[] = [
     'assets/images/products/headphones-min.webp',
     'assets/images/products/makeup.webp',
@@ -67,13 +69,16 @@ export class ProductItem implements OnInit {
 
   attemptDelete: boolean;
   items: MenuItem[] | undefined;
+  price: number;
+  originalPrice: number;
+  currency: CurrencySchema;
 
   private _subscription = new Subscription();
 
   private readonly _dialogService = inject(DialogService);
   private _translate = inject(TranslateService);
   private _utils = inject(UtilsService);
-  private readonly _productService = inject(ProductService);
+  private readonly _productService = inject(ProductPrivateService);
   private readonly _messageService = inject(MessageService);
 
   constructor(
@@ -86,19 +91,38 @@ export class ProductItem implements OnInit {
       this.image = this.product.productFiles
         ? this.product.productFiles[0]?.file?.url
         : '';
-      this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
-      this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/edit`;
-    } else {
-      this.image = this.images[Math.floor(Math.random() * this.images.length)];
-      this.url = `/business-1/catalog-1/123`;
-      this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/catalog-1/123/edit`;
+      this.url = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
+      this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.edit}`;
+      this.inventoryUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.inventory}`;
+      this.price = this._utils.formatPriceWithDiscount(
+        this.product.skus?.[0] ?? null,
+        (this.product.discountProduct?.discount as DiscountSchema) ?? null,
+        this.rates ?? null,
+      );
+      this.originalPrice = this.product.skus?.[0]?.price ?? null;
+      this.currency = this.product.skus?.[0]?.currency ?? null;
     }
     this.items = [
+      {
+        label: this._translate.instant('general.viewProduct'),
+        icon: 'pi pi-external-link',
+        command: () => {
+          const url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
+          window.open(url, '_blank');
+        },
+      },
+      {
+        label: this._translate.instant('general.inventory'),
+        icon: 'pi pi-warehouse',
+        command: () => {
+          this._utils.navigate([this.inventoryUrl]);
+        },
+      },
       {
         label: this._translate.instant('general.edit'),
         icon: 'pi pi-pencil',
         command: () => {
-          this._utils.navigate([this.url + '/edit']);
+          this._utils.navigate([this.editUrl]);
         },
       },
       {
@@ -165,7 +189,8 @@ export class ProductItem implements OnInit {
     });
   }
 
-  setLabel(title: string): string {
-    return title.length > 20 ? title.substring(0, 20) + '...' : title;
+  setLabel(title: string | null | undefined, maxLength = 20): string {
+    const t = title ?? '';
+    return t.length > maxLength ? t.substring(0, maxLength) + '...' : t;
   }
 }

@@ -3,12 +3,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
+  BcvOfficialRatesSchema,
+  BusinessPrivateService,
   BusinessSchema,
-  BusinessService,
+  CatalogPrivateService,
   CatalogSchema,
-  CatalogService,
+  ProductPrivateService,
   ProductSchema,
-  ProductService,
+  RatesPrivateService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -21,6 +23,7 @@ import {
   ProductItem,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { MessageService } from 'primeng/api';
 import { ChipModule } from 'primeng/chip';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -44,6 +47,7 @@ import { Subscription } from 'rxjs';
     TranslateModule,
     ChipModule,
     ProductItem,
+    InfiniteScrollDirective,
   ],
   templateUrl: './catalog-panel-page.html',
   styleUrl: './catalog-panel-page.scss',
@@ -59,14 +63,17 @@ export class CatalogPanelPage implements OnInit {
   deleteAttempt = false;
   page = 1;
   noMoreResults = false;
+  productsAttempt = false;
+  rates: BcvOfficialRatesSchema;
   ref: DynamicDialogRef | undefined;
   private readonly _activatedRoute = inject(ActivatedRoute);
-  private readonly _businessService = inject(BusinessService);
-  private readonly _catalogService = inject(CatalogService);
+  private readonly _businessService = inject(BusinessPrivateService);
+  private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
-  private readonly _productService = inject(ProductService);
+  private readonly _productService = inject(ProductPrivateService);
+  private readonly _ratesService = inject(RatesPrivateService);
   private readonly _utils = inject(UtilsService);
   private _subscription: Subscription = new Subscription();
 
@@ -77,6 +84,7 @@ export class CatalogPanelPage implements OnInit {
       this.getBusiness();
     }
     this.getCatalog();
+    this.getRates();
   }
 
   getBusiness(): void {
@@ -96,14 +104,17 @@ export class CatalogPanelPage implements OnInit {
   }
 
   getCatalog(): void {
+    this.attempt = true;
     this._subscription.add(
       this._catalogService.findOneCatalogByPath(this.catalogPath).subscribe({
         next: (catalog) => {
           this.catalog = catalog;
           this.getProducts();
+          this.attempt = false;
         },
         error: (error) => {
           console.error(error);
+          this.attempt = false;
         },
         complete: () => {
           console.log('complete');
@@ -112,10 +123,17 @@ export class CatalogPanelPage implements OnInit {
     );
   }
 
+  onScroll(): void {
+    console.log('onScroll');
+    this.getProducts();
+  }
+
   getProducts(): void {
+    if (this.productsAttempt || this.noMoreResults) return;
+    this.productsAttempt = true;
     this._subscription.add(
       this._productService
-        .getAllByCatalog(this.catalog.id, {
+        .getAllByCatalogPaginated(this.catalog.id, {
           page: this.page,
           limit: 100,
         })
@@ -127,9 +145,11 @@ export class CatalogPanelPage implements OnInit {
             if (products.items.length === 0) {
               this.noMoreResults = true;
             }
+            this.productsAttempt = false;
           },
           error: (error) => {
             console.error(error);
+            this.productsAttempt = false;
           },
           complete: () => {
             console.log('complete');
@@ -198,5 +218,18 @@ export class CatalogPanelPage implements OnInit {
   deleteProduct(id: number): void {
     console.log(id);
     this.products = this.products.filter((product) => product.id !== id);
+  }
+
+  getRates(): void {
+    this._subscription.add(
+      this._ratesService.findBcvOfficialRates().subscribe({
+        next: (rates) => {
+          this.rates = rates;
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      }),
+    );
   }
 }

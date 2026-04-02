@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
-import { AppConfigService, BusinessSchema, BusinessService } from '@lineup/core';
+import { AppConfigService, BusinessSchema, BusinessPrivateService } from '@lineup/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services';
@@ -13,18 +13,19 @@ export const BusinessAuthGuard: CanActivateFn = ():
   | boolean
   | UrlTree => {
   const auth = inject(AuthService);
-  const business = inject(BusinessService);
+  const business = inject(BusinessPrivateService);
   const router = inject(Router);
   const loginUrl = router.createUrlTree([AppConfigService.config.routes.login]);
   const profileUrl = router.createUrlTree([AppConfigService.config.routes.profile]);
 
   if (auth.userValue) {
-    return of(profileUrl);
+    return profileUrl;
   }
   if (auth.businessValue) {
-    return of(true);
+    return true;
   }
 
+  // No confiar solo en storage: la cookie puede haber expirado en el servidor.
   return business.myBusiness().pipe(
     map((businessData: unknown) => {
       if (businessData) {

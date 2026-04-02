@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { BusinessApiFileService, UtilsService } from '@lineup/core';
+import {
+  BusinessApiFilePrivateService,
+  BusinessPrivateService,
+  UtilsService,
+} from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
@@ -10,7 +14,6 @@ import {
 import { Apollo } from 'apollo-angular';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { BusinessService } from 'libs/shared/core/src/lib/services/business.service';
 import { of } from 'rxjs';
 import { EditBusinessPage } from './edit-business-page';
 
@@ -19,7 +22,7 @@ describe('EditBusinessPage', () => {
   let fixture: ComponentFixture<EditBusinessPage>;
 
   beforeEach(async () => {
-    const businessServiceMock: Pick<BusinessService, 'myBusiness'> = {
+    const businessServiceMock: Pick<BusinessPrivateService, 'myBusiness'> = {
       myBusiness: () =>
         of({
           name: 'Test Business',
@@ -38,7 +41,7 @@ describe('EditBusinessPage', () => {
       compressImage: (base64: string) => of(base64),
     };
 
-    const businessApiFileServiceMock: Partial<BusinessApiFileService> = {
+    const businessApiFileServiceMock: Partial<BusinessApiFilePrivateService> = {
       post: () => of({ type: 0 } as any),
     };
 
@@ -55,10 +58,10 @@ describe('EditBusinessPage', () => {
         },
         MessageService,
         DialogService,
-        { provide: BusinessService, useValue: businessServiceMock },
+        { provide: BusinessPrivateService, useValue: businessServiceMock },
         { provide: UtilsService, useValue: utilsServiceMock },
         {
-          provide: BusinessApiFileService,
+          provide: BusinessApiFilePrivateService,
           useValue: businessApiFileServiceMock,
         },
       ],

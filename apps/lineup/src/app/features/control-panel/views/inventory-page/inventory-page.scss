@@ -1,0 +1,19 @@
+.p-select {
+  width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+::ng-deep {
+  .p-panel-icons {
+    width: 44px !important;
+  }
+
+  @media (max-width: 767px) {
+    .p-panel-icons {
+      display: none !important;
+    }
+  }
+}
