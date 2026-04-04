@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -30,6 +31,7 @@ import { ChipModule } from 'primeng/chip';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
@@ -37,11 +39,13 @@ import { Subscription, take } from 'rxjs';
   selector: 'app-catalog-panel-page',
   imports: [
     CommonModule,
+    FormsModule,
     ProductBreadcrumb,
     ProductCard,
     Button,
     IconField,
     InputIcon,
+    InputTextModule,
     CatalogCarousel,
     CreateProductCard,
     ProgressSpinner,
@@ -65,6 +69,7 @@ export class CatalogPanelPage implements OnInit {
   page = 1;
   noMoreResults = false;
   productsAttempt = false;
+  searchQuery = '';
   rates: BcvOfficialRatesSchema;
   ref: DynamicDialogRef | undefined;
   private readonly _activatedRoute = inject(ActivatedRoute);
@@ -130,14 +135,25 @@ export class CatalogPanelPage implements OnInit {
     this.getProducts();
   }
 
+  onSearchSubmit(): void {
+    if (!this.catalog) return;
+    this.searchQuery = this.searchQuery.trim();
+    this.products = [];
+    this.page = 1;
+    this.noMoreResults = false;
+    this.getProducts();
+  }
+
   getProducts(): void {
-    if (this.productsAttempt || this.noMoreResults) return;
+    if (!this.catalog || this.productsAttempt || this.noMoreResults) return;
     this.productsAttempt = true;
+    const trimmedSearch = this.searchQuery.trim();
     this._subscription.add(
       this._productService
         .getAllByCatalogPaginated(this.catalog.id, {
           page: this.page,
           limit: 100,
+          ...(trimmedSearch !== '' ? { search: trimmedSearch } : {}),
         })
         .subscribe({
           next: (products) => {

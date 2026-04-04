@@ -14,12 +14,13 @@
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: 1rem;
+    gap: 1.25rem;
     width: 100%;
     padding: 0 0.25rem 2.5rem;
 
-    @media screen and (max-width: 1535px) {
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    @media screen and (max-width: 1023px) {
+      grid-template-columns: 1fr;
+      justify-items: center;
     }
 
     @media (min-width: 640px) {
@@ -37,64 +38,177 @@
     border-radius: 50% !important;
   }
 
+  .product-page-carousel {
+    width: 100%;
+
+    .p-carousel-viewport {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .p-carousel-item-list {
+      align-items: stretch;
+    }
+
+    .p-carousel-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      min-width: 0;
+      padding-inline: 0.25rem;
+    }
+  }
+
+  .product-page-carousel__slide {
+    min-height: 0;
+  }
+
+  /*
+   * < sm (640px): ancho 100% del slide (sin tope fijo tipo 400px).
+   * sm–<lg: máximo 400px (no 500). lg / xl: sin cambio en columnas.
+   */
+  .carousel-image-frame {
+    box-sizing: border-box;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    max-height: min(72vh, 100vw);
+  }
+
+  @media screen and (min-width: 640px) and (max-width: 1023px) {
+    .carousel-image-frame {
+      width: min(400px, calc(100vw - 3rem), 72vh);
+      height: min(400px, calc(100vw - 3rem), 72vh);
+      max-width: none;
+    }
+  }
+
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .carousel-image-frame {
+      width: min(360px, calc((100vw - 6rem - 1rem) / 2), 62vh);
+      height: min(360px, calc((100vw - 6rem - 1rem) / 2), 62vh);
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    .carousel-image-frame {
+      width: min(500px, calc((100vw - 6rem - 2rem) / 3), 72vh);
+      height: min(500px, calc((100vw - 6rem - 2rem) / 3), 72vh);
+    }
+  }
+
+  .product-page-carousel .carousel-image-frame {
+    .p-image,
+    p-image {
+      display: flex !important;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    img.carousel-image {
+      box-sizing: border-box;
+      cursor: pointer;
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none;
+      max-height: none;
+      object-fit: contain;
+      object-position: center;
+      background: var(--white);
+      border: 15px solid var(--p-primary-50);
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+      filter: brightness(0.98) contrast(1.05) saturate(1.1);
+
+      &:hover {
+        transform: scale(1.03);
+        filter: brightness(1) contrast(1.1) saturate(1.2);
+      }
+    }
+  }
+
+  @media screen and (max-width: 1023px) {
+    .product-page-carousel .carousel-image-frame img.carousel-image {
+      border-width: 12px;
+      border-radius: 40px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .product-page-carousel .carousel-image-frame img.carousel-image {
+      border-width: 10px;
+      border-radius: 36px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .product-page-carousel .carousel-image-frame img.carousel-image {
+      border-width: 8px;
+      border-radius: 32px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .product-page-carousel .carousel-image-frame img.carousel-image {
+      border-width: 5px;
+      border-radius: 24px;
+    }
+  }
+
   .light-mode {
     .p-button-text.p-button-secondary {
       color: var(--p-primary-50) !important;
     }
   }
 
-  .carousel-image {
-    cursor: pointer;
-    width: 100%;
-    min-height: 400px;
-    height: 500px;
-    max-width: 600px;
-    background: var(--white);
-    border: 15px solid var(--p-primary-50);
-    border-radius: 50px;
-    aspect-ratio: 1/1;
-    /* esquinas suaves */
-    object-fit: cover;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    /* sombra sutil */
-    transition:
-      transform 0.25s ease,
-      filter 0.25s ease;
-    filter: brightness(0.98) contrast(1.05) saturate(1.1);
-
-    &:hover {
-      transform: scale(1.03);
-      /* pequeño zoom */
-      filter: brightness(1) contrast(1.1) saturate(1.2);
-    }
-  }
-
   .carousel-image-loading {
-    height: 500px;
-    width: 500px;
+    box-sizing: border-box;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    max-height: min(72vh, 100vw);
     background: var(--white);
-    max-width: 600px;
-    border: 15px solid var(--p-primary-50);
-    border-radius: 50px;
+    border: 12px solid var(--p-primary-50);
+    border-radius: 40px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
-  @media screen and (max-width: 639px) {
-    .carousel-image {
-      max-height: 350px !important;
-      width: 100%;
-      min-height: 350px !important;
-      border: 5px solid var(--p-primary-50);
+  @media screen and (min-width: 640px) and (max-width: 1023px) {
+    .carousel-image-loading {
+      width: min(400px, calc(100vw - 3rem), 72vh);
+      height: min(400px, calc(100vw - 3rem), 72vh);
+      max-width: none;
     }
   }
 
-  @media screen and (max-width: 450px) {
-    .carousel-image {
-      max-height: 250px !important;
-      width: 100%;
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .carousel-image-loading {
+      width: min(360px, calc((100vw - 6rem - 1rem) / 2), 62vh);
+      height: min(360px, calc((100vw - 6rem - 1rem) / 2), 62vh);
+    }
+  }
 
-      min-height: 250px !important;
-      border: 5px solid var(--p-primary-50);
+  @media screen and (min-width: 1280px) {
+    .carousel-image-loading {
+      width: min(500px, calc((100vw - 6rem - 2rem) / 3), 72vh);
+      height: min(500px, calc((100vw - 6rem - 2rem) / 3), 72vh);
+      border-width: 15px;
+      border-radius: 50px;
     }
   }
 }

@@ -35,18 +35,21 @@ export interface InitialStockItemInput {
   quantityDelta: number;
 }
 
+/** Alineado con `CreateProductInput` en GraphQL. */
 export interface CreateProductInput {
   description: string;
   idCatalog: number;
   images: ProductImageInput[];
+  isPrimary: boolean;
   subtitle: string;
   title: string;
   variations?: CreateProductVariationInput[];
 }
 
+/** Alineado con `UpdateProductInput` en GraphQL (solo `id` es obligatorio). */
 export interface UpdateProductInput {
-  id: number;
   description?: string;
+  id: number;
   idCatalog?: number;
   images?: ProductImageInput[];
   isPrimary?: boolean;

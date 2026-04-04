@@ -279,6 +279,7 @@ export const es = {
     ourMainProducts: 'Nuestros productos principales',
     outOfStockSimple: 'Agotado',
     switchCatalog: 'Cambiar de catálogo',
+    productPanel: 'Panel de producto',
   },
   businessHoursModal: {
     days: 'Días',

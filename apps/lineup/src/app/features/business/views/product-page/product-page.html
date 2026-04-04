@@ -20,35 +20,56 @@
       </h3>
     </div>
 
+    @if(myBusiness) {
+    <div class="w-full flex flex-row items-center justify-end">
+      <lib-button
+        class="hidden sm:flex"
+        icon="pi pi-cog"
+        type="rounded"
+        color="secondary"
+        [label]="'general.productPanel' | translate"
+        [link]="configUrl"
+      ></lib-button>
+      <lib-button
+        class="flex sm:hidden"
+        icon="pi pi-cog"
+        [size]="'small'"
+        type="rounded"
+        [label]="'general.productPanel' | translate"
+        color="secondary"
+        [link]="configUrl"
+      ></lib-button>
+    </div>
+    }
     <div [class.light-mode]="brandToneLight" class="card w-10/10">
+      @for (instanceId of [carouselInstanceKey]; track instanceId) {
       <p-carousel
+        styleClass="product-page-carousel"
         [value]="images"
-        [numVisible]="3"
+        [numVisible]="carouselNumVisible"
         [numScroll]="1"
         [showIndicators]="false"
-        [circular]="true"
-        [responsiveOptions]="responsiveOptions"
-        autoplayInterval="8000"
+        [showNavigators]="carouselShowNavigators"
+        [circular]="carouselCircular"
+        [autoplayInterval]="carouselAutoplayInterval"
       >
         <ng-template let-image #item>
           <section
-            class="flex flex-row items-center justify-center p-1 sm:py-3 sm:mx-2"
+            class="product-page-carousel__slide flex flex-row items-center justify-center p-1 sm:py-3 sm:mx-2 w-full min-w-0"
           >
-            <p-image
-              [src]="image"
-              [preview]="true"
-              [appendTo]="'body'"
-              imageClass="carousel-image w-10/10"
-              alt=""
-            />
+            <div class="carousel-image-frame">
+              <p-image
+                [src]="image"
+                [preview]="true"
+                [appendTo]="'body'"
+                imageClass="carousel-image"
+                alt=""
+              />
+            </div>
           </section>
-
-          <!-- <div [hidden]="imageLoaded"
-                         class="carousel-image-skeleton max-h-64 md:max-h-80 lg:max-h-screen w-10/10 sm:w-8/10 lg:w-4/10 flex items-center justify-center">
-
-                    </div> -->
         </ng-template>
       </p-carousel>
+      }
     </div>
     <!-- <div class="w-full flex flex-row gap-6 items-center justify-center">
             <p-skeleton width="340px"
