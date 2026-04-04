@@ -1,4 +1,3 @@
-import { getPlatform } from '@angular/core';
 import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
 import { getContext } from '@netlify/angular-runtime/context.mjs';
 
@@ -7,12 +6,10 @@ const angularAppEngine = new AngularAppEngine();
 export async function netlifyAppEngineHandler(
   request: Request,
 ): Promise<Response> {
-  // Evita NG0400: destruir cualquier plataforma previa antes de manejar la petición.
-  // Puede quedar una plataforma si una petición anterior falló o durante el descubrimiento de rutas.
-  const platform = getPlatform();
-  if (platform) {
-    platform.destroy();
-  }
+  // No llamar a getPlatform()?.destroy() aquí: con peticiones concurrentes o recargas
+  // rápidas (HMR), la siguiente petición destruía el inyector mientras la anterior
+  // seguía renderizando → NG0205 Injector has already been destroyed.
+  // AngularAppEngine gestiona el ciclo de vida; los fallos en bootstrap los limpia el propio SSR.
 
   const context = getContext();
 

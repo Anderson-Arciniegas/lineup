@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AppConfigService,
   DiscountPrivateService,
@@ -13,7 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-discounts-panel-page',
@@ -38,6 +39,7 @@ export class DiscountsPanelPage implements OnInit, OnDestroy {
   loading = false;
 
   private readonly _subscriptions = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
   private _deleteRef: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
@@ -70,7 +72,6 @@ export class DiscountsPanelPage implements OnInit, OnDestroy {
     this._subscriptions.add(
       forkJoin(reqs).subscribe({
         next: (responses) => {
-          console.log(responses);
           const byId = new Map<number, DiscountSchema>();
 
           for (const response of responses) {
@@ -140,34 +141,37 @@ export class DiscountsPanelPage implements OnInit, OnDestroy {
       resizable: false,
     });
 
-    this._deleteRef.onClose.subscribe((confirmed: boolean) => {
-      if (!confirmed) return;
+    this._subscriptions.add(
+      this._deleteRef.onClose
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe((confirmed: boolean) => {
+          if (!confirmed) return;
 
-      this._subscriptions.add(
-        this._discountService.removeDiscount(idDiscount).subscribe({
-          next: () => {
-            this.discounts = this.discounts.filter((d) => d.id !== idDiscount);
-            this._messageService.add({
-              severity: 'success',
-              summary: this._translate.instant('general.success'),
-              detail: 'Descuento eliminado correctamente.',
-              life: 3000,
-            });
-          },
-          error: (error) => {
-            console.error(error);
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail: 'No se pudo eliminar el descuento.',
-              life: 4000,
-            });
-          },
-          complete: () => {
-            // nothing
-          },
+          this._subscriptions.add(
+            this._discountService.removeDiscount(idDiscount).subscribe({
+              next: () => {
+                this.discounts = this.discounts.filter(
+                  (d) => d.id !== idDiscount,
+                );
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: 'Descuento eliminado correctamente.',
+                  life: 3000,
+                });
+              },
+              error: (error) => {
+                console.error(error);
+                this._messageService.add({
+                  severity: 'error',
+                  summary: this._translate.instant('general.error'),
+                  detail: 'No se pudo eliminar el descuento.',
+                  life: 4000,
+                });
+              },
+            }),
+          );
         }),
-      );
-    });
+    );
   }
 }

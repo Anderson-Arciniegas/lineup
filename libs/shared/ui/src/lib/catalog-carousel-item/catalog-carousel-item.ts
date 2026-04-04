@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, Input } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  Input,
+  OnDestroy,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   AuthStore,
@@ -12,7 +18,7 @@ import {
   RatesPrivateService,
   UtilsService,
 } from '@lineup/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Skeleton } from 'primeng/skeleton';
 import { Subscription } from 'rxjs';
@@ -21,11 +27,18 @@ import { ShareModal } from '../share-modal/share-modal';
 
 @Component({
   selector: 'lib-catalog-carousel-item',
-  imports: [CommonModule, Button, Skeleton, CurrencySymbolPipe, RouterModule],
+  imports: [
+    CommonModule,
+    Button,
+    Skeleton,
+    CurrencySymbolPipe,
+    RouterModule,
+    TranslateModule,
+  ],
   templateUrl: './catalog-carousel-item.html',
   styleUrl: './catalog-carousel-item.scss',
 })
-export class CatalogCarouselItem implements AfterViewInit {
+export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   @Input() product: ProductSchema;
   @Input() useLightText?: boolean;
   imageLoaded = false;
@@ -34,6 +47,8 @@ export class CatalogCarouselItem implements AfterViewInit {
   originalPrice: number;
   currency: CurrencySchema;
   rates: BcvOfficialRatesSchema;
+  inStock: boolean;
+  outOfStock: boolean;
   ref: DynamicDialogRef | undefined;
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
@@ -50,6 +65,25 @@ export class CatalogCarouselItem implements AfterViewInit {
     this.originalPrice = this.product.skus?.[0].price ?? null;
     this.currency = this.product.skus?.[0]?.currency ?? null;
     this.getRates();
+    this.product.skus?.map((sku) => {
+      if (
+        sku.quantity === null ||
+        sku.quantity === undefined ||
+        sku.quantity > 0
+      ) {
+        this.inStock = true;
+      }
+    });
+
+    if (this.inStock) {
+      this.outOfStock = false;
+    } else {
+      this.outOfStock = true;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   share() {
@@ -75,16 +109,12 @@ export class CatalogCarouselItem implements AfterViewInit {
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = true;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = false;
-        },
-        complete: () => {
-          console.log('Product liked');
         },
       }),
     );
@@ -95,16 +125,12 @@ export class CatalogCarouselItem implements AfterViewInit {
     this.hasLiked = false;
     this._subscription.add(
       this._productPublicService.unlikeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = false;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = true;
-        },
-        complete: () => {
-          console.log('Product unliked');
         },
       }),
     );
@@ -115,7 +141,6 @@ export class CatalogCarouselItem implements AfterViewInit {
     this._subscription.add(
       this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
-          console.log(response);
           this.hasLiked = response;
         },
       }),

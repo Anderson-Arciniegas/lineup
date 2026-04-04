@@ -4,6 +4,23 @@
   overflow: hidden;
 }
 
+/**
+ * PDF: el .flip-inner completo ya no se renderiza (se sustituye por .pdf-title-face),
+ * pero dejamos el override por si acaso queda algún inline style de GSAP.
+ */
+.product-card--pdf-export .flip-inner {
+  transform: none !important;
+  transition: none !important;
+}
+
+.pdf-title-face {
+  background: rgba(52, 52, 52, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
 // .info-translucid{
 //     background: rgba(52, 52, 52, 0.7);
 //     border: 1px solid var(--p-primary-800);
@@ -40,6 +57,13 @@ a {
   width: 100%;
   padding: 10px;
   top: 0px;
+}
+
+.note-container {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  bottom: 65px;
 }
 
 .product-image {

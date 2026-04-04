@@ -16,7 +16,7 @@ import {
   ProductSchema,
   ProductSkuSchema,
   RatesPrivateService,
-  RegisterPurchaseInput,
+  SalesInput,
   StatusEnum,
   UtilsService,
 } from '@lineup/core';
@@ -472,7 +472,7 @@ export class RegisterSalePage implements OnInit, OnDestroy {
     ];
   }
 
-  private buildRegisterPayload(): RegisterPurchaseInput[] | null {
+  private buildRegisterPayload(): SalesInput | null {
     if (this.cart.length === 0) {
       this._messageService.add({
         severity: 'warn',
@@ -483,7 +483,7 @@ export class RegisterSalePage implements OnInit, OnDestroy {
       return null;
     }
 
-    const lines: RegisterPurchaseInput[] = [];
+    const sales: SalesInput['sales'] = [];
     const seenSku = new Set<number>();
 
     for (const entry of this.cart) {
@@ -523,12 +523,30 @@ export class RegisterSalePage implements OnInit, OnDestroy {
           });
           return null;
         }
+        const totals = this.lineTotals(entry, line);
+        const lineTotal =
+          totals.subtotalFinal ?? totals.subtotalOriginal;
+        if (lineTotal == null) {
+          this._messageService.add({
+            severity: 'warn',
+            summary: this._translate.instant('general.warning'),
+            detail: this._translate.instant(
+              'registerSalePage.missingPriceForSku',
+            ),
+            life: 5000,
+          });
+          return null;
+        }
         seenSku.add(line.idProductSku);
-        lines.push({ idProductSku: line.idProductSku, quantity: qty });
+        sales.push({
+          idProductSku: line.idProductSku,
+          quantity: qty,
+          price: lineTotal,
+        });
       }
     }
 
-    return lines;
+    return { sales };
   }
 
   private triggerProductLoad(): void {

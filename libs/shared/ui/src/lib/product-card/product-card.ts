@@ -4,8 +4,11 @@ import {
   Component,
   inject,
   Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
+  SimpleChanges,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -18,6 +21,7 @@ import {
   RatesPrivateService,
   UtilsService,
 } from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -36,15 +40,18 @@ import { Button } from '../button/button';
     ProgressSpinnerModule,
     TooltipModule,
     RouterLink,
+    TranslateModule,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })
-export class ProductCard implements AfterViewInit, OnInit {
+export class ProductCard implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   @Input() product: ProductSchema;
   @Input() width = 'w-65';
   @Input() height = 'h-100';
   @Input() dashboardMode: boolean;
+  /** Catálogo PDF: sin botones, flip fijado en la cara del título. */
+  @Input() pdfExportAttempt = false;
   image: string;
   businessImage: string;
   imageLoaded: boolean;
@@ -53,6 +60,8 @@ export class ProductCard implements AfterViewInit, OnInit {
   originalPrice: number;
   currency: CurrencySchema;
   hasLiked: boolean;
+  inStock: boolean;
+  outOfStock: boolean;
   images: string[] = [
     'assets/images/products/headphones-min.webp',
     'assets/images/products/makeup.webp',
@@ -74,6 +83,8 @@ export class ProductCard implements AfterViewInit, OnInit {
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
+  private _flipInitTimeoutId: ReturnType<typeof setTimeout> | undefined;
+  private _teardownFlipListeners: (() => void) | undefined;
 
   /** Id único por instancia para el contenedor flip (DOM / GSAP). */
   readonly cardFlipId = `product-flip-${
@@ -83,10 +94,14 @@ export class ProductCard implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     if (this.product) {
-      this.image = this.product.productFiles[0].file?.url;
+      this.image = this.srcWithCrossOriginNonce(
+        this.product.productFiles[0].file?.url,
+      );
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
-        this.businessImage = this.product.business.image?.url;
+        this.businessImage = this.srcWithCrossOriginNonce(
+          this.product.business.image?.url,
+        );
       } else {
         this.url = `/business-1/catalog-1/123`;
       }
@@ -95,6 +110,21 @@ export class ProductCard implements AfterViewInit, OnInit {
       this.currency = this.product.skus?.[0]?.currency ?? null;
       if (isPlatformBrowser(this.platformId)) {
         this.getRates();
+      }
+      this.product.skus?.map((sku) => {
+        if (
+          sku.quantity === null ||
+          sku.quantity === undefined ||
+          sku.quantity > 0
+        ) {
+          this.inStock = true;
+        }
+      });
+
+      if (this.inStock) {
+        this.outOfStock = false;
+      } else {
+        this.outOfStock = true;
       }
     } else {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
@@ -105,28 +135,104 @@ export class ProductCard implements AfterViewInit, OnInit {
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    setTimeout(() => {
-      const flipBox = document.getElementById(this.cardFlipId);
-      const inner = flipBox.querySelector('.flip-inner');
-
-      flipBox.addEventListener('mouseenter', () => {
-        gsap.to(inner, {
-          rotateX: 180,
-          duration: 0.4,
-          ease: 'power2.inOut',
-        });
-      });
-
-      flipBox.addEventListener('mouseleave', () => {
-        gsap.to(inner, {
-          rotateX: 0,
-          duration: 0.4,
-          ease: 'power2.inOut',
-        });
-      });
+    this._flipInitTimeoutId = setTimeout(() => {
+      this._flipInitTimeoutId = undefined;
+      this.syncFlipForExportState();
     }, 100);
 
     this.hasLikedProduct();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product'] && this.product) {
+      this.imageLoaded = false;
+      this.image = this.srcWithCrossOriginNonce(
+        this.product.productFiles[0]?.file?.url,
+      );
+      this.businessImage = this.srcWithCrossOriginNonce(
+        this.product.business?.image?.url,
+      );
+      if (this.product.business && this.product.catalog) {
+        this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
+      }
+    }
+    if (
+      changes['pdfExportAttempt'] &&
+      isPlatformBrowser(this.platformId)
+    ) {
+      this.syncFlipForExportState();
+    }
+  }
+
+  /**
+   * Igual que catalog-carousel: `?t=` para URLs remotas (canvas / html2canvas / CORS).
+   */
+  private srcWithCrossOriginNonce(
+    url: string | undefined | null,
+  ): string | undefined {
+    if (url == null || url === '') {
+      return undefined;
+    }
+    if (url.startsWith('data:') || url.startsWith('blob:')) {
+      return url;
+    }
+    if (!/^https?:\/\//i.test(url)) {
+      return url;
+    }
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}t=${Date.now()}`;
+  }
+
+  /** PDF: cara frontal (título). Normal: hover flip si aplica. */
+  private syncFlipForExportState(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const flipBox = document.getElementById(this.cardFlipId);
+    const inner = flipBox?.querySelector('.flip-inner');
+    if (!flipBox || !inner) {
+      return;
+    }
+
+    this._teardownFlipListeners?.();
+    this._teardownFlipListeners = undefined;
+    gsap.killTweensOf(inner);
+
+    if (this.pdfExportAttempt) {
+      gsap.set(inner, { rotateX: 0 });
+      return;
+    }
+
+    const onEnter = (): void => {
+      gsap.to(inner, {
+        rotateX: 180,
+        duration: 0.4,
+        ease: 'power2.inOut',
+      });
+    };
+    const onLeave = (): void => {
+      gsap.to(inner, {
+        rotateX: 0,
+        duration: 0.4,
+        ease: 'power2.inOut',
+      });
+    };
+
+    flipBox.addEventListener('mouseenter', onEnter);
+    flipBox.addEventListener('mouseleave', onLeave);
+    this._teardownFlipListeners = (): void => {
+      flipBox.removeEventListener('mouseenter', onEnter);
+      flipBox.removeEventListener('mouseleave', onLeave);
+      gsap.killTweensOf(inner);
+    };
+  }
+
+  ngOnDestroy(): void {
+    if (this._flipInitTimeoutId !== undefined) {
+      clearTimeout(this._flipInitTimeoutId);
+    }
+    this._teardownFlipListeners?.();
+    this._subscription.unsubscribe();
   }
 
   likeProduct(): void {
@@ -134,16 +240,12 @@ export class ProductCard implements AfterViewInit, OnInit {
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = true;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = false;
-        },
-        complete: () => {
-          console.log('Product liked');
         },
       }),
     );
@@ -154,16 +256,12 @@ export class ProductCard implements AfterViewInit, OnInit {
     this.hasLiked = false;
     this._subscription.add(
       this._productPublicService.unlikeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = false;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = true;
-        },
-        complete: () => {
-          console.log('Product unliked');
         },
       }),
     );
@@ -174,7 +272,6 @@ export class ProductCard implements AfterViewInit, OnInit {
     this._subscription.add(
       this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
-          console.log(response);
           this.hasLiked = response;
         },
       }),

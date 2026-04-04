@@ -93,6 +93,32 @@
     }
   }
 
+  /*
+   * PDF mode: columnas fijas por breakpoint para garantizar exactamente 2 filas.
+   * Reemplaza el auto-fill que puede generar más o menos columnas según el viewport.
+   * Mayor row-gap para separar visualmente las dos filas dentro de la hoja.
+   */
+  .products-grid--pdf {
+    grid-template-columns: 1fr;           /* xs  (<640)  — 1 col */
+    row-gap: 2.5rem;
+
+    @media screen and (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);  /* sm/md        — 2 cols */
+    }
+
+    @media screen and (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);  /* lg           — 3 cols */
+    }
+
+    @media screen and (min-width: 1280px) {
+      grid-template-columns: repeat(4, 1fr);  /* xl           — 4 cols */
+    }
+
+    @media screen and (min-width: 1536px) {
+      grid-template-columns: repeat(5, 1fr);  /* xxl          — 5 cols */
+    }
+  }
+
   .p-togglebutton.p-togglebutton-checked {
     background: var(--p-primary-800) !important;
     border-color: var(--p-primary-800) !important;

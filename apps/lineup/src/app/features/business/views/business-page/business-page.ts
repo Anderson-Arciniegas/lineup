@@ -155,7 +155,7 @@ export class BusinessPage implements OnInit {
     this.attemptProducts = true;
     this._subscription.add(
       this._productService
-        .getAllPrimaryProductsByBusiness(this.business.id)
+        .getAllPrimaryProductsByBusiness({ idBusiness: this.business.id })
         .subscribe({
           next: (products) => {
             this.attemptProducts = false;

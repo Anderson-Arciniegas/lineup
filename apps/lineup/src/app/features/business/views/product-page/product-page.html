@@ -28,7 +28,6 @@
         [showIndicators]="false"
         [circular]="true"
         [responsiveOptions]="responsiveOptions"
-        (onPage)="onPage($event)"
         autoplayInterval="8000"
       >
         <ng-template let-image #item>
@@ -81,14 +80,49 @@
     />
   </div>
   }
-  <div class="w-full mt-10 gap-6 flex flex-row items-center justify-center">
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 w-9/10 px-4 lg:px-10 max-w-screen-2xl"
-    >
-      <!-- <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
-      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
-      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card>
-      <lib-product-card [width]="'w-full'" [height]="'h-70'"></lib-product-card> -->
+  <div
+    class="w-full mt-10 flex flex-col items-center gap-10 px-4 lg:px-10 max-w-screen-2xl mx-auto"
+  >
+    @if (sameBusinessProducts.length) {
+    <div class="w-full flex flex-col gap-10">
+      <div
+        [class.product-page__brand-text--light]="brandToneLight"
+        [class.product-page__brand-text--dark]="brandToneDark"
+        class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+      >
+        <i class="pi pi-shop text-3xl"></i>
+        <h2 class="text-xl md:text-2xl font-semibold text-left">
+          {{'general.otherProductsFromBusiness' | translate}}
+        </h2>
+      </div>
+      <div class="container w-full products-grid">
+        @for (p of sameBusinessProducts; track p.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-product-card [product]="p" [width]="'w-65'" [height]="'h-100'" />
+        </div>
+        }
+      </div>
     </div>
+    } @if (relatedProductsByTags.length) {
+    <div class="w-full flex flex-col gap-10">
+      <div
+        [class.product-page__brand-text--light]="brandToneLight"
+        [class.product-page__brand-text--dark]="brandToneDark"
+        class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+      >
+        <i class="pi pi-link text-3xl"></i>
+        <h2 class="text-xl md:text-2xl font-semibold text-left">
+          {{'general.relatedProductsByTags' | translate}}
+        </h2>
+      </div>
+      <div class="container w-full products-grid">
+        @for (p of relatedProductsByTags; track p.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-product-card [product]="p" [width]="'w-65'" [height]="'h-100'" />
+        </div>
+        }
+      </div>
+    </div>
+    }
   </div>
 </section>

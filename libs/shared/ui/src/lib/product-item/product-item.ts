@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Inject,
@@ -9,6 +10,7 @@ import {
   Output,
   PLATFORM_ID,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import {
   AppConfigService,
@@ -27,7 +29,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MenuModule } from 'primeng/menu';
 import { PopoverModule } from 'primeng/popover';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { Button } from '../button/button';
 import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 @Component({
@@ -80,6 +82,7 @@ export class ProductItem implements OnInit {
   private _utils = inject(UtilsService);
   private readonly _productService = inject(ProductPrivateService);
   private readonly _messageService = inject(MessageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -155,38 +158,35 @@ export class ProductItem implements OnInit {
       resizable: false,
     });
 
-    this.ref.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log(confirmed);
-        const id = this.product.id;
-        if (this.attemptDelete) return;
-        this.attemptDelete = true;
-        this._subscription.add(
-          this._productService.removeProduct(id).subscribe({
-            next: (response) => {
-              console.log(response);
-              this.attemptDelete = false;
-              this._messageService.add({
-                severity: 'success',
-                summary: this._translate.instant('general.success'),
-                detail: this._translate.instant(
-                  'toast.productDeletedSuccessfully',
-                ),
-                life: 3000,
-              });
-              this.productDeletionEvent.emit(id);
-            },
-            error: (error) => {
-              console.error(error);
-              this.attemptDelete = false;
-            },
-            complete: () => {
-              console.log('Product deleted');
-            },
-          }),
-        );
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          const id = this.product.id;
+          if (this.attemptDelete) return;
+          this.attemptDelete = true;
+          this._subscription.add(
+            this._productService.removeProduct(id).subscribe({
+              next: () => {
+                this.attemptDelete = false;
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: this._translate.instant(
+                    'toast.productDeletedSuccessfully',
+                  ),
+                  life: 3000,
+                });
+                this.productDeletionEvent.emit(id);
+              },
+              error: (error) => {
+                console.error(error);
+                this.attemptDelete = false;
+              },
+            }),
+          );
+        }
+      });
   }
 
   setLabel(title: string | null | undefined, maxLength = 20): string {

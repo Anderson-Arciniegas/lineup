@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -37,6 +44,7 @@ import {
   DraggableImageList,
   ImageCropper,
   ProductBreadcrumb,
+  SelectCatalogModal,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
@@ -52,7 +60,7 @@ import { PanelModule } from 'primeng/panel';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-create-product-page',
@@ -113,6 +121,7 @@ export class CreateProductPage implements OnInit {
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
 
   private readonly _subscription = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     this.createProductForm = this._formBuilder.group({
@@ -129,6 +138,8 @@ export class CreateProductPage implements OnInit {
         [Validators.minLength(3), Validators.maxLength(this.maxSubtitleLength)],
       ],
       description: ['', [Validators.required]],
+      /** Solo se usa en modo actualización (cambio de catálogo). */
+      idCatalog: [null as number | null],
       variations: this._formBuilder.array([]),
     });
   }
@@ -146,6 +157,56 @@ export class CreateProductPage implements OnInit {
     if (this.idProduct) {
       this.getProduct();
     }
+  }
+
+  switchCatalog(): void {
+    if (!this.product) {
+      return;
+    }
+    this.ref = this._dialogService.open(SelectCatalogModal, {
+      width: '480px',
+      style: { maxHeight: '80vh' },
+      breakpoints: {
+        '640px': '450px',
+        '500px': '80vw',
+        '400px': '90vw',
+      },
+      modal: true,
+      closable: true,
+      dismissableMask: true,
+    });
+    this._subscription.add(
+      this.ref.onClose
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe((catalogId: number | undefined) => {
+        if (catalogId == null) {
+          return;
+        }
+        const currentId =
+          this.product.catalog?.id ?? this.catalog?.id ?? null;
+        if (catalogId === currentId) {
+          return;
+        }
+        this._subscription.add(
+          this._catalogService.findOneCatalog(catalogId).subscribe({
+            next: (catalog) => {
+              this.catalog = catalog;
+              this.catalogPath = catalog.path;
+              this.createProductForm.patchValue({ idCatalog: catalogId });
+              this._cdr.markForCheck();
+            },
+            error: (err) => {
+              console.error(err);
+              this._messageService.add({
+                severity: 'error',
+                summary: this._translate.instant('general.error'),
+                detail: this._translate.instant('general.errorLoadingData'),
+              });
+            },
+          }),
+        );
+      }),
+    );
   }
 
   private getCatalog(): void {
@@ -171,6 +232,7 @@ export class CreateProductPage implements OnInit {
             title: product.title,
             subtitle: product.subtitle ?? '',
             description: product.description,
+            idCatalog: product.catalog?.id ?? null,
           });
           const variations = product.variations ?? [];
           this.variationsFormArray.clear();
@@ -431,11 +493,13 @@ export class CreateProductPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((image: string) => {
-      if (image) {
-        this.uploadFile(image);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((image: string) => {
+        if (image) {
+          this.uploadFile(image);
+        }
+      });
   }
 
   uploadFile(fileBase64: any) {
@@ -581,12 +645,16 @@ export class CreateProductPage implements OnInit {
         })),
       }));
 
+      const idCatalog =
+        raw.idCatalog != null
+          ? Number(raw.idCatalog)
+          : (this.catalog?.id ?? this.product.catalog?.id);
       const data: UpdateProductInput = {
         id: this.product.id,
         title: this._utils.normalizeSpaces(raw.title ?? ''),
         subtitle: this._utils.normalizeSpaces(raw.subtitle ?? ''),
         description: raw.description,
-        idCatalog: this.catalog.id,
+        idCatalog,
         images,
         variations: variationsUpdate.length > 0 ? variationsUpdate : undefined,
       };

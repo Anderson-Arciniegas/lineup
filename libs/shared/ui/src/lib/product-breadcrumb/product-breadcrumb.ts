@@ -107,6 +107,8 @@ export class ProductBreadcrumb {
   @Input() path?: string | null;
   @Input() useLightText?: boolean;
   @Input() publicMode?: boolean;
+  @Input() hiddenBusiness?: boolean;
+  @Input() downloadMode?: boolean;
   private _authStore = inject(AuthStore);
   private location = inject(Location);
   private router = inject(Router);
@@ -121,6 +123,15 @@ export class ProductBreadcrumb {
   businessMode = computed(() => this._authStore.isBusinessLoggedIn());
 
   goBack(): void {
+    const hierarchyTarget = this.pickFirstFallbackDifferentFromCurrent();
+
+    // En vistas públicas (negocio/catálogo/producto), no usar history.back(): el stack
+    // puede devolver al producto o al catálogo tras haber subido un nivel con el atrás del navegador.
+    if (this.publicMode && hierarchyTarget) {
+      void this.router.navigateByUrl(hierarchyTarget);
+      return;
+    }
+
     if (
       isPlatformBrowser(this.platformId) &&
       window.history.length > 1 &&
@@ -130,9 +141,8 @@ export class ProductBreadcrumb {
       return;
     }
 
-    const targetUrl = this.pickFirstFallbackDifferentFromCurrent();
-    if (targetUrl) {
-      void this.router.navigateByUrl(targetUrl);
+    if (hierarchyTarget) {
+      void this.router.navigateByUrl(hierarchyTarget);
       return;
     }
 
@@ -140,12 +150,16 @@ export class ProductBreadcrumb {
   }
 
   /**
-   * Prioridad explícita: `path` → URL de catálogo → URL de negocio.
+   * Prioridad explícita: `path` → URL de catálogo → URL de negocio → `/` (solo modo público con negocio).
    * Se usa el primer destino que no sea la ruta actual.
    */
   private pickFirstFallbackDifferentFromCurrent(): string | null {
     const current = this.router.url;
-    for (const candidate of this.getFallbackUrls()) {
+    const candidates = [...this.getFallbackUrls()];
+    if (this.publicMode && this.business?.path?.trim()) {
+      candidates.push('/');
+    }
+    for (const candidate of candidates) {
       if (!isSamePath(candidate, current)) {
         return candidate;
       }

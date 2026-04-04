@@ -1,13 +1,20 @@
 <section
-  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen"
+  #catalogPdfRoot
+  class="catalog-page catalog-page__pdf-capture w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
   [style.background]="pageBackgroundGradient || null"
 >
+  <!-- =====================================================================
+       VISTA NORMAL (sin exportación PDF)
+       ===================================================================== -->
+  @if (!pdfExportAttempt) {
   <lib-product-breadcrumb
     [business]="business"
     [catalog]="catalog"
     [publicMode]="true"
+    [downloadMode]="false"
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
+
   @if (catalog) {
   <div
     class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
@@ -19,15 +26,6 @@
 
     @if (myBusiness) {
     <div class="flex flex-row items-center justify-center">
-      <!-- <lib-button
-          [icon]="'pi pi-pencil'"
-          [label]="'general.edit' | translate"
-          [type]="'rounded'"
-          [width]="'w-25'"
-          [size]="'small'"
-          [link]="'/dashboard/edit'"
-        ></lib-button> -->
-
       <lib-button
         [icon]="'pi pi-palette'"
         [label]="'general.editColor' | translate"
@@ -75,6 +73,7 @@
     </div>
     }
   </div>
+
   <div
     class="catalog-page__toolbar w-full flex flex-row items-center justify-center sm:justify-end gap-5 mt-4 lg:mt-0"
     [class.catalog-page__toolbar--on-dark-brand]="brandToneLight"
@@ -97,6 +96,7 @@
       [color]="'primary'"
       [type]="'rounded'"
       [label]="'general.download' | translate"
+      [loading]="pdfExportAttempt"
       (action)="downloadCatalog()"
     ></lib-button>
     <lib-button
@@ -113,6 +113,7 @@
       [color]="'primary'"
       [type]="'rounded'"
       [width]="'w-11'"
+      [loading]="pdfExportAttempt"
       (action)="downloadCatalog()"
     ></lib-button>
     <lib-button
@@ -129,9 +130,10 @@
   <div class="w-full flex flex-col items-center gap-6 md:gap-20">
     @if (products.length > 0) {
     <div class="w-full flex flex-col items-center gap-6 md:gap-6">
+      @if (primaryProducts.length > 0) {
       <div class="flex flex-row items-center justify-center w-10/10">
         <lib-catalog-carousel
-          [products]="products"
+          [products]="primaryProducts"
           [predefinedColor]="business.hexColor || catalog.hexColor ? true : false"
           class="w-10/10"
           [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
@@ -139,6 +141,7 @@
         >
         </lib-catalog-carousel>
       </div>
+      }
       <div
         class="flex flex-row items-center justify-center w-full w-full mb-6 md:mb-0"
       >
@@ -166,12 +169,13 @@
           [height]="'h-100'"
         ></lib-create-product-card>
       </div>
-      } @for (product of products; track product.id) {
+      } @for (product of products; track $index) {
       <div class="w-full flex flex-col items-center justify-center">
         <lib-product-card
           [width]="'w-65'"
           [height]="'h-100'"
           [product]="product"
+          [pdfExportAttempt]="false"
         />
       </div>
       }
@@ -188,7 +192,7 @@
     </div>
     }
     <div
-      class="container w-full flex flex-col gap-5"
+      class="container w-full flex flex-col gap-4 lg:gap-5"
       infiniteScroll
       [infiniteScrollDistance]="2"
       [infiniteScrollThrottle]="50"
@@ -196,19 +200,19 @@
       [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
       (scrolled)="onScroll()"
     >
-      @for (product of products; track product.id) {
+      @for (product of products; track $index) {
       <div class="w-full flex flex-row items-center justify-center">
         <lib-product-expanded-item
           class="w-full"
           [product]="product"
           [reverse]="$index % 2 !== 0"
+          [pdfExportAttempt]="false"
         />
       </div>
       }
     </div>
   </div>
-
-  } } @if(attempt || productsAttempt) {
+  } } @if((attempt || productsAttempt || primaryProductsAttempt)) {
   <div class="flex flex-col justify-center items-center w-full">
     <div class="card flex justify-center p-10">
       <p-progress-spinner
@@ -217,5 +221,74 @@
       />
     </div>
   </div>
-  }
+  } }
+
+  <!-- =====================================================================
+       VISTA EXPORTACIÓN PDF: un #pdfPage por cada chunk de productos.
+       Cada div se captura de forma independiente → una hoja A4 por página.
+       ===================================================================== -->
+  @if (pdfExportAttempt && catalog) {
+  <!-- ── PORTADA ─────────────────────────────────────────────────── -->
+  <div
+    #pdfPage
+    class="w-full flex flex-col items-center justify-center gap-10 py-16 px-8"
+    [style.min-height]="pdfPageMinHeight"
+    [style.background]="pageBackgroundGradient || null"
+  >
+    @if (business.image?.url) {
+    <img
+      class="w-64 h-64 object-cover rounded-full shadow-xl border-8 border-white"
+      [src]="business.image?.url"
+      alt=""
+    />
+    }
+    <div
+      class="flex flex-col items-center gap-5 text-center"
+      [class.catalog-page__brand-text--light]="brandToneLight"
+    >
+      <h1 class="text-6xl font-bold tracking-tight">{{ business.name }}</h1>
+      <div class="w-24 h-1 rounded-full bg-current opacity-40"></div>
+      <h2 class="text-3xl font-medium opacity-75">
+        {{ catalog.title || 'Catálogo' }}
+      </h2>
+    </div>
+  </div>
+
+  <!-- ── PÁGINAS DE PRODUCTOS ───────────────────────────────────── -->
+  @for (chunk of pdfProductPageChunks; track $index) {
+  <div
+    #pdfPage
+    class="w-full flex flex-col justify-center"
+    [style.min-height]="pdfPageMinHeight"
+    [style.background]="pageBackgroundGradient || null"
+  >
+    @if (layoutMode === 'Grid') {
+    <div class="container w-full products-grid products-grid--pdf">
+      @for (product of chunk; track $index) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-product-card
+          [width]="'w-65'"
+          [height]="pdfCardHeight"
+          [product]="product"
+          [pdfExportAttempt]="true"
+        />
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="container w-full flex flex-col gap-3 xl:gap-5">
+      @for (product of chunk; track $index) {
+      <div class="w-full flex flex-row items-center justify-center">
+        <lib-product-expanded-item
+          class="w-full"
+          [product]="product"
+          [reverse]="$index % 2 !== 0"
+          [pdfExportAttempt]="true"
+        />
+      </div>
+      }
+    </div>
+    }
+  </div>
+  } }
 </section>
