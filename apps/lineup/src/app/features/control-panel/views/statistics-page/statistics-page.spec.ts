@@ -60,6 +60,8 @@ describe('StatisticsPage', () => {
                 withoutRatingsCount: 0,
                 withoutVisitsCount: 0,
               }),
+            businessSalesInTimePeriod: () =>
+              of({ sales: [], salesCount: { total: 0 } }),
           },
         },
       ],
