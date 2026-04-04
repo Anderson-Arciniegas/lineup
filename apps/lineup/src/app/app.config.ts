@@ -16,6 +16,7 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { InMemoryCache } from '@apollo/client/core';
+import { SEO_SITE_ORIGIN } from '@lineup/core';
 import { environment } from '@lineup/envs';
 import { I18nModule } from '@lineup/i18n';
 import { definePreset } from '@primeuix/themes';
@@ -74,6 +75,11 @@ const MyPreset = definePreset(Lara, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    {
+      provide: SEO_SITE_ORIGIN,
+      useValue:
+        environment.publicSiteUrl?.replace(/\/$/, '').trim() || undefined,
+    },
     { provide: LOCALE_ID, useValue: 'es-ES' },
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
