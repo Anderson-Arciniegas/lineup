@@ -18,7 +18,11 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { InfinityScrollInput, PaginatedProducts } from '../../models';
+import type {
+  GetAllPrimaryProductsByBusinessInput,
+  InfinityScrollInput,
+  PaginatedProducts,
+} from '../../models';
 import {
   ProductCollectionSchema,
   ProductReactionSchema,
@@ -184,13 +188,19 @@ export class ProductPublicService {
   }
 
   getAllPrimaryProductsByBusiness(
-    idBusiness: number,
+    data: GetAllPrimaryProductsByBusinessInput,
   ): Observable<ProductSchema[]> {
+    const payload: GetAllPrimaryProductsByBusinessInput = {
+      idBusiness: Math.trunc(data.idBusiness),
+      ...(data.idCatalog != null
+        ? { idCatalog: Math.trunc(data.idCatalog) }
+        : {}),
+    };
     return this.apollo
       .use('userAPI')
       .query<{ getAllPrimaryProductsByBusiness: ProductSchema[] }>({
         query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
-        variables: { idBusiness: Math.trunc(idBusiness) },
+        variables: { data: payload },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,

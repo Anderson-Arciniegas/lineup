@@ -248,6 +248,7 @@ export const stockMovementSelection = `{
   newQuantity
   notes
   previousQuantity
+  price
   quantityDelta
   type
   business ${businessBasicSelection}

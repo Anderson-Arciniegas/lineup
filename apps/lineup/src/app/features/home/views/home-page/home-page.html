@@ -51,20 +51,34 @@
   @if(!collectionsAttempt) { @for (productCollection of productCollections;
   track productCollection.id) {
   <div
-    class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border"
+    class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
   >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ productCollection.title }}
     </h3>
-    <div class="card w-10/10">
+    <div
+      class="card w-10/10 home-carousel"
+      [class.home-carousel--few]="
+        fewerItemsThanCarouselViewport(
+          productCollection.products.length,
+          'collections'
+        )
+      "
+    >
+      @for (remount of [carouselRemountCollections()]; track remount) {
       <p-carousel
         [value]="productCollection.products"
-        [circular]="true"
-        [responsiveOptions]="productCollectionResponsiveOptions"
+        [circular]="
+          productCollection.products.length >= carouselNumVisibleCollections()
+        "
+        [numVisible]="carouselNumVisibleCollections()"
+        [numScroll]="1"
         [showIndicators]="true"
       >
         <ng-template let-product #item>
-          <div class="flex flex-row items-center justify-center my-2 sm:my-4">
+          <div
+            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+          >
             <lib-product-card
               class="cursor-pointer w-54 md:w-65"
               [width]="'w-54 md:w-65'"
@@ -74,6 +88,7 @@
           </div>
         </ng-template>
       </p-carousel>
+      }
     </div>
   </div>
   } @if(collectionsAttempt) {
@@ -85,20 +100,31 @@
   </div>
   } }
 
-  <div class="flex flex-col items-start justify-center w-full px-4 box-border">
+  <div
+    class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+  >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
     @if(!businessesAttempt) {
-    <div class="card w-10/10">
+    <div
+      class="card w-10/10 home-carousel"
+      [class.home-carousel--few]="
+        fewerItemsThanCarouselViewport(businesses.length, 'standard')
+      "
+    >
+      @for (remount of [carouselRemountStandard()]; track remount) {
       <p-carousel
         [value]="businesses"
-        [circular]="true"
-        [responsiveOptions]="responsiveOptions"
+        [circular]="businesses.length >= carouselNumVisibleStandard()"
+        [numVisible]="carouselNumVisibleStandard()"
+        [numScroll]="1"
         [showIndicators]="true"
       >
         <ng-template let-business #item>
-          <div class="flex flex-row items-center justify-center my-2 sm:my-4">
+          <div
+            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+          >
             <lib-business-card
               class="cursor-pointer w-45 sm:w-60"
               [width]="'w-45 sm:w-60'"
@@ -108,6 +134,7 @@
           </div>
         </ng-template>
       </p-carousel>
+      }
     </div>
     } @if(businessesAttempt) {
     <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
@@ -118,20 +145,31 @@
     </div>
     }
   </div>
-  <div class="flex flex-col items-start justify-center w-full px-4 box-border">
+  <div
+    class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+  >
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
     @if(!catalogsAttempt) {
-    <div class="card w-10/10">
+    <div
+      class="card w-10/10 home-carousel"
+      [class.home-carousel--few]="
+        fewerItemsThanCarouselViewport(catalogs.length, 'standard')
+      "
+    >
+      @for (remount of [carouselRemountStandard()]; track remount) {
       <p-carousel
         [value]="catalogs"
-        [circular]="true"
-        [responsiveOptions]="responsiveOptions"
+        [circular]="catalogs.length >= carouselNumVisibleStandard()"
+        [numVisible]="carouselNumVisibleStandard()"
+        [numScroll]="1"
         [showIndicators]="true"
       >
         <ng-template let-catalog #item>
-          <div class="flex flex-row items-center justify-center my-2 sm:my-4">
+          <div
+            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+          >
             <lib-catalog-card
               class="cursor-pointer w-45 sm:w-60"
               [width]="'w-45 sm:w-60'"
@@ -141,6 +179,7 @@
           </div>
         </ng-template>
       </p-carousel>
+      }
     </div>
     } @if(catalogsAttempt) {
     <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">

@@ -1,0 +1,51 @@
+// El tema PrimeNG aplica `min-width: 100%` al panel respecto al ancho del input
+// (`.p-datepicker .p-datepicker-panel`), lo que estira el calendario al ancho del campo.
+// Clase aplicada vía `panelStyleClass` en los p-datepicker de periodo personalizado.
+:host ::ng-deep .statistics-datepicker-panel--compact {
+  min-width: unset !important;
+  width: auto;
+  padding: 0.5rem;
+
+  .p-datepicker-header {
+    padding-block: 0.375rem;
+    padding-inline: 0.5rem;
+  }
+
+  .p-datepicker-title {
+    font-size: 0.875rem;
+  }
+
+  .p-datepicker-select-month,
+  .p-datepicker-select-year {
+    font-size: 0.8125rem;
+    padding-block: 0.25rem;
+    padding-inline: 0.35rem;
+  }
+
+  .p-datepicker-calendar-container .p-datepicker-calendar {
+    padding-inline: 0.35rem;
+  }
+
+  .p-datepicker-day-view {
+    font-size: 0.8125rem;
+    margin: 0.25rem 0;
+  }
+
+  .p-datepicker-weekday-cell,
+  .p-datepicker-day-cell {
+    padding: 0.125rem;
+  }
+
+  .p-datepicker-day {
+    width: 1.875rem;
+    height: 1.875rem;
+    min-width: 1.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .p-datepicker-prev-button,
+  .p-datepicker-next-button {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}

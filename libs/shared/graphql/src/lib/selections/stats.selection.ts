@@ -1,8 +1,6 @@
+import { stockMovementSelection } from './product.selection';
+
 const timeSeriesStatsFields = `
-  data {
-    period
-    value
-  }
   total
 `;
 
@@ -69,9 +67,6 @@ export const inventoryStatsSelection = `
       quantityDelta
       type
     }
-    salesCount {
-      ${timeSeriesStatsFields}
-    }
     skusLowOrOutOfStockCount
   }
 `;
@@ -100,5 +95,14 @@ export const productStatsSelection = `
     }
     withoutRatingsCount
     withoutVisitsCount
+  }
+`;
+
+export const businessSalesInTimePeriodSelection = `
+  {
+    sales ${stockMovementSelection}
+    salesCount {
+      ${timeSeriesStatsFields}
+    }
   }
 `;

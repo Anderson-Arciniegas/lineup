@@ -1,24 +1,42 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AppConfigService,
   AuthStore,
-  BusinessPrivateService,
+  BusinessPublicService,
   BusinessSchema,
   CatalogPrivateService,
+  InfinityScrollInput,
+  PaginatedProducts,
   ProductPrivateService,
+  ProductPublicService,
   ProductSchema,
+  SeoService,
   UserPublicService,
   UtilsService,
   VisitTypeEnum,
 } from '@lineup/core';
-import { ProductBreadcrumb, ProductInfo } from '@lineup/ui';
-import { TranslateService } from '@ngx-translate/core';
-import { Carousel, CarouselPageEvent } from 'primeng/carousel';
+import {
+  Button,
+  ProductBreadcrumb,
+  ProductCard,
+  ProductInfo,
+} from '@lineup/ui';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Carousel } from 'primeng/carousel';
 import { ImageModule } from 'primeng/image';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-page',
@@ -26,15 +44,18 @@ import { Subscription } from 'rxjs';
     CommonModule,
     SkeletonModule,
     ProductBreadcrumb,
+    ProductCard,
     ProductInfo,
+    TranslateModule,
     Carousel,
     ImageModule,
     ProgressSpinner,
+    Button,
   ],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss',
 })
-export class ProductPage implements OnInit {
+export class ProductPage implements OnInit, OnDestroy {
   business: BusinessSchema;
   path: string;
   id: number;
@@ -61,9 +82,25 @@ export class ProductPage implements OnInit {
   ];
   imageLoaded: boolean[] = [];
   attempt = false;
-  responsiveOptions: any[] | undefined;
+  /**
+   * Slides visibles (Tailwind por defecto): xl/2xl (≥1280px) → 3; lg (1024–1279) → 2; debajo de lg → 1.
+   * Sin `responsiveOptions` para que PrimeNG regenere CSS vía `@Input` al redimensionar.
+   */
+  carouselNumVisible = 2;
+  /** Al cambiar, destruye y recrea `p-carousel` (evita transform/clones desincronizados al cruzar breakpoints). */
+  carouselInstanceKey = 0;
   myBusiness = false;
-  private readonly _businessService = inject(BusinessPrivateService);
+  configUrl: string;
+  /** Hasta 4 productos del mismo negocio que comparten etiquetas con el producto actual. */
+  sameBusinessProducts: ProductSchema[] = [];
+  /** Hasta 4 productos de otros contextos (sin filtrar por negocio), excl. los de `sameBusinessProducts`. */
+  relatedProductsByTags: ProductSchema[] = [];
+
+  private static readonly _TAG_RELATED_MAX = 4;
+  private static readonly _TAG_RELATED_FETCH = 4;
+
+  private readonly _businessService = inject(BusinessPublicService);
+  private readonly _breakpointObserver = inject(BreakpointObserver);
   private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
@@ -71,42 +108,32 @@ export class ProductPage implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productService = inject(ProductPrivateService);
+  private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
 
   private readonly _subscription = new Subscription();
 
   ngOnInit() {
-    this.responsiveOptions = [
-      {
-        breakpoint: '1400px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '1199px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '767px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '575px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-    ];
-
-    // this.product = generateRandomProducts(1)[0];
-    console.log(this.product);
+    this._subscription.add(
+      this._breakpointObserver
+        .observe([
+          '(max-width: 1023px)',
+          '(min-width: 1024px) and (max-width: 1279px)',
+          '(min-width: 1280px)',
+        ])
+        .subscribe(() => {
+          const next = this._carouselNumVisibleForViewport();
+          if (next !== this.carouselNumVisible) {
+            this.carouselNumVisible = next;
+            this.carouselInstanceKey += 1;
+            this._cdr.markForCheck();
+          }
+        }),
+    );
 
     this.path = this._activatedRoute.snapshot.params['business'];
     this.id = Number(this._activatedRoute.snapshot.params['idProduct']);
-    console.log(this.id);
-    console.log(this.path);
-    console.log('business', this._authStore.business());
 
     this.getBusiness();
     this.getProduct();
@@ -116,31 +143,31 @@ export class ProductPage implements OnInit {
     if (this.attempt) return;
     this.attempt = true;
     this._subscription.add(
-      this._productService.findOneProduct(this.id).subscribe({
+      this._productPublicService.findOneProduct(this.id).subscribe({
         next: (product) => {
-          console.log(product);
           this.product = product;
           if (product.productFiles) {
             this.images = product.productFiles.map(
               (file) => file.file?.url || '',
             );
+            this.carouselInstanceKey += 1;
           }
           if (!this.myBusiness) {
             this.visitProduct();
           }
+          if (this.myBusiness) {
+            this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
+          }
           this.applyBrandSurfaceColor();
+          this.loadTaggedRelatedProducts(product);
+          this._seoService.setProductPage(product, this.path);
           this.attempt = false;
         },
         error: (error) => {
           console.error(error);
-          console.log(
-            (error as { graphQLErrors?: Array<{ message?: string }> })
-              ?.graphQLErrors,
-          );
           this.attempt = false;
         },
         complete: () => {
-          console.log('complete');
           this.attempt = false;
         },
       }),
@@ -149,9 +176,8 @@ export class ProductPage implements OnInit {
 
   private getBusiness(): void {
     this._subscription.add(
-      this._businessService.getBusinessByPath(this.path).subscribe({
+      this._businessService.findBusinessByPath(this.path).subscribe({
         next: (business) => {
-          console.log(business);
           this.business = business;
           this.myBusiness =
             Number(this._authStore.business()?.id) === Number(this.business.id);
@@ -160,11 +186,12 @@ export class ProductPage implements OnInit {
         error: (error) => {
           console.error(error);
         },
-        complete: () => {
-          console.log('complete');
-        },
       }),
     );
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   /** Prioridad: `catalog.hexColor` → `business.hexColor`. */
@@ -184,6 +211,40 @@ export class ProductPage implements OnInit {
 
   get brandToneDark(): boolean {
     return !!this.pageBackgroundGradient && !this.isDarkBackground;
+  }
+
+  /**
+   * PrimeNG activa circular si `length >= numVisible`: con 1 foto y 1 visible entran clones y autoplay rotos.
+   * Solo circular cuando haya más ítems que cupo en pantalla.
+   */
+  get carouselCircular(): boolean {
+    return this._carouselSlideCount() > this.carouselNumVisible;
+  }
+
+  /** Sin autoplay si una sola imagen o si todas caben a la vez. */
+  get carouselAutoplayInterval(): number {
+    const n = this._carouselSlideCount();
+    if (n <= 1) return 0;
+    if (n <= this.carouselNumVisible) return 0;
+    return 8000;
+  }
+
+  get carouselShowNavigators(): boolean {
+    return this._carouselSlideCount() > this.carouselNumVisible;
+  }
+
+  private _carouselSlideCount(): number {
+    return this.images?.filter((u) => !!u?.trim()).length ?? 0;
+  }
+
+  private _carouselNumVisibleForViewport(): number {
+    if (this._breakpointObserver.isMatched('(min-width: 1280px)')) {
+      return 3;
+    }
+    if (this._breakpointObserver.isMatched('(min-width: 1024px)')) {
+      return 2;
+    }
+    return 1;
   }
 
   setColor(raw: string): void {
@@ -271,13 +332,83 @@ export class ProductPage implements OnInit {
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
   }
 
-  onPage($event: CarouselPageEvent): void {
-    console.log('Page changed to: ', $event.page);
-  }
-
   onImageLoad(index: number): void {
     this.imageLoaded[index] = true;
     this._cdr.detectChanges();
+  }
+
+  private extractProductTagIdentifiers(product: ProductSchema): string[] {
+    const ids =
+      product.productTags?.flatMap((pt) => {
+        const t = pt.tag;
+        if (!t) {
+          return [];
+        }
+        const id = (t.slug?.trim() || t.name?.trim() || '').trim();
+        return id ? [id] : [];
+      }) ?? [];
+    return [...new Set(ids)];
+  }
+
+  private loadTaggedRelatedProducts(product: ProductSchema): void {
+    const tagNamesOrSlugs = this.extractProductTagIdentifiers(product);
+    if (tagNamesOrSlugs.length === 0) {
+      this.sameBusinessProducts = [];
+      this.relatedProductsByTags = [];
+      return;
+    }
+
+    const pagination: InfinityScrollInput = {
+      page: 1,
+      limit: ProductPage._TAG_RELATED_FETCH,
+    };
+
+    const idBusinessRaw = product.business?.id ?? product.idCreationBusiness;
+    const idBusiness =
+      idBusinessRaw != null && !Number.isNaN(Number(idBusinessRaw))
+        ? Number(idBusinessRaw)
+        : null;
+
+    const emptyPage: PaginatedProducts = {
+      items: [],
+      limit: pagination.limit ?? 0,
+      page: pagination.page,
+      total: 0,
+    };
+
+    const same$ =
+      idBusiness != null
+        ? this._productPublicService
+            .getAllByTags(pagination, tagNamesOrSlugs, {
+              idBusiness,
+              idProducts: [product.id],
+            })
+            .pipe(catchError(() => of(emptyPage)))
+        : of(emptyPage);
+
+    const related$ = this._productPublicService
+      .getAllByTags(pagination, tagNamesOrSlugs, {
+        idProducts: [product.id],
+      })
+      .pipe(catchError(() => of(emptyPage)));
+
+    this._subscription.add(
+      forkJoin({ same: same$, related: related$ }).subscribe({
+        next: ({ same, related }) => {
+          if (this.product?.id !== product.id) {
+            return;
+          }
+          this.sameBusinessProducts = same.items.slice(
+            0,
+            ProductPage._TAG_RELATED_MAX,
+          );
+          const sameIds = new Set(this.sameBusinessProducts.map((p) => p.id));
+          this.relatedProductsByTags = related.items
+            .filter((p) => !sameIds.has(p.id))
+            .slice(0, ProductPage._TAG_RELATED_MAX);
+        },
+      }),
+    );
   }
 
   private visitProduct(): void {
@@ -287,11 +418,7 @@ export class ProductPage implements OnInit {
           id: this.product.id,
           type: VisitTypeEnum.PRODUCT,
         })
-        .subscribe({
-          next: (response) => {
-            console.log(response);
-          },
-        }),
+        .subscribe(),
     );
   }
 }

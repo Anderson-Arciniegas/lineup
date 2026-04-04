@@ -3,6 +3,7 @@
   [routerLink]="url"
   [attr.id]="cardFlipId"
   class="bg-white product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+  [class.product-card--pdf-export]="pdfExportAttempt"
   [ngClass]="[width, height]"
 >
   <div [ngClass]="[width, height]">
@@ -29,11 +30,13 @@
     </div>
   </div>
 
-  @if (!dashboardMode) {
   <div [ngClass]="[width]" class="buttons-container">
     <div
-      class="button-content flex flex-row w-full justify-between rounded-full gap-2"
+      class="button-content flex flex-row w-full rounded-full justify-between gap-3"
+      [class.justify-between]="!pdfExportAttempt"
+      [class.justify-end]="pdfExportAttempt"
     >
+      @if (!dashboardMode && !pdfExportAttempt) {
       <div
         tabindex="-1"
         (click)="$event.preventDefault(); $event.stopPropagation()"
@@ -48,9 +51,8 @@
           (action)="hasLiked ? unlikeProduct() : likeProduct()"
         ></lib-button>
       </div>
-
-      @if (price && currency) {
-      <div class="flex flex-col justify-center items-center">
+      } @if (price && currency) {
+      <div class="flex flex-col justify-center items-center min-w-30">
         @if(originalPrice > price) {
         <h2 class="text-gray-200 text-xs text-center font-medium line-through">
           {{(originalPrice | currency: currency?.code : 'symbol' : '1.0-2' :
@@ -62,6 +64,7 @@
         </h2>
       </div>
       }
+
       <div
         tabindex="-1"
         (click)="$event.preventDefault(); $event.stopPropagation()"
@@ -85,9 +88,33 @@
       </div>
     </div>
   </div>
+  @if (outOfStock) {
+  <div class="note-container flex flex-row justify-center items-center">
+    <div
+      class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+    >
+      <span class="text-sm text-center font-medium"
+        >{{'general.outOfStockSimple' | translate}}</span
+      >
+    </div>
+  </div>
   }
 
   <div [ngClass]="[width]" class="flip-box">
+    @if (pdfExportAttempt) {
+    <!-- PDF: sin 3D (html2canvas no soporta backface-visibility); muestra solo el título -->
+    <div
+      class="pdf-title-face h-12 rounded-full py-1 px-3 flex flex-row items-center"
+    >
+      <h2
+        class="text-white text-sm font-medium w-full product-name"
+        [ngClass]="'max-' + [width]"
+      >
+        {{product?.title || 'Product Title'}}
+      </h2>
+    </div>
+    } @else {
+    <!-- Normal: flip 3D hover con GSAP -->
     <div class="flip-inner h-12">
       <div
         class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
@@ -104,16 +131,6 @@
       <div
         class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
       >
-        <!-- <h2 class="text-white text-xs text-center font-medium">
-            {{product?.business?.name || 'Business Name'}}
-          </h2>
-          @if (product?.price) {
-          <h2 class="text-white text-sm text-center font-medium">
-            {{(product?.price | currency: product?.currency?.code : 'symbol' :
-            '1.0-2' : 'es')}}
-          </h2>
-          } -->
-
         <div
           class="flex flex-row justify-center items-center w-full text-white gap-2"
         >
@@ -124,6 +141,7 @@
         </div>
       </div>
     </div>
+    }
   </div>
 </a>
 }

@@ -64,6 +64,8 @@ export const en = {
     profilePicture: 'Profile picture',
     businesses: 'Businesses',
     products: 'Products',
+    otherProductsFromBusiness: 'More from this business',
+    relatedProductsByTags: 'Related products',
     statistics: 'Statistics',
     followers: 'Followers',
     dashboard: 'Dashboard',
@@ -131,6 +133,7 @@ export const en = {
     details: 'Details',
     select: 'Select',
     contactUs: 'Contact us',
+    whatsappContactIntro: "Hi! I'm interested in:",
     follow: 'Follow',
     following: 'Following',
     visits: 'Visits',
@@ -269,6 +272,9 @@ export const en = {
     noCatalogProducts: 'No products registered in this catalog.',
     ourCatalogs: 'Our catalogs',
     ourMainProducts: 'Our main products',
+    outOfStockSimple: 'Out of stock',
+    switchCatalog: 'Switch catalog',
+    productPanel: 'Product panel',
   },
   businessHoursModal: {
     days: 'Days',
@@ -357,9 +363,15 @@ export const en = {
     discountByStatus: 'By status',
     discountByType: 'By type',
     inventorySection: 'Inventory',
+    salesSection: 'Sales',
+    salesCountTotal: 'Sales in period (total)',
+    salesListedMovements: 'Movements in this list',
+    salesMovementsDetail: 'Sale movements',
+    salesProductLabel: 'Product',
+    salesIdProductSkuLabel: 'SKU ID',
+    salesPriceLabel: 'Price',
     lowStockSkus: 'SKUs low or out of stock',
     productsWithoutStock: 'Products without stock',
-    salesInPeriod: 'Sales in period',
     recentMovements: 'Recent stock movements',
     movementDate: 'Date',
     movementDelta: 'Change',
@@ -424,6 +436,8 @@ export const en = {
     invalidQuantity: 'Each line must have an integer quantity of at least 1.',
     duplicateSkuInCart:
       'The same SKU appears twice in the cart; use a single line with the total quantity.',
+    missingPriceForSku:
+      'A line has no price total; check the product and exchange rates.',
     noSkusForProduct: 'This product has no SKUs available to sell.',
   },
   validation: {
@@ -453,6 +467,8 @@ export const en = {
     emailUpdated: 'Email updated successfully',
     primaryProductAdded: 'The product was added to primary products.',
     primaryProductRemoved: 'The product was removed from primary products.',
+    catalogPdfExportFailed:
+      'Could not generate the catalog PDF. If images are missing, enable CORS on your file storage for this origin.',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork:

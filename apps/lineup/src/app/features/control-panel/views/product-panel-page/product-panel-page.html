@@ -11,7 +11,7 @@
   } @else if (product) {
 
   <div
-    class="w-full flex flex-col gap-8 py-4 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+    class="w-full flex flex-col gap-5 sm:gap-8 sm:py-4 sm:px-4 lg:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <!-- Acciones superiores -->
     <div
@@ -26,7 +26,7 @@
         [type]="'rounded'"
         (action)="goBack()"
       ></lib-button>
-      <div class="flex flex-row gap-3 flex-wrap">
+      <div class="flex flex-row gap-3 flex-wrap justify-end w-full md:w-auto">
         <lib-button
           icon="pi pi-pencil"
           width="w-38"
@@ -76,16 +76,21 @@
           >
           <p-tag [value]="product.status" severity="success"></p-tag>
         </div>
-        <h1 class="text-3xl font-semibold text-gray-800">
+        <h2 class="text-xl lg:text-3xl font-semibold text-gray-800">
           {{ product.title }}
-        </h1>
+        </h2>
         @if (product.subtitle) {
-        <p class="text-lg text-gray-500">{{ product.subtitle }}</p>
+        <p class="text-base md:text-lg text-gray-500">{{ product.subtitle }}</p>
         } @if (product.catalog) {
-        <span class="text-sm text-gray-400 flex items-center gap-1">
-          <i class="pi pi-folder"></i>
-          {{ product.catalog.title }}
-        </span>
+        <div class="flex flex-row justify-start items-center gap-4">
+          <span
+            class="text-base text-gray-600 font-medium flex items-center gap-2"
+          >
+            <i class="pi pi-folder"></i>
+            {{ product.catalog.title }}
+          </span>
+        </div>
+
         }
 
         <div class="card flex flex-row justify-start items-center gap-3">
@@ -94,15 +99,15 @@
             [disabled]="togglingPrimary"
             (ngModelChange)="onIsPrimaryToggle($event)"
           />
-          <span class="text-sm text-gray-600">{{
-            'general.primaryProduct' | translate
-          }}</span>
+          <span class="text-sm text-gray-600"
+            >{{ 'general.primaryProduct' | translate }}</span
+          >
         </div>
       </div>
     </div>
 
     <!-- Tarjetas de estadísticas -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 w-full">
       <div
         class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-blue-50 border border-blue-100"
       >
@@ -241,10 +246,10 @@
       <div class="flex flex-col gap-3">
         @for (sku of product.skus; track sku.id) {
         <div
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
         >
           <div class="flex flex-col gap-1">
-            <span class="font-mono text-xs text-gray-400"
+            <span class="font-medium text-md text-gray-400"
               >{{ sku.skuCode }}</span
             >
             @if ((product.skus?.length ?? 0) > 1) {
@@ -253,7 +258,9 @@
             </span>
             }
           </div>
-          <div class="flex flex-row items-center gap-6 flex-wrap">
+          <div
+            class="self-end flex flex-row items-center gap-3 sm:gap-6 flex-wrap justify-end"
+          >
             <div
               class="flex flex-col items-end gap-1 min-w-[8.5rem] sm:min-w-36"
             >

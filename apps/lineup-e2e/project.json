@@ -9,6 +9,7 @@
   "targets": {
     "e2e": {
       "executor": "@nx/playwright:playwright",
+      "dependsOn": ["lineup:build"],
       "outputs": [
         "{workspaceRoot}/dist/apps/lineup-e2e"
       ],

@@ -1,0 +1,69 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.catalog-download__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+/* Tipografía de marca sobre fondo de color (reutiliza la misma lógica que catalog-page). */
+.catalog-page__brand-text {
+  &--light h1,
+  &--light h2 {
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+::ng-deep {
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 1rem;
+    width: 100%;
+    padding: 0 0.25rem 2.5rem;
+
+    @media (min-width: 640px) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      padding-left: 3.75rem;
+      padding-right: 3.75rem;
+    }
+  }
+
+  /*
+   * PDF mode: columnas fijas por breakpoint para garantizar exactamente 2 filas.
+   * Reemplaza el auto-fill que puede generar más o menos columnas según el viewport.
+   */
+  .products-grid--pdf {
+    grid-template-columns: 1fr;
+    row-gap: 2.5rem;
+
+    @media screen and (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media screen and (min-width: 1280px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media screen and (min-width: 1536px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+}

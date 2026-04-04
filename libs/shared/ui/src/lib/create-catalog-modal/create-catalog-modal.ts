@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   BusinessApiFilePrivateService,
@@ -11,7 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, take } from 'rxjs';
 import { Button } from '../button/button';
 import { ImageCropper } from '../image-cropper/image-cropper';
 
@@ -37,6 +38,7 @@ export class CreateCatalogModal {
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   createCatalog() {
     console.log(this.catalogName, this.imageUrl);
@@ -63,12 +65,14 @@ export class CreateCatalogModal {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((image: string) => {
-      if (image) {
-        this._cdr.detectChanges();
-        this.uploadFile(image);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((image: string) => {
+        if (image) {
+          this._cdr.detectChanges();
+          this.uploadFile(image);
+        }
+      });
   }
 
   uploadFile(fileBase64: any) {

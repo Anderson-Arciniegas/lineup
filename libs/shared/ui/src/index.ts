@@ -37,6 +37,7 @@ export * from './lib/rate-modal/rate-modal';
 export * from './lib/rating-item/rating-item';
 export * from './lib/search-bar/search-bar';
 export * from './lib/search-filters/search-filters';
+export * from './lib/select-catalog-modal/select-catalog-modal';
 export * from './lib/share-modal/share-modal';
 export * from './lib/sidebar/sidebar';
 export * from './lib/ui/ui';

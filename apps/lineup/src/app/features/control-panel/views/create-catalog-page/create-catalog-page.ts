@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormGroup,
@@ -37,7 +44,7 @@ import { PanelModule } from 'primeng/panel';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-create-catalog-page',
@@ -93,6 +100,7 @@ export class CreateCatalogPage implements OnInit {
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _messageService = inject(MessageService);
   private readonly _authStore = inject(AuthStore);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     this.business = this._authStore.business();
@@ -268,12 +276,13 @@ export class CreateCatalogPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((image: string) => {
-      if (image) {
-        console.log(image);
-        this.uploadFile(image);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((image: string) => {
+        if (image) {
+          this.uploadFile(image);
+        }
+      });
   }
 
   uploadFile(fileBase64: any) {

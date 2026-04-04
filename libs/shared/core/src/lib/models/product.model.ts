@@ -35,22 +35,26 @@ export interface InitialStockItemInput {
   quantityDelta: number;
 }
 
+/** Alineado con `CreateProductInput` en GraphQL. */
 export interface CreateProductInput {
   description: string;
   idCatalog: number;
   images: ProductImageInput[];
+  isPrimary: boolean;
   subtitle: string;
   title: string;
   variations?: CreateProductVariationInput[];
 }
 
+/** Alineado con `UpdateProductInput` en GraphQL (solo `id` es obligatorio). */
 export interface UpdateProductInput {
-  description: string;
+  description?: string;
   id: number;
-  idCatalog: number;
+  idCatalog?: number;
   images?: ProductImageInput[];
-  subtitle: string;
-  title: string;
+  isPrimary?: boolean;
+  subtitle?: string;
+  title?: string;
   variations?: ProductVariationInput[];
 }
 
@@ -60,10 +64,16 @@ export interface AdjustStockInput {
   quantityDelta: number;
 }
 
-export interface RegisterPurchaseInput {
+/** Línea de venta enviada a `registerSale` (`price` = total de línea, unitario efectivo × cantidad). */
+export interface RegisterSaleInput {
   idProductSku: number;
   notes?: string;
+  price: number;
   quantity: number;
+}
+
+export interface SalesInput {
+  sales: RegisterSaleInput[];
 }
 
 export interface UpdateProductSkuItemInput {
@@ -75,6 +85,11 @@ export interface UpdateProductSkuItemInput {
 
 export interface UpdateProductSkusInput {
   skus: UpdateProductSkuItemInput[];
+}
+
+export interface GetAllPrimaryProductsByBusinessInput {
+  idBusiness: number;
+  idCatalog?: number | null;
 }
 
 export interface PaginatedProducts {

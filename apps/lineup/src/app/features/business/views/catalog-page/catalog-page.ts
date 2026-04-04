@@ -1,8 +1,14 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AppConfigService,
   AuthStore,
   BusinessPublicService,
   BusinessSchema,
@@ -11,6 +17,7 @@ import {
   CatalogSchema,
   ProductPublicService,
   ProductSchema,
+  SeoService,
   UserPublicService,
   VisitTypeEnum,
 } from '@lineup/core';
@@ -29,8 +36,6 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { MessageService } from 'primeng/api';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PopoverModule } from 'primeng/popover';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -44,8 +49,6 @@ import { Subscription } from 'rxjs';
     ProductBreadcrumb,
     ProductCard,
     Button,
-    IconField,
-    InputIcon,
     CatalogCarousel,
     CreateProductCard,
     ProgressSpinner,
@@ -77,27 +80,30 @@ export class CatalogPage implements OnInit {
   path: string;
   catalogPath: string;
   products: ProductSchema[] = [];
+  primaryProducts: ProductSchema[] = [];
   attempt = false;
   productsAttempt = false;
+  primaryProductsAttempt = false;
   page = 1;
   noMoreResults = false;
   myBusiness = false;
   searchQuery = '';
-  layoutMode = 'Grid';
+  layoutMode: 'Grid' | 'List' = 'Grid';
   layoutOptions = [
     { index: 0, icon: 'pi pi-th-large', label: 'Grid', value: 'Grid' },
     { index: 1, icon: 'pi pi-list', label: 'List', value: 'List' },
   ];
-  downloadMode = false;
   color = '#ffffff';
   attemptColor = false;
   ref: DynamicDialogRef | undefined;
+  configUrl: string;
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _catalogPublicService = inject(CatalogPublicService);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _seoService = inject(SeoService);
 
   private readonly _authStore = inject(AuthStore);
   private readonly _userService = inject(UserPublicService);
@@ -105,6 +111,17 @@ export class CatalogPage implements OnInit {
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private _subscription: Subscription = new Subscription();
+
+  /** Detecta el breakpoint Tailwind activo según el ancho del viewport. */
+  private getTailwindBreakpoint(): 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' {
+    const w = document.documentElement.clientWidth;
+    if (w >= 1536) return 'xxl';
+    if (w >= 1280) return 'xl';
+    if (w >= 1024) return 'lg';
+    if (w >= 768) return 'md';
+    if (w >= 640) return 'sm';
+    return 'xs';
+  }
 
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
@@ -126,7 +143,12 @@ export class CatalogPage implements OnInit {
             } else if (this.business.hexColor) {
               this.setColor(this.business.hexColor);
             }
+            this.getPrimaryProducts();
+            if (this.myBusiness) {
+              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
+            }
           }
+          this.applyCatalogSeoIfReady();
         },
       }),
     );
@@ -141,10 +163,10 @@ export class CatalogPage implements OnInit {
     return !!this.pageBackgroundGradient && !this.isDarkBackground;
   }
 
-  onLayoutModeChange(event: any): void {
-    console.log(event);
-    // this.layoutMode = event.value;
-    console.log(this.layoutMode);
+  onLayoutModeChange(value: unknown): void {
+    if (value !== 'Grid' && value !== 'List') {
+      this.layoutMode = 'Grid';
+    }
   }
 
   onSearchSubmit(query: string): void {
@@ -168,8 +190,13 @@ export class CatalogPage implements OnInit {
             this.attempt = false;
             console.log(this.catalog);
             this.getProducts();
+            if (this.business) {
+              this.getPrimaryProducts();
+            }
             if (!this.myBusiness) {
               this.visitCatalog();
+            } else {
+              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
             }
 
             if (this.catalog.hexColor) {
@@ -177,6 +204,7 @@ export class CatalogPage implements OnInit {
             } else if (this.business && this.business.hexColor) {
               this.setColor(this.business.hexColor);
             }
+            this.applyCatalogSeoIfReady();
           },
           error: (error) => {
             console.error(error);
@@ -188,6 +216,12 @@ export class CatalogPage implements OnInit {
           },
         }),
     );
+  }
+
+  private applyCatalogSeoIfReady(): void {
+    if (this.business && this.catalog) {
+      this._seoService.setCatalogPage(this.business, this.catalog);
+    }
   }
 
   private visitCatalog(): void {
@@ -220,7 +254,12 @@ export class CatalogPage implements OnInit {
           next: (products) => {
             console.log(products);
             this.productsAttempt = false;
-            this.products = [...this.products, ...products.items];
+            this.products = [
+              ...this.products,
+              ...products.items,
+              ...products.items,
+              ...products.items,
+            ];
             this.page++;
             if (products.items.length === 0) {
               this.noMoreResults = true;
@@ -233,6 +272,29 @@ export class CatalogPage implements OnInit {
           complete: () => {
             console.log('complete');
             this.productsAttempt = false;
+          },
+        }),
+    );
+  }
+
+  private getPrimaryProducts(): void {
+    if (this.primaryProductsAttempt || this.noMoreResults) return;
+    this.primaryProductsAttempt = true;
+    this._subscription.add(
+      this._productPublicService
+        .getAllPrimaryProductsByBusiness({
+          idBusiness: this.business.id,
+          idCatalog: this.catalog.id,
+        })
+        .subscribe({
+          next: (products) => {
+            this.primaryProductsAttempt = false;
+            console.log(products);
+            this.primaryProducts = products;
+          },
+          error: (error) => {
+            console.error(error);
+            this.primaryProductsAttempt = false;
           },
         }),
     );
@@ -330,8 +392,8 @@ export class CatalogPage implements OnInit {
   }
 
   downloadCatalog(): void {
-    console.log('downloadCatalog');
-    this.downloadMode = true;
+    const base = window.location.href.replace(/\/$/, '');
+    window.open(`${base}/download?layout=${this.layoutMode}`, '_blank');
   }
 
   share() {

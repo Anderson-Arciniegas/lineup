@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   SocialNetworkBusinessSchema,
   SocialNetworkPrivateService,
@@ -11,7 +12,7 @@ import { SocialNetworkSchema } from 'libs/shared/core/src/lib/schemas/social-net
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-social-medias-page',
@@ -31,6 +32,7 @@ export class SocialMediasPage implements OnInit {
   private readonly _messageService = inject(MessageService);
   private readonly _utilsService = inject(UtilsService);
   private _subscriptions = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.getMySocialNetworkBusinesses();
@@ -138,9 +140,10 @@ export class SocialMediasPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((newSocialMedia: SocialNetworkBusinessSchema | undefined) => {
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((newSocialMedia: SocialNetworkBusinessSchema | undefined) => {
       if (newSocialMedia) {
-        console.log(newSocialMedia);
         this.getMySocialNetworkBusinesses();
         if (businessSocialNetwork) {
           this._messageService.add({
@@ -185,40 +188,37 @@ export class SocialMediasPage implements OnInit {
       resizable: false,
     });
 
-    this.ref.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log(confirmed);
-        const id = this.businessSocialNetworks.find(
-          (socialNetwork) =>
-            Number(socialNetwork.socialNetwork.id) === Number(socialMedia.id),
-        )?.id;
-        if (this.attemptDelete) return;
-        this.attemptDelete = true;
-        this._subscriptions.add(
-          this._socialMediaService.removeSocialNetworkBusiness(id).subscribe({
-            next: (response) => {
-              console.log(response);
-              this.getMySocialNetworkBusinesses();
-              this.attemptDelete = false;
-              this._messageService.add({
-                severity: 'success',
-                summary: this._translate.instant('general.success'),
-                detail: this._translate.instant(
-                  'toast.socialNetworkBusinessDeletedSuccessfullySocial',
-                ),
-                life: 3000,
-              });
-            },
-            error: (error) => {
-              console.error(error);
-              this.attemptDelete = false;
-            },
-            complete: () => {
-              console.log('Social network business deleted');
-            },
-          }),
-        );
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          const id = this.businessSocialNetworks.find(
+            (socialNetwork) =>
+              Number(socialNetwork.socialNetwork.id) === Number(socialMedia.id),
+          )?.id;
+          if (this.attemptDelete) return;
+          this.attemptDelete = true;
+          this._subscriptions.add(
+            this._socialMediaService.removeSocialNetworkBusiness(id).subscribe({
+              next: () => {
+                this.getMySocialNetworkBusinesses();
+                this.attemptDelete = false;
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: this._translate.instant(
+                    'toast.socialNetworkBusinessDeletedSuccessfullySocial',
+                  ),
+                  life: 3000,
+                });
+              },
+              error: (error) => {
+                console.error(error);
+                this.attemptDelete = false;
+              },
+            }),
+          );
+        }
+      });
   }
 }

@@ -4,7 +4,9 @@
 >
   <lib-product-breadcrumb
     class="w-10/10"
+    [business]="business"
     [publicMode]="true"
+    [hiddenBusiness]="true"
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
   <div
@@ -16,6 +18,7 @@
       [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
       (colorChange)="setColor($event)"
     ></lib-business-data>
+    @if (products.length > 0) {
     <div class="w-full flex flex-col items-center justify-center gap-10">
       <div
         [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
@@ -38,6 +41,7 @@
         }
       </div>
     </div>
+    }
     <div class="w-full flex flex-col items-center justify-center gap-10">
       <div
         [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"

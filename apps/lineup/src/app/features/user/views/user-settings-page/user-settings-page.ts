@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthStore, ProvidersEnum } from '@lineup/core';
 import {
   Button,
@@ -10,6 +11,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-user-settings-page',
@@ -24,6 +26,7 @@ export class UserSettingsPage implements OnInit {
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private readonly _authStore = inject(AuthStore);
+  private readonly destroyRef = inject(DestroyRef);
   private _ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
@@ -52,16 +55,18 @@ export class UserSettingsPage implements OnInit {
       closable: true,
     });
 
-    this._ref.onClose.subscribe((success: boolean) => {
-      if (success) {
-        this._messageService.add({
-          severity: 'success',
-          summary: this._translate.instant('general.success'),
-          detail: this._translate.instant('toast.passwordUpdated'),
-          life: 3000,
-        });
-      }
-    });
+    this._ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((success: boolean) => {
+        if (success) {
+          this._messageService.add({
+            severity: 'success',
+            summary: this._translate.instant('general.success'),
+            detail: this._translate.instant('toast.passwordUpdated'),
+            life: 3000,
+          });
+        }
+      });
   }
 
   changeEmail(): void {
@@ -76,12 +81,14 @@ export class UserSettingsPage implements OnInit {
       data: { type: 'user' as const },
     });
 
-    verifyRef.onClose.subscribe((verified: boolean) => {
-      if (!verified) {
-        return;
-      }
-      this._openUpdateEmailModal();
-    });
+    verifyRef.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((verified: boolean) => {
+        if (!verified) {
+          return;
+        }
+        this._openUpdateEmailModal();
+      });
   }
 
   private _openUpdateEmailModal(): void {
@@ -100,18 +107,20 @@ export class UserSettingsPage implements OnInit {
       closable: true,
     });
 
-    this._ref.onClose.subscribe((success: boolean) => {
-      if (success) {
-        const u = this._authStore.user();
-        this.email = u?.email ? this._maskEmail(u.email) : '';
-        this._messageService.add({
-          severity: 'success',
-          summary: this._translate.instant('general.success'),
-          detail: this._translate.instant('toast.emailUpdated'),
-          life: 3000,
-        });
-      }
-    });
+    this._ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((success: boolean) => {
+        if (success) {
+          const u = this._authStore.user();
+          this.email = u?.email ? this._maskEmail(u.email) : '';
+          this._messageService.add({
+            severity: 'success',
+            summary: this._translate.instant('general.success'),
+            detail: this._translate.instant('toast.emailUpdated'),
+            life: 3000,
+          });
+        }
+      });
   }
 
   private _maskEmail(email: string): string {

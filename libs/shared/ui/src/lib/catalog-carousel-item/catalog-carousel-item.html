@@ -5,6 +5,17 @@
   <div
     class="flex flex-col items-start justify-start gap-2 sm:gap-4 w-10/10 sm:w-8/10 lg:w-5/10 h-max max-w-3xl"
   >
+    @if (outOfStock) {
+    <div class="note-container flex flex-row justify-center items-center">
+      <div
+        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        <span class="text-md text-center font-medium"
+          >{{'general.outOfStockSimple' | translate}}</span
+        >
+      </div>
+    </div>
+    }
     <a [routerLink]="[product.id]" [class.text-white]="useLightText === true">
       <h4 class="font-semibold text-lg md:text-3xl">{{ product.title }}</h4>
     </a>

@@ -1,6 +1,7 @@
 import { gql } from 'apollo-angular';
 
 import {
+  businessSalesInTimePeriodSelection,
   catalogStatsSelection,
   discountStatsSelection,
   engagementStatsSelection,
@@ -35,5 +36,11 @@ export const INVENTORY_STATS_QUERY = gql`
 export const PRODUCT_STATS_QUERY = gql`
   query ProductStats($timePeriod: TimePeriodInput!) {
     productStats(timePeriod: $timePeriod) ${productStatsSelection}
+  }
+`;
+
+export const BUSINESS_SALES_IN_TIME_PERIOD_QUERY = gql`
+  query BusinessSalesInTimePeriod($timePeriod: TimePeriodInput!) {
+    businessSalesInTimePeriod(timePeriod: $timePeriod) ${businessSalesInTimePeriodSelection}
   }
 `;

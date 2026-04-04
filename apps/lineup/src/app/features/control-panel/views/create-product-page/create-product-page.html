@@ -19,10 +19,32 @@
     class="w-full flex flex-col gap-5 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <div class="flex flex-row items-center justify-between">
-      <h1 class="text-3xl font-medium">
+      @if(idProduct){
+      <h2 class="text-3xl font-medium">
+        {{ 'general.editProduct' | translate }}
+      </h2>
+      } @else {
+      <h2 class="text-3xl font-medium">
         {{ 'general.createProduct' | translate }}
-      </h1>
+      </h2>
+      }
     </div>
+    @if(product){
+    <div class="flex flex-row items-center justify-start gap-3">
+      <span class="text-base text-gray-600 font-medium flex items-center gap-2">
+        <i class="pi pi-folder"></i>
+        {{ catalog?.title }}
+      </span>
+      <lib-button
+        [size]="'small'"
+        [label]="'general.switchCatalog' | translate"
+        type="rounded"
+        color="primary"
+        (action)="switchCatalog()"
+      ></lib-button>
+    </div>
+
+    }
     <div class="w-full flex flex-col gap-2">
       <div class="flex flex-row items-end justify-start gap-2">
         <label for="title" class="font-medium text-lg"

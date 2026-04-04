@@ -22,6 +22,14 @@ export interface EnvironmentConfig {
     seed: string;
     secret: string;
   };
+  /**
+   * Solo desarrollo: `fetch` del PDF va al prefijo local; `proxy.conf.json` lo reenvía al bucket S3
+   * (evita CORS en localhost). En producción configura CORS en el bucket o un proxy en tu API.
+   */
+  catalogPdfMediaProxy?: {
+    s3OriginPrefix: string;
+    localPathPrefix: string;
+  };
 }
 
 export const environment: EnvironmentConfig = {
@@ -42,6 +50,10 @@ export const environment: EnvironmentConfig = {
   crypto: {
     seed: 'ThisIsTheDevSeed',
     secret: 'a7f82e39372e2f31b878c3971cac81d04bcff42ad9538131418d6d5e1047f04d',
+  },
+  catalogPdfMediaProxy: {
+    s3OriginPrefix: 'https://test-mangloo.s3.us-east-1.amazonaws.com',
+    localPathPrefix: '/s3-lineup-media',
   },
 };
 

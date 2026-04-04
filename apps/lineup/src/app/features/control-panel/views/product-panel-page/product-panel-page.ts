@@ -2,10 +2,12 @@ import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   inject,
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -32,7 +34,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 @Component({
   selector: 'app-product-panel-page',
   imports: [
@@ -80,6 +82,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
   private readonly _dialogService = inject(DialogService);
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _subscription = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
@@ -254,17 +257,17 @@ export class ProductPanelPage implements OnInit, OnDestroy {
       resizable: false,
     });
 
-    this.ref.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log(confirmed);
-        const id = this.product.id;
-        if (this.attemptDelete) return;
-        this.attemptDelete = true;
-        this._subscription.add(
-          this._productService.removeProduct(id).subscribe({
-            next: (response) => {
-              console.log(response);
-              this.attemptDelete = false;
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          const id = this.product.id;
+          if (this.attemptDelete) return;
+          this.attemptDelete = true;
+          this._subscription.add(
+            this._productService.removeProduct(id).subscribe({
+              next: () => {
+                this.attemptDelete = false;
               this._messageService.add({
                 severity: 'success',
                 summary: this._translate.instant('general.success'),
@@ -273,23 +276,20 @@ export class ProductPanelPage implements OnInit, OnDestroy {
                 ),
                 life: 3000,
               });
-              this._utils.navigate([
-                AppConfigService.config.routes.dashboard,
-                AppConfigService.config.routes.catalogs,
-                this.catalogPath,
-              ]);
-            },
-            error: (error) => {
-              console.error(error);
-              this.attemptDelete = false;
-            },
-            complete: () => {
-              console.log('Product deleted');
-            },
-          }),
-        );
-      }
-    });
+                this._utils.navigate([
+                  AppConfigService.config.routes.dashboard,
+                  AppConfigService.config.routes.catalogs,
+                  this.catalogPath,
+                ]);
+              },
+              error: (error) => {
+                console.error(error);
+                this.attemptDelete = false;
+              },
+            }),
+          );
+        }
+      });
   }
 
   getRates(): void {
