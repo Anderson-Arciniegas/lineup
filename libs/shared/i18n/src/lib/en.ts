@@ -273,6 +273,7 @@ export const en = {
     ourMainProducts: 'Our main products',
     outOfStockSimple: 'Out of stock',
     switchCatalog: 'Switch catalog',
+    productPanel: 'Product panel',
   },
   businessHoursModal: {
     days: 'Days',

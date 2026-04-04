@@ -12,6 +12,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AppConfigService,
   AuthStore,
   BusinessPublicService,
   BusinessSchema,
@@ -107,6 +108,7 @@ export class CatalogPage implements OnInit {
   attemptColor = false;
   allProductsMode = true;
   ref: DynamicDialogRef | undefined;
+  configUrl: string;
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessPublicService = inject(BusinessPublicService);
@@ -149,12 +151,17 @@ export class CatalogPage implements OnInit {
     if (this.layoutMode === 'Grid') {
       // Siempre 2 filas por página; columnas: xxl→5, xl→4, lg→3, md/sm→2, xs→1
       switch (bp) {
-        case 'xxl': return 10; // 2 × 5
-        case 'xl':  return 8;  // 2 × 4
-        case 'lg':  return 6;  // 2 × 3
+        case 'xxl':
+          return 10; // 2 × 5
+        case 'xl':
+          return 8; // 2 × 4
+        case 'lg':
+          return 6; // 2 × 3
         case 'md':
-        case 'sm':  return 4;  // 2 × 2
-        default:    return 2;  // 2 × 1
+        case 'sm':
+          return 4; // 2 × 2
+        default:
+          return 2; // 2 × 1
       }
     } else {
       // List mode: siempre 2 productos por página.
@@ -191,7 +198,8 @@ export class CatalogPage implements OnInit {
    */
   get pdfPageMinHeight(): string {
     const bp = this.getTailwindBreakpoint();
-    const isLandscape = this.layoutMode === 'Grid' && (bp === 'xxl' || bp === 'xl');
+    const isLandscape =
+      this.layoutMode === 'Grid' && (bp === 'xxl' || bp === 'xl');
     const w = document.documentElement.clientWidth;
     const ratio = isLandscape ? 210 / 297 : 297 / 210;
     return `${Math.round(w * ratio)}px`;
@@ -216,6 +224,10 @@ export class CatalogPage implements OnInit {
               this.setColor(this.catalog.hexColor);
             } else if (this.business.hexColor) {
               this.setColor(this.business.hexColor);
+            }
+            this.getPrimaryProducts();
+            if (this.myBusiness) {
+              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
             }
           }
         },
@@ -259,9 +271,13 @@ export class CatalogPage implements OnInit {
             this.attempt = false;
             console.log(this.catalog);
             this.getProducts();
-            this.getPrimaryProducts();
+            if (this.business) {
+              this.getPrimaryProducts();
+            }
             if (!this.myBusiness) {
               this.visitCatalog();
+            } else {
+              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
             }
 
             if (this.catalog.hexColor) {

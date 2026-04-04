@@ -44,6 +44,13 @@ export const businessRoutes: Routes = [
           ),
       },
       {
+        path: 'download',
+        loadComponent: () =>
+          import('./views/catalog-download-page/catalog-download-page').then(
+            (m) => m.CatalogDownloadPage,
+          ),
+      },
+      {
         canActivate: [BusinessAuthGuard],
         path: AppConfigService.config.routes.createProduct,
         component: CreateProductPage,

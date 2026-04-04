@@ -656,6 +656,7 @@ export class CreateProductPage implements OnInit {
         description: raw.description,
         idCatalog,
         images,
+        isPrimary: this.product.isPrimary,
         variations: variationsUpdate.length > 0 ? variationsUpdate : undefined,
       };
 
@@ -703,6 +704,7 @@ export class CreateProductPage implements OnInit {
         description: raw.description,
         idCatalog: this.catalog.id,
         images,
+        isPrimary: false,
         variations:
           variationsFormatted.length > 0 ? variationsFormatted : undefined,
       };
