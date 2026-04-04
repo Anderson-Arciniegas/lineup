@@ -27,6 +27,7 @@ export const appRoutes: AppRoutes = {
   statistics: 'statistics',
   tag: 'tag',
   businessHours: 'business-hours',
+  download: 'download',
 };
 
 export const languagesList: Language[] = [
@@ -80,4 +81,5 @@ export interface AppRoutes {
   statistics: string;
   tag: string;
   businessHours: string;
+  download: string;
 }

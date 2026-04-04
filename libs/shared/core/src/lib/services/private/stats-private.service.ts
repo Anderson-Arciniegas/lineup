@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 
 import {
   BUSINESS_ENGAGEMENT_STATS_QUERY,
+  BUSINESS_SALES_IN_TIME_PERIOD_QUERY,
   CATALOG_STATS_QUERY,
   DISCOUNT_STATS_QUERY,
   INVENTORY_STATS_QUERY,
@@ -13,6 +14,7 @@ import { map } from 'rxjs/operators';
 
 import type { TimePeriodInput } from '../../models/stats.model';
 import type {
+  BusinessSalesInTimePeriodSchema,
   CatalogStatsSchema,
   DiscountStatsSchema,
   EngagementStatsSchema,
@@ -100,5 +102,21 @@ export class StatsPrivateService {
         },
       })
       .pipe(map((result) => result.data.productStats));
+  }
+
+  businessSalesInTimePeriod(
+    timePeriod: TimePeriodInput
+  ): Observable<BusinessSalesInTimePeriodSchema> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ businessSalesInTimePeriod: BusinessSalesInTimePeriodSchema }>({
+        query: BUSINESS_SALES_IN_TIME_PERIOD_QUERY,
+        variables: { timePeriod },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.businessSalesInTimePeriod));
   }
 }

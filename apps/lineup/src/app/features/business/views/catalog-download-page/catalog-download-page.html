@@ -1,1 +1,96 @@
-<p>catalog-download-page works!</p>
+<!-- Overlay de carga / estado (posición fija, encima de todo) -->
+<div class="catalog-download__overlay">
+  @if (isGenerating) {
+  <p-progress-spinner
+    strokeWidth="4"
+    [style]="{ width: '80px', height: '80px' }"
+  />
+  <p class="mt-6 text-lg font-medium text-slate-700">Generando PDF…</p>
+  } @else if (isDone) {
+  <i class="pi pi-check-circle text-6xl text-green-500"></i>
+  <p class="mt-4 text-lg font-medium text-slate-700">
+    ¡PDF descargado! Puedes cerrar esta pestaña.
+  </p>
+  } @else if (hasError) {
+  <i class="pi pi-times-circle text-6xl text-red-500"></i>
+  <p class="mt-4 text-lg font-medium text-red-600">
+    Error al generar el PDF. Inténtalo de nuevo.
+  </p>
+  }
+</div>
+
+<!-- =====================================================================
+     SECCIÓN PDF: se renderiza off-screen para que html2canvas la capture.
+     Idéntica al bloque de exportación que existía en catalog-page.html.
+     ===================================================================== -->
+@if (pdfExportAttempt && catalog && business) {
+<section
+  #catalogPdfRoot
+  class="catalog-page catalog-page__pdf-capture w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
+  [style.background]="pageBackgroundGradient || null"
+>
+  <!-- ── PORTADA ─────────────────────────────────────────────────── -->
+  <div
+    #pdfPage
+    class="w-full flex flex-col items-center justify-center gap-10 py-16 px-8"
+    [style.min-height]="pdfPageMinHeight"
+    [style.background]="pageBackgroundGradient || null"
+  >
+    @if (business.image?.url) {
+    <img
+      class="w-64 h-64 object-cover rounded-full shadow-xl border-8 border-white"
+      [src]="business.image?.url"
+      alt=""
+    />
+    }
+    <div
+      class="flex flex-col items-center gap-5 text-center"
+      [class.catalog-page__brand-text--light]="brandToneLight"
+    >
+      <h2 class="text-6xl font-bold tracking-tight">{{ business.name }}</h2>
+      <div class="w-24 h-1 rounded-full bg-current opacity-40"></div>
+      <h2 class="text-3xl font-medium opacity-75">
+        {{ catalog.title || 'Catálogo' }}
+      </h2>
+    </div>
+  </div>
+
+  <!-- ── PÁGINAS DE PRODUCTOS ───────────────────────────────────── -->
+  @for (chunk of pdfProductPageChunks; track $index) {
+  <div
+    #pdfPage
+    class="w-full flex flex-col justify-center"
+    [style.min-height]="pdfPageMinHeight"
+    [style.background]="pageBackgroundGradient || null"
+  >
+    @if (layoutMode === 'Grid') {
+    <div class="container w-full products-grid products-grid--pdf">
+      @for (product of chunk; track $index) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <lib-product-card
+          [width]="'w-65'"
+          [height]="pdfCardHeight"
+          [product]="product"
+          [pdfExportAttempt]="true"
+        />
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="container w-full flex flex-col gap-3 xl:gap-5">
+      @for (product of chunk; track $index) {
+      <div class="w-full flex flex-row items-center justify-center">
+        <lib-product-expanded-item
+          class="w-full"
+          [product]="product"
+          [reverse]="$index % 2 !== 0"
+          [pdfExportAttempt]="true"
+        />
+      </div>
+      }
+    </div>
+    }
+  </div>
+  }
+</section>
+}

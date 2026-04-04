@@ -1,3 +1,5 @@
+import { stockMovementSelection } from './product.selection';
+
 const timeSeriesStatsFields = `
   total
 `;
@@ -93,5 +95,14 @@ export const productStatsSelection = `
     }
     withoutRatingsCount
     withoutVisitsCount
+  }
+`;
+
+export const businessSalesInTimePeriodSelection = `
+  {
+    sales ${stockMovementSelection}
+    salesCount {
+      ${timeSeriesStatsFields}
+    }
   }
 `;

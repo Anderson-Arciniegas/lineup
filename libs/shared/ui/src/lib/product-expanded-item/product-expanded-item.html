@@ -96,8 +96,22 @@
       class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10"
       [class.expanded-product-image--pdf]="pdfExportAttempt"
       [src]="expandedImageSrc"
+      (load)="imageLoaded = true"
+      [hidden]="!imageLoaded"
       alt=""
     />
+
+    <div
+      [hidden]="imageLoaded"
+      class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10 flex flex-row items-center justify-center"
+    >
+      <p-progress-spinner
+        strokeWidth="8"
+        fill="transparent"
+        animationDuration=".5s"
+        [style]="{ width: '50px', height: '50px' }"
+      />
+    </div>
   </a>
 </section>
 }

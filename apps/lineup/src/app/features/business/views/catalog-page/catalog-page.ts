@@ -1,13 +1,9 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   inject,
   OnInit,
   PLATFORM_ID,
-  viewChild,
-  viewChildren,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -21,10 +17,10 @@ import {
   CatalogSchema,
   ProductPublicService,
   ProductSchema,
+  SeoService,
   UserPublicService,
   VisitTypeEnum,
 } from '@lineup/core';
-import { environment } from '@lineup/envs';
 import {
   Button,
   CatalogCarousel,
@@ -36,19 +32,15 @@ import {
   ShareModal,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { MessageService } from 'primeng/api';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PopoverModule } from 'primeng/popover';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-page',
@@ -57,8 +49,6 @@ import { firstValueFrom, Subscription } from 'rxjs';
     ProductBreadcrumb,
     ProductCard,
     Button,
-    IconField,
-    InputIcon,
     CatalogCarousel,
     CreateProductCard,
     ProgressSpinner,
@@ -98,15 +88,13 @@ export class CatalogPage implements OnInit {
   noMoreResults = false;
   myBusiness = false;
   searchQuery = '';
-  layoutMode = 'Grid';
+  layoutMode: 'Grid' | 'List' = 'Grid';
   layoutOptions = [
     { index: 0, icon: 'pi pi-th-large', label: 'Grid', value: 'Grid' },
     { index: 1, icon: 'pi pi-list', label: 'List', value: 'List' },
   ];
-  pdfExportAttempt = false;
   color = '#ffffff';
   attemptColor = false;
-  allProductsMode = true;
   ref: DynamicDialogRef | undefined;
   configUrl: string;
   private readonly _platformId = inject(PLATFORM_ID);
@@ -115,18 +103,14 @@ export class CatalogPage implements OnInit {
   private readonly _catalogPublicService = inject(CatalogPublicService);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _seoService = inject(SeoService);
 
   private readonly _authStore = inject(AuthStore);
   private readonly _userService = inject(UserPublicService);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
-  private readonly _cdr = inject(ChangeDetectorRef);
   private _subscription: Subscription = new Subscription();
-
-  private readonly _catalogPdfRoot =
-    viewChild<ElementRef<HTMLElement>>('catalogPdfRoot');
-  private readonly _pdfPages = viewChildren<ElementRef<HTMLElement>>('pdfPage');
 
   /** Detecta el breakpoint Tailwind activo según el ancho del viewport. */
   private getTailwindBreakpoint(): 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' {
@@ -137,72 +121,6 @@ export class CatalogPage implements OnInit {
     if (w >= 768) return 'md';
     if (w >= 640) return 'sm';
     return 'xs';
-  }
-
-  /**
-   * Devuelve cuántos productos caben en una hoja A4 sin cortarse,
-   * según el breakpoint activo y el modo de layout.
-   *
-   * Grid   – xxl: 5×2=10 | xl: 4×2=8 | lg: 3×3=9 | md/sm: 2×2=4 | xs: 1
-   * List   – xxl: 4       | xl: 3      | lg: 2      | md/sm/xs: 1
-   */
-  private getPdfProductsPerPage(): number {
-    const bp = this.getTailwindBreakpoint();
-    if (this.layoutMode === 'Grid') {
-      // Siempre 2 filas por página; columnas: xxl→5, xl→4, lg→3, md/sm→2, xs→1
-      switch (bp) {
-        case 'xxl':
-          return 10; // 2 × 5
-        case 'xl':
-          return 8; // 2 × 4
-        case 'lg':
-          return 6; // 2 × 3
-        case 'md':
-        case 'sm':
-          return 4; // 2 × 2
-        default:
-          return 2; // 2 × 1
-      }
-    } else {
-      // List mode: siempre 2 productos por página.
-      // xs (<640 px) mantiene 1 porque el viewport no admite 2 items sin recorte.
-      if (bp === 'xs') return 1;
-      if (bp === 'xxl' || bp === 'xl') return 3;
-      return 2;
-    }
-  }
-
-  /** Productos agrupados en páginas PDF según el breakpoint y modo de layout. */
-  get pdfProductPageChunks(): ProductSchema[][] {
-    const perPage = this.getPdfProductsPerPage();
-    if (this.products.length === 0) return [[]];
-    const chunks: ProductSchema[][] = [];
-    for (let i = 0; i < this.products.length; i += perPage) {
-      chunks.push(this.products.slice(i, i + perPage));
-    }
-    return chunks;
-  }
-
-  /**
-   * Altura de la card de producto en modo PDF (Grid).
-   * Con solo 2 filas por página, h-100 (400 px) cabe en A4 a todos los breakpoints.
-   */
-  get pdfCardHeight(): string {
-    return 'h-100';
-  }
-
-  /**
-   * Altura mínima de cada #pdfPage para que cubra exactamente una hoja A4.
-   * Proporcional al ancho del viewport según la orientación activa.
-   * Grid xxl/xl → landscape (210/297); resto → portrait (297/210).
-   */
-  get pdfPageMinHeight(): string {
-    const bp = this.getTailwindBreakpoint();
-    const isLandscape =
-      this.layoutMode === 'Grid' && (bp === 'xxl' || bp === 'xl');
-    const w = document.documentElement.clientWidth;
-    const ratio = isLandscape ? 210 / 297 : 297 / 210;
-    return `${Math.round(w * ratio)}px`;
   }
 
   ngOnInit(): void {
@@ -230,6 +148,7 @@ export class CatalogPage implements OnInit {
               this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
             }
           }
+          this.applyCatalogSeoIfReady();
         },
       }),
     );
@@ -244,10 +163,10 @@ export class CatalogPage implements OnInit {
     return !!this.pageBackgroundGradient && !this.isDarkBackground;
   }
 
-  onLayoutModeChange(event: any): void {
-    console.log(event);
-    // this.layoutMode = event.value;
-    console.log(this.layoutMode);
+  onLayoutModeChange(value: unknown): void {
+    if (value !== 'Grid' && value !== 'List') {
+      this.layoutMode = 'Grid';
+    }
   }
 
   onSearchSubmit(query: string): void {
@@ -285,6 +204,7 @@ export class CatalogPage implements OnInit {
             } else if (this.business && this.business.hexColor) {
               this.setColor(this.business.hexColor);
             }
+            this.applyCatalogSeoIfReady();
           },
           error: (error) => {
             console.error(error);
@@ -296,6 +216,12 @@ export class CatalogPage implements OnInit {
           },
         }),
     );
+  }
+
+  private applyCatalogSeoIfReady(): void {
+    if (this.business && this.catalog) {
+      this._seoService.setCatalogPage(this.business, this.catalog);
+    }
   }
 
   private visitCatalog(): void {
@@ -462,765 +388,12 @@ export class CatalogPage implements OnInit {
 
   onScroll(): void {
     console.log('onScroll');
-    if (this.allProductsMode) {
-      return;
-    }
     this.getProducts();
   }
 
-  async downloadCatalog(): Promise<void> {
-    if (!isPlatformBrowser(this._platformId) || !this.catalog) {
-      return;
-    }
-    const host = this._catalogPdfRoot()?.nativeElement;
-    if (!host) {
-      return;
-    }
-
-    const prevScrollX = window.scrollX;
-    const prevScrollY = window.scrollY;
-    const prevProducts = this.products;
-
-    try {
-      this.pdfExportAttempt = true;
-
-      if (!this.allProductsMode) {
-        const allProducts = await firstValueFrom(
-          this._productPublicService.getAllByCatalog(
-            this.catalog.id,
-            this.searchQuery || null,
-          ),
-        );
-        this.products = allProducts;
-        if (this.products.length > 0) {
-          this.allProductsMode = true;
-        }
-      }
-
-      // Angular necesita un ciclo de detección antes de que #pdfPage exista en el DOM.
-      this._cdr.detectChanges();
-      await CatalogPage.waitNextPaint();
-
-      // Posicionamos la sección en el inicio para que scrollY=0 sea coherente.
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      host.scrollIntoView({
-        block: 'start',
-        inline: 'nearest',
-        behavior: 'auto',
-      });
-
-      if (document.fonts?.ready) {
-        try {
-          await document.fonts.ready;
-        } catch {
-          /* fuentes ya cargadas o API no disponible */
-        }
-      }
-      await CatalogPage.waitNextPaint();
-
-      const pdfPageEls = this._pdfPages();
-      if (pdfPageEls.length === 0) {
-        return;
-      }
-
-      // Esperamos a que todas las imágenes estén cargadas antes de capturar.
-      await CatalogPage.waitForImages(host);
-      await CatalogPage.waitNextPaint();
-
-      const layoutViewportW = document.documentElement.clientWidth;
-      const layoutViewportH = document.documentElement.clientHeight;
-      const captureH = Math.ceil(
-        Math.max(host.scrollHeight, host.getBoundingClientRect().height),
-      );
-      const captureScale = 1.5;
-
-      // Medimos la posición de cada #pdfPage ANTES de llamar a html2canvas,
-      // relativa a la sección raíz (que tras scrollIntoView está en top≈0).
-      const sectionRect = host.getBoundingClientRect();
-      const pageSlices = pdfPageEls.map((el) => {
-        const r = el.nativeElement.getBoundingClientRect();
-        return {
-          top: Math.round((r.top - sectionRect.top) * captureScale),
-          height: Math.round(r.height * captureScale),
-        };
-      });
-
-      // Captura única de TODA la sección: evita los problemas de elementos
-      // fuera del viewport que tiene la captura elemento-por-elemento.
-      const fullCanvas = await html2canvas(host, {
-        foreignObjectRendering: true,
-        scale: captureScale,
-        useCORS: false,
-        allowTaint: false,
-        logging: false,
-        backgroundColor: null,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: layoutViewportW,
-        windowHeight: Math.max(layoutViewportH, captureH),
-        onclone: ((documentClone: Document) => {
-          CatalogPage.preparePdfCloneDocument(documentClone, layoutViewportW);
-          return CatalogPage.preparePdfCloneForCapture(documentClone);
-        }) as (document: Document, element: HTMLElement) => void,
-      });
-
-      // Grid xxl/xl → landscape (ancho domina). List y el resto → portrait (alto domina).
-      const bp = this.getTailwindBreakpoint();
-      const isLandscape =
-        this.layoutMode === 'Grid' && (bp === 'xxl' || bp === 'xl');
-
-      const pdf = new jsPDF({
-        orientation: isLandscape ? 'l' : 'p',
-        unit: 'mm',
-        format: 'a4',
-      });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      for (let i = 0; i < pageSlices.length; i++) {
-        const { top, height } = pageSlices[i];
-
-        // Recortamos el canvas completo en el bloque de esta página PDF.
-        const sliceCanvas = document.createElement('canvas');
-        sliceCanvas.width = fullCanvas.width;
-        sliceCanvas.height = height;
-        const sliceCtx = sliceCanvas.getContext('2d');
-        if (!sliceCtx) {
-          continue;
-        }
-        sliceCtx.drawImage(fullCanvas, 0, -top);
-
-        // Fondo blanco + JPEG (~90 % menos peso que PNG).
-        const jpegCanvas = document.createElement('canvas');
-        jpegCanvas.width = sliceCanvas.width;
-        jpegCanvas.height = sliceCanvas.height;
-        const jCtx = jpegCanvas.getContext('2d');
-        if (jCtx) {
-          jCtx.fillStyle = '#ffffff';
-          jCtx.fillRect(0, 0, jpegCanvas.width, jpegCanvas.height);
-          jCtx.drawImage(sliceCanvas, 0, 0);
-        }
-        const outCanvas = jCtx ? jpegCanvas : sliceCanvas;
-        const trimmed = CatalogPage.trimCanvasPdfMargins(outCanvas);
-        // calidad 0.82: equilibrio texto legible / peso mínimo
-        const imgData = trimmed.toDataURL('image/jpeg', 0.82);
-
-        // Siempre llena el ancho completo de la hoja A4 (sin márgenes laterales).
-        // Si el contenido supera ligeramente la altura disponible (≤ 8 %) se acepta
-        // el recorte mínimo (solo afecta al relleno inferior, no a las cards).
-        // Si el desbordamiento es mayor, se escala para que todo quepa en la hoja.
-        const imgWidth = pageWidth;
-        const imgHeight = (trimmed.height * imgWidth) / trimmed.width;
-
-        if (i > 0) {
-          pdf.addPage();
-        }
-
-        if (imgHeight <= pageHeight * 1.08) {
-          // Ancho completo; desbordamiento menor al 8 % solo afecta relleno inferior.
-          pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-        } else {
-          // Desbordamiento significativo: ajusta a la altura de la hoja y centra.
-          const scaledH = pageHeight;
-          const scaledW = (trimmed.width * scaledH) / trimmed.height;
-          const xOffset = (pageWidth - scaledW) / 2;
-          pdf.addImage(imgData, 'JPEG', xOffset, 0, scaledW, scaledH);
-        }
-      }
-
-      const baseName = CatalogPage.slugifyFilename(
-        this.catalog.title || 'catalogo',
-      );
-      pdf.save(`${baseName}.pdf`);
-    } catch (err) {
-      console.error(err);
-      this._messageService.add({
-        severity: 'error',
-        summary: this._translate.instant('general.error'),
-        detail: this._translate.instant('toast.catalogPdfExportFailed'),
-      });
-    } finally {
-      window.scrollTo(prevScrollX, prevScrollY);
-      this.products = prevProducts;
-      this.pdfExportAttempt = false;
-      this._cdr.detectChanges();
-    }
-  }
-
-  /** Fondo y ancho del documento clonado para que coincidan con la vista y el degradado del host. */
-  private static preparePdfCloneDocument(
-    documentClone: Document,
-    viewportWidth: number,
-  ): void {
-    const html = documentClone.documentElement;
-    const body = documentClone.body;
-    html.style.setProperty('margin', '0', 'important');
-    html.style.setProperty('background-color', 'transparent', 'important');
-    if (body) {
-      body.style.setProperty('margin', '0', 'important');
-      body.style.setProperty('background-color', 'transparent', 'important');
-      body.style.setProperty('min-width', `${viewportWidth}px`, 'important');
-    }
-  }
-
-  /** Dos requestAnimationFrame: layout + pintado tras detectChanges(). */
-  private static waitNextPaint(): Promise<void> {
-    return new Promise((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-    );
-  }
-
-  /**
-   * Espera a que todas las <img> del contenedor hayan terminado de cargar
-   * (o fallado). Incluye un timeout de seguridad por imagen para no bloquear
-   * indefinidamente si un recurso nunca responde.
-   */
-  private static waitForImages(
-    container: HTMLElement,
-    timeoutMs = 10_000,
-  ): Promise<void> {
-    const imgs = Array.from(
-      container.querySelectorAll<HTMLImageElement>('img'),
-    );
-    const pending = imgs.filter((img) => !img.complete);
-    if (pending.length === 0) return Promise.resolve();
-
-    const waits = pending.map(
-      (img) =>
-        new Promise<void>((resolve) => {
-          const timer = setTimeout(resolve, timeoutMs);
-          const done = () => {
-            clearTimeout(timer);
-            resolve();
-          };
-          img.addEventListener('load', done, { once: true });
-          img.addEventListener('error', done, { once: true });
-        }),
-    );
-    return Promise.all(waits).then(() => undefined);
-  }
-
-  /**
-   * undefined = aún no intentado; null = intentado y sin fuente; objeto = lista para inyectar.
-   */
-  private static primeIconsFontCache:
-    | { dataUrl: string; format: string }
-    | null
-    | undefined = undefined;
-
-  private static async getPrimeIconsFontForPdf(): Promise<{
-    dataUrl: string;
-    format: string;
-  } | null> {
-    if (CatalogPage.primeIconsFontCache !== undefined) {
-      return CatalogPage.primeIconsFontCache;
-    }
-    const bundle = await CatalogPage.resolvePrimeIconsFontBundle();
-    CatalogPage.primeIconsFontCache = bundle;
-    return bundle;
-  }
-
-  /** data URL con MIME correcto para @font-face (FileReader suele dar octet-stream). */
-  private static async binaryBlobToDataUrl(
-    blob: Blob,
-    mime: string,
-  ): Promise<string> {
-    const buf = new Uint8Array(await blob.arrayBuffer());
-    const chunk = 0x8000;
-    let binary = '';
-    for (let i = 0; i < buf.length; i += chunk) {
-      binary += String.fromCharCode(...buf.subarray(i, i + chunk));
-    }
-    return `data:${mime};base64,${btoa(binary)}`;
-  }
-
-  private static mimeForFontFormat(format: string): string {
-    const f = format.toLowerCase();
-    if (f === 'woff2') {
-      return 'font/woff2';
-    }
-    if (f === 'woff') {
-      return 'font/woff';
-    }
-    if (f === 'truetype' || f === 'opentype') {
-      return 'font/ttf';
-    }
-    return 'application/octet-stream';
-  }
-
-  private static collectPrimeIconsFontCandidates(): {
-    url: string;
-    format: string;
-  }[] {
-    const candidates: { url: string; format: string }[] = [];
-    const seen = new Set<string>();
-
-    const add = (url: string, format: string) => {
-      if (seen.has(url)) {
-        return;
-      }
-      seen.add(url);
-      candidates.push({ url, format });
-    };
-
-    if (typeof document !== 'undefined') {
-      if (typeof performance !== 'undefined') {
-        const entries = performance.getEntriesByType(
-          'resource',
-        ) as PerformanceResourceTiming[];
-        for (const e of entries) {
-          const u = e.name;
-          if (!/primeicons/i.test(u)) {
-            continue;
-          }
-          const lower = u.toLowerCase();
-          if (lower.endsWith('.woff2')) {
-            add(u, 'woff2');
-          } else if (lower.endsWith('.woff')) {
-            add(u, 'woff');
-          } else if (/\.(ttf|otf)(\?|$)/i.test(u)) {
-            add(u, 'truetype');
-          }
-        }
-      }
-    }
-
-    return candidates;
-  }
-
-  private static extractUrlsFromFontFaceBlock(
-    block: string,
-    baseHref: string,
-  ): { url: string; format: string }[] {
-    const found: { url: string; format: string }[] = [];
-    const withFormat =
-      /url\(\s*["']?([^"')]+)["']?\s*\)\s*format\(\s*["']([^"']+)["']\s*\)/gi;
-    let m: RegExpExecArray | null;
-    while ((m = withFormat.exec(block)) !== null) {
-      try {
-        found.push({
-          url: new URL(m[1].trim(), baseHref).href,
-          format: m[2],
-        });
-      } catch {
-        /* skip */
-      }
-    }
-    if (found.length === 0) {
-      const simple = /url\(\s*["']?([^"')]+)["']?\s*\)/gi;
-      let sm: RegExpExecArray | null;
-      while ((sm = simple.exec(block)) !== null) {
-        try {
-          const url = new URL(sm[1].trim(), baseHref).href;
-          const ext = url.split('.').pop()?.toLowerCase().split('?')[0] ?? '';
-          const format =
-            ext === 'woff2'
-              ? 'woff2'
-              : ext === 'woff'
-                ? 'woff'
-                : ext === 'ttf'
-                  ? 'truetype'
-                  : 'opentype';
-          found.push({ url, format });
-        } catch {
-          /* skip */
-        }
-      }
-    }
-    return found;
-  }
-
-  private static async collectPrimeIconsUrlsFromLinkedCss(): Promise<
-    { url: string; format: string }[]
-  > {
-    const out: { url: string; format: string }[] = [];
-    if (typeof document === 'undefined') {
-      return out;
-    }
-    const links = Array.from(
-      document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
-    );
-    for (const link of links) {
-      const href = link.href;
-      if (!href) {
-        continue;
-      }
-      try {
-        const res = await fetch(href, { credentials: 'same-origin' });
-        if (!res.ok) {
-          continue;
-        }
-        const text = await res.text();
-        if (!/primeicons/i.test(text)) {
-          continue;
-        }
-        const faceRe = /@font-face\s*\{([^}]*)\}/gi;
-        let fm: RegExpExecArray | null;
-        while ((fm = faceRe.exec(text)) !== null) {
-          if (!/primeicons/i.test(fm[1])) {
-            continue;
-          }
-          out.push(...CatalogPage.extractUrlsFromFontFaceBlock(fm[1], href));
-        }
-      } catch {
-        continue;
-      }
-    }
-    return out;
-  }
-
-  private static collectPrimeIconsUrlsFromCssRules(): {
-    url: string;
-    format: string;
-  }[] {
-    const out: { url: string; format: string }[] = [];
-    if (typeof document === 'undefined') {
-      return out;
-    }
-    for (const sheet of Array.from(document.styleSheets)) {
-      let rules: CSSRuleList | undefined;
-      try {
-        rules = sheet.cssRules;
-      } catch {
-        continue;
-      }
-      if (!rules || !sheet.href) {
-        continue;
-      }
-      for (let i = 0; i < rules.length; i++) {
-        const rule = rules[i];
-        if (!(rule instanceof CSSFontFaceRule)) {
-          continue;
-        }
-        const family = rule.style.getPropertyValue('font-family').toLowerCase();
-        if (!family.includes('primeicons')) {
-          continue;
-        }
-        out.push(
-          ...CatalogPage.extractUrlsFromFontFaceBlock(
-            rule.style.getPropertyValue('src'),
-            sheet.href,
-          ),
-        );
-      }
-    }
-    return out;
-  }
-
-  private static async resolvePrimeIconsFontBundle(): Promise<{
-    dataUrl: string;
-    format: string;
-  } | null> {
-    const rank = (f: string) =>
-      f === 'woff2' ? 0 : f === 'woff' ? 1 : f === 'truetype' ? 2 : 3;
-
-    if (typeof document !== 'undefined') {
-      try {
-        const staticUrl = new URL(
-          'assets/fonts/primeicons.woff2',
-          document.baseURI,
-        ).href;
-        const res = await fetch(staticUrl, {
-          credentials: 'same-origin',
-          cache: 'force-cache',
-        });
-        if (res.ok) {
-          const blob = await res.blob();
-          const dataUrl = await CatalogPage.binaryBlobToDataUrl(
-            blob,
-            'font/woff2',
-          );
-          return { dataUrl, format: 'woff2' };
-        }
-      } catch {
-        /* seguir con otras fuentes */
-      }
-    }
-
-    const merged: { url: string; format: string }[] = [
-      ...CatalogPage.collectPrimeIconsFontCandidates(),
-      ...(await CatalogPage.collectPrimeIconsUrlsFromLinkedCss()),
-      ...CatalogPage.collectPrimeIconsUrlsFromCssRules(),
-    ];
-    merged.sort((a, b) => rank(a.format) - rank(b.format));
-
-    for (const c of merged) {
-      if (c.url.startsWith('data:')) {
-        continue;
-      }
-      try {
-        const res = await fetch(c.url, {
-          mode: 'cors',
-          credentials: 'omit',
-          cache: 'force-cache',
-        });
-        if (!res.ok) {
-          continue;
-        }
-        const blob = await res.blob();
-        const mime = CatalogPage.mimeForFontFormat(c.format);
-        const dataUrl = await CatalogPage.binaryBlobToDataUrl(blob, mime);
-        return { dataUrl, format: c.format };
-      } catch {
-        continue;
-      }
-    }
-    return null;
-  }
-
-  private static injectPrimeIconsFontIntoClone(
-    doc: Document,
-    bundle: { dataUrl: string; format: string },
-  ): void {
-    const safeUrl = bundle.dataUrl.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    const style = doc.createElement('style');
-    style.setAttribute('data-pdf-embed', 'primeicons');
-    style.textContent = `
-@font-face {
-  font-family: 'primeicons';
-  font-style: normal;
-  font-weight: normal;
-  font-display: block;
-  src: url("${safeUrl}") format('${bundle.format}');
-}
-.pi {
-  font-family: 'primeicons', sans-serif !important;
-  speak: none;
-  font-style: normal !important;
-  font-weight: normal !important;
-  font-variant: normal !important;
-  text-transform: none !important;
-  line-height: 1 !important;
-  display: inline-block !important;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.pi:before {
-  font-family: 'primeicons', sans-serif !important;
-}
-`;
-    doc.head.appendChild(style);
-  }
-
-  /**
-   * Quita columnas/filas desde la derecha y el fondo si son solo margen (transparente
-   * o blanco). No recorta fondos de color (p. ej. degradado) para no comer contenido.
-   */
-  private static trimCanvasPdfMargins(
-    source: HTMLCanvasElement,
-  ): HTMLCanvasElement {
-    const ctx = source.getContext('2d');
-    if (!ctx || source.width < 2 || source.height < 2) {
-      return source;
-    }
-    const w0 = source.width;
-    const h0 = source.height;
-    const data = ctx.getImageData(0, 0, w0, h0).data;
-    const pixel = (x: number, y: number) => {
-      const i = (y * w0 + x) * 4;
-      return [data[i], data[i + 1], data[i + 2], data[i + 3]] as const;
-    };
-    const isMarginPixel = (p: readonly [number, number, number, number]) =>
-      p[3] < 20 || (p[0] > 247 && p[1] > 247 && p[2] > 247 && p[3] > 247);
-
-    let cropW = w0;
-    let cropH = h0;
-
-    while (cropW > 1) {
-      const x = cropW - 1;
-      let allMargin = true;
-      for (let y = 0; y < cropH; y++) {
-        if (!isMarginPixel(pixel(x, y))) {
-          allMargin = false;
-          break;
-        }
-      }
-      if (!allMargin) {
-        break;
-      }
-      cropW--;
-    }
-
-    while (cropH > 1) {
-      const y = cropH - 1;
-      let allMargin = true;
-      for (let x = 0; x < cropW; x++) {
-        if (!isMarginPixel(pixel(x, y))) {
-          allMargin = false;
-          break;
-        }
-      }
-      if (!allMargin) {
-        break;
-      }
-      cropH--;
-    }
-
-    if (cropW === w0 && cropH === h0) {
-      return source;
-    }
-    const out = document.createElement('canvas');
-    out.width = cropW;
-    out.height = cropH;
-    const octx = out.getContext('2d');
-    if (!octx) {
-      return source;
-    }
-    octx.drawImage(source, 0, 0, cropW, cropH, 0, 0, cropW, cropH);
-    return out;
-  }
-
-  private static async preparePdfCloneForCapture(
-    documentClone: Document,
-  ): Promise<void> {
-    const bundle = await CatalogPage.getPrimeIconsFontForPdf();
-    if (bundle) {
-      CatalogPage.injectPrimeIconsFontIntoClone(documentClone, bundle);
-      if (documentClone.fonts) {
-        try {
-          await documentClone.fonts.load('1em primeicons');
-        } catch {
-          /* el clon puede no registrar la fuente hasta el pintado */
-        }
-      }
-    }
-    await CatalogPage.inlineRemoteImagesInDocument(documentClone);
-  }
-
-  private static blobToDataUrl(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  /**
-   * Quita el nonce `?t=` / `&t=` usado en <img> para agrupar y pedir una sola vez la misma foto.
-   */
-  private static stripPdfCacheNonceFromUrl(url: string): string {
-    try {
-      const u = new URL(url);
-      const t = u.searchParams.get('t');
-      if (t !== null && /^\d+$/.test(t)) {
-        u.searchParams.delete('t');
-      }
-      const out = u.toString();
-      return out.endsWith('?') ? out.slice(0, -1) : out;
-    } catch {
-      return url;
-    }
-  }
-
-  /**
-   * URL que realmente pide `fetch`: en local, mismo origen vía proxy (ver proxy.conf.json +
-   * environment.catalogPdfMediaProxy). En producción debe poder leerse con CORS desde el dominio de la app.
-   */
-  private static resolvePdfImageFetchUrl(canonicalAbsoluteUrl: string): string {
-    const cfg = environment.catalogPdfMediaProxy;
-    if (
-      cfg &&
-      !environment.production &&
-      typeof globalThis.location !== 'undefined' &&
-      canonicalAbsoluteUrl.startsWith(cfg.s3OriginPrefix)
-    ) {
-      const path = canonicalAbsoluteUrl.slice(cfg.s3OriginPrefix.length);
-      return `${globalThis.location.origin}${cfg.localPathPrefix}${path}`;
-    }
-    return canonicalAbsoluteUrl;
-  }
-
-  /**
-   * Sustituye src de <img> por data URLs para que foreignObject+canvas incluya las fotos.
-   * El `fetch` exige CORS en el origen remoto salvo en dev con `catalogPdfMediaProxy` + proxy de Angular.
-   */
-  private static async inlineRemoteImagesInDocument(
-    doc: Document,
-  ): Promise<void> {
-    const images = doc.querySelectorAll<HTMLImageElement>('img[src]');
-    const byCanonical = new Map<string, HTMLImageElement[]>();
-
-    for (const img of Array.from(images)) {
-      const url = img.src?.trim() ?? '';
-      if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
-        continue;
-      }
-      const canonical = CatalogPage.stripPdfCacheNonceFromUrl(url);
-      const list = byCanonical.get(canonical) ?? [];
-      list.push(img);
-      byCanonical.set(canonical, list);
-    }
-
-    const fetchCache = new Map<string, Promise<string | null>>();
-
-    const fetchAsDataUrl = (fetchUrl: string): Promise<string | null> => {
-      const cached = fetchCache.get(fetchUrl);
-      if (cached) {
-        return cached;
-      }
-      const task = (async (): Promise<string | null> => {
-        try {
-          const res = await fetch(fetchUrl, {
-            mode: 'cors',
-            credentials: 'omit',
-            cache: 'default',
-          });
-          if (!res.ok) {
-            return null;
-          }
-          const blob = await res.blob();
-          if (!blob.type.startsWith('image/')) {
-            return null;
-          }
-          return await CatalogPage.blobToDataUrl(blob);
-        } catch {
-          return null;
-        }
-      })();
-      fetchCache.set(fetchUrl, task);
-      return task;
-    };
-
-    await Promise.all(
-      [...byCanonical.entries()].map(async ([canonical, imgs]) => {
-        const fetchUrl = CatalogPage.resolvePdfImageFetchUrl(canonical);
-        const dataUrl = await fetchAsDataUrl(fetchUrl);
-        if (!dataUrl) {
-          return;
-        }
-        await Promise.all(
-          imgs.map(async (img) => {
-            img.setAttribute('src', dataUrl);
-            img.removeAttribute('srcset');
-            try {
-              await img.decode();
-            } catch {
-              await new Promise<void>((resolve) => {
-                if (img.complete) {
-                  resolve();
-                  return;
-                }
-                img.onload = () => resolve();
-                img.onerror = () => resolve();
-              });
-            }
-          }),
-        );
-      }),
-    );
-  }
-
-  private static slugifyFilename(name: string): string {
-    const s = name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-zA-Z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 80);
-    return s || 'catalogo';
+  downloadCatalog(): void {
+    const base = window.location.href.replace(/\/$/, '');
+    window.open(`${base}/download?layout=${this.layoutMode}`, '_blank');
   }
 
   share() {
