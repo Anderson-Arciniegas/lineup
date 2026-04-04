@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  BusinessSalesInTimePeriodSchema,
   CatalogStatsSchema,
+  CurrencySymbolPipe,
   DiscountStatsSchema,
   EngagementStatsSchema,
   InventoryStatsSchema,
@@ -44,6 +46,7 @@ export enum StatisticsPeriodMode {
     Button,
     TranslateModule,
     LocaleDatePipe,
+    CurrencySymbolPipe,
     ProgressSpinner,
     SelectModule,
     DatePickerModule,
@@ -56,10 +59,11 @@ export enum StatisticsPeriodMode {
 export class StatisticsPage implements OnInit, OnDestroy {
   readonly StatisticsPeriodMode = StatisticsPeriodMode;
 
-  /** Pestaña visible: inventario, productos, catálogos, descuentos, engagement */
+  /** Pestaña visible: inventario, ventas, productos, catálogos, descuentos, engagement */
   activeStatisticsTab = 'inventory';
 
   loading = true;
+  businessSales: BusinessSalesInTimePeriodSchema | undefined;
   engagement: EngagementStatsSchema | undefined;
   catalog: CatalogStatsSchema | undefined;
   discount: DiscountStatsSchema | undefined;
@@ -116,6 +120,8 @@ export class StatisticsPage implements OnInit, OnDestroy {
               discount: this._statsService.discountStats(timePeriod),
               inventory: this._statsService.inventoryStats(timePeriod),
               product: this._statsService.productStats(timePeriod),
+              businessSales:
+                this._statsService.businessSalesInTimePeriod(timePeriod),
             });
           }),
         )
@@ -126,6 +132,7 @@ export class StatisticsPage implements OnInit, OnDestroy {
             this.discount = data.discount;
             this.inventory = data.inventory;
             this.product = data.product;
+            this.businessSales = data.businessSales;
             this.loading = false;
             this._cdr.markForCheck();
           },

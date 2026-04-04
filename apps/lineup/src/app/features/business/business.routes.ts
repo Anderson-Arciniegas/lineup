@@ -44,7 +44,7 @@ export const businessRoutes: Routes = [
           ),
       },
       {
-        path: 'download',
+        path: AppConfigService.config.routes.download,
         loadComponent: () =>
           import('./views/catalog-download-page/catalog-download-page').then(
             (m) => m.CatalogDownloadPage,

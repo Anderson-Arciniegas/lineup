@@ -23,6 +23,7 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Skeleton } from 'primeng/skeleton';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
@@ -37,6 +38,7 @@ import { ShareModal } from '../share-modal/share-modal';
     CurrencySymbolPipe,
     RouterModule,
     TranslateModule,
+    ProgressSpinner,
   ],
   templateUrl: './product-expanded-item.html',
   styleUrl: './product-expanded-item.scss',

@@ -1,12 +1,7 @@
 <section
-  #catalogPdfRoot
-  class="catalog-page catalog-page__pdf-capture w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
+  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
   [style.background]="pageBackgroundGradient || null"
 >
-  <!-- =====================================================================
-       VISTA NORMAL (sin exportación PDF)
-       ===================================================================== -->
-  @if (!pdfExportAttempt) {
   <lib-product-breadcrumb
     [business]="business"
     [catalog]="catalog"
@@ -82,6 +77,7 @@
     <p-selectbutton
       [options]="layoutOptions"
       [(ngModel)]="layoutMode"
+      [allowEmpty]="false"
       optionValue="value"
       optionLabel="label"
       (ngModelChange)="onLayoutModeChange($event)"
@@ -96,7 +92,6 @@
       [color]="'primary'"
       [type]="'rounded'"
       [label]="'general.download' | translate"
-      [loading]="pdfExportAttempt"
       (action)="downloadCatalog()"
     ></lib-button>
     <lib-button
@@ -113,7 +108,6 @@
       [color]="'primary'"
       [type]="'rounded'"
       [width]="'w-11'"
-      [loading]="pdfExportAttempt"
       (action)="downloadCatalog()"
     ></lib-button>
     <lib-button
@@ -231,74 +225,5 @@
       />
     </div>
   </div>
-  } }
-
-  <!-- =====================================================================
-       VISTA EXPORTACIÓN PDF: un #pdfPage por cada chunk de productos.
-       Cada div se captura de forma independiente → una hoja A4 por página.
-       ===================================================================== -->
-  @if (pdfExportAttempt && catalog) {
-  <!-- ── PORTADA ─────────────────────────────────────────────────── -->
-  <div
-    #pdfPage
-    class="w-full flex flex-col items-center justify-center gap-10 py-16 px-8"
-    [style.min-height]="pdfPageMinHeight"
-    [style.background]="pageBackgroundGradient || null"
-  >
-    @if (business.image?.url) {
-    <img
-      class="w-64 h-64 object-cover rounded-full shadow-xl border-8 border-white"
-      [src]="business.image?.url"
-      alt=""
-    />
-    }
-    <div
-      class="flex flex-col items-center gap-5 text-center"
-      [class.catalog-page__brand-text--light]="brandToneLight"
-    >
-      <h1 class="text-6xl font-bold tracking-tight">{{ business.name }}</h1>
-      <div class="w-24 h-1 rounded-full bg-current opacity-40"></div>
-      <h2 class="text-3xl font-medium opacity-75">
-        {{ catalog.title || 'Catálogo' }}
-      </h2>
-    </div>
-  </div>
-
-  <!-- ── PÁGINAS DE PRODUCTOS ───────────────────────────────────── -->
-  @for (chunk of pdfProductPageChunks; track $index) {
-  <div
-    #pdfPage
-    class="w-full flex flex-col justify-center"
-    [style.min-height]="pdfPageMinHeight"
-    [style.background]="pageBackgroundGradient || null"
-  >
-    @if (layoutMode === 'Grid') {
-    <div class="container w-full products-grid products-grid--pdf">
-      @for (product of chunk; track $index) {
-      <div class="w-full flex flex-col items-center justify-center">
-        <lib-product-card
-          [width]="'w-65'"
-          [height]="pdfCardHeight"
-          [product]="product"
-          [pdfExportAttempt]="true"
-        />
-      </div>
-      }
-    </div>
-    } @else {
-    <div class="container w-full flex flex-col gap-3 xl:gap-5">
-      @for (product of chunk; track $index) {
-      <div class="w-full flex flex-row items-center justify-center">
-        <lib-product-expanded-item
-          class="w-full"
-          [product]="product"
-          [reverse]="$index % 2 !== 0"
-          [pdfExportAttempt]="true"
-        />
-      </div>
-      }
-    </div>
-    }
-  </div>
-  } }
+  }
 </section>

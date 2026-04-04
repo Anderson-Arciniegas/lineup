@@ -1,5 +1,7 @@
 import { StockMovementTypeEnum } from '../enums';
 
+import type { StockMovementSchema } from './product.schema';
+
 export interface TimeSeriesDataPointSchema {
   period: string;
   value: number;
@@ -92,4 +94,9 @@ export interface ProductStatsSchema {
   visitToLikeRatio: VisitToLikeRatioSchema;
   withoutRatingsCount: number;
   withoutVisitsCount: number;
+}
+
+export interface BusinessSalesInTimePeriodSchema {
+  sales: StockMovementSchema[];
+  salesCount: TimeSeriesStatsSchema;
 }

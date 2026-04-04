@@ -10,6 +10,7 @@ import {
   CatalogSchema,
   ProductPublicService,
   ProductSchema,
+  SeoService,
   UserPublicService,
   UtilsService,
   VisitTypeEnum,
@@ -91,6 +92,7 @@ export class BusinessPage implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _catalogService = inject(CatalogPublicService);
   private readonly _productService = inject(ProductPublicService);
+  private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
 
   private readonly _subscription = new Subscription();
@@ -119,6 +121,7 @@ export class BusinessPage implements OnInit {
           if (this.business.hexColor) {
             this.setColor(this.business.hexColor);
           }
+          this._seoService.setBusinessPage(this.business);
         },
         error: (error) => {
           console.error(error);

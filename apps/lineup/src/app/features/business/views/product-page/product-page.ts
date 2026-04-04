@@ -19,6 +19,7 @@ import {
   ProductPrivateService,
   ProductPublicService,
   ProductSchema,
+  SeoService,
   UserPublicService,
   UtilsService,
   VisitTypeEnum,
@@ -108,6 +109,7 @@ export class ProductPage implements OnInit, OnDestroy {
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productService = inject(ProductPrivateService);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
 
   private readonly _subscription = new Subscription();
@@ -158,6 +160,7 @@ export class ProductPage implements OnInit, OnDestroy {
           }
           this.applyBrandSurfaceColor();
           this.loadTaggedRelatedProducts(product);
+          this._seoService.setProductPage(product, this.path);
           this.attempt = false;
         },
         error: (error) => {

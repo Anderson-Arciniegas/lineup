@@ -63,7 +63,9 @@ export class ProductDetails implements OnChanges {
   attempt: boolean;
   ref: DynamicDialogRef | undefined;
   hasLiked = false;
-  href: string;
+  href = '';
+  /** Teléfono WhatsApp del negocio; el mensaje y la URL se arman al vuelo. */
+  private whatsappPhone: string | null = null;
   outOfStock: boolean;
   rates: BcvOfficialRatesSchema;
   private readonly _socialMediaService = inject(SocialNetworkPrivateService);
@@ -85,6 +87,8 @@ export class ProductDetails implements OnChanges {
       if (this.lastInitializedProductId !== productId) {
         this.lastInitializedProductId = productId;
         this.selectedOptionsByVariationTitle = {};
+        this.whatsappPhone = null;
+        this.href = '';
         this.initializeSelectionFromUrl();
       }
     }
@@ -119,9 +123,11 @@ export class ProductDetails implements OnChanges {
   /**
    * Precio de venta, precio de lista y si aplica UI de descuento (lista mayor que venta).
    */
-  private getEffectivePriceDetails():
-    | { salePrice: number; listPrice: number; showDiscount: boolean }
-    | null {
+  private getEffectivePriceDetails(): {
+    salePrice: number;
+    listPrice: number;
+    showDiscount: boolean;
+  } | null {
     const sku = this.getSkuForPricing();
     if (sku == null || sku.price == null) return null;
     const listPrice = sku.price;
@@ -148,6 +154,35 @@ export class ProductDetails implements OnChanges {
   get currency(): CurrencySchema | null {
     const sku = this.getSkuForPricing();
     return sku?.currency ?? null;
+  }
+
+  /**
+   * Factor BCV: Bs por 1 USD o 1 EUR. `null` si ya está en Bs o faltan tasas.
+   */
+  private getBsRateForSkuCurrency(): number | null {
+    const sku = this.getSkuForPricing();
+    if (!this.rates || sku?.idCurrency == null) return null;
+    if (sku.idCurrency === 2) return null;
+    if (sku.idCurrency === 1) return this.rates.dollar;
+    if (sku.idCurrency === 3) return this.rates.euro;
+    return null;
+  }
+
+  /** Equivalente en Bs del precio de venta (USD/EUR → Bs). */
+  get equivalentBsSalePrice(): number | null {
+    const p = this.price;
+    const factor = this.getBsRateForSkuCurrency();
+    if (p == null || factor == null) return null;
+    return p * factor;
+  }
+
+  /** Equivalente en Bs del precio de lista tachado, si hay descuento. */
+  get equivalentBsOriginalPrice(): number | null {
+    if (!this.showDiscountUi) return null;
+    const p = this.originalListPrice;
+    const factor = this.getBsRateForSkuCurrency();
+    if (p == null || factor == null) return null;
+    return p * factor;
   }
 
   private getProductDiscount(): DiscountSchemaFields | undefined {
@@ -214,6 +249,7 @@ export class ProductDetails implements OnChanges {
     if (!this.isInitializingFromUrl) {
       this.syncUrlFromSelection();
     }
+    this.syncWhatsappHref();
   }
 
   getSelectedOption(variationTitle: string): string | null {
@@ -474,24 +510,15 @@ export class ProductDetails implements OnChanges {
             console.log(socialNetworkBusinesses);
             if (socialNetworkBusinesses.length > 0) {
               this.businessSocialNetworks = socialNetworkBusinesses;
-              if (
-                this.businessSocialNetworks &&
-                this.businessSocialNetworks.find(
-                  (socialNetwork) => socialNetwork.phone,
-                )
-              ) {
-                const phone = this.businessSocialNetworks
-                  .find((socialNetwork) => socialNetwork.phone)
-                  .phone.trim();
-                console.log(phone);
-                this.href = this._utilsService.formatWhatsappPhone(
-                  phone,
-                  `Hola%20estoy%20interesado%20en%20este%20producto:%20${location.href}`,
-                );
-              }
+              const withPhone = this.businessSocialNetworks.find((sn) =>
+                sn.phone?.trim(),
+              );
+              this.whatsappPhone = withPhone?.phone?.trim() ?? null;
             } else {
               this.businessSocialNetworks = [];
+              this.whatsappPhone = null;
             }
+            this.syncWhatsappHref();
             this.attempt = false;
           },
           error: (error) => {
@@ -575,13 +602,93 @@ export class ProductDetails implements OnChanges {
     );
   }
 
+  /**
+   * Texto para WhatsApp: saludo, producto con variaciones elegidas, precio y URL actual.
+   */
+  private buildWhatsappContactMessage(): string {
+    const intro = this._translate.instant('general.whatsappContactIntro');
+    const title = (this.product?.title ?? '').trim();
+    const variationParts = this.buildWhatsappVariationSummaryParts();
+    const varSuffix =
+      variationParts.length > 0 ? ` (${variationParts.join(', ')})` : '';
+    const amount = this.price;
+    const currencyCode = this.currency?.code ?? 'USD';
+    let priceStr: string;
+    if (amount != null) {
+      try {
+        priceStr = new Intl.NumberFormat('es', {
+          style: 'currency',
+          currency: currencyCode,
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }).format(amount);
+      } catch {
+        priceStr = `${amount} ${currencyCode}`;
+      }
+    } else {
+      priceStr = this._translate.instant('general.noPrice');
+    }
+    const bullet = `- ${title}${varSuffix} - ${priceStr}`;
+    const url =
+      typeof globalThis !== 'undefined' &&
+      'location' in globalThis &&
+      globalThis.location?.href
+        ? globalThis.location.href
+        : '';
+    return `${intro}\n\n${bullet}\n\n${url}`.trim();
+  }
+
+  /**
+   * Misma resolución que {@link ProductVariations.getOptionLabel}: el valor del SKU
+   * (p. ej. `black`) se mapea a la clave i18n (`colors.black`), no a `instant('black')`.
+   */
+  private resolveVariationOptionLabel(option: string): string {
+    const trimmed = String(option ?? '').trim();
+    if (!trimmed) return '';
+    const colorMeta = BASIC_COLORS.find((c) => c.value === trimmed);
+    if (colorMeta) {
+      return this._translate.instant(colorMeta.name);
+    }
+    const sizeMeta = BASIC_SIZES.find((s) => s.value === trimmed);
+    if (sizeMeta) {
+      return this._translate.instant(sizeMeta.name);
+    }
+    return this._translate.instant(trimmed);
+  }
+
+  /** Resumen legible de cada variación seleccionada (mismas claves i18n que la UI). */
+  private buildWhatsappVariationSummaryParts(): string[] {
+    const parts: string[] = [];
+    for (const v of this.productVariationsUnique) {
+      const sel = this.selectedOptionsByVariationTitle[v.title];
+      if (!sel) continue;
+      const titleT = this._translate.instant(v.title);
+      const selT = this.resolveVariationOptionLabel(sel);
+      parts.push(`${titleT} ${selT}`.replace(/\s+/g, ' ').trim());
+    }
+    return parts;
+  }
+
+  private syncWhatsappHref(): void {
+    if (!this.whatsappPhone) {
+      this.href = '';
+      return;
+    }
+    const message = this.buildWhatsappContactMessage();
+    this.href = this._utilsService.formatWhatsappPhone(
+      this.whatsappPhone,
+      encodeURIComponent(message),
+    );
+  }
+
   private getRates(): void {
     this._subscription.add(
       this._ratesService.findBcvOfficialRates().subscribe({
         next: (rates) => {
           console.log(rates);
           this.rates = rates;
-          
+          this.syncWhatsappHref();
         },
         error: (error) => {
           console.error(error);

@@ -19,9 +19,15 @@
     class="w-full flex flex-col gap-5 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <div class="flex flex-row items-center justify-between">
-      <h1 class="text-3xl font-medium">
+      @if(idProduct){
+      <h2 class="text-3xl font-medium">
+        {{ 'general.editProduct' | translate }}
+      </h2>
+      } @else {
+      <h2 class="text-3xl font-medium">
         {{ 'general.createProduct' | translate }}
-      </h1>
+      </h2>
+      }
     </div>
     @if(product){
     <div class="flex flex-row items-center justify-start gap-3">

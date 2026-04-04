@@ -10,9 +10,9 @@
     class="w-full flex flex-col gap-10 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey max-w-5xl"
   >
     <div class="flex flex-row items-center justify-between gap-4 flex-wrap">
-      <h1 class="text-3xl font-medium">
+      <h2 class="text-3xl font-medium">
         {{ 'general.createDiscount' | translate }}
-      </h1>
+      </h2>
       <lib-button
         type="rounded"
         [label]="'general.cancel' | translate"
@@ -24,9 +24,9 @@
 
     <form class="w-full flex flex-col gap-8" [formGroup]="discountForm">
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-scope">{{
-          'general.discountScope' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-scope"
+          >{{ 'general.discountScope' | translate }}</label
+        >
         <p-select
           inputId="discount-scope"
           formControlName="scope"
@@ -50,9 +50,9 @@
 
       @if (showCatalogField) {
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-catalog">{{
-          'general.catalog' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-catalog"
+          >{{ 'general.catalog' | translate }}</label
+        >
         <p-select
           inputId="discount-catalog"
           formControlName="idCatalog"
@@ -66,22 +66,18 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if (
-          discountForm.get('idCatalog')?.invalid &&
-          discountForm.get('idCatalog')?.touched
-        ) {
-        <small class="text-red-500 text-sm">{{
-          'validation.fieldRequired' | translate
-        }}</small>
+        @if ( discountForm.get('idCatalog')?.invalid &&
+        discountForm.get('idCatalog')?.touched ) {
+        <small class="text-red-500 text-sm"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
         }
       </div>
-      }
-
-      @if (showProductField) {
+      } @if (showProductField) {
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-product">{{
-          'general.product' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-product"
+          >{{ 'general.product' | translate }}</label
+        >
         <p-select
           inputId="discount-product"
           formControlName="idProduct"
@@ -95,21 +91,19 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if (
-          discountForm.get('idProduct')?.invalid &&
-          discountForm.get('idProduct')?.touched
-        ) {
-        <small class="text-red-500 text-sm">{{
-          'validation.fieldRequired' | translate
-        }}</small>
+        @if ( discountForm.get('idProduct')?.invalid &&
+        discountForm.get('idProduct')?.touched ) {
+        <small class="text-red-500 text-sm"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
         }
       </div>
       }
 
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-type">{{
-          'general.discountType' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-type"
+          >{{ 'general.discountType' | translate }}</label
+        >
         <p-select
           inputId="discount-type"
           formControlName="discountType"
@@ -133,9 +127,9 @@
 
       @if (showCurrencyField) {
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-currency">{{
-          'general.currency' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-currency"
+          >{{ 'general.currency' | translate }}</label
+        >
         <p-select
           inputId="discount-currency"
           formControlName="idCurrency"
@@ -154,7 +148,9 @@
               }
               <span>{{ selected.name }}</span>
               @if (selected.code) {
-              <span class="text-color-secondary text-sm">({{ selected.code }})</span>
+              <span class="text-color-secondary text-sm"
+                >({{ selected.code }})</span
+              >
               }
             </div>
             }
@@ -173,21 +169,19 @@
             </div>
           </ng-template>
         </p-select>
-        @if (
-          discountForm.get('idCurrency')?.invalid &&
-          discountForm.get('idCurrency')?.touched
-        ) {
-        <small class="text-red-500 text-sm">{{
-          'validation.fieldRequired' | translate
-        }}</small>
+        @if ( discountForm.get('idCurrency')?.invalid &&
+        discountForm.get('idCurrency')?.touched ) {
+        <small class="text-red-500 text-sm"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
         }
       </div>
       }
 
       <div class="w-full flex flex-col gap-2">
-        <label class="font-medium text-lg" for="discount-value">{{
-          'general.discountValue' | translate
-        }}</label>
+        <label class="font-medium text-lg" for="discount-value"
+          >{{ 'general.discountValue' | translate }}</label
+        >
         <p-inputnumber
           inputId="discount-value"
           formControlName="value"
@@ -210,23 +204,19 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if (
-          discountForm.get('value')?.invalid &&
-          discountForm.get('value')?.touched
-        ) {
-        <small class="text-red-500 text-sm">{{
-          'validation.fieldRequired' | translate
-        }}</small>
+        @if ( discountForm.get('value')?.invalid &&
+        discountForm.get('value')?.touched ) {
+        <small class="text-red-500 text-sm"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
         }
       </div>
 
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
-      >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         <div class="w-full flex flex-col gap-2">
-          <label class="font-medium text-lg" for="discount-start">{{
-            'general.startDate' | translate
-          }}</label>
+          <label class="font-medium text-lg" for="discount-start"
+            >{{ 'general.startDate' | translate }}</label
+          >
           <input
             pInputText
             type="date"
@@ -236,9 +226,9 @@
           />
         </div>
         <div class="w-full flex flex-col gap-2">
-          <label class="font-medium text-lg" for="discount-end">{{
-            'general.endDate' | translate
-          }}</label>
+          <label class="font-medium text-lg" for="discount-end"
+            >{{ 'general.endDate' | translate }}</label
+          >
           <input
             pInputText
             type="date"
@@ -249,9 +239,9 @@
         </div>
       </div>
       @if (discountForm.errors?.['dateOrder'] && discountForm.touched) {
-      <small class="text-red-500 text-sm">{{
-        'general.discountInvalidDateRange' | translate
-      }}</small>
+      <small class="text-red-500 text-sm"
+        >{{ 'general.discountInvalidDateRange' | translate }}</small
+      >
       }
 
       <div class="w-full flex flex-row items-center justify-center gap-4 pt-4">

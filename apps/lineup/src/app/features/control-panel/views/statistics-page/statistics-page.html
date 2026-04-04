@@ -3,9 +3,9 @@
     class="w-full flex flex-col gap-6 py-4 sm:py-6 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <div class="flex flex-col gap-1 w-full">
-      <h1 class="text-3xl font-semibold text-gray-800">
+      <h2 class="text-3xl font-semibold text-gray-800">
         {{ 'general.statistics' | translate }}
-      </h1>
+      </h2>
       <p class="text-sm text-gray-500">
         {{ 'statisticsPage.periodFilterHint' | translate }}
       </p>
@@ -91,6 +91,12 @@
           <span class="inline-flex items-center gap-2">
             <i class="pi pi-box"></i>
             <span>{{ 'statisticsPage.inventorySection' | translate }}</span>
+          </span>
+        </p-tab>
+        <p-tab value="sales">
+          <span class="inline-flex items-center gap-2">
+            <i class="pi pi-shopping-cart"></i>
+            <span>{{ 'statisticsPage.salesSection' | translate }}</span>
           </span>
         </p-tab>
         <p-tab value="products">
@@ -183,6 +189,113 @@
                       >{{ mv.type | stockMovementType }}</span
                     >
                   </div>
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="sales">
+          <div class="flex flex-col gap-4 pt-4">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl"
+            >
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-emerald-50 border border-emerald-100"
+              >
+                <i class="pi pi-chart-bar text-emerald-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ businessSales?.salesCount?.total ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.salesCountTotal' | translate }}</span
+                >
+              </div>
+              <div
+                class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-teal-50 border border-teal-100"
+              >
+                <i class="pi pi-list text-teal-600 text-2xl"></i>
+                <span class="text-2xl font-bold text-gray-800 text-center"
+                  >{{ businessSales?.sales?.length ?? 0 }}</span
+                >
+                <span class="text-sm text-gray-500 text-center"
+                  >{{ 'statisticsPage.salesListedMovements' | translate }}</span
+                >
+              </div>
+            </div>
+
+            <div class="w-full flex flex-col gap-3">
+              <h3 class="text-lg font-medium text-gray-700">
+                {{ 'statisticsPage.salesMovementsDetail' | translate }}
+              </h3>
+              @if ((businessSales?.sales?.length ?? 0) === 0) {
+              <div
+                class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm"
+              >
+                {{ 'statisticsPage.noData' | translate }}
+              </div>
+              } @else {
+              <div class="flex flex-col gap-2">
+                @for (sale of businessSales?.sales ?? []; track sale.id) {
+                <div
+                  class="flex flex-col gap-3 p-4 border border-gray-200 rounded-xl bg-white"
+                >
+                  <div
+                    class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2"
+                  >
+                    <div class="flex flex-col gap-1 min-w-0">
+                      <span class="font-medium text-gray-800 truncate">{{
+                        sale.productSku?.product?.title
+                          ?? sale.productSku?.skuCode
+                          ?? ('statisticsPage.salesProductLabel' | translate)
+                      }}</span>
+                      <span class="text-xs text-gray-400 font-mono">
+                        #{{ sale.id }} ·
+                        {{ 'statisticsPage.salesIdProductSkuLabel' | translate }}
+                        {{ sale.idProductSku }} ·
+                        {{ sale.creationDate | localeDate: 'short' }}
+                      </span>
+                    </div>
+                    <div
+                      class="flex flex-row flex-wrap gap-4 items-center sm:justify-end"
+                    >
+                      <span
+                        class="font-semibold"
+                        [class.text-green-600]="sale.quantityDelta > 0"
+                        [class.text-red-600]="sale.quantityDelta < 0"
+                      >
+                        {{ sale.quantityDelta > 0 ? '+' : '' }}{{
+                        sale.quantityDelta }}
+                      </span>
+                      <span class="text-sm text-gray-600"
+                        >{{ sale.type | stockMovementType }}</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-row flex-wrap items-baseline gap-2 text-sm text-gray-600 pt-1 border-t border-gray-100"
+                  >
+                    <span>{{ 'statisticsPage.salesPriceLabel' | translate }}:</span>
+                    @if (sale.price !== null && sale.price !== undefined) {
+                    <span class="font-semibold text-gray-800">
+                      @if (sale.productSku?.currency?.code) {
+                      <span class="text-gray-500 font-normal mr-1">{{
+                        sale.productSku.currency.code | currencySymbol
+                      }}</span>
+                      }
+                      {{ sale.price | number: '1.2-2' }}
+                    </span>
+                    } @else {
+                    <span class="font-medium text-gray-400">{{
+                      'inventoryPage.notAvailable' | translate
+                    }}</span>
+                    }
+                  </div>
+                  @if (sale.notes) {
+                  <p class="text-xs text-gray-500 m-0">{{ sale.notes }}</p>
+                  }
                 </div>
                 }
               </div>
