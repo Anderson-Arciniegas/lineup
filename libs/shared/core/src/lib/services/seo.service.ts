@@ -1,7 +1,16 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import type { BusinessSchema, CatalogSchema, ProductSchema } from '../schemas';
+
+/**
+ * Origen público del sitio (`https://tu-dominio.com`), sin barra final.
+ * En SSR (p. ej. Netlify) no existe `window.location.origin`; Facebook/WhatsApp/Telegram
+ * exigen `og:url` y `og:image` en URL absolutas.
+ */
+export const SEO_SITE_ORIGIN = new InjectionToken<string | undefined>(
+  'SEO_SITE_ORIGIN',
+);
 
 /** Opciones para título, descripción, imagen y meta tags sociales (Open Graph / Twitter). */
 export interface SeoMetaOptions {
@@ -22,6 +31,7 @@ export class SeoService {
   private readonly meta = inject(Meta);
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly siteOrigin = inject(SEO_SITE_ORIGIN, { optional: true });
 
   /**
    * Actualiza `document.title`, meta description/keywords y etiquetas og:* / twitter:*.
@@ -165,10 +175,14 @@ export class SeoService {
   }
 
   private getOrigin(): string {
-    if (!isPlatformBrowser(this.platformId)) {
-      return '';
+    if (isPlatformBrowser(this.platformId)) {
+      return this.document.defaultView?.location?.origin ?? '';
     }
-    return this.document.defaultView?.location?.origin ?? '';
+    const configured = this.siteOrigin?.trim();
+    if (configured) {
+      return configured.replace(/\/$/, '');
+    }
+    return '';
   }
 
   private toAbsoluteUrl(urlOrPath: string, origin: string): string {

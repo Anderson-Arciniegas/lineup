@@ -1,10 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-  Component,
-  inject,
-  OnInit,
-  PLATFORM_ID,
-} from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -254,12 +249,7 @@ export class CatalogPage implements OnInit {
           next: (products) => {
             console.log(products);
             this.productsAttempt = false;
-            this.products = [
-              ...this.products,
-              ...products.items,
-              ...products.items,
-              ...products.items,
-            ];
+            this.products = [...this.products, ...products.items];
             this.page++;
             if (products.items.length === 0) {
               this.noMoreResults = true;
