@@ -20,6 +20,7 @@ import {
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
 import { ProductCard, ProductExpandedItem } from '@lineup/ui';
+import { QRCodeComponent } from 'angularx-qrcode';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { firstValueFrom } from 'rxjs';
@@ -27,7 +28,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-catalog-download-page',
-  imports: [CommonModule, ProductCard, ProductExpandedItem, ProgressSpinner],
+  imports: [CommonModule, ProductCard, ProductExpandedItem, ProgressSpinner, QRCodeComponent],
   templateUrl: './catalog-download-page.html',
   styleUrl: './catalog-download-page.scss',
 })
@@ -42,6 +43,7 @@ export class CatalogDownloadPage implements OnInit {
   isGenerating = false;
   isDone = false;
   hasError = false;
+  catalogUrl = '';
 
   private static readonly _GRADIENT_TOP_LIGHTEN = 0.25;
   private static readonly _GRADIENT_BOTTOM_LIGHTEN = 0.6;
@@ -127,6 +129,9 @@ export class CatalogDownloadPage implements OnInit {
     const layout = this._activatedRoute.snapshot.queryParams['layout'];
     if (layout === 'List') {
       this.layoutMode = 'List';
+    }
+    if (isPlatformBrowser(this._platformId) && typeof window !== 'undefined') {
+      this.catalogUrl = window.location.href.replace(/\/download(\?.*)?$/, '');
     }
     this.loadAndDownload();
   }

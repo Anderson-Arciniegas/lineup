@@ -53,6 +53,16 @@
         {{ catalog.title || 'Catálogo' }}
       </h2>
     </div>
+    @if (catalogUrl) {
+    <div class="flex flex-col items-center gap-2">
+      <qrcode
+        [qrdata]="catalogUrl"
+        [width]="160"
+        [errorCorrectionLevel]="'M'"
+        [margin]="2"
+      ></qrcode>
+    </div>
+    }
   </div>
 
   <!-- ── PÁGINAS DE PRODUCTOS ───────────────────────────────────── -->

@@ -4,6 +4,21 @@
  * from `@lineup/envs`.
  */
 
+/** Netlify define `URL` en el build; puedes forzar con `PUBLIC_SITE_URL` en el panel. */
+function resolvePublicSiteUrl(fallback: string): string {
+  const proc = (
+    globalThis as unknown as {
+      process?: { env?: Record<string, string | undefined> };
+    }
+  ).process;
+  const raw =
+    proc?.env?.['PUBLIC_SITE_URL'] ??
+    proc?.env?.['URL'] ??
+    proc?.env?.['DEPLOY_PRIME_URL'];
+  const t = raw?.replace(/\/$/, '').trim();
+  return t || fallback;
+}
+
 export interface EnvironmentConfig {
   production: boolean;
   businessApi: string;
@@ -30,6 +45,11 @@ export interface EnvironmentConfig {
     s3OriginPrefix: string;
     localPathPrefix: string;
   };
+  /**
+   * URL pública del front (sin barra final), p. ej. `https://tu-app.netlify.app`.
+   * Usada en SSR para meta Open Graph absolutas (`og:url`, `og:image`).
+   */
+  publicSiteUrl: string;
 }
 
 export const environment: EnvironmentConfig = {
@@ -55,6 +75,7 @@ export const environment: EnvironmentConfig = {
     s3OriginPrefix: 'https://test-mangloo.s3.us-east-1.amazonaws.com',
     localPathPrefix: '/s3-lineup-media',
   },
+  publicSiteUrl: resolvePublicSiteUrl('http://localhost:4200'),
 };
 
 export const PROD: EnvironmentConfig = {
@@ -77,6 +98,7 @@ export const PROD: EnvironmentConfig = {
     seed: 'ThisIsTheDevSeed',
     secret: 'a7f82e39372e2f31b878c3971cac81d04bcff42ad9538131418d6d5e1047f04d',
   },
+  publicSiteUrl: resolvePublicSiteUrl('https://lineup-dev.netlify.app'),
 };
 
 // Default export for convenience
