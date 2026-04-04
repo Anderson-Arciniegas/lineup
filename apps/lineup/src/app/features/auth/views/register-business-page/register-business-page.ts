@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControlOptions,
   FormBuilder,
@@ -28,7 +30,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
@@ -60,6 +62,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   private readonly _translate = inject(TranslateService);
 
   private _subscription: Subscription = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.registerBusinessForm = this._createForm();
@@ -130,7 +133,9 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this._subscription.add(
-      ref.onClose.subscribe((verified: boolean) => {
+      ref.onClose
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe((verified: boolean) => {
         if (!verified) {
           this.attempt = false;
           return;

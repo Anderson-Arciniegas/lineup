@@ -22,7 +22,7 @@ import {
 import { Button } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { DatePicker } from 'primeng/datepicker';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
@@ -46,7 +46,7 @@ export enum StatisticsPeriodMode {
     LocaleDatePipe,
     ProgressSpinner,
     SelectModule,
-    DatePicker,
+    DatePickerModule,
     TabsModule,
     StockMovementTypeTranslatePipe,
   ],

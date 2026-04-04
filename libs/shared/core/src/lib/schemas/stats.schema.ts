@@ -6,7 +6,6 @@ export interface TimeSeriesDataPointSchema {
 }
 
 export interface TimeSeriesStatsSchema {
-  data: TimeSeriesDataPointSchema[] | null;
   total: number;
 }
 
@@ -59,7 +58,6 @@ export interface StockMovementStatItemSchema {
 export interface InventoryStatsSchema {
   productsWithoutStockCount: number;
   recentStockMovements: StockMovementStatItemSchema[];
-  salesCount: TimeSeriesStatsSchema;
   skusLowOrOutOfStockCount: number;
 }
 

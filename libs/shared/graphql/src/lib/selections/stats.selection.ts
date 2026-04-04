@@ -1,8 +1,4 @@
 const timeSeriesStatsFields = `
-  data {
-    period
-    value
-  }
   total
 `;
 
@@ -68,9 +64,6 @@ export const inventoryStatsSelection = `
       id
       quantityDelta
       type
-    }
-    salesCount {
-      ${timeSeriesStatsFields}
     }
     skusLowOrOutOfStockCount
   }

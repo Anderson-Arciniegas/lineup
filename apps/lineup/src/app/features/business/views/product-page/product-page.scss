@@ -10,6 +10,29 @@
 }
 
 ::ng-deep {
+  /* Misma rejilla que catalog-page (Grid) para `lib-product-card`. */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 1rem;
+    width: 100%;
+    padding: 0 0.25rem 2.5rem;
+
+    @media screen and (max-width: 1535px) {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
+
+    @media (min-width: 640px) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      padding-left: 3.75rem;
+      padding-right: 3.75rem;
+    }
+  }
+
   .p-carousel-indicator-button {
     border-radius: 50% !important;
   }
@@ -26,6 +49,7 @@
     min-height: 400px;
     height: 500px;
     max-width: 600px;
+    background: var(--white);
     border: 15px solid var(--p-primary-50);
     border-radius: 50px;
     aspect-ratio: 1/1;
@@ -48,6 +72,7 @@
   .carousel-image-loading {
     height: 500px;
     width: 500px;
+    background: var(--white);
     max-width: 600px;
     border: 15px solid var(--p-primary-50);
     border-radius: 50px;

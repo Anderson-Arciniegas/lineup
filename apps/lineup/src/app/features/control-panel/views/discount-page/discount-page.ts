@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
@@ -18,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-discount-page',
@@ -42,6 +43,7 @@ export class DiscountPage implements OnInit, OnDestroy {
   private readonly _messageService = inject(MessageService);
   private readonly _translate = inject(TranslateService);
   private readonly _dialogService = inject(DialogService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly _subscriptions = new Subscription();
 
   business: BusinessSchema | undefined;
@@ -121,38 +123,40 @@ export class DiscountPage implements OnInit, OnDestroy {
     });
 
     this._subscriptions.add(
-      this._deleteRef.onClose.subscribe((confirmed: boolean) => {
-        if (!confirmed || !this.discount) return;
+      this._deleteRef.onClose
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe((confirmed: boolean) => {
+          if (!confirmed || !this.discount) return;
 
-        const idDiscount = this.discount.id;
-        this._subscriptions.add(
-          this._discountService.removeDiscount(idDiscount).subscribe({
-            next: () => {
-              this._messageService.add({
-                severity: 'success',
-                summary: this._translate.instant('general.success'),
-                detail: this._translate.instant('general.discountDeleted'),
-                life: 3000,
-              });
-              this._utils.navigate([
-                AppConfigService.config.routes.dashboard,
-                AppConfigService.config.routes.discounts,
-              ]);
-            },
-            error: (error: unknown) => {
-              console.error(error);
-              this._messageService.add({
-                severity: 'error',
-                summary: this._translate.instant('general.error'),
-                detail: this._translate.instant(
-                  'general.errorDeletingDiscount',
-                ),
-                life: 4000,
-              });
-            },
-          }),
-        );
-      }),
+          const idDiscount = this.discount.id;
+          this._subscriptions.add(
+            this._discountService.removeDiscount(idDiscount).subscribe({
+              next: () => {
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: this._translate.instant('general.discountDeleted'),
+                  life: 3000,
+                });
+                this._utils.navigate([
+                  AppConfigService.config.routes.dashboard,
+                  AppConfigService.config.routes.discounts,
+                ]);
+              },
+              error: (error: unknown) => {
+                console.error(error);
+                this._messageService.add({
+                  severity: 'error',
+                  summary: this._translate.instant('general.error'),
+                  detail: this._translate.instant(
+                    'general.errorDeletingDiscount',
+                  ),
+                  life: 4000,
+                });
+              },
+            }),
+          );
+        }),
     );
   }
 
@@ -171,7 +175,6 @@ export class DiscountPage implements OnInit, OnDestroy {
     this._subscriptions.add(
       this._discountService.findOneDiscount(id).subscribe({
         next: (d) => {
-          console.log(d);
           this.discount = d;
           this.loading = false;
         },

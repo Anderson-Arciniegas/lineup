@@ -22,6 +22,12 @@ export const REMOVE_PRODUCT_MUTATION = gql`
   }
 `;
 
+export const REMOVE_PRODUCT_SKU_MUTATION = gql`
+  mutation RemoveProductSku($idProductSku: Int!) {
+    removeProductSku(idProductSku: $idProductSku)
+  }
+`;
+
 export const ADJUST_STOCK_MUTATION = gql`
   mutation AdjustStock($data: AdjustStockInput!) {
     adjustStock(data: $data) ${productSkuSelection}
@@ -29,7 +35,7 @@ export const ADJUST_STOCK_MUTATION = gql`
 `;
 
 export const REGISTER_SALE_MUTATION = gql`
-  mutation RegisterSale($data: [RegisterPurchaseInput!]!) {
+  mutation RegisterSale($data: SalesInput!) {
     registerSale(data: $data) ${productSkuSelection}
   }
 `;

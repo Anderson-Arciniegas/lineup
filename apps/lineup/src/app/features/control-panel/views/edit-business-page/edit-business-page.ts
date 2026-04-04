@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   AuthStore,
@@ -25,7 +32,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, take } from 'rxjs';
 @Component({
   selector: 'app-edit-business-page',
   imports: [
@@ -68,6 +75,7 @@ export class EditBusinessPage implements OnInit {
   private readonly _messageService = inject(MessageService);
   private _authStore = inject(AuthStore);
   private _subscription: Subscription = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly maxDescriptionLength = 100;
 
@@ -129,12 +137,14 @@ export class EditBusinessPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((image: string) => {
-      if (image) {
-        this._cdr.detectChanges();
-        this.uploadFile(image);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((image: string) => {
+        if (image) {
+          this._cdr.detectChanges();
+          this.uploadFile(image);
+        }
+      });
   }
 
   uploadFile(fileBase64: string) {

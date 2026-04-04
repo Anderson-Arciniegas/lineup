@@ -1,3 +1,10 @@
+// El hermano siguiente (contenido del layout) se pintaba encima y ocultaba la sombra del nav.
+:host {
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+
 ::ng-deep {
   .input-nav {
     border-radius: var(--border-radius);

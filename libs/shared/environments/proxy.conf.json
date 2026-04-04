@@ -43,5 +43,14 @@
       "^/api/business-file": "/files"
     },
     "logLevel": "debug"
+  },
+  "/s3-lineup-media": {
+    "target": "https://test-mangloo.s3.us-east-1.amazonaws.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/s3-lineup-media": ""
+    },
+    "logLevel": "warn"
   }
 }

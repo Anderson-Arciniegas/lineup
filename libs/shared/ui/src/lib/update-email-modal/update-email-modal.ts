@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -24,6 +25,7 @@ import {
 } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { take } from 'rxjs';
 import { Button } from '../button/button';
 import { VerificationCodeModal } from '../verification-code-modal/verification-code-modal';
 
@@ -64,6 +66,7 @@ export class UpdateEmailModal implements OnInit {
   private readonly _messageService = inject(MessageService);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     const data = this._config.data as UpdateEmailModalData | undefined;
@@ -115,12 +118,14 @@ export class UpdateEmailModal implements OnInit {
       },
     });
 
-    verifyRef.onClose.subscribe((verified: boolean) => {
-      if (!verified) {
-        return;
-      }
-      this._updateEmail(newEmail);
-    });
+    verifyRef.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((verified: boolean) => {
+        if (!verified) {
+          return;
+        }
+        this._updateEmail(newEmail);
+      });
   }
 
   private _normalizeEmail(email: string): string {

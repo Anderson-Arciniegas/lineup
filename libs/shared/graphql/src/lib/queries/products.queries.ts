@@ -89,8 +89,8 @@ export const GET_ALL_BY_TAGS_QUERY = gql`
 `;
 
 export const GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY = gql`
-  query GetAllPrimaryProductsByBusiness($idBusiness: Int!) {
-    getAllPrimaryProductsByBusiness(idBusiness: $idBusiness) ${productSelection}
+  query GetAllPrimaryProductsByBusiness($data: GetAllPrimaryProductsByBusinessInput!) {
+    getAllPrimaryProductsByBusiness(data: $data) ${productSelection}
   }
 `;
 

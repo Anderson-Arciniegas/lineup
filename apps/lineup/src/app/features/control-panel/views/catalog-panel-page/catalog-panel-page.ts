@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
@@ -30,7 +31,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-panel-page',
@@ -76,6 +77,7 @@ export class CatalogPanelPage implements OnInit {
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _utils = inject(UtilsService);
   private _subscription: Subscription = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
@@ -180,39 +182,37 @@ export class CatalogPanelPage implements OnInit {
       // closable: true,
     });
 
-    this.ref.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        if (this.deleteAttempt) return;
-        this.deleteAttempt = true;
-        this._subscription.add(
-          this._catalogService.removeCatalog(this.catalog.id).subscribe({
-            next: (response) => {
-              console.log(response);
-              this.deleteAttempt = false;
-              this._messageService.add({
-                severity: 'success',
-                summary: this._translate.instant('general.success'),
-                detail: this._translate.instant(
-                  'toast.catalogDeletedSuccessfully',
-                ),
-                life: 3000,
-              });
-              this._utils.navigate([
-                AppConfigService.config.routes.dashboard,
-                AppConfigService.config.routes.catalogs,
-              ]);
-            },
-            error: (error) => {
-              console.error(error);
-              this.deleteAttempt = false;
-            },
-            complete: () => {
-              console.log('Catalog deleted');
-            },
-          }),
-        );
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          if (this.deleteAttempt) return;
+          this.deleteAttempt = true;
+          this._subscription.add(
+            this._catalogService.removeCatalog(this.catalog.id).subscribe({
+              next: () => {
+                this.deleteAttempt = false;
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: this._translate.instant(
+                    'toast.catalogDeletedSuccessfully',
+                  ),
+                  life: 3000,
+                });
+                this._utils.navigate([
+                  AppConfigService.config.routes.dashboard,
+                  AppConfigService.config.routes.catalogs,
+                ]);
+              },
+              error: (error) => {
+                console.error(error);
+                this.deleteAttempt = false;
+              },
+            }),
+          );
+        }
+      });
   }
 
   deleteProduct(id: number): void {

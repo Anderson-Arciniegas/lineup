@@ -1,5 +1,6 @@
 <div class="flex flex-row items-center justify-between gap-3 sm:gap-5 h-14">
   <div class="flex flex-row items-center justify-start gap-3">
+    @if (!downloadMode) {
     <div class="flex flex-row items-center justify-start">
       <div class="flex flex-row items-center justify-center">
         <lib-button
@@ -13,8 +14,14 @@
         ></lib-button>
       </div>
     </div>
-    @if (publicMode) {
-    <div class="hidden sm:flex flex-row items-center justify-start gap-3">
+    } @if (publicMode && !hiddenBusiness) {
+    <div
+      [ngClass]="
+        downloadMode
+          ? 'flex flex-row items-center justify-start gap-3'
+          : 'hidden sm:flex flex-row items-center justify-start gap-3'
+      "
+    >
       @if (business) {
       <a
         class="flex flex-row items-center justify-center gap-3"
@@ -31,7 +38,7 @@
         </div>
         <h3
           [class.text-white]="useLightText"
-          class="hidden sm:block text-sm md:text-base font-medium"
+          class="text-sm md:text-base font-medium"
         >
           {{ business.name }}
         </h3>
@@ -41,7 +48,11 @@
         [class.text-white]="useLightText"
         class="flex flex-row items-center justify-center gap-3"
       >
+        @if (!downloadMode) {
         <i class="pi pi-angle-right text-xl"></i>
+        }@else {
+        <span class="text-xl font-medium">-</span>
+        }
       </div>
 
       <a
@@ -60,7 +71,7 @@
     }
   </div>
 
-  @if (publicMode) {
+  @if (publicMode && !downloadMode) {
   <div class="flex flex-row items-center justify-end gap-3">
     <lib-button
       class="flex"

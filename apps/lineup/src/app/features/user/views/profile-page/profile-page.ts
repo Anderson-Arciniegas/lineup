@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import type { StateSchema, UpdateUserInput, UserSchema } from '@lineup/core';
 import {
@@ -49,6 +50,7 @@ export class ProfilePage implements OnInit {
   private readonly utilsService = inject(UtilsService);
   private readonly dialogService = inject(DialogService);
   private readonly translateService = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly maxFirstNameLength = MAX_NAME_LENGTH;
   readonly maxLastNameLength = MAX_NAME_LENGTH;
@@ -199,11 +201,13 @@ export class ProfilePage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((image: string) => {
-      if (image) {
-        this.uploadFile(image);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((image: string) => {
+        if (image) {
+          this.uploadFile(image);
+        }
+      });
   }
 
   uploadFile(fileBase64: string): void {

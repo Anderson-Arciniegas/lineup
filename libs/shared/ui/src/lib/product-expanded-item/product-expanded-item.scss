@@ -33,6 +33,27 @@
     }
   }
 
+  /*
+   * PDF export: ajuste de tamaño de imagen por breakpoint para que los chunks
+   * del List mode quepan exactamente en A4 portrait sin recortar ningún item.
+   *
+   * lg (1024-1279px): 500px → 400px, 3 items × (400+32)px + gaps = 1340px < 1449px ✓
+   * xs (<640px):      400px → 280px, imagen proporcionada al viewport móvil.
+   */
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .expanded-product-image--pdf {
+      width: 400px !important;
+      height: 400px !important;
+    }
+  }
+
+  @media screen and (max-width: 639px) {
+    .expanded-product-image--pdf {
+      width: 280px !important;
+      height: 280px !important;
+    }
+  }
+
   .carousel-image-skeleton {
     width: 500px;
     height: 500px;
