@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AuthStore,
   BusinessSchema,
@@ -15,7 +16,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-locations-page',
@@ -40,6 +41,7 @@ export class LocationsPage implements OnInit {
   private readonly _locationsService = inject(LocationsPrivateService);
 
   private _subscriptions = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.business = this._authStore.business();
@@ -57,15 +59,11 @@ export class LocationsPage implements OnInit {
       this._locationsService.findAllMyLocations().subscribe({
         next: (response) => {
           this.locations = [...response];
-          console.log(this.locations);
           this.attempt = false;
         },
         error: (error) => {
           console.error(error);
           this.attempt = false;
-        },
-        complete: () => {
-          console.log('Locations fetched');
         },
       }),
     );
@@ -89,15 +87,17 @@ export class LocationsPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe(
-      (response: { edit?: boolean; delete?: boolean } | undefined) => {
-        if (response?.edit) {
-          this.addLocationModal(location);
-        } else if (response?.delete) {
-          this.deleteLocation(location);
-        }
-      },
-    );
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        (response: { edit?: boolean; delete?: boolean } | undefined) => {
+          if (response?.edit) {
+            this.addLocationModal(location);
+          } else if (response?.delete) {
+            this.deleteLocation(location);
+          }
+        },
+      );
   }
 
   addLocationModal(location?: LocationSchema) {
@@ -120,9 +120,10 @@ export class LocationsPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((response: LocationSchema | undefined) => {
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response: LocationSchema | undefined) => {
       if (response) {
-        console.log(response);
         if (location) {
           const index = this.locations.findIndex(
             (loc) => loc.id === location.id,
@@ -160,25 +161,23 @@ export class LocationsPage implements OnInit {
       },
     });
 
-    this.ref.onClose.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this._subscriptions.add(
-          this._locationsService.removeLocation(location.id).subscribe({
-            next: (response) => {
-              console.log(response);
-              this.locations = this.locations.filter(
-                (loc) => loc.id !== location.id,
-              );
-            },
-            error: (error) => {
-              console.error(error);
-            },
-            complete: () => {
-              console.log('Location deleted');
-            },
-          }),
-        );
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._subscriptions.add(
+            this._locationsService.removeLocation(location.id).subscribe({
+              next: () => {
+                this.locations = this.locations.filter(
+                  (loc) => loc.id !== location.id,
+                );
+              },
+              error: (error) => {
+                console.error(error);
+              },
+            }),
+          );
+        }
+      });
   }
 }

@@ -1,4 +1,4 @@
-<section class="page flex flex-col gap-8 py-5">
+<section class="flex flex-col gap-8 py-5">
   <div
     class="flex flex-col justify-start items-start sm:flex-row sm:justify-between sm:items-center gap-4 ps-4 pe-10"
   >
@@ -10,7 +10,7 @@
         {{ 'general.welcomeToYourDashboard' | translate }}
       </h4>
     </div>
-    <span class="text-sm text-gray-500 font-medium">
+    <span class="text-sm text-gray-500 font-medium text-right">
       {{ 'general.last30Days' | translate }}
     </span>
   </div>
@@ -41,13 +41,13 @@
 
     <div class="card shadow flex flex-col gap-2">
       <span class="text-sm text-gray-500 font-medium"
-        >{{ 'general.sales' | translate }}</span
+        >{{ 'inventoryPage.stockNotRegistered' | translate }}</span
       >
       <span class="text-2xl font-semibold"
-        >{{ inventory?.salesCount?.total ?? 0 }}</span
+        >{{ inventory?.productsWithoutStockCount ?? 0 }}</span
       >
       <span class="text-xs text-gray-500 font-medium"
-        >{{ 'general.salesLast30Days' | translate }}</span
+        >{{ 'general.last30Days' | translate }}</span
       >
     </div>
 

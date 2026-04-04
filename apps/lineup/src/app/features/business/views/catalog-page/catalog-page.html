@@ -1,13 +1,15 @@
 <section
-  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen"
+  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
   [style.background]="pageBackgroundGradient || null"
 >
   <lib-product-breadcrumb
     [business]="business"
     [catalog]="catalog"
     [publicMode]="true"
+    [downloadMode]="false"
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
+
   @if (catalog) {
   <div
     class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
@@ -19,15 +21,6 @@
 
     @if (myBusiness) {
     <div class="flex flex-row items-center justify-center">
-      <!-- <lib-button
-          [icon]="'pi pi-pencil'"
-          [label]="'general.edit' | translate"
-          [type]="'rounded'"
-          [width]="'w-25'"
-          [size]="'small'"
-          [link]="'/dashboard/edit'"
-        ></lib-button> -->
-
       <lib-button
         [icon]="'pi pi-palette'"
         [label]="'general.editColor' | translate"
@@ -75,14 +68,16 @@
     </div>
     }
   </div>
+
   <div
-    class="catalog-page__toolbar w-full flex flex-row items-center justify-center sm:justify-end gap-5 mt-4 lg:mt-0"
+    class="catalog-page__toolbar w-full flex flex-row items-center justify-center sm:justify-end gap-3 sm:gap-5 mt-4 lg:mt-0"
     [class.catalog-page__toolbar--on-dark-brand]="brandToneLight"
     [class.catalog-page__toolbar--on-light-brand]="brandToneDark"
   >
     <p-selectbutton
       [options]="layoutOptions"
       [(ngModel)]="layoutMode"
+      [allowEmpty]="false"
       optionValue="value"
       optionLabel="label"
       (ngModelChange)="onLayoutModeChange($event)"
@@ -123,15 +118,25 @@
       color="secondary"
       (click)="share()"
     ></lib-button>
+    @if (myBusiness) {
+    <lib-button
+      icon="pi pi-cog"
+      [width]="'w-11'"
+      type="rounded"
+      color="secondary"
+      [link]="configUrl"
+    ></lib-button>
+    }
   </div>
 
   @if (layoutMode === 'Grid') {
   <div class="w-full flex flex-col items-center gap-6 md:gap-20">
     @if (products.length > 0) {
     <div class="w-full flex flex-col items-center gap-6 md:gap-6">
+      @if (primaryProducts.length > 0) {
       <div class="flex flex-row items-center justify-center w-10/10">
         <lib-catalog-carousel
-          [products]="products"
+          [products]="primaryProducts"
           [predefinedColor]="business.hexColor || catalog.hexColor ? true : false"
           class="w-10/10"
           [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
@@ -139,6 +144,7 @@
         >
         </lib-catalog-carousel>
       </div>
+      }
       <div
         class="flex flex-row items-center justify-center w-full w-full mb-6 md:mb-0"
       >
@@ -166,12 +172,14 @@
           [height]="'h-100'"
         ></lib-create-product-card>
       </div>
-      } @for (product of products; track product.id) {
+      } @for (product of products; track $index) {
       <div class="w-full flex flex-col items-center justify-center">
         <lib-product-card
+          class="my-1 sm:my-3"
           [width]="'w-65'"
           [height]="'h-100'"
           [product]="product"
+          [pdfExportAttempt]="false"
         />
       </div>
       }
@@ -188,7 +196,7 @@
     </div>
     }
     <div
-      class="container w-full flex flex-col gap-5"
+      class="container w-full flex flex-col gap-4 lg:gap-5"
       infiniteScroll
       [infiniteScrollDistance]="2"
       [infiniteScrollThrottle]="50"
@@ -196,19 +204,19 @@
       [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
       (scrolled)="onScroll()"
     >
-      @for (product of products; track product.id) {
+      @for (product of products; track $index) {
       <div class="w-full flex flex-row items-center justify-center">
         <lib-product-expanded-item
           class="w-full"
           [product]="product"
           [reverse]="$index % 2 !== 0"
+          [pdfExportAttempt]="false"
         />
       </div>
       }
     </div>
   </div>
-
-  } } @if(attempt || productsAttempt) {
+  } } @if((attempt || productsAttempt || primaryProductsAttempt)) {
   <div class="flex flex-col justify-center items-center w-full">
     <div class="card flex justify-center p-10">
       <p-progress-spinner

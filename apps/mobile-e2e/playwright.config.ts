@@ -4,6 +4,7 @@ import { workspaceRoot } from '@nx/devkit';
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+const isCi = !!process.env['CI'];
 
 /**
  * Read environment variables from file.
@@ -21,13 +22,18 @@ export default defineConfig({
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    headless: true,
   },
-  /* Run your local dev server before starting the tests */
+  /**
+   * `mobile-e2e:e2e` declara `dependsOn: ["mobile:build"]` para que en CI no compitan en paralelo
+   * `mobile:build` y el `nx serve` del webServer (ECONNREFUSED en :4200).
+   */
   webServer: {
-    command: 'npx nx run mobile:serve',
+    command: 'npx nx serve mobile --port=4200',
     url: 'http://localhost:4200',
-    reuseExistingServer: true,
+    reuseExistingServer: !isCi,
     cwd: workspaceRoot,
+    timeout: isCi ? 300 * 1000 : 120 * 1000,
   },
   projects: [
     {

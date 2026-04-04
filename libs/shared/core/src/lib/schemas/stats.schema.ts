@@ -1,12 +1,13 @@
 import { StockMovementTypeEnum } from '../enums';
 
+import type { StockMovementSchema } from './product.schema';
+
 export interface TimeSeriesDataPointSchema {
   period: string;
   value: number;
 }
 
 export interface TimeSeriesStatsSchema {
-  data: TimeSeriesDataPointSchema[] | null;
   total: number;
 }
 
@@ -59,7 +60,6 @@ export interface StockMovementStatItemSchema {
 export interface InventoryStatsSchema {
   productsWithoutStockCount: number;
   recentStockMovements: StockMovementStatItemSchema[];
-  salesCount: TimeSeriesStatsSchema;
   skusLowOrOutOfStockCount: number;
 }
 
@@ -94,4 +94,9 @@ export interface ProductStatsSchema {
   visitToLikeRatio: VisitToLikeRatioSchema;
   withoutRatingsCount: number;
   withoutVisitsCount: number;
+}
+
+export interface BusinessSalesInTimePeriodSchema {
+  sales: StockMovementSchema[];
+  salesCount: TimeSeriesStatsSchema;
 }

@@ -15,7 +15,24 @@ export enum ApiClient {
 export class GraphqlService {
   private apollo = inject(Apollo);
 
+  /**
+   * Una lectura (completa al terminar). Preferible a `watchQuery$` salvo que necesites
+   * re-emisiones al actualizar el caché de Apollo.
+   */
   query<T>(
+    queryGql: any,
+    variables?: any,
+    client: ApiClient = ApiClient.USER,
+  ): Observable<T> {
+    const apolloClient = this.apollo.use(client);
+
+    return apolloClient
+      .query<T>({ query: queryGql, variables })
+      .pipe(map((result) => result.data as T));
+  }
+
+  /** Emite de nuevo cuando cambian datos en caché o tras refetch (watchQuery + valueChanges). */
+  watchQuery$<T>(
     queryGql: any,
     variables?: any,
     client: ApiClient = ApiClient.USER,

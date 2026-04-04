@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BusinessHourSchema, BusinessPrivateService, WeekDayEnum } from '@lineup/core';
 import { BusinessHoursModal, Button } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-business-hours-page',
@@ -32,6 +33,7 @@ export class BusinessHoursPage implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly businessService = inject(BusinessPrivateService);
   private readonly subscriptions = new Subscription();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.loadBusinessHours();
@@ -91,25 +93,27 @@ export class BusinessHoursPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe(
-      (response: BusinessHourSchema[] | BusinessHourSchema | undefined) => {
-        if (!response) return;
-        if (Array.isArray(response)) {
-          this.businessHours = [...response];
-          return;
-        }
-        const index = this.businessHours.findIndex((h) => h.id === response.id);
-        if (index !== -1) {
-          this.businessHours = [
-            ...this.businessHours.slice(0, index),
-            response,
-            ...this.businessHours.slice(index + 1),
-          ];
-        } else {
-          this.businessHours = [...this.businessHours, response];
-        }
-      },
-    );
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        (response: BusinessHourSchema[] | BusinessHourSchema | undefined) => {
+          if (!response) return;
+          if (Array.isArray(response)) {
+            this.businessHours = [...response];
+            return;
+          }
+          const index = this.businessHours.findIndex((h) => h.id === response.id);
+          if (index !== -1) {
+            this.businessHours = [
+              ...this.businessHours.slice(0, index),
+              response,
+              ...this.businessHours.slice(index + 1),
+            ];
+          } else {
+            this.businessHours = [...this.businessHours, response];
+          }
+        },
+      );
   }
 
   openBusinessHoursModalForDay(day: WeekDayEnum): void {
@@ -130,24 +134,26 @@ export class BusinessHoursPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe(
-      (response: BusinessHourSchema[] | BusinessHourSchema | undefined) => {
-        if (!response) return;
-        if (Array.isArray(response)) {
-          this.businessHours = [...response];
-          return;
-        }
-        const index = this.businessHours.findIndex((h) => h.id === response.id);
-        if (index !== -1) {
-          this.businessHours = [
-            ...this.businessHours.slice(0, index),
-            response,
-            ...this.businessHours.slice(index + 1),
-          ];
-        } else {
-          this.businessHours = [...this.businessHours, response];
-        }
-      },
-    );
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        (response: BusinessHourSchema[] | BusinessHourSchema | undefined) => {
+          if (!response) return;
+          if (Array.isArray(response)) {
+            this.businessHours = [...response];
+            return;
+          }
+          const index = this.businessHours.findIndex((h) => h.id === response.id);
+          if (index !== -1) {
+            this.businessHours = [
+              ...this.businessHours.slice(0, index),
+              response,
+              ...this.businessHours.slice(index + 1),
+            ];
+          } else {
+            this.businessHours = [...this.businessHours, response];
+          }
+        },
+      );
   }
 }

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -39,6 +40,7 @@ import {
   Subject,
   Subscription,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 
@@ -87,6 +89,7 @@ export class SearchPage implements OnInit {
   private readonly _utils = inject(UtilsService);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly _subscription = new Subscription();
 
@@ -185,17 +188,16 @@ export class SearchPage implements OnInit {
       closable: true,
     });
 
-    this.ref.onClose.subscribe((filters) => {
-      console.log(filters);
-      if (filters) {
-        this.setFilters(filters as TreeNode[]);
-      }
-    });
+    this.ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((filters) => {
+        if (filters) {
+          this.setFilters(filters as TreeNode[]);
+        }
+      });
   }
 
   setFilters(filters: TreeNode[]): void {
-    console.log(filters);
-
     if (filters[0]) {
       this.searchTypeFilter = filters[0].data as SearchTargetEnum;
     } else {

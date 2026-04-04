@@ -181,6 +181,7 @@ export interface StockMovementSchema {
   newQuantity: number;
   notes?: string;
   previousQuantity: number;
+  price?: number | null;
   productSku?: ProductSkuSchema;
   quantityDelta: number;
   type: StockMovementTypeEnum;

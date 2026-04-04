@@ -19,9 +19,9 @@ describe('StatisticsPage', () => {
           useValue: {
             businessEngagementStats: () =>
               of({
-                newFollowers: { total: 0, data: [] },
+                newFollowers: { total: 0 },
                 visits: {
-                  visits: { total: 0, data: [] },
+                  visits: { total: 0 },
                   visitsByAuthType: {
                     anonymous: 0,
                     identified: 0,
@@ -31,7 +31,7 @@ describe('StatisticsPage', () => {
               }),
             catalogStats: () =>
               of({
-                catalogVisitsOverTime: { total: 0, data: [] },
+                catalogVisitsOverTime: { total: 0 },
                 topByVisits: [],
                 productsPerCatalog: [],
               }),
@@ -39,13 +39,12 @@ describe('StatisticsPage', () => {
               of({
                 byStatus: [],
                 byType: [],
-                expiringSoon: { total: 0, data: [] },
+                expiringSoon: { total: 0 },
               }),
             inventoryStats: () =>
               of({
                 productsWithoutStockCount: 0,
                 skusLowOrOutOfStockCount: 0,
-                salesCount: { total: 0, data: [] },
                 recentStockMovements: [],
               }),
             productStats: () =>
@@ -61,6 +60,8 @@ describe('StatisticsPage', () => {
                 withoutRatingsCount: 0,
                 withoutVisitsCount: 0,
               }),
+            businessSalesInTimePeriod: () =>
+              of({ sales: [], salesCount: { total: 0 } }),
           },
         },
       ],

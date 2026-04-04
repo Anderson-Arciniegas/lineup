@@ -66,6 +66,8 @@ export const es = {
     profilePicture: 'Foto de perfil',
     businesses: 'Negocios',
     products: 'Productos',
+    otherProductsFromBusiness: 'Más productos de este negocio',
+    relatedProductsByTags: 'Productos relacionados',
     statistics: 'Estadísticas',
     followers: 'Seguidores',
     dashboard: 'Panel de control',
@@ -133,6 +135,7 @@ export const es = {
     details: 'Detalles',
     select: 'Seleccionar',
     contactUs: 'Contactanos',
+    whatsappContactIntro: 'Hola! Me interesa:',
     follow: 'Seguir',
     following: 'Siguiendo',
     visits: 'Visitas',
@@ -275,6 +278,9 @@ export const es = {
     noCatalogProducts: 'Aun no has registrado productos en este catálogo.',
     ourCatalogs: 'Nuestros catálogos',
     ourMainProducts: 'Nuestros productos principales',
+    outOfStockSimple: 'Agotado',
+    switchCatalog: 'Cambiar de catálogo',
+    productPanel: 'Panel de producto',
   },
   businessHoursModal: {
     days: 'Días',
@@ -364,9 +370,15 @@ export const es = {
     discountByStatus: 'Por estado',
     discountByType: 'Por tipo',
     inventorySection: 'Inventario',
+    salesSection: 'Ventas',
+    salesCountTotal: 'Ventas en el período (total)',
+    salesListedMovements: 'Movimientos en el listado',
+    salesMovementsDetail: 'Movimientos de venta',
+    salesProductLabel: 'Producto',
+    salesIdProductSkuLabel: 'ID SKU',
+    salesPriceLabel: 'Precio',
     lowStockSkus: 'SKU con stock bajo o agotado',
     productsWithoutStock: 'Productos sin stock',
-    salesInPeriod: 'Ventas en el período',
     recentMovements: 'Movimientos de stock recientes',
     movementDate: 'Fecha',
     movementDelta: 'Cambio',
@@ -434,6 +446,8 @@ export const es = {
       'Cada línea debe tener una cantidad entera mayor o igual a 1.',
     duplicateSkuInCart:
       'Hay el mismo SKU repetido en el carrito; unifica cantidades en una sola línea.',
+    missingPriceForSku:
+      'Una línea no tiene importe total; revisa el producto y las tasas de cambio.',
     noSkusForProduct: 'Este producto no tiene SKU disponibles para vender.',
   },
   validation: {
@@ -464,6 +478,8 @@ export const es = {
     emailUpdated: 'Correo actualizado correctamente',
     primaryProductAdded: 'El producto se agregó a los productos principales.',
     primaryProductRemoved: 'El producto se quitó de los productos principales.',
+    catalogPdfExportFailed:
+      'No se pudo generar el PDF del catálogo. Si faltan imágenes, el almacenamiento debe permitir CORS para tu dominio.',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork: '¿Deseas eliminar esta red social?',

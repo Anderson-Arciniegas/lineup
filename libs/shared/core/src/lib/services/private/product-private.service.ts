@@ -13,6 +13,7 @@ import {
   GET_STOCK_HISTORY_QUERY,
   REGISTER_SALE_MUTATION,
   REMOVE_PRODUCT_MUTATION,
+  REMOVE_PRODUCT_SKU_MUTATION,
   TOGGLE_PRODUCT_IS_PRIMARY_MUTATION,
   UPDATE_PRODUCT_MUTATION,
   UPDATE_PRODUCT_SKUS_MUTATION,
@@ -24,9 +25,10 @@ import { ApiClient } from '.';
 import {
   AdjustStockInput,
   CreateProductInput,
+  GetAllPrimaryProductsByBusinessInput,
   InfinityScrollInput,
   PaginatedProducts,
-  RegisterPurchaseInput,
+  SalesInput,
   UpdateProductInput,
   UpdateProductSkusInput,
 } from '../../models/product.model';
@@ -122,13 +124,19 @@ export class ProductPrivateService {
   }
 
   getAllPrimaryProductsByBusiness(
-    idBusiness: number,
+    data: GetAllPrimaryProductsByBusinessInput,
   ): Observable<ProductSchema[]> {
+    const payload: GetAllPrimaryProductsByBusinessInput = {
+      idBusiness: Math.trunc(data.idBusiness),
+      ...(data.idCatalog != null
+        ? { idCatalog: Math.trunc(data.idCatalog) }
+        : {}),
+    };
     return this.apollo
       .use(ApiClient.BUSINESS)
       .query<{ getAllPrimaryProductsByBusiness: ProductSchema[] }>({
         query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
-        variables: { idBusiness: Math.trunc(idBusiness) },
+        variables: { data: payload },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -211,6 +219,26 @@ export class ProductPrivateService {
       );
   }
 
+  removeProductSku(idProductSku: number): Observable<boolean> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .mutate<{ removeProductSku: boolean }>({
+        mutation: REMOVE_PRODUCT_SKU_MUTATION,
+        variables: { idProductSku: Math.trunc(idProductSku) },
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(
+        map((result) => {
+          if (!result.data) {
+            throw new Error('No data returned from mutation');
+          }
+          return result.data.removeProductSku;
+        }),
+      );
+  }
+
   getStockByProduct(idProduct: number): Observable<ProductSkuSchema[]> {
     return this.apollo
       .use(ApiClient.BUSINESS)
@@ -267,9 +295,7 @@ export class ProductPrivateService {
       );
   }
 
-  registerSale(
-    data: RegisterPurchaseInput[],
-  ): Observable<ProductSkuSchema[]> {
+  registerSale(data: SalesInput): Observable<ProductSkuSchema[]> {
     return this.apollo
       .use(ApiClient.BUSINESS)
       .mutate<{ registerSale: ProductSkuSchema[] }>({

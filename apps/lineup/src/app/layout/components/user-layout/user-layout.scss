@@ -1,3 +1,8 @@
 .sidebar {
   border-right: 1px solid var(--p-primary-200);
+  height: calc(100vh - 80px);
+
+  @media screen and (max-width: 639px) {
+    height: calc(100vh - 72px);
+  }
 }

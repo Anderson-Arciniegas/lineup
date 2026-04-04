@@ -1,15 +1,30 @@
 @if (product) {
 <section
-  class="flex flex-col-reverse items-center justify-center w-full py-4 px-1 sm:px-4 gap-5 lg:gap-10"
+  class="flex flex-col-reverse items-center justify-center w-full py-3 lg:py-0 xl:py-4 px-1 sm:px-4 gap-5 lg:gap-10"
   [class.lg:flex-row-reverse]="reverse"
   [class.lg:flex-row]="!reverse"
 >
   <div
     class="flex flex-col items-start justify-start gap-2 sm:gap-4 w-9/10 sm:w-8/10 lg:w-5/10 h-max max-w-3xl"
   >
+    @if (outOfStock) {
+    <div
+      class="note-container flex flex-row justify-center items-center w-full"
+      [class.lg:justify-end]="reverse"
+      [class.lg:justify-start]="!reverse"
+    >
+      <div
+        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        <span class="text-md text-center font-medium"
+          >{{'general.outOfStockSimple' | translate}}</span
+        >
+      </div>
+    </div>
+    }
     <a [routerLink]="[product.id]" class="w-full"
       ><h4
-        class="font-semibold text-xl md:text-4xl w-full text-center"
+        class="font-semibold text-xl md:text-3xl lg:text-4xl w-full text-center"
         [class.lg:text-end]="reverse"
         [class.lg:text-start]="!reverse"
       >
@@ -24,9 +39,11 @@
       {{ product?.subtitle }}
     </p>
     <div
-      class="flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-center items-start sm:items-center lg:items-end xl:items-center gap-5 xl:gap-10 w-full"
-      [class.lg:justify-end]="reverse"
-      [class.lg:justify-start]="!reverse"
+      class="flex flex-col sm:flex-row lg:flex-col xl:flex-row justify-center items-start sm:items-center xl:items-center gap-5 xl:gap-10 w-full"
+      [class.xl:justify-end]="reverse"
+      [class.xl:justify-start]="!reverse"
+      [class.lg:items-end]="reverse"
+      [class.lg:items-start]="!reverse"
     >
       @if (price && currency) {
       <div
@@ -40,13 +57,13 @@
           'es')}}
         </span>
         }
-        <span class="font-semibold text-xl md:text-4xl"
+        <span class="font-semibold text-xl md:text-3xl lg:text-4xl"
           >{{ price | currency: currency?.code : 'symbol' : '1.0-2' : 'es'
           }}</span
         >
       </div>
 
-      }
+      } @if (!pdfExportAttempt) {
       <div
         class="w-full sm:w-auto flex flex-row items-center justify-center gap-6"
       >
@@ -69,6 +86,7 @@
           (action)="share()"
         ></lib-button>
       </div>
+      }
     </div>
   </div>
 
@@ -76,9 +94,24 @@
     <img
       [id]="product.id"
       class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10"
-      [src]="product.productFiles[0].file?.url || 'assets/images/products/headphones-min.webp'"
+      [class.expanded-product-image--pdf]="pdfExportAttempt"
+      [src]="expandedImageSrc"
+      (load)="imageLoaded = true"
+      [hidden]="!imageLoaded"
       alt=""
     />
+
+    <div
+      [hidden]="imageLoaded"
+      class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10 flex flex-row items-center justify-center"
+    >
+      <p-progress-spinner
+        strokeWidth="8"
+        fill="transparent"
+        animationDuration=".5s"
+        [style]="{ width: '50px', height: '50px' }"
+      />
+    </div>
   </a>
 </section>
 }

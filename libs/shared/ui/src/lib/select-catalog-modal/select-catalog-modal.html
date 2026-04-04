@@ -1,0 +1,53 @@
+<div class="select-catalog-modal flex flex-col gap-4">
+  @if (loading()) {
+  <div class="flex flex-row items-center justify-center py-10">
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '48px', height: '48px' }"
+    />
+  </div>
+  } @else if (loadError()) {
+  <p class="text-sm text-gray-600">{{ 'general.errorLoadingData' | translate }}</p>
+  } @else if (catalogs().length > 0) {
+  <div class="catalogs-list flex flex-col gap-2">
+    @for (catalog of catalogs(); track catalog.id) {
+    <button
+      type="button"
+      class="catalog-item flex flex-row items-center gap-3 text-left"
+      (click)="select(catalog)"
+    >
+      @if (catalog.image?.url) {
+      <img
+        [src]="catalog.image.url"
+        [alt]="catalog.title"
+        class="catalog-item__thumb shrink-0 rounded-md object-cover"
+        width="48"
+        height="48"
+      />
+      } @else {
+      <span
+        class="catalog-item__thumb-placeholder flex shrink-0 items-center justify-center rounded-md bg-primary-50"
+      >
+        <i class="pi pi-th-large text-primary"></i>
+      </span>
+      }
+      <span class="min-w-0 flex-1 text-sm font-semibold">{{ catalog.title }}</span>
+      <i class="pi pi-angle-right text-lg text-gray-500 shrink-0"></i>
+    </button>
+    }
+  </div>
+  } @else {
+  <p class="text-sm text-gray-600">{{ 'general.noCatalogsAvailable' | translate }}</p>
+  }
+
+  <div class="flex flex-row justify-center pt-2">
+    <lib-button
+      [label]="'general.close' | translate"
+      [width]="'w-30'"
+      variant="outlined"
+      (action)="cancel()"
+    ></lib-button>
+  </div>
+</div>

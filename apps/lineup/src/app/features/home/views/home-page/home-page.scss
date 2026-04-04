@@ -1,4 +1,31 @@
 ::ng-deep {
+  .p-carousel-viewport {
+    overflow: hidden;
+  }
+
+  .p-carousel-item-list {
+    align-items: stretch;
+  }
+
+  .p-carousel-item {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  // Menos ítems que `numVisible`: fila a la izquierda y ancho natural del slide (pantallas grandes).
+  // Desde `lg` (1024px); por debajo de `lg` se mantiene el carrusel como hasta ahora.
+  .home-carousel.home-carousel--few {
+    @media screen and (min-width: 1024px) {
+      .p-carousel-item-list {
+        justify-content: flex-start;
+      }
+
+      .p-carousel-item {
+        flex: 0 0 auto !important;
+      }
+    }
+  }
+
   .max-width {
     max-width: 950px;
   }
