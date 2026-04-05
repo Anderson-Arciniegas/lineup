@@ -7,7 +7,12 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { SearchTargetEnum } from '@lineup/core';
+import { FormsModule } from '@angular/forms';
+import {
+  ProductSearchFiltersInput,
+  SearchFiltersApplyPayload,
+  SearchTargetEnum,
+} from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -21,6 +26,7 @@ import { Button } from '../button/button';
   selector: 'lib-search-filters',
   imports: [
     CommonModule,
+    FormsModule,
     TreeModule,
     InputNumberModule,
     Button,
@@ -36,10 +42,14 @@ export class SearchFilters implements OnInit {
   selectedFilterType!: TreeNode;
   selectedFilterLocation!: TreeNode;
   selectedFilterDelivery!: TreeNode;
+  /** Vacío = sin filtro de precio mínimo. */
+  minPrice: number | null = null;
+  /** Vacío = sin filtro de precio máximo. */
+  maxPrice: number | null = null;
   modalMode = signal<boolean>(false);
   private readonly ref = inject(DynamicDialogRef);
 
-  @Output() setFilters = new EventEmitter<TreeNode[]>();
+  @Output() setFilters = new EventEmitter<SearchFiltersApplyPayload>();
 
   private readonly _translate = inject(TranslateService);
 
@@ -191,20 +201,30 @@ export class SearchFilters implements OnInit {
   }
 
   saveFilters() {
+    const productFilters = this.buildProductFilters();
+    const payload: SearchFiltersApplyPayload = {
+      target: this.selectedFilterType.data as SearchTargetEnum,
+      productFilters,
+    };
     if (this.modalMode()) {
-      this.ref.close({
-        filters: [
-          this.selectedFilterType,
-          this.selectedFilterLocation,
-          this.selectedFilterDelivery,
-        ],
-      });
+      this.ref.close(payload);
     } else {
-      this.setFilters.emit([
-        this.selectedFilterType,
-        this.selectedFilterLocation,
-        this.selectedFilterDelivery,
-      ]);
+      this.setFilters.emit(payload);
     }
+  }
+
+  private buildProductFilters(): ProductSearchFiltersInput {
+    const productFilters: ProductSearchFiltersInput = {};
+    const loc = this.selectedFilterLocation?.data;
+    if (typeof loc === 'string' && loc.length > 0) {
+      productFilters.location = loc;
+    }
+    if (this.minPrice != null) {
+      productFilters.minPrice = this.minPrice;
+    }
+    if (this.maxPrice != null) {
+      productFilters.maxPrice = this.maxPrice;
+    }
+    return productFilters;
   }
 }

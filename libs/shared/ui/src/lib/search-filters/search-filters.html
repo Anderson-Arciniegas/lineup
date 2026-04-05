@@ -17,14 +17,14 @@
     [(selection)]="selectedFilterLocation"
   />
 
-  <p-tree
+  <!-- <p-tree
     [value]="filtersDelivery"
     class="w-full"
     selectionMode="single"
     [highlightOnSelect]="true"
     (onNodeExpand)="onNodeExpand($event)"
     [(selection)]="selectedFilterDelivery"
-  />
+  /> -->
 
   <div
     class="w-10/10 flex flex-col items-center justify-center gap-3 px-4 sm:px-8"
@@ -36,17 +36,37 @@
       class="flex flex-row w-10/10 gap-3 price-filter justify-between items-center"
     >
       <div class="w-5/10">
-        <label for="integeronly" class="text-sm"
+        <label for="searchFilterMinPrice" class="text-sm"
           >{{'general.minimum' | translate}}</label
         >
-        <p-inputnumber size="small" locale="es-ES" inputId="integeronly" />
+        <p-inputnumber
+          inputId="searchFilterMinPrice"
+          size="small"
+          locale="es-ES"
+          mode="decimal"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="2"
+          [min]="0"
+          [showClear]="true"
+          [(ngModel)]="minPrice"
+        />
       </div>
 
       <div class="w-5/10">
-        <label for="integeronly" class="text-sm"
+        <label for="searchFilterMaxPrice" class="text-sm"
           >{{'general.maximum' | translate}}</label
         >
-        <p-inputnumber size="small" locale="es-ES" inputId="integeronly" />
+        <p-inputnumber
+          inputId="searchFilterMaxPrice"
+          size="small"
+          locale="es-ES"
+          mode="decimal"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="2"
+          [min]="0"
+          [showClear]="true"
+          [(ngModel)]="maxPrice"
+        />
       </div>
     </div>
   </div>
