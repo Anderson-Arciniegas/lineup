@@ -6,6 +6,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  PendingTasks,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -36,7 +37,7 @@ import { ImageModule } from 'primeng/image';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, of, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-page',
@@ -109,6 +110,7 @@ export class ProductPage implements OnInit, OnDestroy {
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productService = inject(ProductPrivateService);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _pendingTasks = inject(PendingTasks);
   private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
 
@@ -142,35 +144,39 @@ export class ProductPage implements OnInit, OnDestroy {
   private getProduct(): void {
     if (this.attempt) return;
     this.attempt = true;
+    const taskDone = this._pendingTasks.add();
     this._subscription.add(
-      this._productPublicService.findOneProduct(this.id).subscribe({
-        next: (product) => {
-          this.product = product;
-          if (product.productFiles) {
-            this.images = product.productFiles.map(
-              (file) => file.file?.url || '',
-            );
-            this.carouselInstanceKey += 1;
-          }
-          if (!this.myBusiness) {
-            this.visitProduct();
-          }
-          if (this.myBusiness) {
-            this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
-          }
-          this.applyBrandSurfaceColor();
-          this.loadTaggedRelatedProducts(product);
-          this._seoService.setProductPage(product, this.path);
-          this.attempt = false;
-        },
-        error: (error) => {
-          console.error(error);
-          this.attempt = false;
-        },
-        complete: () => {
-          this.attempt = false;
-        },
-      }),
+      this._productPublicService
+        .findOneProduct(this.id)
+        .pipe(finalize(() => taskDone()))
+        .subscribe({
+          next: (product) => {
+            this.product = product;
+            if (product.productFiles) {
+              this.images = product.productFiles.map(
+                (file) => file.file?.url || '',
+              );
+              this.carouselInstanceKey += 1;
+            }
+            if (!this.myBusiness) {
+              this.visitProduct();
+            }
+            if (this.myBusiness) {
+              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
+            }
+            this.applyBrandSurfaceColor();
+            this.loadTaggedRelatedProducts(product);
+            this._seoService.setProductPage(product, this.path);
+            this.attempt = false;
+          },
+          error: (error) => {
+            console.error(error);
+            this.attempt = false;
+          },
+          complete: () => {
+            this.attempt = false;
+          },
+        }),
     );
   }
 
