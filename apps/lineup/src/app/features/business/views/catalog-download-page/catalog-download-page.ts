@@ -23,12 +23,18 @@ import { ProductCard, ProductExpandedItem } from '@lineup/ui';
 import { QRCodeComponent } from 'angularx-qrcode';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import { firstValueFrom } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-download-page',
-  imports: [CommonModule, ProductCard, ProductExpandedItem, ProgressSpinner, QRCodeComponent],
+  imports: [
+    CommonModule,
+    ProductCard,
+    ProductExpandedItem,
+    ProgressSpinner,
+    QRCodeComponent,
+  ],
   templateUrl: './catalog-download-page.html',
   styleUrl: './catalog-download-page.scss',
 })
@@ -78,7 +84,6 @@ export class CatalogDownloadPage implements OnInit {
     if (this.layoutMode === 'Grid') {
       switch (bp) {
         case 'xxl':
-          return 10;
         case 'xl':
           return 8;
         case 'lg':
@@ -152,8 +157,13 @@ export class CatalogDownloadPage implements OnInit {
       CatalogDownloadPage._GRADIENT_BOTTOM_LIGHTEN,
     );
     this.pageBackgroundGradient = `linear-gradient(to bottom, rgba(${top.r}, ${top.g}, ${top.b}, 1), rgba(${bottom.r}, ${bottom.g}, ${bottom.b}, 1))`;
-    const luminance = CatalogDownloadPage.relativeLuminance(top.r, top.g, top.b);
-    this.isDarkBackground = luminance < CatalogDownloadPage._LUMINANCE_THRESHOLD;
+    const luminance = CatalogDownloadPage.relativeLuminance(
+      top.r,
+      top.g,
+      top.b,
+    );
+    this.isDarkBackground =
+      luminance < CatalogDownloadPage._LUMINANCE_THRESHOLD;
   }
 
   private async loadAndDownload(): Promise<void> {
@@ -182,7 +192,12 @@ export class CatalogDownloadPage implements OnInit {
       const allProducts = await firstValueFrom(
         this._productPublicService.getAllByCatalog(this.catalog.id, null),
       );
-      this.products = allProducts;
+      this.products = [
+        ...allProducts,
+        ...allProducts,
+        ...allProducts,
+        ...allProducts,
+      ];
 
       this.pdfExportAttempt = true;
       this._cdr.detectChanges();
@@ -195,7 +210,11 @@ export class CatalogDownloadPage implements OnInit {
       const host = this._catalogPdfRoot()?.nativeElement;
       if (!host) return;
 
-      host.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
+      host.scrollIntoView({
+        block: 'start',
+        inline: 'nearest',
+        behavior: 'auto',
+      });
 
       if (document.fonts?.ready) {
         try {
@@ -713,9 +732,7 @@ export class CatalogDownloadPage implements OnInit {
     }
   }
 
-  private static resolvePdfImageFetchUrl(
-    canonicalAbsoluteUrl: string,
-  ): string {
+  private static resolvePdfImageFetchUrl(canonicalAbsoluteUrl: string): string {
     const cfg = environment.catalogPdfMediaProxy;
     if (
       cfg &&
@@ -769,8 +786,7 @@ export class CatalogDownloadPage implements OnInit {
 
     await Promise.all(
       [...byCanonical.entries()].map(async ([canonical, imgs]) => {
-        const fetchUrl =
-          CatalogDownloadPage.resolvePdfImageFetchUrl(canonical);
+        const fetchUrl = CatalogDownloadPage.resolvePdfImageFetchUrl(canonical);
         const dataUrl = await fetchAsDataUrl(fetchUrl);
         if (!dataUrl) return;
         await Promise.all(
