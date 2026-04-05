@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, PendingTasks, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -36,6 +36,7 @@ import { PopoverModule } from 'primeng/popover';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-catalog-page',
@@ -98,6 +99,7 @@ export class CatalogPage implements OnInit {
   private readonly _catalogPublicService = inject(CatalogPublicService);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _pendingTasks = inject(PendingTasks);
   private readonly _seoService = inject(SeoService);
 
   private readonly _authStore = inject(AuthStore);
@@ -126,26 +128,30 @@ export class CatalogPage implements OnInit {
   }
 
   private getBusiness(): void {
+    const taskDone = this._pendingTasks.add();
     this._subscription.add(
-      this._businessPublicService.findBusinessByPath(this.path).subscribe({
-        next: (business) => {
-          this.business = business;
-          this.myBusiness =
-            Number(this._authStore.business()?.id) === Number(this.business.id);
-          if (this.catalog) {
-            if (this.catalog.hexColor) {
-              this.setColor(this.catalog.hexColor);
-            } else if (this.business.hexColor) {
-              this.setColor(this.business.hexColor);
+      this._businessPublicService
+        .findBusinessByPath(this.path)
+        .pipe(finalize(() => taskDone()))
+        .subscribe({
+          next: (business) => {
+            this.business = business;
+            this.myBusiness =
+              Number(this._authStore.business()?.id) === Number(this.business.id);
+            if (this.catalog) {
+              if (this.catalog.hexColor) {
+                this.setColor(this.catalog.hexColor);
+              } else if (this.business.hexColor) {
+                this.setColor(this.business.hexColor);
+              }
+              this.getPrimaryProducts();
+              if (this.myBusiness) {
+                this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
+              }
             }
-            this.getPrimaryProducts();
-            if (this.myBusiness) {
-              this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
-            }
-          }
-          this.applyCatalogSeoIfReady();
-        },
-      }),
+            this.applyCatalogSeoIfReady();
+          },
+        }),
     );
   }
 
@@ -176,9 +182,11 @@ export class CatalogPage implements OnInit {
   private getCatalog(): void {
     if (this.attempt) return;
     this.attempt = true;
+    const taskDone = this._pendingTasks.add();
     this._subscription.add(
       this._catalogPublicService
         .findOneCatalogByPath(this.catalogPath)
+        .pipe(finalize(() => taskDone()))
         .subscribe({
           next: (catalog) => {
             this.catalog = catalog;

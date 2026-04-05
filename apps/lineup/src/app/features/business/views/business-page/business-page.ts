@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, PendingTasks } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -30,6 +30,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-business-page',
@@ -86,6 +87,7 @@ export class BusinessPage implements OnInit {
 
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _cdr = inject(ChangeDetectorRef);
+  private readonly _pendingTasks = inject(PendingTasks);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
   private readonly _utils = inject(UtilsService);
@@ -106,30 +108,34 @@ export class BusinessPage implements OnInit {
   }
 
   private getBusiness(): void {
+    const taskDone = this._pendingTasks.add();
     this._subscription.add(
-      this._businessPublicService.findBusinessByPath(this.path).subscribe({
-        next: (business) => {
-          console.log(business);
-          this.business = business;
-          this.myBusiness =
-            Number(this._authStore.business()?.id) === Number(this.business.id);
-          this.getCatalogs();
-          this.getProducts();
-          if (!this.myBusiness) {
-            this.visitBusiness();
-          }
-          if (this.business.hexColor) {
-            this.setColor(this.business.hexColor);
-          }
-          this._seoService.setBusinessPage(this.business);
-        },
-        error: (error) => {
-          console.error(error);
-        },
-        complete: () => {
-          console.log('complete');
-        },
-      }),
+      this._businessPublicService
+        .findBusinessByPath(this.path)
+        .pipe(finalize(() => taskDone()))
+        .subscribe({
+          next: (business) => {
+            console.log(business);
+            this.business = business;
+            this.myBusiness =
+              Number(this._authStore.business()?.id) === Number(this.business.id);
+            this.getCatalogs();
+            this.getProducts();
+            if (!this.myBusiness) {
+              this.visitBusiness();
+            }
+            if (this.business.hexColor) {
+              this.setColor(this.business.hexColor);
+            }
+            this._seoService.setBusinessPage(this.business);
+          },
+          error: (error) => {
+            console.error(error);
+          },
+          complete: () => {
+            console.log('complete');
+          },
+        }),
     );
   }
 
