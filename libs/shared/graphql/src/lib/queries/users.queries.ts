@@ -100,8 +100,16 @@ export const FEATURED_PRODUCTS_QUERY = gql`
  * Query para búsqueda unificada (negocios, catálogos, productos)
  */
 export const SEARCH_QUERY = gql`
-  query Search($pagination: InfinityScrollInput!, $target: SearchTargetEnum!) {
-    search(pagination: $pagination, target: $target) {
+  query Search(
+    $pagination: InfinityScrollInput!
+    $target: SearchTargetEnum!
+    $productFilters: ProductSearchFiltersInput
+  ) {
+    search(
+      pagination: $pagination
+      target: $target
+      productFilters: $productFilters
+    ) {
       items {
         __typename
         ... on BusinessSchema ${businessSearchSelection}
