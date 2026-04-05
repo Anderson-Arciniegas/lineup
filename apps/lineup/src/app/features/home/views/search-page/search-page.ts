@@ -6,6 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
   ProductPublicService,
+  ProductSearchFiltersInput,
+  SearchFiltersApplyPayload,
   SearchResultItem,
   SearchTargetEnum,
   UserPublicService,
@@ -22,7 +24,6 @@ import {
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { TreeNode } from 'primeng/api';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
 import { ButtonModule } from 'primeng/button';
@@ -78,8 +79,7 @@ export class SearchPage implements OnInit {
   ref: DynamicDialogRef;
   noMoreResults: boolean;
   searchTypeFilter: SearchTargetEnum = SearchTargetEnum.ALL;
-  searchLocationFilter: string;
-  searchDeliveryFilter: string;
+  productFilters: ProductSearchFiltersInput = {};
   /** Desde `data.searchMode` de la ruta (`search` vs `tag`). */
   searchMode: 'search' | 'tag' = 'search';
   private readonly searchTrigger$ = new Subject<void>();
@@ -115,6 +115,7 @@ export class SearchPage implements OnInit {
               .search(
                 { page: this.page, limit: 10, search: this.searchQuery },
                 this.searchTypeFilter as SearchTargetEnum,
+                this.productFilters,
               )
               .pipe(
                 finalize(() => {
@@ -190,25 +191,16 @@ export class SearchPage implements OnInit {
 
     this.ref.onClose
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
-      .subscribe((filters) => {
-        if (filters) {
-          this.setFilters(filters as TreeNode[]);
+      .subscribe((payload: SearchFiltersApplyPayload | undefined) => {
+        if (payload) {
+          this.setFilters(payload);
         }
       });
   }
 
-  setFilters(filters: TreeNode[]): void {
-    if (filters[0]) {
-      this.searchTypeFilter = filters[0].data as SearchTargetEnum;
-    } else {
-      this.searchTypeFilter = SearchTargetEnum.ALL;
-    }
-    if (filters[1]) {
-      this.searchLocationFilter = filters[1].data as string;
-    }
-    if (filters[2]) {
-      this.searchDeliveryFilter = filters[2].data as string;
-    }
+  setFilters(payload: SearchFiltersApplyPayload): void {
+    this.searchTypeFilter = payload.target;
+    this.productFilters = { ...payload.productFilters };
 
     this.items = [];
     this.noMoreResults = false;

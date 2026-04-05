@@ -15,6 +15,11 @@
   backdrop-filter: blur(4px);
 }
 
+/* Evita recortes al aplicar transform en hijos (captura PDF). */
+.catalog-page__pdf-capture {
+  overflow: visible;
+}
+
 /* Tipografía de marca sobre fondo de color (reutiliza la misma lógica que catalog-page). */
 .catalog-page__brand-text {
   &--light h1,
@@ -31,6 +36,10 @@
     width: 100%;
     padding: 0 0.25rem 2.5rem;
 
+    @media (max-width: 640px) {
+      padding-top: 1rem !important;
+    }
+
     @media (min-width: 640px) {
       padding-left: 1rem;
       padding-right: 1rem;
@@ -39,6 +48,11 @@
     @media (min-width: 768px) {
       padding-left: 3.75rem;
       padding-right: 3.75rem;
+    }
+
+    @media screen and (min-width: 1536px) {
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
   }
 
@@ -52,6 +66,7 @@
 
     @media screen and (min-width: 640px) {
       grid-template-columns: repeat(2, 1fr);
+      row-gap: 1rem !important;
     }
 
     @media screen and (min-width: 1024px) {
@@ -62,8 +77,86 @@
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @media screen and (min-width: 1536px) {
-      grid-template-columns: repeat(5, 1fr);
+    /* xxl: seguir en 4 columnas (no 5) para alinear con chunks del PDF. */
+
+    /*
+     * Grid PDF: sin tope .container (80rem/96rem) para no dejar franjas vacías ~1550px;
+     * menos padding horizontal heredado de .products-grid y más hueco entre columnas.
+     */
+    .catalog-download__pdf-grid-page {
+      max-width: none !important;
+      width: 100% !important;
+      margin-inline: 0 !important;
     }
+
+    @media screen and (min-width: 1280px) {
+      .catalog-download__pdf-grid-page {
+        column-gap: 2rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+    }
+
+    /*
+     * Grid PDF xxl: mucho hueco entre filas y sin padding vertical asimétrico de .products-grid
+     * (el margen simétrico respecto al borde de página va en .catalog-download__pdf-page-grid).
+     */
+    @media screen and (min-width: 1536px) {
+      /*
+       * scale(1.3) no aumenta la altura en el flujo: hace falta hueco extra bajo cada celda
+       * + row-gap grande para que las filas no se solapen al pintar / exportar.
+       */
+      .catalog-download__pdf-grid-page {
+        align-items: start;
+        row-gap: 18rem !important;
+        column-gap: 2.5rem !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
+      .catalog-download__pdf-grid-cell {
+        padding-bottom: 10rem !important;
+        box-sizing: border-box;
+      }
+    }
+  }
+}
+
+/*
+ * Viewport xxl (≥1536px): escala visual 1.3 solo sobre card / ítem expandido en PDF.
+ * Ancho pre-escala compensa para que el resultado pintado encaje en la celda o fila.
+ */
+@media screen and (min-width: 1536px) {
+  /*
+   * Página grid xxl: bloque de productos un poco más arriba (flex-start + menos padding top).
+   */
+  .catalog-download__pdf-page-grid {
+    justify-content: flex-start !important;
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+    box-sizing: border-box;
+  }
+
+  /* Lista xxl: bloque de 3 productos un poco más arriba que con justify-center. */
+  .catalog-download__pdf-page-list {
+    justify-content: flex-start !important;
+    padding-top: 10rem;
+    padding-bottom: 4rem;
+    box-sizing: border-box;
+  }
+
+  /* Lista xxl: más aire entre cada product-expanded-item en la página. */
+  .catalog-download__pdf-list-inner {
+    gap: 3.25rem !important;
+  }
+
+  .catalog-page__pdf-capture .catalog-download__pdf-product-scale {
+    --catalog-download-pdf-product-scale: 1.3;
+
+    width: calc(100% / var(--catalog-download-pdf-product-scale));
+    max-width: calc(100% / var(--catalog-download-pdf-product-scale));
+    margin-inline: auto;
+    transform: scale(var(--catalog-download-pdf-product-scale));
+    transform-origin: top center;
   }
 }

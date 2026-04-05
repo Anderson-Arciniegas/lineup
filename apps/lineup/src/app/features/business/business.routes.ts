@@ -5,6 +5,7 @@ import { CreateCatalogPage } from '../control-panel/views/create-catalog-page/cr
 import { CreateProductPage } from '../control-panel/views/create-product-page/create-product-page';
 import { UpdateProductSkuPage } from '../control-panel/views/update-product-sku-page/update-product-sku-page';
 import { BusinessPage } from './views/business-page/business-page';
+import { CatalogDownloadPage } from './views/catalog-download-page/catalog-download-page';
 
 export const businessRoutes: Routes = [
   {
@@ -45,10 +46,7 @@ export const businessRoutes: Routes = [
       },
       {
         path: AppConfigService.config.routes.download,
-        loadComponent: () =>
-          import('./views/catalog-download-page/catalog-download-page').then(
-            (m) => m.CatalogDownloadPage,
-          ),
+        component: CatalogDownloadPage,
       },
       {
         canActivate: [BusinessAuthGuard],

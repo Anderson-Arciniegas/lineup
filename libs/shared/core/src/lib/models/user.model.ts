@@ -1,4 +1,9 @@
-import { ProvidersEnum, RolesCodesEnum, VisitTypeEnum } from '../enums';
+import {
+  ProvidersEnum,
+  RolesCodesEnum,
+  SearchTargetEnum,
+  VisitTypeEnum,
+} from '../enums';
 import type {
   BusinessSchema,
   CatalogSchema,
@@ -80,6 +85,20 @@ export interface PaginatedProductRatings {
 }
 
 export type SearchResultItem = BusinessSchema | CatalogSchema | ProductSchema;
+
+/** Entrada GraphQL `ProductSearchFiltersInput` para la búsqueda unificada. */
+export interface ProductSearchFiltersInput {
+  location?: string;
+  maxPrice?: number;
+  minPrice?: number;
+  minRating?: number;
+}
+
+/** Resultado al aplicar filtros en `SearchFilters` (sidebar o diálogo). */
+export interface SearchFiltersApplyPayload {
+  target: SearchTargetEnum;
+  productFilters: ProductSearchFiltersInput;
+}
 
 export interface PaginatedSearchResults {
   items: SearchResultItem[];

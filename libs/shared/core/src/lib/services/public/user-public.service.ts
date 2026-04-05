@@ -32,6 +32,7 @@ import type {
   InfinityScrollInput,
   LoginResponse,
   PaginatedSearchResults,
+  ProductSearchFiltersInput,
   SearchResultItem,
 } from '../../models';
 import { UserSchema } from '../../schemas';
@@ -173,13 +174,19 @@ export class UserPublicService {
 
   search(
     pagination: InfinityScrollInput,
-    target: SearchTargetEnum
+    target: SearchTargetEnum,
+    productFilters?: ProductSearchFiltersInput | null
   ): Observable<PaginatedSearchResults> {
+    const compact = this.compactProductFilters(productFilters);
     return this.apollo
       .use('userAPI')
       .query<{ search: PaginatedSearchResults }>({
         query: SEARCH_QUERY,
-        variables: { pagination, target },
+        variables: {
+          pagination,
+          target,
+          ...(compact ? { productFilters: compact } : {}),
+        },
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
@@ -220,6 +227,28 @@ export class UserPublicService {
         },
       })
       .pipe(map((result) => result.data!.loginWithGoogle));
+  }
+
+  private compactProductFilters(
+    filters?: ProductSearchFiltersInput | null
+  ): ProductSearchFiltersInput | undefined {
+    if (!filters) {
+      return undefined;
+    }
+    const out: ProductSearchFiltersInput = {};
+    if (filters.location != null && filters.location !== '') {
+      out.location = filters.location;
+    }
+    if (filters.minPrice != null) {
+      out.minPrice = filters.minPrice;
+    }
+    if (filters.maxPrice != null) {
+      out.maxPrice = filters.maxPrice;
+    }
+    if (filters.minRating != null) {
+      out.minRating = filters.minRating;
+    }
+    return Object.keys(out).length > 0 ? out : undefined;
   }
 
   /**
