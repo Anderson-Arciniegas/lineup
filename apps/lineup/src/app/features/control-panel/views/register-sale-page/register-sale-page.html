@@ -87,7 +87,7 @@
             <span class="font-medium text-gray-800 truncate"
               >#{{ product.id }} — {{ product.title }}</span
             >
-            @if (product.productTags?.length) {
+            <!-- @if (product.productTags?.length) {
             <div class="flex flex-wrap gap-1">
               @for (pt of product.productTags; track pt.idTag) { @if
               (pt.tag?.name) {
@@ -97,7 +97,7 @@
               >
               } }
             </div>
-            }
+            } -->
           </div>
           <lib-button
             [label]="
