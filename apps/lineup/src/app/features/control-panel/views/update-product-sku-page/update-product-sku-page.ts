@@ -26,7 +26,6 @@ import { ProductPrivateService } from 'libs/shared/core/src/lib/services/private
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
-import { EditorModule } from 'primeng/editor';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
@@ -52,7 +51,6 @@ import { forkJoin, Subscription } from 'rxjs';
     PanelModule,
     MenuModule,
     ChipModule,
-    EditorModule,
     ReactiveFormsModule,
     ProgressSpinner,
     SelectModule,
