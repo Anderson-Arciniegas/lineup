@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -23,7 +23,6 @@ import {
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { gsap } from 'gsap';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -35,6 +34,7 @@ import { Button } from '../button/button';
   selector: 'lib-product-card',
   imports: [
     CommonModule,
+    NgOptimizedImage,
     Button,
     CardModule,
     ButtonModule,
@@ -88,6 +88,7 @@ export class ProductCard
   private readonly _subscription = new Subscription();
   private _flipInitTimeoutId: ReturnType<typeof setTimeout> | undefined;
   private _teardownFlipListeners: (() => void) | undefined;
+  private _gsap: typeof import('gsap').gsap | null = null;
 
   /** Id único por instancia para el contenedor flip (DOM / GSAP). */
   readonly cardFlipId = `product-flip-${
@@ -188,6 +189,19 @@ export class ProductCard
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+    void this.syncFlipForExportStateAsync();
+  }
+
+  private async ensureGsap(): Promise<typeof import('gsap').gsap> {
+    if (!this._gsap) {
+      const m = await import('gsap');
+      this._gsap = m.gsap;
+    }
+    return this._gsap;
+  }
+
+  private async syncFlipForExportStateAsync(): Promise<void> {
+    const gsap = await this.ensureGsap();
     const flipBox = document.getElementById(this.cardFlipId);
     const inner = flipBox?.querySelector('.flip-inner');
     if (!flipBox || !inner) {
@@ -200,6 +214,9 @@ export class ProductCard
 
     if (this.pdfExportAttempt) {
       gsap.set(inner, { rotateX: 0 });
+      this._teardownFlipListeners = (): void => {
+        gsap.killTweensOf(inner);
+      };
       return;
     }
 
