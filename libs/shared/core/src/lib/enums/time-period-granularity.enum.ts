@@ -1,9 +1,9 @@
 export enum TimePeriodGranularityEnum {
   ALL = 'ALL',
-  LAST_MONTH = 'LAST_MONTH',
-  LAST_WEEK = 'LAST_WEEK',
-  LAST_YEAR = 'LAST_YEAR',
   RANGE = 'RANGE',
+  THIS_MONTH = 'THIS_MONTH',
+  THIS_WEEK = 'THIS_WEEK',
+  THIS_YEAR = 'THIS_YEAR',
   TODAY = 'TODAY',
   YESTERDAY = 'YESTERDAY',
 }

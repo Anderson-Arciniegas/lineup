@@ -82,11 +82,17 @@
     max-height: min(72vh, 100vw);
   }
 
+  @media screen and (max-width: 639px) {
+    .carousel-image-frame {
+      max-height: 400px;
+      max-width: 400px;
+    }
+  }
+
   @media screen and (min-width: 640px) and (max-width: 1023px) {
     .carousel-image-frame {
       width: min(400px, calc(100vw - 3rem), 72vh);
       height: min(400px, calc(100vw - 3rem), 72vh);
-      max-width: none;
     }
   }
 

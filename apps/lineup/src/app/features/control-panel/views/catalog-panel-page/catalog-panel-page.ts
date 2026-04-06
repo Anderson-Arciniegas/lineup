@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
@@ -10,6 +10,7 @@ import {
   BusinessSchema,
   CatalogPrivateService,
   CatalogSchema,
+  FileThumbnailUrlPipe,
   ProductPrivateService,
   ProductSchema,
   RatesPrivateService,
@@ -53,6 +54,7 @@ import { Subscription, take } from 'rxjs';
     ChipModule,
     ProductItem,
     InfiniteScrollDirective,
+    FileThumbnailUrlPipe,
   ],
   templateUrl: './catalog-panel-page.html',
   styleUrl: './catalog-panel-page.scss',

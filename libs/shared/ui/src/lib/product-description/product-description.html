@@ -11,12 +11,14 @@
       > -->
     </div>
 
+    @if (userMode()) {
     <lib-button
       size="small"
       width="w-25"
       [label]="'general.rate'"
       (action)="openRateModal()"
     ></lib-button>
+    }
   </div>
   <div class="w-full flex flex-col gap-1">
     <div class="flex flex-col gap-2 w-full lg:w-11/12">

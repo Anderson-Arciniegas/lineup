@@ -1,0 +1,45 @@
+<div class="notifications flex flex-col gap-3 w-80 sm:w-96 max-h-[min(24rem,70vh)]">
+  <div
+    class="flex flex-row items-center justify-between gap-2 shrink-0 border-b border-primary-100 pb-2"
+  >
+    <h2 class="text-base font-semibold m-0">
+      {{ 'notifications.title' | translate }}
+    </h2>
+    @if (hasUnread()) {
+      <lib-button
+        variant="text"
+        color="primary"
+        size="small"
+        [label]="'notifications.markAllRead' | translate"
+        [loading]="markAllLoading"
+        (action)="markAllRead()"
+      />
+    }
+  </div>
+
+  @if (loading()) {
+  <div class="flex justify-center py-6">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '40px', height: '40px' }"
+    />
+  </div>
+  } @else if (loadError()) {
+  <p class="text-sm text-red-600 m-0 py-2">
+    {{ 'notifications.loadError' | translate }}
+  </p>
+  } @else if (items().length === 0) {
+  <p class="text-sm text-surface-600 m-0 py-4 text-center">
+    {{ 'notifications.empty' | translate }}
+  </p>
+  } @else {
+  <div class="flex flex-col gap-1 overflow-y-auto min-h-0 pr-1 -mr-1">
+    @for (n of items(); track n.id) {
+    <lib-notification-item
+      [notification]="n"
+      (markRead)="onMarkRead($event)"
+    />
+    }
+  </div>
+  }
+</div>

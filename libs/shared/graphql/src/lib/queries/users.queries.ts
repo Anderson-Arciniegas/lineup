@@ -7,6 +7,7 @@ import {
   catalogSearchSelection,
   catalogSelection,
 } from '../selections/catalog.selection';
+import { discountWithoutDiscountProductsSelection } from '../selections/discount.selection';
 import {
   productCollectionSelection,
   productRatingSelection,
@@ -17,6 +18,11 @@ import {
   userBasicSelection,
   userFullSelection,
 } from '../selections/users.selection';
+
+/** Negocios seguidos con descuentos (el dashboard del usuario filtra promociones activas). */
+const businessFollowedItemsSelection = `${businessFullSelection.slice(0, -1)}
+  discounts ${discountWithoutDiscountProductsSelection}
+}`;
 
 /**
  * Query para obtener el usuario actual autenticado
@@ -143,7 +149,7 @@ export const FIND_LIKED_PRODUCTS_QUERY = gql`
 export const FIND_FOLLOWED_BUSINESSES_QUERY = gql`
   query FindFollowedBusinesses($pagination: InfinityScrollInput!) {
     findFollowedBusinesses(pagination: $pagination) {
-      items ${businessFullSelection}
+      items ${businessFollowedItemsSelection}
       limit
       page
       total

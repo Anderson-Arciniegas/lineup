@@ -3,3 +3,8 @@
   border-radius: 15px;
   background-color: #fff;
 }
+
+.dashboard-panel {
+  max-height: 500px;
+  overflow-y: auto;
+}

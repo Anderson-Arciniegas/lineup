@@ -5,6 +5,7 @@ export * from './color.model';
 export * from './email-verification.model';
 export * from './file.model';
 export * from './location.model';
+export * from './notification.model';
 export * from './product.model';
 export * from './size.model';
 export * from './social-network-business.model';

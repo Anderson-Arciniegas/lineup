@@ -6,9 +6,26 @@ import { Apollo } from 'apollo-angular';
 import { of } from 'rxjs';
 import { HomePage } from './home-page';
 
+/** `@defer (on viewport)` usa IntersectionObserver; Jest no lo define por defecto. */
+class IntersectionObserverMock implements IntersectionObserver {
+  readonly root: Element | Document | null = null;
+  readonly rootMargin = '';
+  readonly thresholds: ReadonlyArray<number> = [];
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+}
+
 describe('HomePage', () => {
   let component: HomePage;
   let fixture: ComponentFixture<HomePage>;
+
+  beforeAll(() => {
+    globalThis.IntersectionObserver = IntersectionObserverMock;
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

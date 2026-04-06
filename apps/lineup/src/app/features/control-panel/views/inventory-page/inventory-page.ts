@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   AppConfigService,
@@ -18,7 +18,14 @@ import { MessageService } from 'primeng/api';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
-import { Subscription } from 'rxjs';
+import {
+  forkJoin,
+  from,
+  of,
+  Subscription,
+  timer,
+} from 'rxjs';
+import { catchError, concatMap, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-inventory-page',
@@ -45,9 +52,11 @@ export class InventoryPage implements OnInit, OnDestroy {
   loadingProducts = false;
   loadingStock = false;
   expandedProductIds = new Set<number>();
+  downloadingCsv = false;
 
   readonly lowStockThreshold = 5;
 
+  private readonly _platformId = inject(PLATFORM_ID);
   private readonly _catalogService = inject(CatalogPrivateService);
   private readonly _productService = inject(ProductPrivateService);
   private readonly _authStore = inject(AuthStore);
@@ -189,6 +198,94 @@ export class InventoryPage implements OnInit, OnDestroy {
     return sku.id;
   }
 
+  downloadCurrentCatalogCsv(): void {
+    const catalog = this.selectedCatalog;
+    if (!catalog || this.loadingProducts || this.loadingStock) return;
+
+    const csv = this.buildCatalogInventoryCsv(
+      catalog,
+      this.products,
+      this._stockByProductId,
+    );
+    this.triggerCsvDownload(csv, this.csvFilenameForCatalog(catalog));
+    this._messageService.add({
+      severity: 'success',
+      summary: this._translate.instant('general.download'),
+      detail: this._translate.instant('inventoryPage.csvExportDone'),
+      life: 3500,
+    });
+  }
+
+  downloadAllCatalogsAsCsv(): void {
+    if (
+      this.downloadingCsv ||
+      this.catalogs.length === 0 ||
+      !isPlatformBrowser(this._platformId)
+    ) {
+      return;
+    }
+
+    this.downloadingCsv = true;
+    this._messageService.add({
+      severity: 'info',
+      summary: this._translate.instant('general.download'),
+      detail: this._translate.instant('inventoryPage.csvExportStarted'),
+      life: 2500,
+    });
+
+    const requests = this.catalogs.map((catalog) =>
+      this._productService.getAllByCatalog(catalog.id).pipe(
+        catchError((error: unknown) => {
+          console.error(error);
+          return of<ProductSchema[]>([]);
+        }),
+        map((products) => ({ catalog, products })),
+      ),
+    );
+
+    this._subscriptions.add(
+      forkJoin(requests)
+        .pipe(
+          concatMap((results) =>
+            from(results).pipe(
+              concatMap(({ catalog, products }, index) =>
+                timer(index * 450).pipe(
+                  tap(() => {
+                    const csv = this.buildCatalogInventoryCsv(
+                      catalog,
+                      products,
+                    );
+                    this.triggerCsvDownload(csv, this.csvFilenameForCatalog(catalog));
+                  }),
+                ),
+              ),
+            ),
+          ),
+        )
+        .subscribe({
+          complete: () => {
+            this.downloadingCsv = false;
+            this._messageService.add({
+              severity: 'success',
+              summary: this._translate.instant('general.download'),
+              detail: this._translate.instant('inventoryPage.csvExportDone'),
+              life: 4000,
+            });
+          },
+          error: (error: unknown) => {
+            console.error(error);
+            this.downloadingCsv = false;
+            this._messageService.add({
+              severity: 'error',
+              summary: this._translate.instant('general.error'),
+              detail: this._translate.instant('inventoryPage.csvExportError'),
+              life: 5000,
+            });
+          },
+        }),
+    );
+  }
+
   private get allSkus(): ProductSkuSchema[] {
     return this.products.flatMap(
       (product) => this._stockByProductId.get(product.id) ?? [],
@@ -230,20 +327,18 @@ export class InventoryPage implements OnInit, OnDestroy {
     this._stockByProductId.clear();
 
     this._subscriptions.add(
-      this._productService
-        .getAllByCatalogPaginated(catalogId, { page: 1, limit: 200 })
-        .subscribe({
-          next: (response) => {
-            this.products = response.items;
-            this.loadingProducts = false;
-            this.loadStockForProducts(response.items);
-          },
-          error: (error: unknown) => {
-            console.error(error);
-            this.loadingProducts = false;
-            this.showLoadError();
-          },
-        }),
+      this._productService.getAllByCatalog(catalogId).subscribe({
+        next: (response) => {
+          this.products = response;
+          this.loadingProducts = false;
+          this.loadStockForProducts(response);
+        },
+        error: (error: unknown) => {
+          console.error(error);
+          this.loadingProducts = false;
+          this.showLoadError();
+        },
+      }),
     );
   }
 
@@ -284,5 +379,115 @@ export class InventoryPage implements OnInit, OnDestroy {
       detail: this._translate.instant('general.errorLoadingData'),
       life: 4000,
     });
+  }
+
+  private buildCatalogInventoryCsv(
+    catalog: CatalogSchema,
+    products: ProductSchema[],
+    stockByProductId?: Map<number, ProductSkuSchema[]>,
+  ): string {
+    const headers = [
+      'catalog_id',
+      'catalog_title',
+      'catalog_path',
+      'product_id',
+      'product_title',
+      'product_price',
+      'product_currency_code',
+      'product_status',
+      'sku_id',
+      'sku_code',
+      'sku_price',
+      'sku_quantity',
+      'sku_currency_code',
+      'sku_status',
+      'sku_variation_options',
+    ];
+
+    const lines: string[] = [headers.map((h) => this.csvCell(h)).join(',')];
+
+    for (const product of products) {
+      const skus = this.resolveSkus(product, stockByProductId);
+      const rows = skus.length > 0 ? skus : [null];
+
+      for (const sku of rows) {
+        const base = [
+          catalog.id,
+          catalog.title,
+          catalog.path,
+          product.id,
+          product.title,
+          product.price ?? '',
+          product.currency?.code ?? '',
+          product.status,
+          sku?.id ?? '',
+          sku?.skuCode ?? '',
+          sku?.price ?? '',
+          sku?.quantity ?? '',
+          sku?.currency?.code ?? '',
+          sku?.status ?? '',
+          sku ? this.formatSkuVariationOptions(sku.variationOptions) : '',
+        ];
+        lines.push(base.map((v) => this.csvCell(v)).join(','));
+      }
+    }
+
+    return `\uFEFF${lines.join('\r\n')}`;
+  }
+
+  private resolveSkus(
+    product: ProductSchema,
+    stockByProductId?: Map<number, ProductSkuSchema[]>,
+  ): ProductSkuSchema[] {
+    if (stockByProductId?.has(product.id)) {
+      return stockByProductId.get(product.id)!;
+    }
+    return product.skus ?? [];
+  }
+
+  private formatSkuVariationOptions(
+    options: Record<string, unknown> | null | undefined,
+  ): string {
+    if (!options || typeof options !== 'object') return '';
+    return Object.entries(options)
+      .map(([key, value]) => `${key}: ${String(value)}`)
+      .join(' | ');
+  }
+
+  private csvCell(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    const s = String(value);
+    if (/[",\n\r]/.test(s)) {
+      return `"${s.replace(/"/g, '""')}"`;
+    }
+    return s;
+  }
+
+  private csvFilenameForCatalog(catalog: CatalogSchema): string {
+    const date = new Date().toISOString().slice(0, 10);
+    const slug = this.safeFilenameSegment(catalog.path || catalog.title);
+    return `inventario_${slug}_${date}.csv`;
+  }
+
+  private safeFilenameSegment(raw: string): string {
+    const cleaned = raw
+      .trim()
+      .replace(/[/\\?%*:|"<>]/g, '-')
+      .replace(/\s+/g, '_')
+      .slice(0, 80);
+    return cleaned || 'catalogo';
+  }
+
+  private triggerCsvDownload(content: string, filename: string): void {
+    if (!isPlatformBrowser(this._platformId)) return;
+
+    const doc = this._utils.document;
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = doc.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 }

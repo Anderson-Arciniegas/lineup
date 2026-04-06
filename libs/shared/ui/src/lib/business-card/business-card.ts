@@ -1,13 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BusinessSchema } from '@lineup/core';
+import { BusinessSchema, FileThumbnailUrlPipe } from '@lineup/core';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'lib-business-card',
-  imports: [CommonModule, CardModule, ProgressSpinnerModule, RouterLink],
+  imports: [
+    CommonModule,
+    CardModule,
+    FileThumbnailUrlPipe,
+    ProgressSpinnerModule,
+    RouterLink,
+  ],
   templateUrl: './business-card.html',
   styleUrl: './business-card.scss',
 })

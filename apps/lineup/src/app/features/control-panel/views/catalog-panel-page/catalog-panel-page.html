@@ -19,7 +19,7 @@
       class="flex flex-col sm:flex-row items-center justify-start gap-5 w-full"
     >
       <img
-        [src]="catalog.image.url"
+        [src]="catalog.image | fileThumbnailUrl:'xs'"
         alt="Catalog Image"
         class="w-40 h-40 catalog-image"
       />

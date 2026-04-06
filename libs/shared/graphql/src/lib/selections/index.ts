@@ -5,6 +5,7 @@ export * from './discount.selection';
 export * from './currency.selection';
 export * from './file.selection';
 export * from './location.selection';
+export * from './notification.selection';
 export * from './product.selection';
 export * from './social-network-business.selection';
 export * from './social-network.selection';

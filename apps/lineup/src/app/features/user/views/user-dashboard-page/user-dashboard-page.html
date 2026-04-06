@@ -1,0 +1,107 @@
+<section
+  class="user-dashboard flex flex-col gap-6 sm:gap-10 items-center justify-start w-full my-1 pt-1 pb-30 container"
+>
+  <section
+    class="py-6 sm:py-10 px-4 box-border w-full flex flex-col gap-6 sm:gap-10 items-center justify-start"
+  >
+    <div class="w-full flex flex-col gap-2 px-2 md:px-12 lg:px-18">
+      <h1 class="text-xl sm:text-3xl md:text-4xl font-bold">
+        {{ 'general.userDashboardTitle' | translate }}
+      </h1>
+      <p class="text-md md:text-lg text-gray-600">
+        {{ 'general.userDashboardSubtitle' | translate }}
+      </p>
+    </div>
+
+    @if (followedLoading) {
+    <div class="flex flex-row items-center justify-center p-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else if (followedBusinesses.length === 0) {
+    <div
+      class="w-full max-w-3xl p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 flex flex-col gap-4 items-start"
+    >
+      <span class="font-medium">{{
+        'general.userDashboardEmptyFollows' | translate
+      }}</span>
+      <lib-button
+        [label]="'general.userDashboardViewFavorites' | translate"
+        color="primary"
+        type="rounded"
+        [link]="favoritesLink"
+        [size]="'small'"
+      />
+    </div>
+    } @else {
+    <div
+      class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
+    >
+      <h2 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+        {{ 'general.userDashboardPromotions' | translate }}
+      </h2>
+      @if (businessesWithPromotions.length > 0) {
+      <div class="w-full products-grid mb-4">
+        @for (business of businessesWithPromotions; track business.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-business-card
+            class="cursor-pointer"
+            [width]="'w-60 2xl:w-65'"
+            [height]="'h-80'"
+            [business]="business"
+          />
+        </div>
+        }
+      </div>
+      } @else {
+      <div
+        class="w-full ms-5 sm:ms-10 p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
+      >
+        <span class="font-medium">{{
+          'general.userDashboardEmptyDiscounts' | translate
+        }}</span>
+      </div>
+      }
+    </div>
+
+    <div
+      class="flex flex-col items-start justify-center gap-5 w-full px-4 pt-2 box-border"
+    >
+      <h2 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+        {{ 'general.userDashboardRecentProducts' | translate }}
+      </h2>
+      @if (productsLoading) {
+      <div class="flex flex-row items-center justify-center p-10 w-full">
+        <p-progress-spinner
+          strokeWidth="4"
+          [style]="{ width: '100px', height: '100px' }"
+        />
+      </div>
+      } @else if (recentProductsFromFollowed.length > 0) {
+      <div class="products-grid w-full">
+        @for (product of recentProductsFromFollowed; track product.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-product-card
+            class="my-1 sm:my-3"
+            [width]="'w-65'"
+            [height]="'h-100'"
+            [product]="product"
+          />
+        </div>
+        }
+      </div>
+      } @else {
+      <div
+        class="w-full ms-5 sm:ms-10 p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
+      >
+        <span class="font-medium">{{
+          'general.userDashboardNoRecentProducts' | translate
+        }}</span>
+      </div>
+      }
+    </div>
+    }
+  </section>
+</section>

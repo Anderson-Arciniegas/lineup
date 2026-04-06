@@ -30,7 +30,7 @@
       }
     </div>
     @if(product){
-    <div class="flex flex-row items-center justify-start gap-3">
+    <div class="flex sm:flex-row flex-col sm:items-center justify-start gap-3">
       <span class="text-base text-gray-600 font-medium flex items-center gap-2">
         <i class="pi pi-folder"></i>
         {{ catalog?.title }}
@@ -112,11 +112,12 @@
             </div>
 
             <div>
-              @if (urls.length > 0) {
+              @if (urls.length > 0 || loadingFile) {
 
               <lib-draggable-image-list
                 [images]="urls"
                 [imageCodes]="imgCodes"
+                [loadingFile]="loadingFile"
                 (imagesChange)="onImagesChange($event)"
               />
               }

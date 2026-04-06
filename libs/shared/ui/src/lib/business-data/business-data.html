@@ -8,7 +8,18 @@
     class="flex flex-row items-start justify-start sm:justify-center gap-2 md:gap-6 w-full"
   >
     <div class="flex flex-col items-center justify-center img-box min-w-25">
-      <img [src]="business?.image?.url" alt="Shop Icon" />
+      @if (business?.image) {
+      <img
+        class="block sm:hidden"
+        [src]="business.image | fileThumbnailUrl:'xs'"
+        alt="Shop Icon"
+      />
+      <img
+        class="hidden sm:block"
+        [src]="business.image | fileThumbnailUrl:'sm'"
+        alt="Shop Icon"
+      />
+      }
     </div>
     <div class="flex flex-col items-center md:items-start justify-center gap-2">
       <div
@@ -102,7 +113,7 @@
               </div>
             </p-popover>
           </div>
-          }@else {
+          }@else if (userMode()) {
           <div class="flex flex-row items-center justify-start h-10">
             <div>
               <lib-button

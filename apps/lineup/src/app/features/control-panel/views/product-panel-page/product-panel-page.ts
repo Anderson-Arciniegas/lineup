@@ -68,6 +68,8 @@ export class ProductPanelPage implements OnInit, OnDestroy {
   page = 1;
   loadingRatings = false;
   rates: BcvOfficialRatesSchema;
+  productUrl: string;
+
   readonly colorsVariations = BASIC_COLORS;
   readonly DiscountTypeEnum = DiscountTypeEnum;
 
@@ -197,6 +199,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
           this.isPrimaryToggle = product.isPrimary;
           console.log(this.product);
           this.loading = false;
+          this.productUrl = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
           this._cdr.markForCheck();
         },
         error: (error) => {
@@ -268,14 +271,14 @@ export class ProductPanelPage implements OnInit, OnDestroy {
             this._productService.removeProduct(id).subscribe({
               next: () => {
                 this.attemptDelete = false;
-              this._messageService.add({
-                severity: 'success',
-                summary: this._translate.instant('general.success'),
-                detail: this._translate.instant(
-                  'toast.productDeletedSuccessfully',
-                ),
-                life: 3000,
-              });
+                this._messageService.add({
+                  severity: 'success',
+                  summary: this._translate.instant('general.success'),
+                  detail: this._translate.instant(
+                    'toast.productDeletedSuccessfully',
+                  ),
+                  life: 3000,
+                });
                 this._utils.navigate([
                   AppConfigService.config.routes.dashboard,
                   AppConfigService.config.routes.catalogs,
