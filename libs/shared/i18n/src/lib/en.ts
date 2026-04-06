@@ -248,6 +248,17 @@ export const en = {
     myFavoritesEmpty: 'No businesses in your favorites.',
     myWishlist: 'My wishlist',
     myFavorites: 'My favorites',
+    userDashboardTitle: 'Your dashboard',
+    userDashboardSubtitle: 'Updates from businesses you follow',
+    userDashboardRecentProducts: 'Latest products from businesses you follow',
+    userDashboardPromotions: 'Promotions from businesses you follow',
+    userDashboardEmptyFollows:
+      'You are not following any businesses yet. Follow some to see their new products and offers here.',
+    userDashboardEmptyDiscounts:
+      'None of your followed businesses have active promotions right now.',
+    userDashboardViewFavorites: 'View businesses I follow',
+    userDashboardNoRecentProducts:
+      'No primary products to show from your followed businesses yet.',
     businessHours: 'Business hours',
     addBusinessHours: 'Add hours',
     editBusinessHours: 'Edit hours',
@@ -271,10 +282,15 @@ export const en = {
     total: 'Total',
     noCatalogProducts: 'No products registered in this catalog.',
     ourCatalogs: 'Our catalogs',
+    noBusinessCatalogs: 'This business has no catalogs created yet.',
     ourMainProducts: 'Our main products',
     outOfStockSimple: 'Out of stock',
     switchCatalog: 'Switch catalog',
     productPanel: 'Product panel',
+    editProduct: 'Edit product',
+    showProductPriceEquivalentsInBs:
+      'Show product price equivalents in BS (BCV Rate)',
+    productPriceInBs: 'Product price in BS',
   },
   businessHoursModal: {
     days: 'Days',
@@ -370,6 +386,8 @@ export const en = {
     salesProductLabel: 'Product',
     salesIdProductSkuLabel: 'SKU ID',
     salesPriceLabel: 'Price',
+    salesUnitPriceLabel: 'Unit',
+    salesTotalPriceLabel: 'Total',
     lowStockSkus: 'SKUs low or out of stock',
     productsWithoutStock: 'Products without stock',
     recentMovements: 'Recent stock movements',
@@ -385,6 +403,13 @@ export const en = {
     topByLikes: 'Most likes',
     topByRating: 'Best rated',
     noData: 'No data to display.',
+    downloadCsv: 'Download CSV',
+    csvExportEmpty: 'There is no data to export for this section.',
+    ratingAverageColumn: 'Average rating',
+    csvNotesColumn: 'Notes',
+    salesRemainingQuantity: 'Remaining quantity',
+    csvLabelColumn: 'Label',
+    csvCountColumn: 'Count',
   },
   inventoryPage: {
     selectCatalogHint:
@@ -409,6 +434,11 @@ export const en = {
     lowStock: 'Low stock',
     available: 'Available',
     noCatalogsAvailable: 'You have no catalogs available to show inventory.',
+    downloadCsvCurrentCatalog: 'CSV — current catalog',
+    downloadCsvAllCatalogs: 'CSV per catalog (all)',
+    csvExportStarted: 'Generating CSV files…',
+    csvExportDone: 'Inventory CSV files per catalog were downloaded.',
+    csvExportError: 'Could not generate the CSV export.',
   },
   registerSalePage: {
     subtitle:
@@ -469,6 +499,7 @@ export const en = {
     primaryProductRemoved: 'The product was removed from primary products.',
     catalogPdfExportFailed:
       'Could not generate the catalog PDF. If images are missing, enable CORS on your file storage for this origin.',
+    bsPricePreferenceUpdated: 'BS price preference updated successfully',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork:
@@ -555,5 +586,11 @@ export const en = {
   variations: {
     color: 'Color',
     size: 'Size',
+  },
+  notifications: {
+    title: 'Notifications',
+    empty: 'You have no notifications yet.',
+    markAllRead: 'Mark all as read',
+    loadError: 'Could not load notifications.',
   },
 };

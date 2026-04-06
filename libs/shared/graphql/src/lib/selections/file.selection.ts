@@ -9,4 +9,9 @@ export const fileSelection = `{
     username
     email
   }
+  thumbnails {
+    md { height url width }
+    sm { height url width }
+    xs { height url width }
+  }
 }`;

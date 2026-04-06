@@ -16,6 +16,7 @@ import {
   BcvOfficialRatesSchema,
   CurrencySchema,
   DiscountSchema,
+  getFileThumbnailUrl,
   ProductPublicService,
   ProductSchema,
   RatesPrivateService,
@@ -45,7 +46,9 @@ import { Button } from '../button/button';
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })
-export class ProductCard implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+export class ProductCard
+  implements AfterViewInit, OnChanges, OnDestroy, OnInit
+{
   @Input() product: ProductSchema;
   @Input() width = 'w-65';
   @Input() height = 'h-100';
@@ -95,12 +98,12 @@ export class ProductCard implements AfterViewInit, OnChanges, OnDestroy, OnInit 
   ngOnInit(): void {
     if (this.product) {
       this.image = this.srcWithCrossOriginNonce(
-        this.product.productFiles[0].file?.url,
+        getFileThumbnailUrl(this.product.productFiles[0].file, 'sm'),
       );
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
         this.businessImage = this.srcWithCrossOriginNonce(
-          this.product.business.image?.url,
+          getFileThumbnailUrl(this.product.business.image, 'xs'),
         );
       } else {
         this.url = `/business-1/catalog-1/123`;
@@ -147,19 +150,16 @@ export class ProductCard implements AfterViewInit, OnChanges, OnDestroy, OnInit 
     if (changes['product'] && this.product) {
       this.imageLoaded = false;
       this.image = this.srcWithCrossOriginNonce(
-        this.product.productFiles[0]?.file?.url,
+        getFileThumbnailUrl(this.product.productFiles[0]?.file, 'sm'),
       );
       this.businessImage = this.srcWithCrossOriginNonce(
-        this.product.business?.image?.url,
+        getFileThumbnailUrl(this.product.business?.image, 'sm'),
       );
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
       }
     }
-    if (
-      changes['pdfExportAttempt'] &&
-      isPlatformBrowser(this.platformId)
-    ) {
+    if (changes['pdfExportAttempt'] && isPlatformBrowser(this.platformId)) {
       this.syncFlipForExportState();
     }
   }

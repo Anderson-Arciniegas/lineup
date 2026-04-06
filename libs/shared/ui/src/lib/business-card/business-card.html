@@ -2,7 +2,7 @@
   <div
     class="business-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
   >
-    <div
+    <!-- <div
       class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs"
     >
       @if (!favoritesMode) {
@@ -15,21 +15,33 @@
         >
       </div>
       }
-      <!-- <div class="business-data-right flex flex-row items-center justify-end gap-2 w-fit px-2 py-1">
-                <i class="pi pi-objects-column"
-                   style="font-size: 0.8rem"></i>
-                <span>99+</span>
-            </div> -->
-    </div>
+    </div> -->
 
     <div class="h-full image-container">
+      @if (business?.image) {
+      <img
+        alt="Card"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="image h-full w-full block sm:hidden"
+        [src]="business.image | fileThumbnailUrl:'xs'"
+      />
+      <img
+        alt="Card"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="image h-full w-full hidden sm:block"
+        [src]="business.image | fileThumbnailUrl:'sm'"
+      />
+      } @else {
       <img
         alt="Card"
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
         class="image h-full w-full"
-        [src]="business?.image?.url ?? image"
+        [src]="image"
       />
+      }
       <div
         [hidden]="imageLoaded"
         class="h-full w-full flex flex-row items-center justify-center"
@@ -43,7 +55,7 @@
         />
       </div>
     </div>
-    <div>
+    <div class="pt-2">
       <p
         class="text-center font-medium text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden"
       >

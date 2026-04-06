@@ -1,4 +1,5 @@
 export { ApiClient } from '../graphql.service';
+export * from './business-notifications-public.service';
 export * from './business-public.service';
 export * from './catalog-public.service';
 export * from './rating-public.service';

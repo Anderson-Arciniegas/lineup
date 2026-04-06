@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { StatsPrivateService } from '@lineup/core';
+import {
+  CurrencyPrivateService,
+  StatsPrivateService,
+  UtilsService,
+} from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
@@ -14,6 +18,22 @@ describe('StatisticsPage', () => {
       imports: [StatisticsPage, TranslateModule.forRoot()],
       providers: [
         MessageService,
+        {
+          provide: UtilsService,
+          useValue: {
+            document: {
+              createElement: () => ({
+                click: (): void => undefined,
+                href: '',
+                download: '',
+              }),
+            },
+          },
+        },
+        {
+          provide: CurrencyPrivateService,
+          useValue: { findAllCurrencies: () => of([]) },
+        },
         {
           provide: StatsPrivateService,
           useValue: {

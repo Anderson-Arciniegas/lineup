@@ -10,7 +10,7 @@
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
   <div
-    class="container flex flex-col items-center justify-start gap-4 sm:gap-8 w-full"
+    class="container flex flex-col items-center justify-start gap-4 sm:gap-8 w-full pb-30"
   >
     <lib-business-data
       [business]="business"
@@ -43,6 +43,7 @@
     </div>
     }
     <div class="w-full flex flex-col items-center justify-center gap-10">
+      @if (business && (catalogs.length > 0 || !attempt)) {
       <div
         [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
         class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
@@ -52,6 +53,7 @@
           {{'general.ourCatalogs' | translate}}
         </h2>
       </div>
+      }
       <div
         class="catalogs-grid"
         infiniteScroll
@@ -61,7 +63,7 @@
         [infiniteScrollDisabled]="attempt || noMoreResults"
         (scrolled)="onScroll()"
       >
-        @if (business && myBusiness) {
+        @if (business && myBusiness && (catalogs.length > 0 || !attempt)) {
         <div class="w-full flex flex-col items-center justify-center">
           <lib-create-catalog-card
             [business]="business"
@@ -81,6 +83,16 @@
         </div>
         }
       </div>
+
+      @if (business && !attempt && catalogs.length === 0) {
+      <p
+        class="w-full text-center text-base md:text-lg px-6 sm:px-10 md:px-26 text-color-secondary"
+        [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+        [class.opacity-90]="pageBackgroundGradient ? isDarkBackground : undefined"
+      >
+        {{ 'general.noBusinessCatalogs' | translate }}
+      </p>
+      }
 
       @if(attempt) {
       <div class="flex flex-col justify-center items-center w-full">

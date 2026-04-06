@@ -41,6 +41,7 @@ describe('InventoryPage', () => {
         {
           provide: ProductPrivateService,
           useValue: {
+            getAllByCatalog: () => of([]),
             getAllByCatalogPaginated: () =>
               of({
                 items: [],

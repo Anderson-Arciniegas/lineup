@@ -21,7 +21,7 @@
     </a>
   </div>
 
-  <div class="flex flex-row items-center justify-end gap-3">
+  <div class="flex flex-row items-center justify-end gap-4">
     <div class="hidden sm:flex flex-row gap-1 items-center justify-center">
       <lib-button
         [link]="'/'"
@@ -73,6 +73,32 @@
       width="w-11"
     ></lib-button>
     }@else if (!businessMode()) {
+    <p-popover
+      #userNotificationsPopover
+      (onShow)="userNotificationsPanel.refresh()"
+    >
+      <lib-notifications
+        #userNotificationsPanel
+        [businessMode]="false"
+        (countMayHaveChanged)="refreshPendingNotificationsCount()"
+      />
+    </p-popover>
+    <div
+      class="flex items-center justify-center cursor-pointer w-12 h-12"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'notifications.title' | translate"
+      (click)="userNotificationsPopover.toggle($event)"
+      (keydown.enter)="userNotificationsPopover.toggle($event)"
+      (keydown.space)="$event.preventDefault(); userNotificationsPopover.toggle($event)"
+    >
+      <p-overlay-badge
+        [value]="pendingNotificationsCount()"
+        [badgeDisabled]="pendingNotificationsCount() === 0"
+      >
+        <i class="pi pi-bell" style="font-size: 1.5rem; cursor: pointer"></i>
+      </p-overlay-badge>
+    </div>
     <lib-button
       class="hidden sm:flex"
       [link]="'/profile'"
@@ -82,6 +108,7 @@
       width="w-30"
       [label]="'general.profile' | translate"
     ></lib-button>
+
     <lib-button
       class="flex sm:hidden"
       [link]="'/profile'"
@@ -90,7 +117,36 @@
       icon="pi pi-user"
       width="w-11"
     ></lib-button>
+
     }@else if (businessMode()) {
+    <p-popover
+      #businessNotificationsPopover
+      (onShow)="businessNotificationsPanel.refresh()"
+    >
+      <lib-notifications
+        #businessNotificationsPanel
+        [businessMode]="true"
+        (countMayHaveChanged)="refreshPendingNotificationsCount()"
+      />
+    </p-popover>
+    <div
+      class="flex items-center justify-center cursor-pointer w-11 h-11 rounded-full hover:bg-primary-200"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'notifications.title' | translate"
+      (click)="businessNotificationsPopover.toggle($event)"
+      (keydown.enter)="businessNotificationsPopover.toggle($event)"
+      (keydown.space)="$event.preventDefault(); businessNotificationsPopover.toggle($event)"
+    >
+      <p-overlay-badge
+        [value]="pendingNotificationsCount()"
+        [badgeDisabled]="pendingNotificationsCount() === 0"
+      >
+        <i class="pi pi-bell" style="font-size: 1.5rem; cursor: pointer"></i>
+      </p-overlay-badge>
+    </div>
+
+    }
     <lib-button
       class="hidden sm:flex"
       [link]="'/dashboard'"
@@ -107,7 +163,6 @@
       icon="pi pi-home"
       width="w-11"
     ></lib-button>
-    }
   </div>
 </nav>
 <!-- 

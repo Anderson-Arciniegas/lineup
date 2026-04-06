@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { CurrencySymbolPipe, ProductSchema } from '@lineup/core';
+import { AuthStore, CurrencySymbolPipe, ProductSchema } from '@lineup/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Button } from '../button/button';
@@ -21,6 +21,9 @@ export class ProductDescription implements OnInit {
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _sanitizer = inject(DomSanitizer);
+  private readonly _authStore = inject(AuthStore);
+
+  userMode = computed(() => this._authStore.isUserLoggedIn());
 
   ngOnInit(): void {
     this.tags =

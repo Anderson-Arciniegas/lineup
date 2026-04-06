@@ -1,4 +1,6 @@
-<div class="w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
+<div
+  class="w-full py-4 sm:py-5 sm:px-2 md:px-10 gap-8 flex flex-col items-center"
+>
   <div
     class="w-full flex flex-col gap-6 py-4 sm:py-6 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
@@ -83,7 +85,7 @@
   } @else {
 
   <div
-    class="w-full flex flex-col gap-4 py-4 sm:py-8 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+    class="w-full flex flex-col gap-4 py-4 sm:py-8 sm:px-4 lg:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <p-tabs [(value)]="activeStatisticsTab" [scrollable]="true">
       <p-tablist>
@@ -128,6 +130,14 @@
       <p-tabpanels>
         <p-tabpanel value="inventory">
           <div class="flex flex-col gap-4 pt-4">
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadInventoryCsv()"
+              />
+            </div>
             <div
               class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 w-full"
             >
@@ -199,9 +209,15 @@
 
         <p-tabpanel value="sales">
           <div class="flex flex-col gap-4 pt-4">
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl"
-            >
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadSalesCsv()"
+              />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
               <div
                 class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-emerald-50 border border-emerald-100"
               >
@@ -246,16 +262,17 @@
                     class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2"
                   >
                     <div class="flex flex-col gap-1 min-w-0">
-                      <span class="font-medium text-gray-800 truncate">{{
-                        sale.productSku?.product?.title
-                          ?? sale.productSku?.skuCode
-                          ?? ('statisticsPage.salesProductLabel' | translate)
-                      }}</span>
-                      <span class="text-xs text-gray-400 font-mono">
-                        #{{ sale.id }} ·
-                        {{ 'statisticsPage.salesIdProductSkuLabel' | translate }}
-                        {{ sale.idProductSku }} ·
-                        {{ sale.creationDate | localeDate: 'short' }}
+                      <span class="font-medium text-gray-800 truncate"
+                        >{{ sale.productSku?.product?.title ??
+                        sale.productSku?.skuCode ??
+                        ('statisticsPage.salesProductLabel' | translate)
+                        }}</span
+                      >
+                      <span class="text-xs text-gray-600 font-mono">
+                        #{{ sale.id }} · {{
+                        'statisticsPage.salesIdProductSkuLabel' | translate }}
+                        {{ sale.idProductSku }} · {{ sale.creationDate |
+                        localeDate: 'short' }}
                       </span>
                     </div>
                     <div
@@ -274,23 +291,64 @@
                       >
                     </div>
                   </div>
+                  <!-- <div
+                    class="flex flex-row flex-wrap items-baseline gap-2 text-sm text-gray-600"
+                  >
+                    <span
+                      >{{ 'statisticsPage.salesRemainingQuantity' | translate }}:</span
+                    >
+                    <span class="font-semibold text-gray-800">{{
+                      sale.newQuantity
+                    }}</span>
+                  </div> -->
                   <div
                     class="flex flex-row flex-wrap items-baseline gap-2 text-sm text-gray-600 pt-1 border-t border-gray-100"
                   >
-                    <span>{{ 'statisticsPage.salesPriceLabel' | translate }}:</span>
-                    @if (sale.price !== null && sale.price !== undefined) {
-                    <span class="font-semibold text-gray-800">
-                      @if (sale.productSku?.currency?.code) {
-                      <span class="text-gray-500 font-normal mr-1">{{
-                        sale.productSku.currency.code | currencySymbol
-                      }}</span>
+                    @let sc = saleCurrencyCode(sale);
+                    <span
+                      >{{ 'statisticsPage.salesPriceLabel' | translate }}:</span
+                    >
+                    @if ( (sale.productSku?.price !== null &&
+                    sale.productSku?.price !== undefined) || (sale.price !==
+                    null && sale.price !== undefined) ) {
+                    <div
+                      class="flex flex-col sm:flex-row sm:flex-wrap gap-x-4 gap-y-1 items-baseline font-semibold text-gray-800"
+                    >
+                      @if ( sale.productSku?.price !== null &&
+                      sale.productSku?.price !== undefined ) {
+                      <span class="inline-flex flex-wrap items-baseline gap-1">
+                        <span class="text-gray-600 font-normal text-sm"
+                          >{{ 'statisticsPage.salesUnitPriceLabel' | translate
+                          }}</span
+                        >
+                        @if (sc) {
+                        <span class="text-gray-500 font-normal mr-0.5"
+                          >{{ sc | currencySymbol }}</span
+                        >
+                        }
+                        <span
+                          >{{ sale.productSku.price | number: '1.2-2' }}</span
+                        >
+                      </span>
+                      } @if (sale.price !== null && sale.price !== undefined) {
+                      <span class="inline-flex flex-wrap items-baseline gap-1">
+                        <span class="text-gray-600 font-normal text-sm"
+                          >{{ 'statisticsPage.salesTotalPriceLabel' | translate
+                          }}</span
+                        >
+                        @if (sc) {
+                        <span class="text-gray-500 font-normal mr-0.5"
+                          >{{ sc | currencySymbol }}</span
+                        >
+                        }
+                        <span>{{ sale.price | number: '1.2-2' }}</span>
+                      </span>
                       }
-                      {{ sale.price | number: '1.2-2' }}
-                    </span>
+                    </div>
                     } @else {
-                    <span class="font-medium text-gray-400">{{
-                      'inventoryPage.notAvailable' | translate
-                    }}</span>
+                    <span class="font-medium text-gray-400"
+                      >{{ 'inventoryPage.notAvailable' | translate }}</span
+                    >
                     }
                   </div>
                   @if (sale.notes) {
@@ -306,6 +364,14 @@
 
         <p-tabpanel value="products">
           <div class="flex flex-col gap-4 pt-4">
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadProductsCsv()"
+              />
+            </div>
             <div
               class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full"
             >
@@ -453,6 +519,14 @@
 
         <p-tabpanel value="catalogs">
           <div class="flex flex-col gap-4 pt-4">
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadCatalogsCsv()"
+              />
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
               <div
                 class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-cyan-50 border border-cyan-100 md:col-span-1"
@@ -532,6 +606,14 @@
 
         <p-tabpanel value="discounts">
           <div class="flex flex-col gap-4 pt-4">
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadDiscountsCsv()"
+              />
+            </div>
             <div
               class="flex flex-col items-center justify-center gap-2 p-5 rounded-xl bg-amber-50 border border-amber-100 w-full max-w-xs"
             >
@@ -602,6 +684,14 @@
 
         <p-tabpanel value="engagement">
           <div class="flex flex-col gap-4 pt-4">
+            <div class="flex justify-end w-full">
+              <lib-button
+                icon="pi pi-download"
+                [label]="'statisticsPage.downloadCsv' | translate"
+                type="rounded"
+                (action)="downloadEngagementCsv()"
+              />
+            </div>
             <div
               class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full"
             >

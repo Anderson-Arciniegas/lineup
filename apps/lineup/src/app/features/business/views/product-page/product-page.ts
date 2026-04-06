@@ -15,6 +15,8 @@ import {
   BusinessPublicService,
   BusinessSchema,
   CatalogPrivateService,
+  FileThumbnailUrlPipe,
+  getFileThumbnailUrl,
   InfinityScrollInput,
   PaginatedProducts,
   ProductPrivateService,
@@ -49,6 +51,7 @@ import { catchError, finalize } from 'rxjs/operators';
     ProductInfo,
     TranslateModule,
     Carousel,
+    FileThumbnailUrlPipe,
     ImageModule,
     ProgressSpinner,
     Button,
@@ -70,18 +73,6 @@ export class ProductPage implements OnInit, OnDestroy {
   private static readonly _GRADIENT_TOP_LIGHTEN = 0.25;
   private static readonly _GRADIENT_BOTTOM_LIGHTEN = 0.6;
   private static readonly _LUMINANCE_THRESHOLD = 0.45;
-  images: string[] = [
-    'assets/images/products/headphones-min.webp',
-    'assets/images/products/makeup.webp',
-    'assets/images/products/shoes-min.webp',
-    'assets/images/products/phone-min.webp',
-    'assets/images/products/skincare-min.webp',
-    'assets/images/products/tomato-min.webp',
-    'assets/images/products/camera.webp',
-    'assets/images/products/cooler.webp',
-    'assets/images/products/laptop.webp',
-  ];
-  imageLoaded: boolean[] = [];
   attempt = false;
   /**
    * Slides visibles (Tailwind por defecto): xl/2xl (≥1280px) → 3; lg (1024–1279) → 2; debajo de lg → 1.
@@ -152,10 +143,7 @@ export class ProductPage implements OnInit, OnDestroy {
         .subscribe({
           next: (product) => {
             this.product = product;
-            if (product.productFiles) {
-              this.images = product.productFiles.map(
-                (file) => file.file?.url || '',
-              );
+            if (product.productFiles?.length) {
               this.carouselInstanceKey += 1;
             }
             if (!this.myBusiness) {
@@ -240,7 +228,12 @@ export class ProductPage implements OnInit, OnDestroy {
   }
 
   private _carouselSlideCount(): number {
-    return this.images?.filter((u) => !!u?.trim()).length ?? 0;
+    const files = this.product?.productFiles;
+    if (!files?.length) {
+      return 0;
+    }
+    return files.filter((pf) => !!getFileThumbnailUrl(pf.file, 'md')?.trim())
+      .length;
   }
 
   private _carouselNumVisibleForViewport(): number {
@@ -336,11 +329,6 @@ export class ProductPage implements OnInit, OnDestroy {
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
-  }
-
-  onImageLoad(index: number): void {
-    this.imageLoaded[index] = true;
-    this._cdr.detectChanges();
   }
 
   private extractProductTagIdentifiers(product: ProductSchema): string[] {
