@@ -22,6 +22,8 @@ export * from './lib/footer/footer';
 export * from './lib/image-cropper/image-cropper';
 export * from './lib/location-modal/location-modal';
 export * from './lib/nav/nav';
+export * from './lib/notification-item/notification-item';
+export * from './lib/notifications/notifications';
 export * from './lib/product-breadcrumb/product-breadcrumb';
 export * from './lib/product-card/product-card';
 export * from './lib/product-carousel/product-carousel';

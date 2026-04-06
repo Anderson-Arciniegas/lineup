@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthStore, BusinessSchema, ProvidersEnum } from '@lineup/core';
+import { FormsModule } from '@angular/forms';
+import {
+  AuthStore,
+  BusinessPrivateService,
+  BusinessSchema,
+  ProvidersEnum,
+} from '@lineup/core';
 import {
   Button,
   UpdateEmailModal,
@@ -11,11 +17,18 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { take } from 'rxjs';
 
 @Component({
   selector: 'app-business-settings-page',
-  imports: [CommonModule, TranslateModule, Button],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    Button,
+    ToggleSwitchModule,
+    FormsModule,
+  ],
   templateUrl: './business-settings-page.html',
   styleUrl: './business-settings-page.scss',
 })
@@ -26,8 +39,10 @@ export class BusinessSettingsPage implements OnInit {
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private readonly _authStore = inject(AuthStore);
+  private readonly _businessPrivateService = inject(BusinessPrivateService);
   private readonly destroyRef = inject(DestroyRef);
   private _ref: DynamicDialogRef | undefined;
+  savingBsPricePreference = false;
 
   ngOnInit(): void {
     this.business = this._authStore.business();
@@ -40,9 +55,54 @@ export class BusinessSettingsPage implements OnInit {
 
   get canChangeEmail(): boolean {
     return (
-      this.business != null &&
-      this.business.provider !== ProvidersEnum.GOOGLE
+      this.business != null && this.business.provider !== ProvidersEnum.GOOGLE
     );
+  }
+
+  get isProductPriceInBsToggle(): boolean {
+    return this.business?.isBsEquivalentPriceEnabled ?? false;
+  }
+
+  onIsProductPriceInBsToggle(value: boolean): void {
+    if (!this.business?.id || this.savingBsPricePreference) {
+      return;
+    }
+    const previous = this.business.isBsEquivalentPriceEnabled ?? false;
+    this.business = { ...this.business, isBsEquivalentPriceEnabled: value };
+    this.savingBsPricePreference = true;
+
+    this._businessPrivateService
+      .updateBusiness({
+        id: this.business.id,
+        isBsEquivalentPriceEnabled: value,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated) => {
+          this.business = updated;
+          this._authStore.setBusiness(updated);
+          this.savingBsPricePreference = false;
+          this._messageService.add({
+            severity: 'success',
+            summary: this._translate.instant('general.success'),
+            detail: this._translate.instant('toast.bsPricePreferenceUpdated'),
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          this.business = {
+            ...this.business,
+            isBsEquivalentPriceEnabled: previous,
+          };
+          this.savingBsPricePreference = false;
+          this._messageService.add({
+            severity: 'error',
+            summary: this._translate.instant('general.error'),
+            life: 3000,
+          });
+        },
+      });
   }
 
   changeEmail(): void {

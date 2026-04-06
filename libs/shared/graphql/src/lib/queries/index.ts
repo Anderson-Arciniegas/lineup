@@ -1,4 +1,6 @@
+export * from './business-notifications.queries';
 export * from './businesses.queries';
+export * from './notifications.queries';
 export * from './catalogs.queries';
 export * from './discounts.queries';
 export * from './locations.queries';

@@ -254,6 +254,17 @@ export const es = {
     myFavoritesEmpty: 'No hay negocios en tu lista de favoritos.',
     myWishlist: 'Mi lista de deseos',
     myFavorites: 'Mis favoritos',
+    userDashboardTitle: 'Tu panel',
+    userDashboardSubtitle: 'Novedades de los negocios que sigues',
+    userDashboardRecentProducts: 'Últimos productos de tus negocios favoritos',
+    userDashboardPromotions: 'Promociones en negocios que sigues',
+    userDashboardEmptyFollows:
+      'Aún no sigues ningún negocio. Sigue algunos para ver aquí sus novedades y ofertas.',
+    userDashboardEmptyDiscounts:
+      'Ninguno de los negocios que sigues tiene promociones activas en este momento.',
+    userDashboardViewFavorites: 'Ver negocios que sigo',
+    userDashboardNoRecentProducts:
+      'Aún no hay productos principales que mostrar de los negocios que sigues.',
     businessHours: 'Horarios de atención',
     addBusinessHours: 'Agregar horarios',
     editBusinessHours: 'Editar horario',
@@ -277,10 +288,15 @@ export const es = {
     total: 'Total',
     noCatalogProducts: 'Aun no has registrado productos en este catálogo.',
     ourCatalogs: 'Nuestros catálogos',
+    noBusinessCatalogs: 'Este negocio aún no tiene ningún catálogo creado.',
     ourMainProducts: 'Nuestros productos principales',
     outOfStockSimple: 'Agotado',
     switchCatalog: 'Cambiar de catálogo',
     productPanel: 'Panel de producto',
+    editProduct: 'Editar producto',
+    showProductPriceEquivalentsInBs:
+      'Mostrar equivalencia de los precio de los productos en BS (Tasa BCV)',
+    productPriceInBs: 'Precio de productos en BS',
   },
   businessHoursModal: {
     days: 'Días',
@@ -377,6 +393,8 @@ export const es = {
     salesProductLabel: 'Producto',
     salesIdProductSkuLabel: 'ID SKU',
     salesPriceLabel: 'Precio',
+    salesUnitPriceLabel: 'Unitario',
+    salesTotalPriceLabel: 'Total',
     lowStockSkus: 'SKU con stock bajo o agotado',
     productsWithoutStock: 'Productos sin stock',
     recentMovements: 'Movimientos de stock recientes',
@@ -392,6 +410,13 @@ export const es = {
     topByLikes: 'Más me gusta',
     topByRating: 'Mejor calificados',
     noData: 'Sin datos para mostrar.',
+    downloadCsv: 'Descargar CSV',
+    csvExportEmpty: 'No hay datos para exportar en esta sección.',
+    ratingAverageColumn: 'Calificación media',
+    csvNotesColumn: 'Notas',
+    salesRemainingQuantity: 'Cantidad restante',
+    csvLabelColumn: 'Etiqueta',
+    csvCountColumn: 'Cantidad',
   },
   inventoryPage: {
     selectCatalogHint:
@@ -417,6 +442,11 @@ export const es = {
     available: 'Disponible',
     noCatalogsAvailable:
       'No tienes catálogos disponibles para mostrar inventario.',
+    downloadCsvCurrentCatalog: 'CSV del catálogo actual',
+    downloadCsvAllCatalogs: 'CSV por catálogo (todos)',
+    csvExportStarted: 'Generando archivos CSV…',
+    csvExportDone: 'Se descargaron los CSV del inventario por catálogo.',
+    csvExportError: 'No se pudo generar la exportación CSV.',
   },
   registerSalePage: {
     subtitle:
@@ -480,6 +510,8 @@ export const es = {
     primaryProductRemoved: 'El producto se quitó de los productos principales.',
     catalogPdfExportFailed:
       'No se pudo generar el PDF del catálogo. Si faltan imágenes, el almacenamiento debe permitir CORS para tu dominio.',
+    bsPricePreferenceUpdated:
+      'Preferencia de precio en BS actualizada correctamente',
   },
   confirmation: {
     doYouWantToDeleteThisSocialNetwork: '¿Deseas eliminar esta red social?',
@@ -566,5 +598,11 @@ export const es = {
   variations: {
     color: 'Color',
     size: 'Talla',
+  },
+  notifications: {
+    title: 'Notificaciones',
+    empty: 'Aún no tienes notificaciones.',
+    markAllRead: 'Marcar todas como leídas',
+    loadError: 'No se pudieron cargar las notificaciones.',
   },
 };

@@ -9,7 +9,9 @@
         class="product-image lg:w-25 lg:h-25 w-20 h-20"
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
-        [src]="image"
+        [src]="
+          (product?.productFiles?.[0]?.file | fileThumbnailUrl:'xs') || image
+        "
         alt=""
       />
     </a>

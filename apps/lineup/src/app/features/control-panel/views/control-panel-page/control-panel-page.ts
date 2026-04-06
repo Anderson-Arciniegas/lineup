@@ -40,7 +40,7 @@ export class ControlPanelPage implements OnInit {
   private readonly _statsService = inject(StatsPrivateService);
   private readonly _authStore = inject(AuthStore);
   private readonly _defaultTimePeriod: TimePeriodInput = {
-    granularity: TimePeriodGranularityEnum.LAST_MONTH,
+    granularity: TimePeriodGranularityEnum.THIS_MONTH,
   };
 
   constructor() {

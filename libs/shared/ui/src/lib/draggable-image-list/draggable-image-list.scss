@@ -18,6 +18,14 @@
   }
 }
 
+.loading-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+}
+
 .image-item {
   position: relative;
   width: 120px;

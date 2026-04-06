@@ -1,3 +1,35 @@
+// Reserva espacio bajo el pliegue mientras @defer espera al viewport (menos CLS).
+.home-defer-placeholder {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--border-radius, 8px);
+  background: color-mix(in srgb, var(--p-surface-100, #f4f4f5) 85%, transparent);
+
+  &--collections {
+    min-height: 14rem;
+
+    @media (min-width: 640px) {
+      min-height: 18rem;
+    }
+  }
+
+  &--carousel {
+    min-height: 12rem;
+
+    @media (min-width: 640px) {
+      min-height: 15rem;
+    }
+  }
+
+  &--grid {
+    min-height: 16rem;
+
+    @media (min-width: 640px) {
+      min-height: 22rem;
+    }
+  }
+}
+
 ::ng-deep {
   .p-carousel-viewport {
     overflow: hidden;

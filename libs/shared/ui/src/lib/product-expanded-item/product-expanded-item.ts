@@ -16,6 +16,7 @@ import {
   CurrencySchema,
   CurrencySymbolPipe,
   DiscountSchema,
+  getFileThumbnailUrl,
   ProductPublicService,
   ProductSchema,
   RatesPrivateService,
@@ -112,7 +113,10 @@ export class ProductExpandedItem
 
   private setExpandedImageSrc(): void {
     const fallback = 'assets/images/products/headphones-min.webp';
-    const raw = this.product?.productFiles?.[0]?.file?.url;
+    const raw = getFileThumbnailUrl(
+      this.product?.productFiles?.[0]?.file,
+      'md',
+    );
     if (!raw) {
       this.expandedImageSrc = fallback;
       return;

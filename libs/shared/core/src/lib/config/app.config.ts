@@ -28,6 +28,9 @@ export const appRoutes: AppRoutes = {
   tag: 'tag',
   businessHours: 'business-hours',
   download: 'download',
+  favorites: 'favorites',
+  wishlist: 'wishlist',
+  myRatings: 'my-ratings',
 };
 
 export const languagesList: Language[] = [
@@ -82,4 +85,7 @@ export interface AppRoutes {
   tag: string;
   businessHours: string;
   download: string;
+  favorites: string;
+  wishlist: string;
+  myRatings: string;
 }

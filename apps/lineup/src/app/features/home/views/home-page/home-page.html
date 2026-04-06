@@ -23,7 +23,7 @@
       <div class="flex flex-col items-center justify-center w-full gap-6">
         <div class="hidden sm:block w-full">
           <div class="flex flex-wrap gap-2 w-full items-center justify-center">
-            @for (tag of tags; track $index) {
+            @for (tag of tags; track tag.id) {
             <lib-button
               width="min-w-30"
               [label]="tag.name"
@@ -37,7 +37,7 @@
           </div>
         </div>
         <div
-          class="flex flex-row items-center justify-center w-full gap-2 sm:gap-3 w-full"
+          class="flex flex-row items-center justify-center w-full gap-2 sm:gap-3"
         >
           <lib-search-bar
             class="w-full max-w-200"
@@ -48,6 +48,7 @@
     </div>
   </section>
 
+  @defer (on viewport; prefetch on idle) {
   @if(!collectionsAttempt) { @for (productCollection of productCollections;
   track productCollection.id) {
   <div
@@ -99,6 +100,12 @@
     />
   </div>
   } }
+  } @placeholder {
+  <div
+    class="home-defer-placeholder home-defer-placeholder--collections"
+    aria-hidden="true"
+  ></div>
+  }
 
   <div
     class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
@@ -106,6 +113,7 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
+    @defer (on viewport; prefetch on idle) {
     @if(!businessesAttempt) {
     <div
       class="card w-10/10 home-carousel"
@@ -128,7 +136,7 @@
             <lib-business-card
               class="cursor-pointer w-45 sm:w-60"
               [width]="'w-45 sm:w-60'"
-              [height]="'h-50 sm:h-60'"
+              [height]="'h-55 sm:h-70'"
               [business]="business"
             ></lib-business-card>
           </div>
@@ -144,6 +152,12 @@
       />
     </div>
     }
+    } @placeholder {
+    <div
+      class="home-defer-placeholder home-defer-placeholder--carousel"
+      aria-hidden="true"
+    ></div>
+    }
   </div>
   <div
     class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
@@ -151,6 +165,7 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
+    @defer (on viewport; prefetch on idle) {
     @if(!catalogsAttempt) {
     <div
       class="card w-10/10 home-carousel"
@@ -173,7 +188,7 @@
             <lib-catalog-card
               class="cursor-pointer w-45 sm:w-60"
               [width]="'w-45 sm:w-60'"
-              [height]="'h-50 sm:h-60'"
+              [height]="'h-55 sm:h-70'"
               [catalog]="catalog"
             ></lib-catalog-card>
           </div>
@@ -189,6 +204,12 @@
       />
     </div>
     }
+    } @placeholder {
+    <div
+      class="home-defer-placeholder home-defer-placeholder--carousel"
+      aria-hidden="true"
+    ></div>
+    }
   </div>
 
   <div
@@ -197,6 +218,7 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredProducts' | translate }}
     </h3>
+    @defer (on viewport; prefetch on idle) {
     <div class="products-grid">
       @for (product of products; track product.id) {
       <div class="w-full flex flex-col items-center justify-center">
@@ -217,6 +239,12 @@
         [style]="{ width: '100px', height: '100px' }"
       />
     </div>
+    }
+    } @placeholder {
+    <div
+      class="home-defer-placeholder home-defer-placeholder--grid"
+      aria-hidden="true"
+    ></div>
     }
   </div>
 </section>

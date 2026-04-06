@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CatalogSchema } from '@lineup/core';
+import { CatalogSchema, FileThumbnailUrlPipe } from '@lineup/core';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Button } from '../button/button';
@@ -11,6 +11,7 @@ import { Button } from '../button/button';
   imports: [
     CommonModule,
     CardModule,
+    FileThumbnailUrlPipe,
     RouterLink,
     ProgressSpinnerModule,
     Button,
@@ -39,9 +40,7 @@ export class CatalogCard implements OnInit {
   ];
 
   ngOnInit(): void {
-    if (this.catalog && this.catalog.image) {
-      this.image = this.catalog.image?.url;
-    } else {
+    if (!this.catalog?.image) {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
     }
   }
