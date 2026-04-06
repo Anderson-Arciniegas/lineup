@@ -1,0 +1,10 @@
+# Monorepo Nx: en Netlify, configura además el directorio del paquete del sitio
+# (Site settings → Build & deploy → Package directory) como `apps/lineup`
+# para que @netlify/angular-runtime resuelva `project.json` y el SSR.
+
+[build]
+  command = "npx nx build lineup --configuration=production"
+  publish = "dist/apps/lineup/browser"
+
+[[plugins]]
+  package = "@netlify/angular-runtime"

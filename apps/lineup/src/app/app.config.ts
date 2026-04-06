@@ -1,4 +1,8 @@
-import { registerLocaleData } from '@angular/common';
+import {
+  IMAGE_LOADER,
+  ImageLoaderConfig,
+  registerLocaleData,
+} from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
 import {
@@ -81,6 +85,10 @@ export const appConfig: ApplicationConfig = {
         environment.publicSiteUrl?.replace(/\/$/, '').trim() || undefined,
     },
     { provide: LOCALE_ID, useValue: 'es-ES' },
+    {
+      provide: IMAGE_LOADER,
+      useValue: (config: ImageLoaderConfig) => config.src,
+    },
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({
@@ -120,8 +128,16 @@ export const appConfig: ApplicationConfig = {
     provideNamedApollo(() => {
       const httpLink = inject(HttpLink);
 
+      const defaultOptions = {
+        watchQuery: {
+          fetchPolicy: 'cache-first' as const,
+        },
+        query: {
+          fetchPolicy: 'cache-first' as const,
+        },
+      };
+
       return {
-        // Default client
         userAPI: {
           link: httpLink.create({
             uri: environment.userApi,
@@ -129,8 +145,8 @@ export const appConfig: ApplicationConfig = {
           }),
           connectToDevTools: true,
           cache: new InMemoryCache(),
+          defaultOptions,
         },
-        // info named client
         businessAPI: {
           link: httpLink.create({
             uri: environment.businessApi,
@@ -138,6 +154,7 @@ export const appConfig: ApplicationConfig = {
           }),
           connectToDevTools: true,
           cache: new InMemoryCache(),
+          defaultOptions,
         },
       };
     }),

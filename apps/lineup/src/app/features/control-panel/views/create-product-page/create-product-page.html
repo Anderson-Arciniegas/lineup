@@ -324,10 +324,18 @@
             <label for="description" class="font-medium text-lg"
               >{{ 'general.description' | translate }}:</label
             >
+            @defer (on idle) {
             <p-editor
               formControlName="description"
               [style]="{ height: '320px' }"
             />
+            } @placeholder {
+            <textarea
+              formControlName="description"
+              rows="12"
+              class="w-full min-h-[320px] rounded-md border border-surface-200 p-3"
+            ></textarea>
+            }
           </div>
         </div>
       </div>

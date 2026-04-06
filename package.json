@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npx nx serve lineup",
-    "postinstall": "npx playwright install",
+    "postinstall": "npx playwright install && node scripts/patch-primeicons-font-display.mjs",
     "clear:angular-cache": "nx reset && node -e \"require('fs').rmSync('.angular', {recursive: true, force: true})\"",
     "start:dev:lineup": "npx nx serve lineup --configuration=development --host=0.0.0.0 --port=4200",
     "build:prod:lineup": "nx build lineup --configuration=production",

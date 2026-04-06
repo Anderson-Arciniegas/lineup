@@ -39,6 +39,16 @@ export const serverRoutes: ServerRoute[] = [
     path: 'search/:query',
     renderMode: RenderMode.Server,
   },
+  // Segmentos literales antes de :idProduct para que el motor SSR no trate
+  // "download" u otros como id de producto.
+  {
+    path: ':business/:catalogPath/download',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: ':business/:catalogPath/create-product',
+    renderMode: RenderMode.Server,
+  },
   {
     path: ':business/**',
     renderMode: RenderMode.Server,
