@@ -19,9 +19,14 @@ export class UserLayout implements OnInit {
   ngOnInit(): void {
     this.items = [
       {
+        label: 'general.dashboard',
+        icon: 'pi pi-objects-column',
+        url: '/profile',
+      },
+      {
         label: 'general.profile',
         icon: 'pi pi-user',
-        url: '/profile',
+        url: '/profile/edit',
       },
       {
         label: 'general.wishlist',

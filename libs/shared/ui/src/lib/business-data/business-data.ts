@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   inject,
@@ -13,10 +14,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
+  AuthStore,
   BusinessHourSchema,
   BusinessPrivateService,
   BusinessPublicService,
   BusinessSchema,
+  FileThumbnailUrlPipe,
   LocationSchema,
   SocialNetworkBusinessSchema,
   SocialNetworkPrivateService,
@@ -43,6 +46,7 @@ import { ShareModal } from '../share-modal/share-modal';
   selector: 'lib-business-data',
   imports: [
     CommonModule,
+    FileThumbnailUrlPipe,
     TagModule,
     Button,
     TranslateModule,
@@ -74,6 +78,7 @@ export class BusinessData implements OnInit, OnChanges {
   followers = 0;
   color = '#ffffff';
   attemptColor = false;
+  private readonly _authStore = inject(AuthStore);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _socialMediaService = inject(SocialNetworkPrivateService);
@@ -82,6 +87,7 @@ export class BusinessData implements OnInit, OnChanges {
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _businessPrivateService = inject(BusinessPrivateService);
   private readonly _messageService = inject(MessageService);
+
   private _subscriptions = new Subscription();
 
   readonly orderedWeekDays: WeekDayEnum[] = [
@@ -93,6 +99,8 @@ export class BusinessData implements OnInit, OnChanges {
     WeekDayEnum.SATURDAY,
     WeekDayEnum.SUNDAY,
   ];
+
+  userMode = computed(() => this._authStore.isUserLoggedIn());
 
   ngOnInit(): void {
     console.log(this.business);

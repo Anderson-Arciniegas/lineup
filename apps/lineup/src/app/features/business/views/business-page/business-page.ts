@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit, PendingTasks } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  PendingTasks,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -29,7 +35,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -73,7 +79,6 @@ export class BusinessPage implements OnInit {
   page = 1;
   noMoreResults = false;
   attempt = false;
-  attemptProducts = false;
   /** Degradado vertical (arriba más intenso, abajo más suave; siempre más claro que el original). */
   pageBackgroundGradient = '';
   /** Según la zona superior del degradado: si es oscura, el texto de marca debe ser claro. */
@@ -118,9 +123,9 @@ export class BusinessPage implements OnInit {
             console.log(business);
             this.business = business;
             this.myBusiness =
-              Number(this._authStore.business()?.id) === Number(this.business.id);
-            this.getCatalogs();
-            this.getProducts();
+              Number(this._authStore.business()?.id) ===
+              Number(this.business.id);
+            this.loadInitialCatalogsAndProducts();
             if (!this.myBusiness) {
               this.visitBusiness();
             }
@@ -159,21 +164,34 @@ export class BusinessPage implements OnInit {
     this.getCatalogs();
   }
 
-  private getProducts(): void {
-    if (this.attemptProducts || this.noMoreResults) return;
-    this.attemptProducts = true;
+  /** Carga productos y primera página de catálogos en paralelo. */
+  private loadInitialCatalogsAndProducts(): void {
+    if (this.attempt) return;
+    this.attempt = true;
     this._subscription.add(
-      this._productService
-        .getAllPrimaryProductsByBusiness({ idBusiness: this.business.id })
+      forkJoin({
+        products: this._productService.getAllPrimaryProductsByBusiness({
+          idBusiness: this.business.id,
+        }),
+        catalogsPage: this._catalogService.findCatalogsByBusinessId(
+          this.business.id,
+          { page: this.page, limit: 20 },
+        ),
+      })
+        .pipe(
+          finalize(() => {
+            this.attempt = false;
+          }),
+        )
         .subscribe({
-          next: (products) => {
-            this.attemptProducts = false;
+          next: ({ products, catalogsPage }) => {
             console.log(products);
+            console.log(catalogsPage);
             this.products = products;
+            this.applyCatalogPage(catalogsPage);
           },
           error: (error) => {
             console.error(error);
-            this.attemptProducts = false;
           },
         }),
     );
@@ -188,26 +206,29 @@ export class BusinessPage implements OnInit {
           page: this.page,
           limit: 20,
         })
+        .pipe(finalize(() => (this.attempt = false)))
         .subscribe({
           next: (response) => {
             console.log(response);
-            this.page++;
-            if (response.items.length === 0) {
-              this.noMoreResults = true;
-            } else {
-              this.catalogs = [...this.catalogs, ...response.items];
-            }
+            this.applyCatalogPage(response);
           },
           error: (error) => {
             console.error(error);
-            this.attempt = false;
           },
           complete: () => {
             console.log('complete');
-            this.attempt = false;
           },
         }),
     );
+  }
+
+  private applyCatalogPage(response: { items: CatalogSchema[] }): void {
+    this.page++;
+    if (response.items.length === 0) {
+      this.noMoreResults = true;
+    } else {
+      this.catalogs = [...this.catalogs, ...response.items];
+    }
   }
 
   setColor(raw: string): void {

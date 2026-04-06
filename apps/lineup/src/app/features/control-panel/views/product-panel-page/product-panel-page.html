@@ -75,6 +75,15 @@
             >#{{ product.id }}</span
           >
           <p-tag [value]="product.status" severity="success"></p-tag>
+
+          <lib-button
+            [icon]="'pi pi-external-link'"
+            [width]="'w-11'"
+            [color]="'secondary'"
+            [type]="'rounded'"
+            [target]="'_blank'"
+            [link]="productUrl"
+          ></lib-button>
         </div>
         <h2 class="text-xl lg:text-3xl font-semibold text-gray-800">
           {{ product.title }}

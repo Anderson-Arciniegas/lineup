@@ -6,11 +6,12 @@ import {
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'lib-draggable-image-list',
   standalone: true,
-  imports: [CommonModule, CdkDropList, CdkDrag],
+  imports: [CommonModule, CdkDropList, CdkDrag, ProgressSpinner],
   templateUrl: './draggable-image-list.html',
   styleUrl: './draggable-image-list.scss',
 })
@@ -18,6 +19,7 @@ export class DraggableImageList {
   /** Array de URLs o rutas de imágenes a mostrar */
   images = input.required<string[]>();
   imageCodes = input.required<string[]>();
+  loadingFile = input.required<boolean>();
   /** Emite el nuevo array cuando se reordena o se elimina una imagen */
   imagesChange = output<{ urls: string[]; imageCodes: string[] }>();
 

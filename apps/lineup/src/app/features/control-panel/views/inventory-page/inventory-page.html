@@ -5,7 +5,7 @@
     <div
       class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 w-full"
     >
-      <div class="flex flex-col gap-1 min-w-0">
+      <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-semibold text-gray-800">
           {{ 'general.inventory' | translate }}
         </h2>
@@ -13,12 +13,41 @@
           {{ 'inventoryPage.selectCatalogHint' | translate }}
         </p>
       </div>
-      <lib-button
-        label="general.registerSale"
-        icon="pi pi-shopping-cart"
-        type="rounded"
-        [link]="registerSalePath"
-      />
+      <div class="flex flex-col gap-2 justify-start items-end">
+        <lib-button
+          icon="pi pi-download"
+          label="inventoryPage.downloadCsvCurrentCatalog"
+          type="rounded"
+          size="small"
+          width="w-55"
+          variant="outlined"
+          color="secondary"
+          buttonType="button"
+          [disabled]="!selectedCatalog || loadingProducts || loadingStock"
+          (action)="downloadCurrentCatalogCsv()"
+        />
+        <lib-button
+          icon="pi pi-download"
+          label="inventoryPage.downloadCsvAllCatalogs"
+          type="rounded"
+          size="small"
+          width="w-55"
+          variant="outlined"
+          color="secondary"
+          buttonType="button"
+          [loading]="downloadingCsv"
+          [disabled]="catalogs.length === 0 || downloadingCsv || loadingCatalogs"
+          (action)="downloadAllCatalogsAsCsv()"
+        />
+        <lib-button
+          label="general.registerSale"
+          icon="pi pi-shopping-cart"
+          size="small"
+          width="w-55"
+          type="rounded"
+          [link]="registerSalePath"
+        />
+      </div>
     </div>
 
     @if (loadingCatalogs) {

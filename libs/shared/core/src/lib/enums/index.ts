@@ -5,6 +5,7 @@ export * from './directories.enum';
 export * from './discount-scope.enum';
 export * from './discount-type.enum';
 export * from './language.enum';
+export * from './notification-type.enum';
 export * from './providers.enum';
 export * from './roles-codes.enum';
 export * from './search-target.enum';

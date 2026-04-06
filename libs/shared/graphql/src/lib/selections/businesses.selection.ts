@@ -32,6 +32,7 @@ export const businessBasicSelection = `{
   status
   businessRoles ${businessRoleSelection}
   telephone
+  isBsEquivalentPriceEnabled
   hexColor
   image ${fileSelection}
   path
@@ -96,6 +97,7 @@ export const businessFullSelection = `{
   imageCode
   telephone
   isOnline
+  isBsEquivalentPriceEnabled
   hexColor
   provider
   status
@@ -308,6 +310,7 @@ export const businessMyBusinessSelection = `{
   tags
   telephone
   isOnline
+  isBsEquivalentPriceEnabled
   hexColor
   image ${fileSelection}
   businessHours ${businessHourPlainSelection}

@@ -18,6 +18,7 @@ export interface UpdateBusinessInput {
   description?: string;
   hexColor?: string;
   imageCode?: string;
+  isBsEquivalentPriceEnabled?: boolean;
   isOnline?: boolean;
   name?: string;
   path?: string;
