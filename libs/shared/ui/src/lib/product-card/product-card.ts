@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -34,7 +34,6 @@ import { Button } from '../button/button';
   selector: 'lib-product-card',
   imports: [
     CommonModule,
-    NgOptimizedImage,
     Button,
     CardModule,
     ButtonModule,
@@ -139,9 +138,12 @@ export class ProductCard
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    requestAnimationFrame(() => this.syncImageLoadedIfCached());
+
     this._flipInitTimeoutId = setTimeout(() => {
       this._flipInitTimeoutId = undefined;
       this.syncFlipForExportState();
+      this.syncImageLoadedIfCached();
     }, 100);
 
     this.hasLikedProduct();
@@ -159,9 +161,25 @@ export class ProductCard
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business.path}/${this.product.catalog.path}/${this.product.id}`;
       }
+      queueMicrotask(() =>
+        requestAnimationFrame(() => this.syncImageLoadedIfCached()),
+      );
     }
     if (changes['pdfExportAttempt'] && isPlatformBrowser(this.platformId)) {
       this.syncFlipForExportState();
+    }
+  }
+
+  /**
+   * Si la imagen ya está en caché del navegador, `complete` es true pero `(load)` puede no
+   * dispararse; el PDF (waitForImages + html2canvas) capturaba el spinner indefinidamente.
+   */
+  private syncImageLoadedIfCached(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const flip = document.getElementById(this.cardFlipId);
+    const img = flip?.querySelector<HTMLImageElement>('.product-image');
+    if (img?.complete && img.naturalWidth > 0) {
+      this.imageLoaded = true;
     }
   }
 

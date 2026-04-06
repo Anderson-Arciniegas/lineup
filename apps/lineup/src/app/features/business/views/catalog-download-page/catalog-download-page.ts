@@ -190,12 +190,7 @@ export class CatalogDownloadPage implements OnInit {
       const allProducts = await firstValueFrom(
         this._productPublicService.getAllByCatalog(this.catalog.id, null),
       );
-      this.products = [
-        ...allProducts,
-        ...allProducts,
-        ...allProducts,
-        ...allProducts,
-      ];
+      this.products = [...allProducts];
 
       this.pdfExportAttempt = true;
       this._cdr.detectChanges();
