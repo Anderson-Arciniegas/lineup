@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AppState, initialAuthState } from '@lineup/core';
 import { provideMockStore } from '@ngrx/store/testing';
+import { Apollo } from 'apollo-angular';
 import {
   TranslateModule,
   TranslateService,
@@ -25,6 +26,7 @@ describe('HomeLayout', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
+        { provide: Apollo, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
         provideMockStore({ initialState }),
         TranslateService,

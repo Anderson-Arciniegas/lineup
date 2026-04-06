@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { AppState, initialAuthState } from '@lineup/core';
 import { provideMockStore } from '@ngrx/store/testing';
+import { Apollo } from 'apollo-angular';
 import {
   TranslateModule,
   TranslateService,
@@ -21,6 +22,7 @@ describe('Nav', () => {
     await TestBed.configureTestingModule({
       imports: [Nav, TranslateModule.forRoot()],
       providers: [
+        { provide: Apollo, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
         provideMockStore({ initialState }),
         TranslateService,
