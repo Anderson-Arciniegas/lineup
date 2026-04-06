@@ -11,9 +11,15 @@ class IntersectionObserverMock implements IntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin = '';
   readonly thresholds: ReadonlyArray<number> = [];
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
+  observe(): void {
+    void 0;
+  }
+  unobserve(): void {
+    void 0;
+  }
+  disconnect(): void {
+    void 0;
+  }
   takeRecords(): IntersectionObserverEntry[] {
     return [];
   }
