@@ -13,6 +13,7 @@ describe('DraggableImageList', () => {
     fixture = TestBed.createComponent(DraggableImageList);
     fixture.componentRef.setInput('images', ['url1.jpg', 'url2.jpg']);
     fixture.componentRef.setInput('imageCodes', ['code1', 'code2']);
+    fixture.componentRef.setInput('loadingFile', false);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
