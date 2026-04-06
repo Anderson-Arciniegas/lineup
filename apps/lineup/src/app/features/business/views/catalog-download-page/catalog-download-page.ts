@@ -21,8 +21,6 @@ import {
 import { environment } from '@lineup/envs';
 import { ProductCard, ProductExpandedItem } from '@lineup/ui';
 import { QRCodeComponent } from 'angularx-qrcode';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { firstValueFrom } from 'rxjs';
 
@@ -246,6 +244,11 @@ export class CatalogDownloadPage implements OnInit {
           height: Math.round(r.height * captureScale),
         };
       });
+
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
 
       const fullCanvas = await html2canvas(host, {
         foreignObjectRendering: true,

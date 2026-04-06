@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, QueryList, ViewChildren } from '@angular/core';
-import { gsap } from 'gsap';
 @Component({
   selector: 'lib-product-carousel',
   imports: [CommonModule],
@@ -22,12 +21,13 @@ export class ProductCarousel implements AfterViewInit {
         @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
   ) {}
 
-  ngAfterViewInit() {
-    this.positionItems();
+  ngAfterViewInit(): void {
+    void this.positionItems();
   }
 
-  positionItems() {
+  async positionItems(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
+    const { gsap } = await import('gsap');
     const items = document.querySelectorAll('.carousel-item');
     const total = items.length;
 
@@ -46,13 +46,13 @@ export class ProductCarousel implements AfterViewInit {
     });
   }
 
-  rotateLeft() {
+  rotateLeft(): void {
     this.offset -= Math.PI / this.images.length;
-    this.positionItems();
+    void this.positionItems();
   }
 
-  rotateRight() {
+  rotateRight(): void {
     this.offset += Math.PI / this.images.length;
-    this.positionItems();
+    void this.positionItems();
   }
 }
