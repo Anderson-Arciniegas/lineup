@@ -12,19 +12,34 @@ import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translat
 import { Apollo } from 'apollo-angular';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
+import { createApolloMock } from '../../../../../testing';
 import { UpdateProductSkuPage } from './update-product-sku-page';
 
 describe('UpdateProductSkuPage', () => {
   let component: UpdateProductSkuPage;
   let fixture: ComponentFixture<UpdateProductSkuPage>;
+  let updateProductSkus: jest.Mock;
+  let messageAdd: jest.Mock;
+
+  const productMock = {
+    id: 1,
+    title: 'P',
+    skus: [
+      { id: 10, idCurrency: 1, price: 9.99, quantity: 3 },
+      { id: 11, idCurrency: null, price: null, quantity: 1 },
+    ],
+    productFiles: [],
+  };
 
   beforeEach(async () => {
+    updateProductSkus = jest.fn(() => of({}));
+    messageAdd = jest.fn();
+
     await TestBed.configureTestingModule({
       imports: [UpdateProductSkuPage, TranslateModule.forRoot(), HttpClientTestingModule],
       providers: [
         TranslateService,
         TranslateStore,
-        MessageService,
         {
           provide: ActivatedRoute,
           useValue: {
@@ -33,15 +48,7 @@ describe('UpdateProductSkuPage', () => {
             },
           },
         },
-        {
-          provide: Apollo,
-          useValue: {
-            use: () => ({
-              query: () => of({ data: {} }),
-              mutate: () => of({ data: {} }),
-            }),
-          },
-        },
+        { provide: Apollo, useValue: createApolloMock().mock },
         {
           provide: BusinessPrivateService,
           useValue: { getBusinessByPath: () => of({ id: 1, path: 'test' }) },
@@ -49,27 +56,23 @@ describe('UpdateProductSkuPage', () => {
         {
           provide: ProductPrivateService,
           useValue: {
-            findOneProduct: () =>
-              of({
-                id: 1,
-                title: 'P',
-                skus: [],
-                productFiles: [],
-              }),
+            findOneProduct: () => of(productMock as any),
+            updateProductSkus,
           },
         },
         {
           provide: CurrencyPrivateService,
-          useValue: { findAllCurrencies: () => of([]) },
+          useValue: {
+            findAllCurrencies: () =>
+              of([{ id: 1, code: 'USD', name: 'Dollar' } as any]),
+          },
         },
-        {
-          provide: CatalogPrivateService,
-          useValue: {},
-        },
+        { provide: CatalogPrivateService, useValue: {} },
         {
           provide: UtilsService,
           useValue: { navigate: jest.fn() },
         },
+        { provide: MessageService, useValue: { add: messageAdd } },
       ],
     }).compileComponents();
 
@@ -78,7 +81,57 @@ describe('UpdateProductSkuPage', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  /**
+   * Tras cargar producto, el FormArray refleja cada SKU.
+   */
+  describe('carga de SKUs', () => {
+    it('debe construir un control por SKU', () => {
+      expect(component.product?.skus?.length).toBe(2);
+      expect(component.skusFormArray.length).toBe(2);
+    });
+  });
+
+  /**
+   * `applyGeneralToAllSkus` propaga moneda y precio del bloque general.
+   */
+  describe('applyGeneralToAllSkus', () => {
+    it('debe actualizar todos los grupos de SKU', () => {
+      component.generalFormGroup.patchValue({ idCurrency: 2, price: 19.5 });
+      component.applyGeneralToAllSkus();
+      const rows = component.skusFormArray.controls.map(
+        (c) => (c as any).getRawValue(),
+      );
+      expect(rows.every((r) => r.idCurrency === 2 && r.price === 19.5)).toBe(
+        true,
+      );
+    });
+  });
+
+  /**
+   * Persistencia vía `updateProductSkus`.
+   */
+  describe('updateProductSku', () => {
+    it('debe llamar al servicio con los valores del formulario', () => {
+      component.updateProductSku();
+      expect(updateProductSkus).toHaveBeenCalledWith({
+        skus: expect.arrayContaining([
+          expect.objectContaining({ id: 10 }),
+          expect.objectContaining({ id: 11 }),
+        ]),
+      });
+    });
+
+    it('debe avisar si no hay SKUs que actualizar', () => {
+      component.skusFormArray.clear();
+      component.updateProductSku();
+      expect(updateProductSkus).not.toHaveBeenCalled();
+      expect(messageAdd).toHaveBeenCalledWith(
+        expect.objectContaining({ severity: 'warn' }),
+      );
+    });
   });
 });

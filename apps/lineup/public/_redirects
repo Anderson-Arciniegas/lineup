@@ -1,1 +1,5 @@
+# Mismo origen que en dev (proxy.conf.json): el PDF inlining hace fetch a esta ruta;
+# sin esto, /* devuelve index.html y las imágenes fallan (CORS/HTML en lugar de binario).
+/s3-lineup-media/*  https://test-mangloo.s3.us-east-1.amazonaws.com/:splat  200
+
 /*    /index.html   200
