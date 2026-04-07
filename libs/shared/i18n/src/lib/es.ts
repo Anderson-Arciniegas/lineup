@@ -297,6 +297,9 @@ export const es = {
     showProductPriceEquivalentsInBs:
       'Mostrar equivalencia de los precio de los productos en BS (Tasa BCV)',
     productPriceInBs: 'Precio de productos en BS',
+    generatingPdf: 'Generando PDF…',
+    pdfDownloaded: 'PDF descargado! Puedes cerrar esta pestaña.',
+    errorGeneratingPdf: 'Error al generar el PDF. Inténtalo de nuevo.',
   },
   businessHoursModal: {
     days: 'Días',
@@ -604,5 +607,6 @@ export const es = {
     empty: 'Aún no tienes notificaciones.',
     markAllRead: 'Marcar todas como leídas',
     loadError: 'No se pudieron cargar las notificaciones.',
+    live: 'En vivo',
   },
 };

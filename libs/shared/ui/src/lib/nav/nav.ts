@@ -2,17 +2,20 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   Input,
   PLATFORM_ID,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import {
   AuthStore,
   BusinessNotificationsPrivateService,
   BusinessNotificationsPublicService,
+  NotificationsSocketService,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DrawerModule } from 'primeng/drawer';
@@ -44,6 +47,7 @@ export class Nav {
   @Input() navItems: any[];
   visible = false;
   private platformId: object = inject(PLATFORM_ID);
+  private readonly _destroyRef = inject(DestroyRef);
   private _authStore = inject(AuthStore);
   private _userNotificationsPublicService = inject(
     BusinessNotificationsPublicService,
@@ -51,6 +55,7 @@ export class Nav {
   private _businessNotificationsPrivateService = inject(
     BusinessNotificationsPrivateService,
   );
+  private readonly _notificationsSocket = inject(NotificationsSocketService);
 
   /** Contador de no leídas: usuario (API user) o negocio (API business), según sesión. */
   pendingNotificationsCount = signal(0);
@@ -63,10 +68,28 @@ export class Nav {
   businessMode = computed(() => this._authStore.isBusinessLoggedIn());
 
   constructor() {
+    this._notificationsSocket.notification$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        if (!this.logged()) {
+          return;
+        }
+        this.refreshPendingNotificationsCount();
+      });
+
     effect((onCleanup) => {
       if (!this.logged()) {
         this.pendingNotificationsCount.set(0);
+        this._notificationsSocket.disconnect();
         return;
+      }
+      const profile = this.businessMode() ? 'business' : 'user';
+      const user = this._authStore.user();
+      const business = this._authStore.business();
+      const entityId =
+        profile === 'business' ? business?.id : user?.id;
+      if (entityId != null) {
+        this._notificationsSocket.connect(profile, entityId);
       }
 
       const request$ = this.businessMode()

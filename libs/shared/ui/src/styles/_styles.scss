@@ -1,24 +1,8 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-primeui";
 @import 'primeicons/primeicons.css';
-
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../../assets/src/lib/fonts/Montserrat-VariableFont_wght.ttf')
-    format('truetype');
-  font-weight: 100 900;
-  font-stretch: 75% 125%;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Montserrat-Italic';
-  src: url('../../../assets/src/lib/fonts/Montserrat-Italic-VariableFont_wght.ttf')
-    format('truetype');
-  font-weight: 100 900;
-  font-stretch: 75% 125%;
-  font-display: swap;
-}
+@import '@fontsource-variable/montserrat/wght.css';
+@import '@fontsource-variable/montserrat/wght-italic.css';
 
 :root {
   --border-radius: 30px;
@@ -29,7 +13,7 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat Variable', sans-serif;
   color: var(--p-primary-800);
 
   --p-button-label-font-weight: 500;

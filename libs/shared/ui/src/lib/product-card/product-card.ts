@@ -51,6 +51,8 @@ export class ProductCard
   @Input() product: ProductSchema;
   @Input() width = 'w-65';
   @Input() height = 'h-100';
+  /** Primera imagen above-the-fold (p. ej. carrusel): mejora LCP con fetchpriority. */
+  @Input() imageFetchPriority = false;
   @Input() dashboardMode: boolean;
   /** Catálogo PDF: sin botones, flip fijado en la cara del título. */
   @Input() pdfExportAttempt = false;
@@ -87,6 +89,7 @@ export class ProductCard
   private readonly _subscription = new Subscription();
   private _flipInitTimeoutId: ReturnType<typeof setTimeout> | undefined;
   private _teardownFlipListeners: (() => void) | undefined;
+  private _teardownFlipWarmup: (() => void) | undefined;
   private _gsap: typeof import('gsap').gsap | null = null;
 
   /** Id único por instancia para el contenedor flip (DOM / GSAP). */
@@ -219,7 +222,6 @@ export class ProductCard
   }
 
   private async syncFlipForExportStateAsync(): Promise<void> {
-    const gsap = await this.ensureGsap();
     const flipBox = document.getElementById(this.cardFlipId);
     const inner = flipBox?.querySelector('.flip-inner');
     if (!flipBox || !inner) {
@@ -228,15 +230,42 @@ export class ProductCard
 
     this._teardownFlipListeners?.();
     this._teardownFlipListeners = undefined;
-    gsap.killTweensOf(inner);
+    this._teardownFlipWarmup?.();
+    this._teardownFlipWarmup = undefined;
 
     if (this.pdfExportAttempt) {
+      const gsap = await this.ensureGsap();
+      gsap.killTweensOf(inner);
       gsap.set(inner, { rotateX: 0 });
       this._teardownFlipListeners = (): void => {
         gsap.killTweensOf(inner);
       };
       return;
     }
+
+    this._gsap?.killTweensOf(inner);
+
+    const onWarmup = (): void => {
+      void this.attachFlipHoverAfterWarmup(flipBox, inner);
+    };
+
+    flipBox.addEventListener('mouseenter', onWarmup, { passive: true });
+    flipBox.addEventListener('touchstart', onWarmup, { passive: true });
+    this._teardownFlipWarmup = (): void => {
+      flipBox.removeEventListener('mouseenter', onWarmup);
+      flipBox.removeEventListener('touchstart', onWarmup);
+    };
+  }
+
+  private async attachFlipHoverAfterWarmup(
+    flipBox: HTMLElement,
+    inner: Element,
+  ): Promise<void> {
+    this._teardownFlipWarmup?.();
+    this._teardownFlipWarmup = undefined;
+
+    const gsap = await this.ensureGsap();
+    gsap.killTweensOf(inner);
 
     const onEnter = (): void => {
       gsap.to(inner, {
@@ -260,12 +289,17 @@ export class ProductCard
       flipBox.removeEventListener('mouseleave', onLeave);
       gsap.killTweensOf(inner);
     };
+
+    if (flipBox.matches(':hover')) {
+      onEnter();
+    }
   }
 
   ngOnDestroy(): void {
     if (this._flipInitTimeoutId !== undefined) {
       clearTimeout(this._flipInitTimeoutId);
     }
+    this._teardownFlipWarmup?.();
     this._teardownFlipListeners?.();
     this._subscription.unsubscribe();
   }

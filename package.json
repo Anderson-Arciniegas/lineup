@@ -9,6 +9,7 @@
     "start:dev:lineup": "npx nx serve lineup --configuration=development --host=0.0.0.0 --port=4200",
     "build:prod:lineup": "nx build lineup --configuration=production",
     "start:prod:lineup": "npm run build:prod:lineup && npx http-server dist/apps/lineup -p 4200",
+    "preview:lineup": "nx run lineup:build:production && nx run lineup:serve-static --configuration=production",
     "start:prod:admin": "npm run build:prod:admin && npx http-server dist/apps/admin -p 4201",
     "test:all": "nx affected -t lint test build e2e"
   },
@@ -30,6 +31,7 @@
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
+    "@fontsource-variable/montserrat": "^5.2.8",
     "@ionic/angular": "^8.7.3",
     "@netlify/angular-runtime": "3.0.1",
     "@ngrx/effects": "^20.0.1",
@@ -57,6 +59,7 @@
     "primeng": "20.0.0",
     "quill": "2.0.3",
     "rxjs": "~7.8.2",
+    "socket.io-client": "^4.8.3",
     "subscriptions-transport-ws": "0.11.0",
     "tailwindcss": "4.1.11",
     "tailwindcss-primeui": "0.6.1",

@@ -15,11 +15,13 @@ import {
   BusinessSchema,
   CatalogPublicService,
   CatalogSchema,
+  FileThumbnailUrlPipe,
   ProductPublicService,
   ProductSchema,
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
 import { ProductCard, ProductExpandedItem } from '@lineup/ui';
+import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { firstValueFrom } from 'rxjs';
@@ -32,6 +34,8 @@ import { firstValueFrom } from 'rxjs';
     ProductExpandedItem,
     ProgressSpinner,
     QRCodeComponent,
+    FileThumbnailUrlPipe,
+    TranslateModule,
   ],
   templateUrl: './catalog-download-page.html',
   styleUrl: './catalog-download-page.scss',

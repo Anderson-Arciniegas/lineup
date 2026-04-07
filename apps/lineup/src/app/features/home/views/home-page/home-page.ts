@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 import {
   afterNextRender,
@@ -7,6 +7,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
   signal,
@@ -29,6 +30,7 @@ import {
   BusinessSchema,
   CatalogPublicService,
   CatalogSchema,
+  getFileThumbnailUrl,
   ProductCollectionSchema,
   ProductPublicService,
   ProductSchema,
@@ -37,8 +39,6 @@ import {
 } from '@lineup/core';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -56,8 +56,6 @@ interface CarouselBreakpointConfig {
   imports: [
     CommonModule,
     Button,
-    InputIcon,
-    IconField,
     BusinessCard,
     ProductCard,
     CatalogCard,
@@ -71,9 +69,10 @@ interface CarouselBreakpointConfig {
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   /**
    * PrimeNG muta `responsiveOptions` con `.sort()` al inyectar estilos; varios `p-carousel` con la misma
@@ -140,6 +139,9 @@ export class HomePage implements OnInit, AfterViewInit {
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _utils = inject(UtilsService);
   private readonly _subscription = new Subscription();
+  private leadProductThumbPreloadInjected = false;
+  private static readonly leadProductPreloadLinkId =
+    'lineup-preload-lead-product-thumbnail';
 
   constructor() {
     afterNextRender(() => {
@@ -174,6 +176,59 @@ export class HomePage implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
     this.windowInnerWidth.set(window.innerWidth);
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.document
+      .getElementById(HomePage.leadProductPreloadLinkId)
+      ?.remove();
+  }
+
+  /**
+   * Primer producto del primer carrusel de colecciones: candidato LCP (Lighthouse).
+   */
+  isLeadCollectionProduct(
+    collection: ProductCollectionSchema,
+    product: ProductSchema,
+  ): boolean {
+    const first = this.productCollections[0];
+    return (
+      !!first &&
+      first.id === collection.id &&
+      collection.products?.[0]?.id === product.id
+    );
+  }
+
+  /** Primer producto de la parrilla “destacados”. */
+  isLeadFeaturedProduct(product: ProductSchema): boolean {
+    return this.products.length > 0 && this.products[0].id === product.id;
+  }
+
+  private injectLeadProductImagePreload(): void {
+    if (
+      !isPlatformBrowser(this.platformId) ||
+      this.leadProductThumbPreloadInjected
+    ) {
+      return;
+    }
+    const file = this.productCollections[0]?.products?.[0]?.productFiles?.[0]
+      ?.file;
+    if (!file) return;
+    const href = getFileThumbnailUrl(file, 'sm');
+    if (!href || !/^https?:\/\//i.test(href)) return;
+    if (this.document.getElementById(HomePage.leadProductPreloadLinkId)) {
+      return;
+    }
+    const link = this.document.createElement('link');
+    link.id = HomePage.leadProductPreloadLinkId;
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = href;
+    link.setAttribute('crossorigin', 'anonymous');
+    this.document.head.appendChild(link);
+    this.leadProductThumbPreloadInjected = true;
   }
 
   /**
@@ -317,6 +372,7 @@ export class HomePage implements OnInit, AfterViewInit {
           this.productCollections = [...this.productCollections, ...response];
           console.log(this.productCollections);
           this.collectionsAttempt = false;
+          this.injectLeadProductImagePreload();
         },
         error: (error) => {
           console.error(error);
