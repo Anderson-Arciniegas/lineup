@@ -81,6 +81,11 @@ export const businessFullSelection = `{
     extension
     name
     url
+    thumbnails {
+      md { height url width }
+      sm { height url width }
+      xs { height url width }
+    }
     idCreationUser
     creationDate
     creationUser {

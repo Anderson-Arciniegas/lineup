@@ -38,8 +38,9 @@ export interface EnvironmentConfig {
     secret: string;
   };
   /**
-   * Solo desarrollo: `fetch` del PDF va al prefijo local; `proxy.conf.json` lo reenvía al bucket S3
-   * (evita CORS en localhost). En producción configura CORS en el bucket o un proxy en tu API.
+   * `fetch` del PDF usa este prefijo en el mismo origen; en dev `proxy.conf.json` lo reenvía a S3.
+   * En Netlify (u otro host) añade una regla de proxy equivalente antes del fallback SPA
+   * (p. ej. en `public/_redirects`), o el catch-all servirá `index.html` y las imágenes del PDF fallarán.
    */
   catalogPdfMediaProxy?: {
     s3OriginPrefix: string;
@@ -97,6 +98,10 @@ export const PROD: EnvironmentConfig = {
   crypto: {
     seed: 'ThisIsTheDevSeed',
     secret: 'a7f82e39372e2f31b878c3971cac81d04bcff42ad9538131418d6d5e1047f04d',
+  },
+  catalogPdfMediaProxy: {
+    s3OriginPrefix: 'https://test-mangloo.s3.us-east-1.amazonaws.com',
+    localPathPrefix: '/s3-lineup-media',
   },
   publicSiteUrl: resolvePublicSiteUrl('https://lineup-dev.netlify.app'),
 };
