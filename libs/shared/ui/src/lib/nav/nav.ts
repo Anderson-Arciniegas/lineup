@@ -86,9 +86,9 @@ export class Nav {
       const profile = this.businessMode() ? 'business' : 'user';
       const user = this._authStore.user();
       const business = this._authStore.business();
-      const entityId =
-        profile === 'business' ? business?.id : user?.id;
+      const entityId = profile === 'business' ? business?.id : user?.id;
       if (entityId != null) {
+        console.log('holaaa connect', profile, entityId);
         this._notificationsSocket.connect(profile, entityId);
       }
 
