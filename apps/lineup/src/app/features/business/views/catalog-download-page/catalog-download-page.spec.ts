@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import {
   BusinessPublicService,
@@ -22,7 +22,10 @@ describe('CatalogDownloadPage', () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              params: { business: 'test-business', catalogPath: 'test-catalog' },
+              params: {
+                business: 'test-business',
+                catalogPath: 'test-catalog',
+              },
               queryParams: {},
             },
           },
@@ -80,11 +83,7 @@ describe('CatalogDownloadPage', () => {
 
     it('debe agrupar productos según el modo de layout', () => {
       component.layoutMode = 'Grid';
-      component.products = [
-        { id: 1 },
-        { id: 2 },
-        { id: 3 },
-      ] as any[];
+      component.products = [{ id: 1 }, { id: 2 }, { id: 3 }] as any[];
       const chunks = component.pdfProductPageChunks;
       expect(chunks.length).toBeGreaterThanOrEqual(1);
       expect(chunks.flat().length).toBe(3);
@@ -115,7 +114,10 @@ describe('CatalogDownloadPage query layout', () => {
           provide: CatalogPublicService,
           useValue: { findOneCatalogByPath: () => of({ id: 1 }) },
         },
-        { provide: ProductPublicService, useValue: { getAllByCatalog: () => of([]) } },
+        {
+          provide: ProductPublicService,
+          useValue: { getAllByCatalog: () => of([]) },
+        },
       ],
     }).compileComponents();
 

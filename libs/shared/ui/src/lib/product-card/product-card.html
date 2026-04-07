@@ -6,21 +6,20 @@
   [class.product-card--pdf-export]="pdfExportAttempt"
   [ngClass]="[width, height]"
 >
-  <div [ngClass]="[width, height]">
+  <div class="product-card__media" [ngClass]="[width, height]">
     <img
-      class="product-image"
+      class="product-image product-card__image"
       (load)="imageLoaded = true"
-      [hidden]="!imageLoaded"
+      [class.product-card__image--pending]="!imageLoaded"
       [ngClass]="[width, height]"
       [src]="image"
       alt=""
+      [attr.fetchpriority]="imageFetchPriority ? 'high' : null"
+      decoding="async"
     />
 
-    <div
-      [hidden]="imageLoaded"
-      [ngClass]="[width, height]"
-      class="flex flex-row items-center justify-center"
-    >
+    @if (!imageLoaded) {
+    <div class="product-card__spinner" aria-hidden="true">
       <p-progress-spinner
         strokeWidth="8"
         fill="transparent"
@@ -28,6 +27,7 @@
         [style]="{ width: '50px', height: '50px' }"
       />
     </div>
+    }
   </div>
 
   <div [ngClass]="[width]" class="buttons-container">
@@ -81,8 +81,10 @@
         >
           <img
             class="business-image"
+            width="44"
+            height="44"
             [src]="businessImage"
-            alt="Business Image"
+            alt=""
           />
         </span>
       </div>
@@ -107,7 +109,7 @@
       class="pdf-title-face h-12 rounded-full py-1 px-3 flex flex-row items-center"
     >
       <h2
-        class="text-white text-sm font-medium w-full product-name"
+        class="text-white text-sm font-semibold w-full product-name"
         [ngClass]="'max-' + [width]"
       >
         {{product?.title || 'Product Title'}}

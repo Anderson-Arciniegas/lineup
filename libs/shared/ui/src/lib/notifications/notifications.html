@@ -2,9 +2,19 @@
   <div
     class="flex flex-row items-center justify-between gap-2 shrink-0 border-b border-primary-100 pb-2"
   >
-    <h2 class="text-base font-semibold m-0">
-      {{ 'notifications.title' | translate }}
-    </h2>
+    <div class="flex flex-row items-center gap-2 min-w-0">
+      <h2 class="text-base font-semibold m-0 truncate">
+        {{ 'notifications.title' | translate }}
+      </h2>
+      @if (socketConnected()) {
+        <span
+          class="text-xs font-medium text-green-700 shrink-0"
+          [attr.title]="'notifications.live' | translate"
+        >
+          {{ 'notifications.live' | translate }}
+        </span>
+      }
+    </div>
     @if (hasUnread()) {
       <lib-button
         variant="text"

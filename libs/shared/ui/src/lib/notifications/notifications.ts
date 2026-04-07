@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Input,
   Output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BusinessNotificationsPrivateService,
   BusinessNotificationsPublicService,
+  NotificationsSocketService,
   type NotificationSchema,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,17 +37,26 @@ export class Notifications {
   @Input({ required: true }) businessMode!: boolean;
   @Output() countMayHaveChanged = new EventEmitter<void>();
 
+  private readonly _destroyRef = inject(DestroyRef);
   private readonly _publicNotifications = inject(
     BusinessNotificationsPublicService,
   );
   private readonly _privateNotifications = inject(
     BusinessNotificationsPrivateService,
   );
+  private readonly _notificationsSocket = inject(NotificationsSocketService);
 
   readonly items = signal<NotificationSchema[]>([]);
   readonly loading = signal(false);
   readonly loadError = signal(false);
+  readonly socketConnected = this._notificationsSocket.isConnected;
   markAllLoading = false;
+
+  constructor() {
+    this._notificationsSocket.notification$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((incoming) => this.mergeRealtimeNotification(incoming));
+  }
 
   refresh(): void {
     this.loading.set(true);
@@ -56,7 +68,7 @@ export class Notifications {
 
     request$.subscribe({
       next: (data) => {
-        this.items.set(data.items);
+        this.items.set(this.mergeListWithExisting(data.items));
         this.loading.set(false);
       },
       error: () => {
@@ -64,6 +76,33 @@ export class Notifications {
         this.loadError.set(true);
       },
     });
+  }
+
+  private mergeRealtimeNotification(incoming: NotificationSchema): void {
+    console.log('[NotificationsSocket] notification recibida:', incoming);
+    this.items.update((list) => {
+      const idx = list.findIndex((n) => n.id === incoming.id);
+      if (idx >= 0) {
+        const next = [...list];
+        next[idx] = { ...next[idx], ...incoming };
+        return next;
+      }
+      return [incoming, ...list];
+    });
+    this.countMayHaveChanged.emit();
+  }
+
+  /** Conserva entradas solo-en-cliente (p. ej. socket durante el fetch) al reconciliar con la API. */
+  private mergeListWithExisting(fromApi: NotificationSchema[]): NotificationSchema[] {
+    const prev = this.items();
+    const apiIds = new Set(fromApi.map((n) => n.id));
+    const onlyLocal = prev.filter((n) => !apiIds.has(n.id));
+    const combined = [...onlyLocal, ...fromApi];
+    return combined.sort(
+      (a, b) =>
+        new Date(b.creationDate).getTime() -
+        new Date(a.creationDate).getTime(),
+    );
   }
 
   protected hasUnread(): boolean {

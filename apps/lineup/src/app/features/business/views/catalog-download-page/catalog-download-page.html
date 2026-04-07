@@ -5,16 +5,18 @@
     strokeWidth="4"
     [style]="{ width: '80px', height: '80px' }"
   />
-  <p class="mt-6 text-lg font-medium text-slate-700 px-2">Generando PDF…</p>
+  <p class="mt-6 text-lg font-medium text-slate-700 px-2">
+    {{ 'general.generatingPdf' | translate }}
+  </p>
   } @else if (isDone) {
   <i class="pi pi-check-circle text-6xl text-green-500"></i>
   <p class="mt-4 text-lg font-medium text-center text-slate-700 px-2">
-    ¡PDF descargado! Puedes cerrar esta pestaña.
+    {{ 'general.pdfDownloaded' | translate }}
   </p>
   } @else if (hasError) {
   <i class="pi pi-times-circle text-6xl text-red-500"></i>
   <p class="mt-4 text-lg font-medium text-center text-red-600 px-2">
-    Error al generar el PDF. Inténtalo de nuevo.
+    {{ 'general.errorGeneratingPdf' | translate }}
   </p>
   }
 </div>
@@ -39,7 +41,7 @@
     @if (business.image?.url) {
     <img
       class="w-64 h-64 object-cover rounded-full shadow-xl border-8 border-white"
-      [src]="business.image?.url"
+      [src]="business.image | fileThumbnailUrl:'sm'"
       alt=""
     />
     }

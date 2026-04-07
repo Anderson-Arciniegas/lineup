@@ -51,6 +51,11 @@ export interface EnvironmentConfig {
    * Usada en SSR para meta Open Graph absolutas (`og:url`, `og:image`).
    */
   publicSiteUrl: string;
+  /**
+   * Origen del servicio de sockets (Socket.IO), sin path de namespace.
+   * Namespace del cliente: `/notifications-socket` (ver `NOTIFICATION_SOCKET_NAMESPACE` en core).
+   */
+  notificationsSocketUrl: string;
 }
 
 export const environment: EnvironmentConfig = {
@@ -77,6 +82,7 @@ export const environment: EnvironmentConfig = {
     localPathPrefix: '/s3-lineup-media',
   },
   publicSiteUrl: resolvePublicSiteUrl('http://localhost:4200'),
+  notificationsSocketUrl: 'https://websockets.api.lineup.com.ve',
 };
 
 export const PROD: EnvironmentConfig = {
@@ -104,6 +110,7 @@ export const PROD: EnvironmentConfig = {
     localPathPrefix: '/s3-lineup-media',
   },
   publicSiteUrl: resolvePublicSiteUrl('https://lineup-dev.netlify.app'),
+  notificationsSocketUrl: 'https://websockets.api.lineup.com.ve',
 };
 
 // Default export for convenience

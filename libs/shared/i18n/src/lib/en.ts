@@ -291,6 +291,9 @@ export const en = {
     showProductPriceEquivalentsInBs:
       'Show product price equivalents in BS (BCV Rate)',
     productPriceInBs: 'Product price in BS',
+    generatingPdf: 'Generating PDF…',
+    pdfDownloaded: 'PDF downloaded! You can close this tab.',
+    errorGeneratingPdf: 'Error generating the PDF. Please try again.',
   },
   businessHoursModal: {
     days: 'Days',
@@ -592,5 +595,6 @@ export const en = {
     empty: 'You have no notifications yet.',
     markAllRead: 'Mark all as read',
     loadError: 'Could not load notifications.',
+    live: 'Live',
   },
 };

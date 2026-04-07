@@ -1,20 +1,20 @@
 import type { NotificationTypeEnum } from '../enums';
 import type { BusinessSchema } from './business.schema';
+import type { NotificationPayloadSchema } from './notification-payload.schema';
 import type { UserSchema } from './user.schema';
 
 /** GraphQL NotificationSchema */
 export interface NotificationSchema {
   body: string;
-  creationBusiness?: BusinessSchema;
+  business?: BusinessSchema | null;
   creationDate: string;
-  creationUser?: UserSchema;
   id: number;
   idCreationBusiness?: number | null;
-  /** Opcional: no siempre se pide en la query GraphQL. */
-  idCreationUser?: number;
-  payload?: Record<string, unknown> | null;
+  idCreationUser: number;
+  payload?: NotificationPayloadSchema | null;
   readAt?: string | null;
   title: string;
   type: NotificationTypeEnum;
+  user?: UserSchema | null;
   __typename?: 'NotificationSchema';
 }

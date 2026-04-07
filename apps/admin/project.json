@@ -1,49 +1,44 @@
 {
-  "name": "lineup",
+  "name": "admin",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/lineup/src",
+  "sourceRoot": "apps/admin/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/lineup",
-        "browser": "apps/lineup/src/main.ts",
+        "outputPath": "dist/apps/admin",
+        "browser": "apps/admin/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/lineup/tsconfig.app.json",
+        "tsConfig": "apps/admin/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/lineup/public"
+            "input": "apps/admin/public"
           },
           {
             "input": "libs/shared/assets/src/lib/fonts",
             "output": "assets/fonts",
             "glob": "**/*"
           },
-          "apps/lineup/src/assets"
+          "apps/admin/src/assets"
         ],
         "styles": [
           "libs/shared/ui/src/styles/_styles.scss",
-          "apps/lineup/src/styles.scss"
-        ],
-        "server": "apps/lineup/src/main.server.ts",
-        "ssr": {
-          "entry": "apps/lineup/src/server.ts"
-        },
-        "outputMode": "server"
+          "apps/admin/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1mb",
-              "maximumError": "1.6mb"
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
             },
             {
               "type": "anyComponentStyle",
@@ -65,14 +60,15 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "options": {
+        "port": 4201,
         "proxyConfig": "libs/shared/environments/proxy.conf.json"
       },
       "configurations": {
         "production": {
-          "buildTarget": "lineup:build:production"
+          "buildTarget": "admin:build:production"
         },
         "development": {
-          "buildTarget": "lineup:build:development"
+          "buildTarget": "admin:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -80,7 +76,7 @@
     "extract-i18n": {
       "executor": "@angular/build:extract-i18n",
       "options": {
-        "buildTarget": "lineup:build"
+        "buildTarget": "admin:build"
       }
     },
     "lint": {
@@ -90,24 +86,24 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/lineup/jest.config.ts"
+        "jestConfig": "apps/admin/jest.config.ts"
       }
     },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "lineup:build:production",
-        "port": 4200,
-        "staticFilePath": "dist/apps/lineup/browser",
+        "buildTarget": "admin:build:production",
+        "port": 4201,
+        "staticFilePath": "dist/apps/admin/browser",
         "spa": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "lineup:build:development"
+          "buildTarget": "admin:build:development"
         },
         "production": {
-          "buildTarget": "lineup:build:production"
+          "buildTarget": "admin:build:production"
         }
       },
       "defaultConfiguration": "production"
