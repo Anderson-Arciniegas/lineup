@@ -48,9 +48,8 @@
     </div>
   </section>
 
-  @defer (on viewport; prefetch on idle) {
-  @if(!collectionsAttempt) { @for (productCollection of productCollections;
-  track productCollection.id) {
+  @defer (on viewport; prefetch on idle) { @if(!collectionsAttempt) { @for
+  (productCollection of productCollections; track productCollection.id) {
   <div
     class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
   >
@@ -99,8 +98,7 @@
       [style]="{ width: '100px', height: '100px' }"
     />
   </div>
-  } }
-  } @placeholder {
+  } } } @placeholder {
   <div
     class="home-defer-placeholder home-defer-placeholder--collections"
     aria-hidden="true"
@@ -113,8 +111,7 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
-    @defer (on viewport; prefetch on idle) {
-    @if(!businessesAttempt) {
+    @defer (on viewport; prefetch on idle) { @if(!businessesAttempt) {
     <div
       class="card w-10/10 home-carousel"
       [class.home-carousel--few]="
@@ -151,8 +148,7 @@
         [style]="{ width: '100px', height: '100px' }"
       />
     </div>
-    }
-    } @placeholder {
+    } } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--carousel"
       aria-hidden="true"
@@ -165,8 +161,7 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
-    @defer (on viewport; prefetch on idle) {
-    @if(!catalogsAttempt) {
+    @defer (on viewport; prefetch on idle) { @if(!catalogsAttempt) {
     <div
       class="card w-10/10 home-carousel"
       [class.home-carousel--few]="
@@ -203,8 +198,7 @@
         [style]="{ width: '100px', height: '100px' }"
       />
     </div>
-    }
-    } @placeholder {
+    } } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--carousel"
       aria-hidden="true"
@@ -239,8 +233,7 @@
         [style]="{ width: '100px', height: '100px' }"
       />
     </div>
-    }
-    } @placeholder {
+    } } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--grid"
       aria-hidden="true"

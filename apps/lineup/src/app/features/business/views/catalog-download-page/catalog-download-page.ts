@@ -734,7 +734,6 @@ export class CatalogDownloadPage implements OnInit {
     const cfg = environment.catalogPdfMediaProxy;
     if (
       cfg &&
-      !environment.production &&
       typeof globalThis.location !== 'undefined' &&
       canonicalAbsoluteUrl.startsWith(cfg.s3OriginPrefix)
     ) {

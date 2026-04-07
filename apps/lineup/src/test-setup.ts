@@ -21,6 +21,29 @@ if (typeof URL.createObjectURL === 'undefined') {
   global.URL.revokeObjectURL = jest.fn();
 }
 
+// `@defer (on viewport)` y similares usan IntersectionObserver; jsdom no lo define.
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+  globalThis.IntersectionObserver = class IntersectionObserverMock
+    implements IntersectionObserver
+  {
+    readonly root: Element | Document | null = null;
+    readonly rootMargin = '';
+    readonly thresholds: ReadonlyArray<number> = [];
+    observe(): void {
+      void 0;
+    }
+    unobserve(): void {
+      void 0;
+    }
+    disconnect(): void {
+      void 0;
+    }
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  };
+}
+
 setupZoneTestEnv({
   errorOnUnknownElements: true,
   errorOnUnknownProperties: true,
