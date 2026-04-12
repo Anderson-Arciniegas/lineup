@@ -1,12 +1,27 @@
 <div class="w-full min-h-screen flex flex-col">
-  <lib-nav></lib-nav>
-  <section
-    class="h-100vh-calc w-full flex flex-row justify-between items-start"
-  >
-    <div class="sidebar w-15 sm:w-1/12 lg:w-2/10 max-w-sm">
-      <lib-sidebar class="h-100vh-calc w-full" [items]="items()"></lib-sidebar>
+  <lib-nav
+    [showSidebarToggle]="true"
+    [sidebarOpen]="sidebarOpen()"
+    (sidebarToggle)="toggleSidebar()"
+  ></lib-nav>
+  <section class="layout-main h-100vh-calc w-full min-w-0">
+    @if (sidebarOpen()) {
+    <div
+      class="sidebar-backdrop"
+      (click)="closeSidebar()"
+      role="presentation"
+      aria-hidden="true"
+    ></div>
+    }
+    <div class="sidebar-dock" [class.sidebar-dock--open]="sidebarOpen()">
+      <lib-sidebar
+        class="sidebar-dock__sidebar"
+        [items]="items()"
+        [iconOnly]="!sidebarOpen()"
+        [overlayMode]="sidebarOpen()"
+      ></lib-sidebar>
     </div>
-    <div class="page w-full sm:w-11/12 lg:w-8/10 2xl:w-full px-2 sm:px-5">
+    <div class="page layout-main__content">
       <router-outlet></router-outlet>
     </div>
   </section>

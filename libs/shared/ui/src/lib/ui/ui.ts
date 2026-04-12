@@ -7,6 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProductCard } from "../product-card/product-card";
 
+/**
+ * Sandbox / demo de UI compartida (categorías de ejemplo y campo de búsqueda) para Storybook o pruebas locales.
+ */
 @Component({
   selector: 'lib-ui',
   imports: [

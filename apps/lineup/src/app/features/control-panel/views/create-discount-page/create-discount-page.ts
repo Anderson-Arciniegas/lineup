@@ -9,6 +9,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
   AuthStore,
@@ -18,10 +19,12 @@ import {
   CreateDiscountInput,
   CurrencyPrivateService,
   DiscountPrivateService,
+  DiscountSchema,
   DiscountScopeEnum,
   DiscountTypeEnum,
   ProductPrivateService,
   ProductSchema,
+  UpdateDiscountInput,
   UtilsService,
 } from '@lineup/core';
 import { Button, ProductBreadcrumb } from '@lineup/ui';
@@ -30,9 +33,14 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { Subscription } from 'rxjs';
 
+/**
+ * Creación y edición de descuentos con alcance negocio/catálogo/producto,
+ * validaciones de fechas, tipo porcentaje/fijo y moneda cuando aplica.
+ */
 @Component({
   selector: 'app-create-discount-page',
   imports: [
@@ -45,6 +53,7 @@ import { Subscription } from 'rxjs';
     InputNumberModule,
     SelectModule,
     Button,
+    ProgressSpinner,
   ],
   templateUrl: './create-discount-page.html',
   styleUrl: './create-discount-page.scss',
@@ -53,6 +62,9 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
   business: BusinessSchema | undefined;
   discountForm: FormGroup;
   isSubmitting = false;
+  loadingDiscount = false;
+  /** Si la ruta es `.../discounts/:id/edit`, aquí va el id; si no, `null`. */
+  editingDiscountId: number | null = null;
 
   catalogs: CatalogSchema[] = [];
   products: ProductSchema[] = [];
@@ -89,6 +101,7 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
   ];
 
   private readonly _authStore = inject(AuthStore);
+  private readonly _route = inject(ActivatedRoute);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _discountService = inject(DiscountPrivateService);
   private readonly _catalogService = inject(CatalogPrivateService);
@@ -115,6 +128,10 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Inicializa validadores según alcance y tipo de descuento, escucha cambios en catálogo
+   * para cargar productos y, si la ruta incluye id, entra en modo edición.
+   */
   ngOnInit(): void {
     this.business = this._authStore.business();
     this.applyScopeValidators(
@@ -179,6 +196,122 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
 
     this.loadCatalogs();
     this.loadCurrencies();
+
+    const editId = this.getEditDiscountIdFromRoute();
+    if (editId != null) {
+      this.loadDiscountForEdit(editId);
+    }
+  }
+
+  get isEditMode(): boolean {
+    return this.editingDiscountId != null;
+  }
+
+  private getEditDiscountIdFromRoute(): number | null {
+    const raw = this._route.snapshot.paramMap.get('idDiscount');
+    if (raw == null) return null;
+    const n = Number.parseInt(raw, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+
+  private loadDiscountForEdit(id: number): void {
+    this.editingDiscountId = id;
+    this.loadingDiscount = true;
+    this._subscriptions.add(
+      this._discountService.findOneDiscount(id).subscribe({
+        next: (d) => {
+          this.applyLoadedDiscount(d, () => {
+            this.loadingDiscount = false;
+          });
+        },
+        error: () => {
+          this.loadingDiscount = false;
+          this.editingDiscountId = null;
+          this._messageService.add({
+            severity: 'error',
+            summary: this._translate.instant('general.error'),
+            detail: this._translate.instant('general.errorLoadingData'),
+          });
+        },
+      }),
+    );
+  }
+
+  /**
+   * Rellena el formulario con el descuento. El API de actualización no permite
+   * cambiar ámbito ni catálogo/producto; esos controles se deshabilitan en modo edición.
+   */
+  private applyLoadedDiscount(d: DiscountSchema, done: () => void): void {
+    const idCatalog =
+      d.scope === DiscountScopeEnum.BUSINESS
+        ? null
+        : (d.idCatalog ?? d.catalog?.id ?? null);
+    const idProduct =
+      d.scope === DiscountScopeEnum.PRODUCT
+        ? (d.discountProducts?.[0]?.idProduct ?? null)
+        : null;
+
+    this.applyScopeValidators(d.scope);
+    this.applyDiscountTypeValidators(d.discountType);
+    this.applyValueValidators(d.discountType);
+
+    const patch = {
+      scope: d.scope,
+      discountType: d.discountType,
+      idCatalog,
+      idProduct,
+      idCurrency:
+        d.discountType === DiscountTypeEnum.FIXED
+          ? (d.idCurrency ?? null)
+          : null,
+      value: d.value,
+      startDate: this.toDateInputValue(d.startDate),
+      endDate: this.toDateInputValue(d.endDate),
+    };
+
+    const runFinish = (): void => {
+      this.discountForm.patchValue(patch, { emitEvent: false });
+      this.disableImmutableFieldsInEditMode();
+      done();
+    };
+
+    if (d.scope === DiscountScopeEnum.PRODUCT && idCatalog != null) {
+      this.loadingProducts = true;
+      this._subscriptions.add(
+        this._productService
+          .getAllByCatalogPaginated(idCatalog, { page: 1, limit: 500 })
+          .subscribe({
+            next: (res) => {
+              this.products = res.items ?? [];
+              this.loadingProducts = false;
+              runFinish();
+            },
+            error: () => {
+              this.loadingProducts = false;
+              this.products = [];
+              this._messageService.add({
+                severity: 'error',
+                summary: this._translate.instant('general.error'),
+                detail: this._translate.instant('general.errorLoadingData'),
+              });
+              runFinish();
+            },
+          }),
+      );
+    } else {
+      runFinish();
+    }
+  }
+
+  private disableImmutableFieldsInEditMode(): void {
+    if (this.editingDiscountId == null) return;
+    this.discountForm.get('scope')?.disable({ emitEvent: false });
+    this.discountForm.get('idCatalog')?.disable({ emitEvent: false });
+    this.discountForm.get('idProduct')?.disable({ emitEvent: false });
+  }
+
+  private toDateInputValue(iso: string): string {
+    return new Date(iso).toISOString().slice(0, 10);
   }
 
   ngOnDestroy(): void {
@@ -368,6 +501,47 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
+
+    if (this.editingDiscountId != null) {
+      const updatePayload: UpdateDiscountInput = {
+        id: this.editingDiscountId,
+        discountType: raw.discountType,
+        value: Number(raw.value),
+        startDate: this.toIsoStart(raw.startDate),
+        endDate: this.toIsoEnd(raw.endDate),
+      };
+      if (raw.discountType === DiscountTypeEnum.FIXED && raw.idCurrency != null) {
+        updatePayload.idCurrency = raw.idCurrency;
+      }
+      this._subscriptions.add(
+        this._discountService.updateDiscount(updatePayload).subscribe({
+          next: () => {
+            this.isSubmitting = false;
+            this._messageService.add({
+              severity: 'success',
+              summary: this._translate.instant('general.success'),
+              detail: this._translate.instant('general.discountUpdated'),
+            });
+            this._utils.navigate([
+              AppConfigService.config.routes.dashboard,
+              AppConfigService.config.routes.discounts,
+            ]);
+          },
+          error: (err: { message?: string }) => {
+            this.isSubmitting = false;
+            this._messageService.add({
+              severity: 'error',
+              summary: this._translate.instant('general.error'),
+              detail:
+                err?.message ??
+                this._translate.instant('general.errorUpdatingDiscount'),
+            });
+          },
+        }),
+      );
+      return;
+    }
+
     this._subscriptions.add(
       this._discountService.createDiscount(data).subscribe({
         next: () => {

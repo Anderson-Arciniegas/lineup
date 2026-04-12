@@ -94,6 +94,17 @@ export const GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY = gql`
   }
 `;
 
+export const GET_ALL_BY_BUSINESS_QUERY = gql`
+  query GetAllByBusiness($idBusiness: Int!, $pagination: InfinityScrollInput!) {
+    getAllByBusiness(idBusiness: $idBusiness, pagination: $pagination) {
+      items ${productSelection}
+      limit
+      page
+      total
+    }
+  }
+`;
+
 export const GET_STOCK_BY_PRODUCT_QUERY = gql`
   query GetStockByProduct($idProduct: Int!) {
     getStockByProduct(idProduct: $idProduct) ${productSkuSelection}

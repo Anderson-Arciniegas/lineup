@@ -18,6 +18,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
+/** CRUD de ubicaciones físicas del negocio con modales de alta/edición y confirmación de borrado. */
 @Component({
   selector: 'app-locations-page',
   imports: [

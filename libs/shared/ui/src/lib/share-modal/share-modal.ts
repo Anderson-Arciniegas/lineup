@@ -26,6 +26,10 @@ interface ShareOption {
   getShareUrl: (url: string) => string;
 }
 
+/**
+ * Modal para compartir una URL: QR, copiar al portapapeles y enlaces a redes (WhatsApp, Telegram, X, etc.).
+ * Funciona embebido en `DynamicDialog` o como componente standalone con `input`/`output`.
+ */
 @Component({
   selector: 'lib-share-modal',
   standalone: true,
@@ -95,6 +99,7 @@ export class ShareModal {
     },
   ];
 
+  /** Copia `displayUrl` al portapapeles y muestra feedback temporal en `copied`. */
   copyUrl(): void {
     const urlToCopy = this.displayUrl();
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -105,6 +110,7 @@ export class ShareModal {
     }
   }
 
+  /** Abre la URL de compartir de la red elegida en una pestaña nueva. */
   shareOn(network: ShareOption): void {
     if (typeof window === 'undefined') return;
     window.open(

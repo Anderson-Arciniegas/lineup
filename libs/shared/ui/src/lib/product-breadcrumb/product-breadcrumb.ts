@@ -19,6 +19,7 @@ import { AuthStore, BusinessSchema, CatalogSchema } from '@lineup/core';
 import { filter } from 'rxjs/operators';
 import { Button } from '../button/button';
 
+/** Segmentos de ruta sin query ni hash (p. ej. `/a/b/` → `['a','b']`). */
 function pathSegments(url: string): string[] {
   const path = url.split('?')[0].split('#')[0];
   return path
@@ -27,7 +28,10 @@ function pathSegments(url: string): string[] {
     .filter((s) => s.length > 0);
 }
 
-/** `from` is exactly one segment deeper than `to` and shares the same prefix (e.g. /b/c → /b). */
+/**
+ * Indica si `from` es exactamente un segmento más profundo que `to` y comparte prefijo
+ * (p. ej. `/negocio/cat` → `/negocio`).
+ */
 function isDirectParentRoute(fromUrl: string, toUrl: string): boolean {
   const from = pathSegments(fromUrl);
   const to = pathSegments(toUrl);
@@ -37,6 +41,7 @@ function isDirectParentRoute(fromUrl: string, toUrl: string): boolean {
   return to.every((seg, i) => from[i] === seg);
 }
 
+/** Comparación de rutas normalizada por segmentos. */
 function isSamePath(a: string, b: string): boolean {
   const sa = pathSegments(a);
   const sb = pathSegments(b);
@@ -95,6 +100,10 @@ class ProductBreadcrumbNavTracker {
   }
 }
 
+/**
+ * Migas de navegación con botón atrás inteligente: respeta `history.back`, evita bucles
+ * catálogo ↔ negocio con `ProductBreadcrumbNavTracker` y admite `path` explícito desde el padre.
+ */
 @Component({
   selector: 'lib-product-breadcrumb',
   imports: [CommonModule, Button, RouterLink],
@@ -122,12 +131,23 @@ export class ProductBreadcrumb {
 
   businessMode = computed(() => this._authStore.isBusinessLoggedIn());
 
+  /**
+   * Elige entre `navigateByUrl` a un padre lógico o `Location.back` según modo público,
+   * historial del navegador y señales del tracker de popstate.
+   */
   goBack(): void {
     const hierarchyTarget = this.pickFirstFallbackDifferentFromCurrent();
+    const hasExplicitBackPath = Boolean(this.path?.trim());
 
-    // En vistas públicas (negocio/catálogo/producto), no usar history.back(): el stack
-    // puede devolver al producto o al catálogo tras haber subido un nivel con el atrás del navegador.
-    if (this.publicMode && hierarchyTarget) {
+    // En público, solo forzamos URL por jerarquía si:
+    // - el tracker detectó popstate "hijo → padre" (evita volver al catálogo/producto en bucle), o
+    // - el padre pasó `path` (p. ej. state lineupPublicBack: '/' o '/dashboard').
+    // Si no, usamos history.back() para respetar origen real (ej. dashboard → negocio).
+    if (
+      this.publicMode &&
+      hierarchyTarget &&
+      (this.navTracker.suppressesHistoryBack || hasExplicitBackPath)
+    ) {
       void this.router.navigateByUrl(hierarchyTarget);
       return;
     }

@@ -62,6 +62,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription, take } from 'rxjs';
 
+/**
+ * Alta o edición de producto: formulario rico (editor, variaciones, imágenes arrastrables),
+ * selección de catálogo y envío a `ProductPrivateService` con validaciones de negocio.
+ */
 @Component({
   selector: 'app-create-product-page',
   imports: [
@@ -123,6 +127,7 @@ export class CreateProductPage implements OnInit {
   private readonly _subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
 
+  /** Define la estructura base del formulario y el `FormArray` de variaciones (vacío al inicio). */
   constructor() {
     this.createProductForm = this._formBuilder.group({
       title: [
@@ -144,6 +149,10 @@ export class CreateProductPage implements OnInit {
     });
   }
 
+  /**
+   * Lee parámetros de ruta (`business`, `catalogPath`, `idProduct`) y encadena
+   * la carga de negocio, catálogo y producto en modo edición.
+   */
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
     this.idProduct = this._activatedRoute.snapshot.params['idProduct'];
@@ -159,6 +168,7 @@ export class CreateProductPage implements OnInit {
     }
   }
 
+  /** Modal para mover el producto a otro catálogo del mismo negocio (solo en edición). */
   switchCatalog(): void {
     if (!this.product) {
       return;
@@ -268,7 +278,6 @@ export class CreateProductPage implements OnInit {
           this.attempt = false;
         },
         complete: () => {
-          console.log('complete');
           this.attempt = false;
         },
       }),
@@ -460,8 +469,6 @@ export class CreateProductPage implements OnInit {
   //     typeof value === 'object' && value !== null
   //       ? value
   //       : (this.currencies.find((c) => c.id === value) ?? null);
-
-  //   console.log(this.selectedCurrency);
   // }
 
   onImagesChange(event: { urls: string[]; imageCodes: string[] }): void {
@@ -521,7 +528,6 @@ export class CreateProductPage implements OnInit {
         .post('files/upload', fileUpload)
         .pipe(
           map((response) => {
-            console.log(response);
             switch (response.type) {
               case HttpEventType.Response:
                 if (response.body.file) {
@@ -586,10 +592,6 @@ export class CreateProductPage implements OnInit {
       this.urls.push(previewUrl);
     };
     reader.readAsDataURL(file);
-  }
-
-  onImageReorder($event) {
-    console.log($event);
   }
 
   createProduct(): void {
@@ -663,8 +665,7 @@ export class CreateProductPage implements OnInit {
       this.isSubmitting = true;
       this._subscription.add(
         this._productService.updateProduct(data).subscribe({
-          next: (product) => {
-            console.log(product);
+          next: () => {
             this.isSubmitting = false;
             this._messageService.add({
               severity: 'success',
@@ -713,7 +714,6 @@ export class CreateProductPage implements OnInit {
       this._subscription.add(
         this._productService.createProduct(data).subscribe({
           next: (product) => {
-            console.log(product);
             this.isSubmitting = false;
             this._messageService.add({
               severity: 'success',

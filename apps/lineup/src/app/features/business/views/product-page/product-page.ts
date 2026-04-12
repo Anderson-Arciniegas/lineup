@@ -41,6 +41,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
+/**
+ * Ficha pública de producto: galería responsive, datos enriquecidos, SEO,
+ * productos relacionados por etiquetas y registro de visita para usuarios externos.
+ */
 @Component({
   selector: 'app-product-page',
   imports: [
@@ -107,6 +111,10 @@ export class ProductPage implements OnInit, OnDestroy {
 
   private readonly _subscription = new Subscription();
 
+  /**
+   * Observa breakpoints para el carrusel de imágenes, lee `business` e `idProduct` de la ruta
+   * y lanza la carga paralela de negocio y producto.
+   */
   ngOnInit() {
     this._subscription.add(
       this._breakpointObserver
@@ -132,6 +140,7 @@ export class ProductPage implements OnInit, OnDestroy {
     this.getProduct();
   }
 
+  /** Obtiene el detalle del producto, aplica SEO, visitas y dispara relaciones por tags. */
   private getProduct(): void {
     if (this.attempt) return;
     this.attempt = true;
@@ -168,6 +177,7 @@ export class ProductPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Resuelve el negocio por path para breadcrumb, permisos de edición y color de marca. */
   private getBusiness(): void {
     this._subscription.add(
       this._businessService.findBusinessByPath(this.path).subscribe({
@@ -184,6 +194,7 @@ export class ProductPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Cancela suscripciones (breakpoint observer y peticiones). */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
@@ -236,6 +247,7 @@ export class ProductPage implements OnInit, OnDestroy {
       .length;
   }
 
+  /** Mapea media queries CDK a número de slides visibles del carousel PrimeNG. */
   private _carouselNumVisibleForViewport(): number {
     if (this._breakpointObserver.isMatched('(min-width: 1280px)')) {
       return 3;
@@ -331,6 +343,7 @@ export class ProductPage implements OnInit, OnDestroy {
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
   }
 
+  /** Lista única de slugs o nombres de etiqueta asociados al producto. */
   private extractProductTagIdentifiers(product: ProductSchema): string[] {
     const ids =
       product.productTags?.flatMap((pt) => {
@@ -344,6 +357,10 @@ export class ProductPage implements OnInit, OnDestroy {
     return [...new Set(ids)];
   }
 
+  /**
+   * Consulta en paralelo productos con las mismas etiquetas dentro del negocio
+   * y en el catálogo global, excluyendo duplicados y limitando a cuatro ítems por bloque.
+   */
   private loadTaggedRelatedProducts(product: ProductSchema): void {
     const tagNamesOrSlugs = this.extractProductTagIdentifiers(product);
     if (tagNamesOrSlugs.length === 0) {
@@ -405,6 +422,7 @@ export class ProductPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Registra visita al producto para analíticas (visitantes no dueños). */
   private visitProduct(): void {
     this._subscription.add(
       this._userService

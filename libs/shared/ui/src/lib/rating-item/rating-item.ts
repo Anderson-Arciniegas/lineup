@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import type { ProductRatingSchema } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+/** Valoración del usuario con enlace al producto y miniatura. */
 @Component({
   selector: 'lib-rating-item',
   imports: [CommonModule, RouterLink, TranslateModule],
@@ -15,8 +16,8 @@ export class RatingItem {
 
   readonly stars = [1, 2, 3, 4, 5] as const;
 
+  /** Ruta pública `/negocio/catálogo/id` si hay datos suficientes en `rating.product`. */
   get productUrl(): string | null {
-    console.log(this.rating);
     const product = this.rating.product;
     if (
       product?.id != null &&
@@ -28,6 +29,7 @@ export class RatingItem {
     return null;
   }
 
+  /** URL del primer archivo de imagen del producto valorado. */
   get productImageUrl(): string | undefined {
     return this.rating.product?.productFiles?.[0]?.file?.url;
   }

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 
 import {
   afterNextRender,
@@ -7,6 +7,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
   signal,
@@ -29,6 +30,7 @@ import {
   BusinessSchema,
   CatalogPublicService,
   CatalogSchema,
+  getFileThumbnailUrl,
   ProductCollectionSchema,
   ProductPublicService,
   ProductSchema,
@@ -37,8 +39,6 @@ import {
 } from '@lineup/core';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -51,13 +51,17 @@ interface CarouselBreakpointConfig {
 }
 
 // gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Página de inicio pública: carruseles de negocios, catálogos, productos y colecciones,
+ * con lógica responsive para PrimeNG Carousel (evita mutación compartida de `responsiveOptions`)
+ * y optimizaciones LCP (preload de miniatura del producto principal).
+ */
 @Component({
   selector: 'app-home-page',
   imports: [
     CommonModule,
     Button,
-    InputIcon,
-    IconField,
     BusinessCard,
     ProductCard,
     CatalogCard,
@@ -71,9 +75,10 @@ interface CarouselBreakpointConfig {
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   /**
    * PrimeNG muta `responsiveOptions` con `.sort()` al inyectar estilos; varios `p-carousel` con la misma
@@ -140,7 +145,14 @@ export class HomePage implements OnInit, AfterViewInit {
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _utils = inject(UtilsService);
   private readonly _subscription = new Subscription();
+  private leadProductThumbPreloadInjected = false;
+  private static readonly leadProductPreloadLinkId =
+    'lineup-preload-lead-product-thumbnail';
 
+  /**
+   * Tras el render en el cliente, escucha `resize` con debounce para recalcular
+   * `numVisible` de los carruseles y forzar remount cuando cambia el breakpoint efectivo.
+   */
   constructor() {
     afterNextRender(() => {
       if (!isPlatformBrowser(this.platformId)) return;
@@ -150,6 +162,7 @@ export class HomePage implements OnInit, AfterViewInit {
     });
   }
 
+  /** Dispara las peticiones de contenido destacado y etiquetas principales. */
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       const w = window.innerWidth;
@@ -171,9 +184,68 @@ export class HomePage implements OnInit, AfterViewInit {
     this.getMainTags();
   }
 
+  /** Sincroniza el ancho inicial del viewport para los computed de carrusel. */
   ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
     this.windowInnerWidth.set(window.innerWidth);
+  }
+
+  /** Cancela suscripciones y elimina el `<link rel="preload">` del LCP si existía. */
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.document
+      .getElementById(HomePage.leadProductPreloadLinkId)
+      ?.remove();
+  }
+
+  /**
+   * Primer producto del primer carrusel de colecciones: candidato LCP (Lighthouse).
+   */
+  isLeadCollectionProduct(
+    collection: ProductCollectionSchema,
+    product: ProductSchema,
+  ): boolean {
+    const first = this.productCollections[0];
+    return (
+      !!first &&
+      first.id === collection.id &&
+      collection.products?.[0]?.id === product.id
+    );
+  }
+
+  /** Primer producto de la parrilla “destacados”. */
+  isLeadFeaturedProduct(product: ProductSchema): boolean {
+    return this.products.length > 0 && this.products[0].id === product.id;
+  }
+
+  /**
+   * Inserta un preload de la miniatura del primer producto de la primera colección
+   * para mejorar LCP en auditorías de rendimiento.
+   */
+  private injectLeadProductImagePreload(): void {
+    if (
+      !isPlatformBrowser(this.platformId) ||
+      this.leadProductThumbPreloadInjected
+    ) {
+      return;
+    }
+    const file = this.productCollections[0]?.products?.[0]?.productFiles?.[0]
+      ?.file;
+    if (!file) return;
+    const href = getFileThumbnailUrl(file, 'sm');
+    if (!href || !/^https?:\/\//i.test(href)) return;
+    if (this.document.getElementById(HomePage.leadProductPreloadLinkId)) {
+      return;
+    }
+    const link = this.document.createElement('link');
+    link.id = HomePage.leadProductPreloadLinkId;
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = href;
+    link.setAttribute('crossorigin', 'anonymous');
+    this.document.head.appendChild(link);
+    this.leadProductThumbPreloadInjected = true;
   }
 
   /**
@@ -191,6 +263,7 @@ export class HomePage implements OnInit, AfterViewInit {
     return itemCount < nv;
   }
 
+  /** Actualiza signals de ancho y fuerza remount de carruseles si cambió `numVisible`. */
   private onWindowResizeForCarousels(): void {
     const w = window.innerWidth;
     const ns = this.resolveNumVisibleForWidth(
@@ -243,6 +316,7 @@ export class HomePage implements OnInit, AfterViewInit {
     return numVisible;
   }
 
+  /** Carga negocios destacados (paginación fija en primera página). */
   private getFeaturedBusinesses(): void {
     this.businessesAttempt = true;
     this._subscription.add(
@@ -250,7 +324,6 @@ export class HomePage implements OnInit, AfterViewInit {
         .featuredBusinesses({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.businesses = [...this.businesses, ...response.items];
             this.businessesAttempt = false;
           },
@@ -258,13 +331,11 @@ export class HomePage implements OnInit, AfterViewInit {
             console.error(error);
             this.businessesAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Carga catálogos destacados. */
   private getFeaturedCatalogs(): void {
     this.catalogsAttempt = true;
     this._subscription.add(
@@ -272,7 +343,6 @@ export class HomePage implements OnInit, AfterViewInit {
         .featuredCatalogs({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.catalogs = [...this.catalogs, ...response.items];
             this.catalogsAttempt = false;
           },
@@ -280,13 +350,11 @@ export class HomePage implements OnInit, AfterViewInit {
             console.error(error);
             this.catalogsAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Carga productos destacados. */
   private getFeaturedProducts(): void {
     this.productsAttempt = true;
     this._subscription.add(
@@ -294,7 +362,6 @@ export class HomePage implements OnInit, AfterViewInit {
         .featuredProducts({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.products = [...this.products, ...response.items];
             this.productsAttempt = false;
           },
@@ -302,44 +369,40 @@ export class HomePage implements OnInit, AfterViewInit {
             console.error(error);
             this.productsAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Obtiene colecciones de productos para el carrusel agrupado. */
   private getProductCollections(): void {
     this.collectionsAttempt = true;
     this._subscription.add(
       this._productPublicService.productCollections().subscribe({
         next: (response) => {
           this.productCollections = [...this.productCollections, ...response];
-          console.log(this.productCollections);
           this.collectionsAttempt = false;
+          this.injectLeadProductImagePreload();
         },
         error: (error) => {
           console.error(error);
           this.collectionsAttempt = false;
         },
-        complete: () => {
-          console.log('complete');
-        },
       }),
     );
   }
 
+  /** Etiquetas principales para navegación rápida hacia búsqueda por tag. */
   private getMainTags(): void {
     this._subscription.add(
       this._productPublicService.getMainTags(8).subscribe({
         next: (response) => {
-          console.log(response);
           this.tags = response;
         },
       }),
     );
   }
 
+  /** Navega a la ruta de búsqueda global con el término indicado. */
   onSearchSubmit(query: string): void {
     if (query === '') return;
 

@@ -5,6 +5,9 @@ import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Button } from '../button/button';
 
+/**
+ * Diálogo de confirmación genérico: mensaje y tono de botón desde `DynamicDialogConfig.data`.
+ */
 @Component({
   selector: 'lib-confirmation-modal',
   imports: [CommonModule, DialogModule, TranslateModule, Button],
@@ -25,15 +28,18 @@ export class ConfirmationModal implements OnInit {
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
 
+  /** Lee `message` y `color` del `DynamicDialogConfig` al abrir el modal. */
   ngOnInit(): void {
     this.message = this.config.data?.message;
     this.color = this.config.data?.color;
   }
 
+  /** Cierra el diálogo devolviendo `false`. */
   cancel() {
     this.ref.close(false);
   }
 
+  /** Cierra el diálogo devolviendo `true`. */
   confirm() {
     this.ref.close(true);
   }

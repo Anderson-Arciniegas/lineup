@@ -15,6 +15,9 @@ import { Carousel } from 'primeng/carousel';
 import { ImageModule } from 'primeng/image';
 import { CatalogCarouselItem } from '../catalog-carousel-item/catalog-carousel-item';
 
+/**
+ * Carrusel de productos de un catálogo: color de fondo dinámico por color medio de la imagen activa (`FastAverageColor`).
+ */
 @Component({
   selector: 'lib-catalog-carousel',
   imports: [CommonModule, Carousel, ImageModule, CatalogCarouselItem],
@@ -44,6 +47,7 @@ export class CatalogCarousel implements OnInit, AfterViewInit {
 
   private _cdr = inject(ChangeDetectorRef);
 
+  /** Configura breakpoints del carousel y datos de ejemplo si se usan placeholders. */
   ngOnInit() {
     this.responsiveOptions = [
       {
@@ -74,12 +78,13 @@ export class CatalogCarousel implements OnInit, AfterViewInit {
     });
   }
 
+  /** Dispara cálculo de color para la primera página visible. */
   ngAfterViewInit(): void {
     this.onPage({ page: 0 });
   }
 
+  /** Al cambiar de slide, muestrea la imagen del producto y emite color de fondo semitransparente. */
   onPage($event: any) {
-    console.log(this.predefinedColor);
     if (!this.predefinedColor) {
       const img = new Image();
       img.crossOrigin = 'anonymous'; // ← ESTO ES CRÍTICO
@@ -94,7 +99,6 @@ export class CatalogCarousel implements OnInit, AfterViewInit {
         fac.getColorAsync(img).then((color) => {
           const rgba = color.rgba.replace(/[\d.]+\)$/g, '0.5)');
           this.bgColor = rgba;
-          console.log(this.bgColor);
           this.setColor.emit(this.bgColor);
           this._cdr.detectChanges();
         });

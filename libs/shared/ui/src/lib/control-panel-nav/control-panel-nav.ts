@@ -5,6 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { DrawerModule } from 'primeng/drawer';
 import { Button } from '../button/button';
 
+/** Navegación compacta del panel con drawer (`visible`) para menú en pantallas pequeñas. */
 @Component({
   selector: 'lib-control-panel-nav',
   imports: [CommonModule, Button, RouterLink, RouterLink, DrawerModule, ButtonModule],

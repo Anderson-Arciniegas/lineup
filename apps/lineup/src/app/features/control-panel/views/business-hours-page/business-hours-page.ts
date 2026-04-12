@@ -8,6 +8,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
+/**
+ * Configuración de horarios de atención por día de la semana mediante modales
+ * y persistencia vía `BusinessPrivateService`.
+ */
 @Component({
   selector: 'app-business-hours-page',
   imports: [CommonModule, TranslateModule, Button, ProgressSpinner],

@@ -1,6 +1,6 @@
 <a [routerLink]="'/' + business?.path" [ngClass]="[width, height]">
   <div
-    class="business-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
+    class="business-card p-2 shadow cursor-pointer flex flex-col justify-end items-center bg-primary-50 w-full h-full"
   >
     <!-- <div
       class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs"
@@ -16,6 +16,18 @@
       </div>
       }
     </div> -->
+
+    <!-- @if (outOfStock) {
+      <div class="note-container flex flex-row justify-center items-center">
+        <div
+          class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+        >
+          <span class="text-sm text-center font-medium"
+            >{{'general.outOfStockSimple' | translate}}</span
+          >
+        </div>
+      </div>
+      } -->
 
     <div class="h-full image-container">
       @if (business?.image) {
@@ -55,7 +67,26 @@
         />
       </div>
     </div>
-    <div class="pt-2">
+
+    @if (discount) {
+    <div class="note-container flex flex-row justify-center items-center">
+      <div
+        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}}% {{'general.discount' | translate}}
+        </span>
+        } @else {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}} {{discount.currency?.code | currencySymbol}}
+          {{'general.discount' | translate}}
+        </span>
+        }
+      </div>
+    </div>
+    }
+    <div class="pt-2 w-full">
       <p
         class="text-center font-medium text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden"
       >

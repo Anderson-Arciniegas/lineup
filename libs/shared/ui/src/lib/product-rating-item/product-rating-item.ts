@@ -3,6 +3,9 @@ import { Component, Input } from '@angular/core';
 import type { ProductRatingSchema } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+/**
+ * Muestra una valoración en contexto de panel de negocio (autor, estrellas, texto).
+ */
 @Component({
   selector: 'lib-product-rating-item',
   imports: [CommonModule, TranslateModule],
@@ -14,11 +17,13 @@ export class ProductRatingItem {
 
   readonly stars = [1, 2, 3, 4, 5] as const;
 
+  /** Avatar del usuario que creó la valoración. */
   get creatorProfileImageUrl(): string | undefined {
     const url = this.rating.creationUser?.profileImage?.url;
     return url?.trim() || undefined;
   }
 
+  /** Prioriza `username` y si no hay, concatena nombre y apellido. */
   get creatorDisplayName(): string {
     const u = this.rating.creationUser;
     const name = u?.username?.trim();

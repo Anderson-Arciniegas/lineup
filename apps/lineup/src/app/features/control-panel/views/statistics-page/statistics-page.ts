@@ -43,6 +43,10 @@ export enum StatisticsPeriodMode {
   CUSTOM = 'CUSTOM',
 }
 
+/**
+ * Estadísticas avanzadas del negocio: pestañas por dominio (inventario, ventas, productos, etc.),
+ * selección de periodo (mes, semana, rango personalizado) y recarga reactiva vía `Subject`.
+ */
 @Component({
   selector: 'app-statistics-page',
   imports: [

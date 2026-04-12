@@ -8,6 +8,7 @@ import {
   BusinessSchema,
   BusinessPrivateService,
   EncryptionService,
+  NotificationsSocketService,
   StorageService,
   UserSchema,
   UserPublicService,
@@ -27,6 +28,7 @@ export class AuthService {
   private _platformId = inject(PLATFORM_ID);
   private _user = inject(UserPublicService);
   private _business = inject(BusinessPrivateService);
+  private _notificationsSocket = inject(NotificationsSocketService);
 
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this._platformId)) {
@@ -63,47 +65,6 @@ export class AuthService {
     }
   }
 
-  // login(data: any): Observable<any> {
-  //   return this._api.post('auth/login', data);
-  // }
-
-  // loginWithGoogle(credentials: SocialAuth): Observable<AuthResponse> {
-  //   return this._api.post(app, 'auth/google/login', credentials);
-  // }
-
-  // registerWithGoogle(credentials: RegisterGoogleDto): Observable<AuthResponse> {
-  //   return this._api.post(app, 'auth/google/register', credentials);
-  // }
-
-  // logOut() {
-  //   return this._api.post('auth/logout');
-  // }
-
-  //   sendEmailCode(
-  //     email: string,
-  //
-  //   ): Observable<any> {
-  //     return this._api.post(app, 'auth/send-email-code', { email });
-  //   }
-
-  //   validateEmailCode(
-  //     email: string,
-  //     code: string,
-  //
-  //   ): Observable<AuthResponse> {
-  //     return this._api.put(app, `auth/validate-email/${code}`, { email });
-  //   }
-
-  // async handleTokens(loggedUser: any) {
-  //   const tokens = {
-  //     token: loggedUser.token,
-  //     refreshToken: loggedUser.refreshToken,
-  //   };
-  //   this._store.dispatch(SetTokens({ tokens }));
-  //   const encryptedTokens = await this.encryptTokens(tokens);
-  //   this._storageService.set('accessToken', encryptedTokens);
-  // }
-
   async handleSuccessLogin(
     loggedUser?: UserSchema,
     loggedBusiness?: BusinessSchema,
@@ -127,54 +88,6 @@ export class AuthService {
       this.setUser(loggedUser);
       this._utilsService.navigate([AppConfigService.config.routes.profile]);
     }
-
-    // if (
-    //   loggedUser.user.roles.some((role) => role === RolesCodesEnum.BUSINESS)
-    // ) {
-    //   if (
-    //     newUser ||
-    //     loggedUser.user.representativeLegalBusinesses.length === 0
-    //   ) {
-    //     setTimeout(() => {
-    //       this._utilsService.navigate([
-    //         AppConfigService.config.routes.dashboard,
-    //         AppConfigService.config.routes.business,
-    //         AppConfigService.config.routes.myProfile,
-    //       ]);
-    //     }, 200);
-    //   } else {
-    //     setTimeout(() => {
-    //       this._utilsService.navigate([
-    //         AppConfigService.config.routes.dashboard,
-    //         AppConfigService.config.routes.business,
-    //       ]);
-    //     }, 200);
-    //   }
-    // } else if (
-    //   loggedUser.user.roles.some((role) => role === RolesCodesEnum.PROFESSIONAL)
-    // ) {
-    //   if (newUser) {
-    //     setTimeout(() => {
-    //       this._utilsService.navigate([
-    //         AppConfigService.config.routes.dashboard,
-    //         AppConfigService.config.routes.myProfile,
-    //       ]);
-    //     }, 200);
-    //   } else {
-    //     setTimeout(() => {
-    //       this._utilsService.navigate([
-    //         AppConfigService.config.routes.dashboard,
-    //       ]);
-    //     }, 200);
-    //   }
-    // } else {
-    //   setTimeout(() => {
-    //     this._utilsService.navigate([
-    //       AppConfigService.config.routes.dashboard,
-    //       AppConfigService.config.routes.user,
-    //     ]);
-    //   }, 200);
-    // }
   }
 
   async encryptTokens(tokens: any): Promise<string> {
@@ -202,6 +115,7 @@ export class AuthService {
 
   removeUser(redirect?: boolean): void {
     if (isPlatformBrowser(this._platformId)) {
+      this._notificationsSocket.disconnect();
       this._authStore.clearAuth();
       this._storageService.remove('loggedUser');
       this._storageService.remove('sessionType');

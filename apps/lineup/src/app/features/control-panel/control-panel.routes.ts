@@ -85,6 +85,10 @@ export const controlPanelRoutes: Routes = [
             component: CatalogsPage,
           },
           {
+            path: AppConfigService.config.routes.createCatalog,
+            component: CreateCatalogPage,
+          },
+          {
             path: ':catalogPath',
             children: [
               {

@@ -33,6 +33,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 import { Button } from '../button/button';
 import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
+
+/**
+ * Tarjeta de producto para el panel: menú de acciones (ver público, inventario, editar, borrar),
+ * precio con descuento según tasas BCV y evento al eliminar.
+ */
 @Component({
   selector: 'lib-product-item',
   imports: [
@@ -91,6 +96,7 @@ export class ProductItem implements OnInit {
     @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
   ) {}
 
+  /** Construye URLs de edición/inventario y menú contextual PrimeNG. */
   ngOnInit(): void {
     if (this.product) {
       this.image = this.product.productFiles
@@ -140,6 +146,7 @@ export class ProductItem implements OnInit {
     ];
   }
 
+  /** Abre confirmación y, si acepta, llama a `removeProduct` y emite `productDeletionEvent`. */
   deleteProduct(): void {
     this.ref = this._dialogService.open(ConfirmationModal, {
       width: '500px',
@@ -191,6 +198,7 @@ export class ProductItem implements OnInit {
       });
   }
 
+  /** Trunca título para vistas de lista en el panel. */
   setLabel(title: string | null | undefined, maxLength = 20): string {
     const t = title ?? '';
     return t.length > maxLength ? t.substring(0, maxLength) + '...' : t;

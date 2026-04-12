@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Input,
   Output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BusinessNotificationsPrivateService,
-  BusinessNotificationsPublicService,
+  NotificationsSocketService,
+  UserNotificationsPublicService,
   type NotificationSchema,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,6 +20,10 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { Button } from '../button/button';
 import { NotificationItem } from '../notification-item/notification-item';
 
+/**
+ * Panel de lista de notificaciones: carga paginada, merge con eventos en vivo del socket,
+ * marcar una o todas como leídas y notificar cambios de conteo al padre.
+ */
 @Component({
   selector: 'lib-notifications',
   standalone: true,
@@ -34,18 +41,29 @@ export class Notifications {
   @Input({ required: true }) businessMode!: boolean;
   @Output() countMayHaveChanged = new EventEmitter<void>();
 
+  private readonly _destroyRef = inject(DestroyRef);
   private readonly _publicNotifications = inject(
-    BusinessNotificationsPublicService,
+    UserNotificationsPublicService,
   );
   private readonly _privateNotifications = inject(
     BusinessNotificationsPrivateService,
   );
+  private readonly _notificationsSocket = inject(NotificationsSocketService);
 
   readonly items = signal<NotificationSchema[]>([]);
   readonly loading = signal(false);
   readonly loadError = signal(false);
+  readonly socketConnected = this._notificationsSocket.isConnected;
   markAllLoading = false;
 
+  /** Suscripción al stream del socket para insertar o actualizar ítems sin recargar toda la lista. */
+  constructor() {
+    this._notificationsSocket.notification$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((incoming) => this.mergeRealtimeNotification(incoming));
+  }
+
+  /** Recarga la primera página desde la API y fusiona con entradas solo locales. */
   refresh(): void {
     this.loading.set(true);
     this.loadError.set(false);
@@ -56,7 +74,7 @@ export class Notifications {
 
     request$.subscribe({
       next: (data) => {
-        this.items.set(data.items);
+        this.items.set(this.mergeListWithExisting(data.items));
         this.loading.set(false);
       },
       error: () => {
@@ -64,6 +82,34 @@ export class Notifications {
         this.loadError.set(true);
       },
     });
+  }
+
+  /** Inserta o actualiza por `id` y avisa que el contador del nav puede haber cambiado. */
+  private mergeRealtimeNotification(incoming: NotificationSchema): void {
+    this.items.update((list) => {
+      const idx = list.findIndex((n) => n.id === incoming.id);
+      if (idx >= 0) {
+        const next = [...list];
+        next[idx] = { ...next[idx], ...incoming };
+        return next;
+      }
+      return [incoming, ...list];
+    });
+    this.countMayHaveChanged.emit();
+  }
+
+  /** Conserva entradas solo-en-cliente (p. ej. socket durante el fetch) al reconciliar con la API. */
+  private mergeListWithExisting(
+    fromApi: NotificationSchema[],
+  ): NotificationSchema[] {
+    const prev = this.items();
+    const apiIds = new Set(fromApi.map((n) => n.id));
+    const onlyLocal = prev.filter((n) => !apiIds.has(n.id));
+    const combined = [...onlyLocal, ...fromApi];
+    return combined.sort(
+      (a, b) =>
+        new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime(),
+    );
   }
 
   protected hasUnread(): boolean {

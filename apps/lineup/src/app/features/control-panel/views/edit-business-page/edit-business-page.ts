@@ -33,6 +33,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription, take } from 'rxjs';
+
+/**
+ * Formulario de datos del negocio autenticado: nombre, path público, contacto, descripción,
+ * etiquetas, imagen de marca y persistencia vía `BusinessPrivateService` + actualización de `AuthStore`.
+ */
 @Component({
   selector: 'app-edit-business-page',
   imports: [
@@ -98,28 +103,38 @@ export class EditBusinessPage implements OnInit {
     tag: [''],
   });
 
+  /** Carga `myBusiness()` y rellena formulario, tags e imagen actual. */
   ngOnInit(): void {
     this.getBusiness();
   }
 
+  /** Añade etiquetas desde el campo `tag` (coma-separadas), normalizadas y sin duplicados. */
   addTag() {
-    const tagValue = this._utils.normalizeSpaces(
-      this.businessForm.get('tag')?.value ?? '',
-    );
-    if (this.tags.includes(tagValue.toLowerCase()) || this.tags.length >= 10) {
-      return;
+    const raw = this.businessForm.get('tag')?.value ?? '';
+    const parts = raw
+      .split(',')
+      .map((t) => this._utils.normalizeSpaces(t))
+      .filter((t) => t.length > 0);
+
+    const next = [...this.tags];
+    for (const part of parts) {
+      if (next.length >= 10) {
+        break;
+      }
+      const normalized = part.toLowerCase();
+      if (!next.includes(normalized)) {
+        next.push(normalized);
+      }
     }
-    if (tagValue) {
-      this.tags.push(tagValue.toLowerCase());
-    }
+    this.tags = next;
     this.businessForm.get('tag')?.setValue('');
-    console.log(this.tags);
   }
 
   removeTag(index: number) {
-    this.tags.splice(index, 1);
+    this.tags = this.tags.filter((_, i) => i !== index);
   }
 
+  /** Diálogo de recorte; al cerrar sube la imagen al directorio de negocio. */
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
@@ -147,6 +162,7 @@ export class EditBusinessPage implements OnInit {
       });
   }
 
+  /** POST multipart al API de archivos del negocio; detecta contenido adulto bloqueado (código 22011). */
   uploadFile(fileBase64: string) {
     this.loadingFile = true;
 
@@ -166,7 +182,6 @@ export class EditBusinessPage implements OnInit {
         .post('files/upload', fileUpload)
         .pipe(
           map((response) => {
-            console.log(response);
             switch (response.type) {
               case HttpEventType.Response:
                 if (response.body.file) {
@@ -197,6 +212,7 @@ export class EditBusinessPage implements OnInit {
     );
   }
 
+  /** Valida formulario e imagen obligatoria, arma `UpdateBusinessInput` y sincroniza sesión. */
   updateBusiness(): void {
     if (this.businessForm.invalid || this.attempt || !this.imgCode) {
       return;
@@ -224,7 +240,6 @@ export class EditBusinessPage implements OnInit {
     this._subscription.add(
       this._businessService.updateBusiness(data).subscribe({
         next: (business) => {
-          console.log(business);
           this.business = business;
           this._authStore.setBusiness(this.business);
           this.attempt = false;
@@ -248,11 +263,11 @@ export class EditBusinessPage implements OnInit {
     return this.businessForm.get('businessPath');
   }
 
+  /** Obtiene el negocio actual del backend para modo edición. */
   private getBusiness(): void {
     this._subscription.add(
       this._businessService.myBusiness().subscribe({
         next: (business) => {
-          console.log(business);
           this.business = business;
           this.businessForm.patchValue({
             name: business.name,
@@ -262,7 +277,7 @@ export class EditBusinessPage implements OnInit {
             isOnline: business.isOnline ?? false,
             tag: '',
           });
-          this.tags = this.business.tags || [];
+          this.tags = [...(this.business.tags ?? [])];
 
           if (business.image) {
             this.imageUrl = business.image.url;

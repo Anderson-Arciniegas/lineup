@@ -54,6 +54,10 @@ export interface SaleCartEntry {
   lines: SaleCartSkuLine[];
 }
 
+/**
+ * Punto de venta interno: selección de catálogo/producto/SKU, carrito multi-línea,
+ * tipos de cambio BCV y envío del payload de venta al backend.
+ */
 @Component({
   selector: 'app-register-sale-page',
   imports: [
@@ -308,7 +312,7 @@ export class RegisterSalePage implements OnInit, OnDestroy {
             life: 4000,
           });
           this.cart = [];
-          this.triggerProductLoad();
+          // this.triggerProductLoad();
         },
         error: (error: unknown) => {
           console.error(error);
@@ -524,8 +528,7 @@ export class RegisterSalePage implements OnInit, OnDestroy {
           return null;
         }
         const totals = this.lineTotals(entry, line);
-        const lineTotal =
-          totals.subtotalFinal ?? totals.subtotalOriginal;
+        const lineTotal = totals.subtotalFinal ?? totals.subtotalOriginal;
         if (lineTotal == null) {
           this._messageService.add({
             severity: 'warn',

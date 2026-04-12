@@ -27,6 +27,10 @@ import {
 } from 'rxjs';
 import { catchError, concatMap, map, tap } from 'rxjs/operators';
 
+/**
+ * Consulta de existencias por catálogo: SKUs, umbrales de stock bajo, expansión de filas
+ * y exportación CSV; enlaza con el flujo de registro de ventas.
+ */
 @Component({
   selector: 'app-inventory-page',
   imports: [

@@ -93,7 +93,9 @@ describe('ProductCard', () => {
       const router = TestBed.inject(Router);
       jest.spyOn(router, 'navigate');
       component.navigateToBusiness();
-      expect(router.navigate).toHaveBeenCalledWith(['/mi-tienda']);
+      expect(router.navigate).toHaveBeenCalledWith(['/mi-tienda'], {
+        state: undefined,
+      });
     });
   });
 

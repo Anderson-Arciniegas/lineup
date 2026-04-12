@@ -35,6 +35,11 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Subscription, take } from 'rxjs';
+
+/**
+ * Panel de gestión de un producto concreto: precios, SKUs, descuentos aplicables,
+ * valoraciones recibidas y acciones destructivas con confirmación.
+ */
 @Component({
   selector: 'app-product-panel-page',
   imports: [
@@ -197,7 +202,6 @@ export class ProductPanelPage implements OnInit, OnDestroy {
         next: (product) => {
           this.product = product;
           this.isPrimaryToggle = product.isPrimary;
-          console.log(this.product);
           this.loading = false;
           this.productUrl = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
           this._cdr.markForCheck();
@@ -225,7 +229,6 @@ export class ProductPanelPage implements OnInit, OnDestroy {
         .productRatings(Number(this.idProduct), { page: this.page, limit: 10 })
         .subscribe({
           next: (ratings) => {
-            console.log(ratings);
             this.ratings = [...this.ratings, ...ratings.items];
             this.loadingRatings = false;
           },

@@ -7,6 +7,9 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 
+/**
+ * Lista paginada de productos marcados con “me gusta” por el usuario, con scroll infinito.
+ */
 @Component({
   selector: 'app-wishlist-page',
   imports: [
@@ -31,6 +34,7 @@ export class WishlistPage implements OnInit {
     this.getFavoritesProducts();
   }
 
+  /** Solicita la siguiente página de productos favoritos si no hay carga en curso ni fin de lista. */
   getFavoritesProducts(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
@@ -39,7 +43,6 @@ export class WishlistPage implements OnInit {
         .findLikedProducts({ page: this.page, limit: 20 })
         .subscribe({
           next: (products) => {
-            console.log(products);
             this.attempt = false;
             this.products = [...this.products, ...products.items];
             this.page++;
@@ -51,15 +54,12 @@ export class WishlistPage implements OnInit {
             console.error(error);
             this.attempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Dispara la siguiente página al llegar al final del viewport (infinite scroll). */
   onScroll(): void {
-    console.log('onScroll');
     this.getFavoritesProducts();
   }
 }

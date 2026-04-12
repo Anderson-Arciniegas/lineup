@@ -22,6 +22,10 @@ import { Button } from '../button/button';
 
 /** Valores del filtro "tipo": solo uno puede estar seleccionado a la vez. */
 
+/**
+ * Árbol de filtros para búsqueda (tipo de entidad, ubicación, entrega, rango de precio).
+ * En modal cierra con `DynamicDialogRef` y devuelve `SearchFiltersApplyPayload`.
+ */
 @Component({
   selector: 'lib-search-filters',
   imports: [
@@ -92,7 +96,6 @@ export class SearchFilters implements OnInit {
     this.selectedFilterType = this.filtersType[0].children?.find(
       (child) => child.checked,
     ) as TreeNode;
-    console.log(this.selectedFilterType);
     this.filtersLocation = [
       {
         label: this._translate.instant('general.location'),
@@ -181,10 +184,6 @@ export class SearchFilters implements OnInit {
         ],
       },
     ];
-  }
-
-  select(event: any) {
-    console.log('Selected File: ', event);
   }
 
   onNodeExpand(event: any) {
