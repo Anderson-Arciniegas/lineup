@@ -1,5 +1,13 @@
 import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
+import {
+  AngularNodeAppEngine,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
 import { getContext } from '@netlify/angular-runtime/context.mjs';
+import express from 'express';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const angularAppEngine = new AngularAppEngine();
 
@@ -28,3 +36,40 @@ export async function netlifyAppEngineHandler(
  * The request handler used by the Angular CLI (dev-server and during build).
  */
 export const reqHandler = createRequestHandler(netlifyAppEngineHandler);
+
+/**
+ * Servidor Node/Express para VPS, Docker, etc. Netlify sigue usando `reqHandler`.
+ */
+if (isMainModule(import.meta.url)) {
+  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+  const browserDistFolder = join(serverDistFolder, '../browser');
+  const angularNodeAppEngine = new AngularNodeAppEngine();
+  const app = express();
+
+  app.use(
+    express.static(browserDistFolder, {
+      maxAge: '1y',
+      index: false,
+      redirect: false,
+    }),
+  );
+
+  app.use('/**', (req, res, next) => {
+    angularNodeAppEngine
+      .handle(req)
+      .then(async (response) => {
+        if (response) {
+          await writeResponseToNodeResponse(response, res);
+        } else {
+          next();
+        }
+      })
+      .catch(next);
+  });
+
+  const port = Number(process.env['PORT'] ?? 4000);
+  const host = process.env['HOST'] ?? '0.0.0.0';
+  app.listen(port, host, () => {
+    console.log(`SSR listening on http://${host}:${port}`);
+  });
+}

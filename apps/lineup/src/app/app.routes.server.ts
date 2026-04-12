@@ -45,10 +45,10 @@ export const serverRoutes: ServerRoute[] = [
     path: ':business/:catalogPath/download',
     renderMode: RenderMode.Server,
   },
-  {
-    path: ':business/:catalogPath/create-product',
-    renderMode: RenderMode.Server,
-  },
+  // {
+  //   path: ':business/:catalogPath/create-product',
+  //   renderMode: RenderMode.Server,
+  // },
   {
     path: ':business/**',
     renderMode: RenderMode.Server,

@@ -38,21 +38,14 @@
       Fin: {{ discount.endDate | localeDate: 'date' }}
     </span>
 
-    <div
-      class="flex flex-row items-center gap-2"
-      (click)="$event.stopPropagation(); $event.preventDefault();"
-      (keydown.enter)="$event.stopPropagation(); $event.preventDefault();"
-      (keydown.space)="$event.stopPropagation(); $event.preventDefault();"
-      tabindex="0"
-      role="button"
-    >
+    <div class="flex flex-row items-center gap-2">
       <lib-button
         [icon]="'pi pi-pencil'"
         [type]="'rounded'"
         [size]="'large'"
         variant="text"
         width="w-13"
-        (action)="edit.emit(discount)"
+        (action)="$event.stopPropagation(); $event.preventDefault(); edit.emit(discount)"
       ></lib-button>
 
       <lib-button
@@ -62,7 +55,7 @@
         variant="text"
         width="w-13"
         color="danger"
-        (action)="delete.emit(discount.id)"
+        (action)="$event.stopPropagation(); $event.preventDefault(); delete.emit(discount.id)"
       ></lib-button>
     </div>
   </div>

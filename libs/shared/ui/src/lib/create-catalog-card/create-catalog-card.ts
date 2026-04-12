@@ -10,6 +10,9 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { Button } from '../button/button';
 
+/**
+ * Tarjeta que lleva al flujo de creación de catálogo en el panel del negocio (`UtilsService.navigate`).
+ */
 @Component({
   selector: 'lib-create-catalog-card',
   imports: [
@@ -34,9 +37,11 @@ export class CreateCatalogCard {
   private readonly _translate = inject(TranslateService);
   private readonly _utils = inject(UtilsService);
 
+  /** Navega a la ruta configurada de alta de catálogo en el dashboard. */
   createCatalog() {
     this._utils.navigate([
-      this.business.path,
+      AppConfigService.config.routes.dashboard,
+      AppConfigService.config.routes.catalogs,
       AppConfigService.config.routes.createCatalog,
     ]);
     // this.ref = this._dialogService.open(CreateCatalogModal, {

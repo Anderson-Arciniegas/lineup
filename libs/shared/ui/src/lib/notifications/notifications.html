@@ -1,4 +1,6 @@
-<div class="notifications flex flex-col gap-3 w-80 sm:w-96 max-h-[min(24rem,70vh)]">
+<div
+  class="notifications flex flex-col gap-3 w-80 sm:w-96 max-h-[min(24rem,70vh)]"
+>
   <div
     class="flex flex-row items-center justify-between gap-2 shrink-0 border-b border-primary-100 pb-2"
   >
@@ -6,24 +8,24 @@
       <h2 class="text-base font-semibold m-0 truncate">
         {{ 'notifications.title' | translate }}
       </h2>
-      @if (socketConnected()) {
+      <!-- @if (socketConnected()) {
         <span
           class="text-xs font-medium text-green-700 shrink-0"
           [attr.title]="'notifications.live' | translate"
         >
           {{ 'notifications.live' | translate }}
         </span>
-      }
+      } -->
     </div>
     @if (hasUnread()) {
-      <lib-button
-        variant="text"
-        color="primary"
-        size="small"
-        [label]="'notifications.markAllRead' | translate"
-        [loading]="markAllLoading"
-        (action)="markAllRead()"
-      />
+    <lib-button
+      variant="text"
+      color="primary"
+      size="small"
+      [label]="'notifications.markAllRead' | translate"
+      [loading]="markAllLoading"
+      (action)="markAllRead()"
+    />
     }
   </div>
 
@@ -45,10 +47,7 @@
   } @else {
   <div class="flex flex-col gap-1 overflow-y-auto min-h-0 pr-1 -mr-1">
     @for (n of items(); track n.id) {
-    <lib-notification-item
-      [notification]="n"
-      (markRead)="onMarkRead($event)"
-    />
+    <lib-notification-item [notification]="n" (markRead)="onMarkRead($event)" />
     }
   </div>
   }

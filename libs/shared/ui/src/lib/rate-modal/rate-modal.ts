@@ -17,6 +17,9 @@ export interface RateModalData {
   idProduct: number;
 }
 
+/**
+ * Modal para enviar valoración (1–5 estrellas y comentario opcional) vía `RatingPublicService`.
+ */
 @Component({
   selector: 'lib-rate-modal',
   imports: [
@@ -67,6 +70,7 @@ export class RateModal implements OnInit {
     this._ref.close(false);
   }
 
+  /** Valida y envía la reseña; cierra con `true` si el backend responde OK. */
   submit(): void {
     if (this.form.invalid || this.attempt()) {
       this.form.markAllAsTouched();

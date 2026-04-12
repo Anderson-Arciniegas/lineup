@@ -45,6 +45,10 @@ import {
   tap,
 } from 'rxjs';
 
+/**
+ * Resultados de búsqueda unificada (negocios, catálogos, productos) o listado por etiqueta,
+ * con scroll infinito, filtros en diálogo y reinicio de estado al cambiar parámetros de ruta.
+ */
 @Component({
   selector: 'app-search-page',
   imports: [
@@ -93,6 +97,10 @@ export class SearchPage implements OnInit {
 
   private readonly _subscription = new Subscription();
 
+  /**
+   * Configura el pipeline reactivo de búsqueda (`searchTrigger$` + `switchMap`)
+   * y reacciona a `paramMap` / `data` para alternar modo texto vs tag.
+   */
   ngOnInit(): void {
     this._subscription.add(
       this.searchTrigger$
@@ -126,7 +134,6 @@ export class SearchPage implements OnInit {
         )
         .subscribe({
           next: (results) => {
-            console.log(results);
             if (results.items.length > 0) {
               this.page++;
             } else {
@@ -158,6 +165,7 @@ export class SearchPage implements OnInit {
     );
   }
 
+  /** Navega a la URL de búsqueda y reinicia paginación y resultados. */
   onSearchSubmit(query: string): void {
     if (query === '') return;
     this.searchQuery = query;
@@ -171,10 +179,12 @@ export class SearchPage implements OnInit {
     this.getSearchResults();
   }
 
+  /** Emite en el subject interno para disparar la siguiente página de resultados. */
   getSearchResults(): void {
     this.searchTrigger$.next();
   }
 
+  /** Abre el componente `SearchFilters` en un diálogo modal de PrimeNG. */
   showFiltersDialog() {
     this.ref = this._dialogService.open(SearchFilters, {
       header: this._translate.instant('general.filters'),
@@ -198,6 +208,7 @@ export class SearchPage implements OnInit {
       });
   }
 
+  /** Aplica objetivo de búsqueda y filtros de producto devueltos por el modal. */
   setFilters(payload: SearchFiltersApplyPayload): void {
     this.searchTypeFilter = payload.target;
     this.productFilters = { ...payload.productFilters };
@@ -208,6 +219,7 @@ export class SearchPage implements OnInit {
     this.getSearchResults();
   }
 
+  /** Handler de infinite scroll: pide la siguiente página si aún hay resultados. */
   onScroll(): void {
     this.getSearchResults();
   }

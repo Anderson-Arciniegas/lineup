@@ -3,6 +3,7 @@
  * Estas selecciones pueden ser usadas en queries y mutations para evitar duplicación
  */
 
+import { currencySelection } from './currency.selection';
 import { fileSelection } from './file.selection';
 import { locationFullSelection } from './location.selection';
 import { userBasicSelection } from './users.selection';
@@ -76,6 +77,21 @@ export const businessFullSelection = `{
   emailValidated
   visits
   followers
+  discounts {
+    id
+    idCatalog
+    idCreationBusiness
+    idCurrency
+    creationDate
+    modificationDate
+    startDate
+    endDate
+    status
+    scope
+    value
+    discountType
+    currency ${currencySelection}
+  }
   image {
     directory
     extension

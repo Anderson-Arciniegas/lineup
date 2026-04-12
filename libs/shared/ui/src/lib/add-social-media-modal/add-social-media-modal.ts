@@ -23,6 +23,9 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputMaskModule } from 'primeng/inputmask';
 import { Button } from '../button/button';
 
+/**
+ * Formulario para asociar URL o teléfono (WhatsApp/Telegram) a una red social del catálogo maestro.
+ */
 @Component({
   selector: 'lib-add-social-media-modal',
   imports: [
@@ -50,6 +53,7 @@ export class AddSocialMediaModal implements OnInit {
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
 
+  /** Validador de URL http(s) para redes que requieren enlace web. */
   private urlValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -70,9 +74,6 @@ export class AddSocialMediaModal implements OnInit {
       this.businessSocialNetwork = this.config.data.businessSocialNetwork;
     }
 
-    console.log(this.businessSocialNetwork);
-    console.log(this.socialMedia);
-
     if (
       this.socialMedia.name === 'WhatsApp' ||
       this.socialMedia.name === 'Telegram'
@@ -86,8 +87,6 @@ export class AddSocialMediaModal implements OnInit {
         url: ['', [Validators.required, this.urlValidator()]],
       });
     }
-
-    console.log(this.socialMedia);
 
     if (this.businessSocialNetwork) {
       if (this.socialMedia.name === 'WhatsApp') {
@@ -128,16 +127,12 @@ export class AddSocialMediaModal implements OnInit {
           })
           .subscribe({
             next: (response) => {
-              console.log(response);
               this.ref.close(response);
               this.attempt = false;
             },
             error: (error) => {
               console.error(error);
               this.attempt = false;
-            },
-            complete: () => {
-              console.log('Social network business updated');
             },
           });
       } else {
@@ -157,9 +152,6 @@ export class AddSocialMediaModal implements OnInit {
             error: (error) => {
               console.error(error);
               this.attempt = false;
-            },
-            complete: () => {
-              console.log('Social network business created');
             },
           });
       }

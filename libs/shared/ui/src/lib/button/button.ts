@@ -4,6 +4,10 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
+/**
+ * Envoltorio sobre PrimeNG Button con soporte de navegación (`routerLink`, `href`),
+ * estados de carga/deshabilitado, variantes visuales y emisión de evento `action` en clics.
+ */
 @Component({
   selector: 'lib-button',
   imports: [CommonModule, ButtonModule, RouterModule, TranslateModule],

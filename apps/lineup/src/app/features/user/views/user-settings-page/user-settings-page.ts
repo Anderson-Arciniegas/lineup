@@ -13,6 +13,10 @@ import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { take } from 'rxjs';
 
+/**
+ * Ajustes de cuenta del usuario: cambio de contraseña, correo (si no es cuenta Google)
+ * y flujos modales con verificación previa.
+ */
 @Component({
   selector: 'app-user-settings-page',
   imports: [CommonModule, TranslateModule, Button],
@@ -40,6 +44,7 @@ export class UserSettingsPage implements OnInit {
     return user != null && user.provider !== ProvidersEnum.GOOGLE;
   }
 
+  /** Abre `UpdatePasswordModal` y muestra toast si el backend confirma el cambio. */
   changePassword(): void {
     this._ref = this._dialogService.open(UpdatePasswordModal, {
       header: this._translate.instant('general.changePassword'),
@@ -69,6 +74,7 @@ export class UserSettingsPage implements OnInit {
       });
   }
 
+  /** Verificación por código y luego modal para actualizar el email de inicio de sesión. */
   changeEmail(): void {
     const verifyRef = this._dialogService.open(VerificationCodeModal, {
       header: this._translate.instant('verificationCodeModal.title'),

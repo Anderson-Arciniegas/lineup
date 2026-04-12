@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -23,10 +23,12 @@ import {
 } from '@lineup/core';
 import {
   BusinessData,
+  Button,
   CatalogCard,
   CreateCatalogCard,
   ProductBreadcrumb,
   ProductCard,
+  SearchBar,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -38,6 +40,11 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+/**
+ * Vista pública de un negocio: datos de marca, catálogos y productos con scroll infinito,
+ * búsqueda local vía query params, visitas registradas para analytics y tema visual
+ * derivado del color corporativo (degradado y contraste de texto).
+ */
 @Component({
   selector: 'app-business-page',
   imports: [
@@ -55,6 +62,8 @@ import { finalize } from 'rxjs/operators';
     ProgressSpinnerModule,
     TranslateModule,
     ProductCard,
+    SearchBar,
+    Button,
   ],
 
   templateUrl: './business-page.html',
@@ -77,12 +86,18 @@ export class BusinessPage implements OnInit {
   catalogs: CatalogSchema[] = [];
   products: ProductSchema[] = [];
   page = 1;
+  productPage = 1;
   noMoreResults = false;
+  noMoreProductsResults = false;
+  productsAttempt = false;
   attempt = false;
   /** Degradado vertical (arriba más intenso, abajo más suave; siempre más claro que el original). */
   pageBackgroundGradient = '';
   /** Según la zona superior del degradado: si es oscura, el texto de marca debe ser claro. */
   isDarkBackground = false;
+  searchQuery = '';
+  /** Destino explícito del atrás del breadcrumb (viene de `history.state`, p. ej. '/' o '/dashboard'). */
+  breadcrumbBackPath: string | null = null;
 
   /** Mezcla con blanco en la parte superior del degradado (color principal, un poco más claro que el original). */
   private static readonly _GRADIENT_TOP_LIGHTEN = 0.25;
@@ -101,17 +116,30 @@ export class BusinessPage implements OnInit {
   private readonly _productService = inject(ProductPublicService);
   private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
+  private readonly _location = inject(Location);
 
   private readonly _subscription = new Subscription();
 
+  /**
+   * Lee `business` de la ruta, estado de navegación para el breadcrumb y `search` en query.
+   * Dispara la carga del negocio y, según haya búsqueda o no, el flujo inicial o filtrado.
+   */
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
-    console.log(this.path);
-    console.log('business', this._authStore.business());
+    const st = this._location.getState() as { lineupPublicBack?: string };
+    const back = st?.lineupPublicBack?.trim();
+    this.breadcrumbBackPath = back ? (back.startsWith('/') ? back : `/${back}`) : null;
+
+    this.searchQuery =
+      this._activatedRoute.snapshot.queryParams?.['search'] ?? '';
 
     this.getBusiness();
   }
 
+  /**
+   * Obtiene el negocio por path, determina si el visitante es el dueño,
+   * aplica SEO, color de fondo y carga de catálogos/productos o visita anónima.
+   */
   private getBusiness(): void {
     const taskDone = this._pendingTasks.add();
     this._subscription.add(
@@ -120,12 +148,16 @@ export class BusinessPage implements OnInit {
         .pipe(finalize(() => taskDone()))
         .subscribe({
           next: (business) => {
-            console.log(business);
             this.business = business;
             this.myBusiness =
               Number(this._authStore.business()?.id) ===
               Number(this.business.id);
-            this.loadInitialCatalogsAndProducts();
+            if (this.searchQuery && this.searchQuery !== '') {
+              this.getProducts();
+              this.getCatalogs();
+            } else {
+              this.loadInitialCatalogsAndProducts();
+            }
             if (!this.myBusiness) {
               this.visitBusiness();
             }
@@ -137,13 +169,11 @@ export class BusinessPage implements OnInit {
           error: (error) => {
             console.error(error);
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Registra visita al perfil del negocio (usuarios no dueños). */
   private visitBusiness(): void {
     this._subscription.add(
       this._userService
@@ -151,17 +181,56 @@ export class BusinessPage implements OnInit {
           id: this.business.id,
           type: VisitTypeEnum.BUSINESS,
         })
-        .subscribe({
-          next: (response) => {
-            console.log(response);
-          },
-        }),
+        .subscribe(),
     );
   }
 
+  /** Infinite scroll: si hay búsqueda activa pagina productos y catálogos; si no, solo catálogos. */
   onScroll(): void {
-    console.log('onScroll');
+    if (this.searchQuery && this.searchQuery !== '') {
+      this.getProducts();
+      this.getCatalogs();
+    } else {
+      this.getCatalogs();
+    }
+  }
+
+  /**
+   * Actualiza la búsqueda en la URL del negocio o limpia si el término queda vacío
+   * (en cuyo caso equivale a `onClearSearch`).
+   */
+  onSearchSubmit(query: string): void {
+    if (query === '') {
+      if (this.searchQuery && this.searchQuery !== '') {
+        this.onClearSearch();
+      }
+      return;
+    }
+    this.searchQuery = query;
+    this._utils.navigate([this.business.path], {
+      queryParams: { search: this.searchQuery },
+    });
+    this.products = [];
+    this.catalogs = [];
+    this.noMoreResults = false;
+    this.noMoreProductsResults = false;
+    this.page = 1;
+    this.productPage = 1;
+    this.getProducts();
     this.getCatalogs();
+  }
+
+  /** Quita filtros de búsqueda y vuelve a la carga inicial paralela de productos y catálogos. */
+  onClearSearch(): void {
+    this.searchQuery = '';
+    this._utils.navigate([this.business.path]);
+    this.products = [];
+    this.catalogs = [];
+    this.noMoreResults = false;
+    this.page = 1;
+    this.productPage = 1;
+
+    this.loadInitialCatalogsAndProducts();
   }
 
   /** Carga productos y primera página de catálogos en paralelo. */
@@ -185,8 +254,6 @@ export class BusinessPage implements OnInit {
         )
         .subscribe({
           next: ({ products, catalogsPage }) => {
-            console.log(products);
-            console.log(catalogsPage);
             this.products = products;
             this.applyCatalogPage(catalogsPage);
           },
@@ -197,6 +264,34 @@ export class BusinessPage implements OnInit {
     );
   }
 
+  /** Paginación de productos cuando hay término de búsqueda en la página del negocio. */
+  private getProducts(): void {
+    if (this.productsAttempt || this.noMoreProductsResults) return;
+    this.productsAttempt = true;
+    this._subscription.add(
+      this._productService
+        .getAllByBusiness(this.business.id, {
+          page: this.productPage,
+          limit: 20,
+          search: this.searchQuery,
+        })
+        .pipe(finalize(() => (this.productsAttempt = false)))
+        .subscribe({
+          next: (response) => {
+            this.products = [...this.products, ...response.items];
+            this.productPage++;
+            if (response.items.length === 0) {
+              this.noMoreProductsResults = true;
+            }
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        }),
+    );
+  }
+
+  /** Paginación de catálogos del negocio, opcionalmente filtrados por búsqueda. */
   private getCatalogs(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
@@ -205,23 +300,21 @@ export class BusinessPage implements OnInit {
         .findCatalogsByBusinessId(this.business.id, {
           page: this.page,
           limit: 20,
+          search: this.searchQuery,
         })
         .pipe(finalize(() => (this.attempt = false)))
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.applyCatalogPage(response);
           },
           error: (error) => {
             console.error(error);
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Acumula ítems de catálogo y marca fin de lista cuando la página viene vacía. */
   private applyCatalogPage(response: { items: CatalogSchema[] }): void {
     this.page++;
     if (response.items.length === 0) {
@@ -231,6 +324,10 @@ export class BusinessPage implements OnInit {
     }
   }
 
+  /**
+   * Construye el degradado de página a partir de un color hex/RGB y fija si el texto
+   * sobre la zona superior debe ir en tono claro según luminancia WCAG.
+   */
   setColor(raw: string): void {
     const rgb = BusinessPage.parseColorToRgb(raw);
     if (!rgb) {
@@ -257,6 +354,7 @@ export class BusinessPage implements OnInit {
     return Math.max(0, Math.min(255, Math.round(n)));
   }
 
+  /** Interpreta `#rgb`, `#rrggbb` o `rgb()/rgba()` y devuelve componentes 0–255. */
   private static parseColorToRgb(
     input: string,
   ): { r: number; g: number; b: number } | null {
@@ -310,6 +408,7 @@ export class BusinessPage implements OnInit {
   }
 
   /** Luminancia relativa sRGB (WCAG), entre 0 y 1. */
+  /** Luminancia relativa sRGB usada para decidir contraste del texto sobre el degradado. */
   private static relativeLuminance(r: number, g: number, b: number): number {
     const linear = [r, g, b].map((v) => {
       const c = v / 255;

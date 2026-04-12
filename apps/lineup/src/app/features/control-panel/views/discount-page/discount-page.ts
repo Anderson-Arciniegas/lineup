@@ -21,6 +21,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
+/** Detalle de un descuento concreto (solo lectura + acciones como eliminar) dentro del panel del negocio. */
 @Component({
   selector: 'app-discount-page',
   imports: [

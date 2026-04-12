@@ -6,11 +6,9 @@
     "start": "npx nx serve lineup",
     "postinstall": "npx playwright install && node scripts/patch-primeicons-font-display.mjs",
     "clear:angular-cache": "nx reset && node -e \"require('fs').rmSync('.angular', {recursive: true, force: true})\"",
-    "start:dev:lineup": "npx nx serve lineup --configuration=development --host=0.0.0.0 --port=4200",
-    "build:prod:lineup": "nx build lineup --configuration=production",
-    "start:prod:lineup": "npm run build:prod:lineup && npx http-server dist/apps/lineup -p 4200",
     "preview:lineup": "nx run lineup:build:production && nx run lineup:serve-static --configuration=production",
-    "start:prod:admin": "npm run build:prod:admin && npx http-server dist/apps/admin -p 4201",
+    "build:ssr:lineup": "nx run lineup:build:production",
+    "start:ssr:lineup": "node dist/apps/lineup/server/server.mjs",
     "test:all": "nx affected -t lint test build e2e"
   },
   "private": true,

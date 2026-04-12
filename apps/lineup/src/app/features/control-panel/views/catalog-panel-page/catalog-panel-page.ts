@@ -18,11 +18,8 @@ import {
 } from '@lineup/core';
 import {
   Button,
-  CatalogCarousel,
   ConfirmationModal,
-  CreateProductCard,
   ProductBreadcrumb,
-  ProductCard,
   ProductItem,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -36,19 +33,20 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
+/**
+ * Vista de administración de un catálogo: listado paginado de productos con búsqueda,
+ * tipos de cambio BCV y navegación hacia creación o edición de ítems.
+ */
 @Component({
   selector: 'app-catalog-panel-page',
   imports: [
     CommonModule,
     FormsModule,
     ProductBreadcrumb,
-    ProductCard,
     Button,
     IconField,
     InputIcon,
     InputTextModule,
-    CatalogCarousel,
-    CreateProductCard,
     ProgressSpinner,
     TranslateModule,
     ChipModule,
@@ -105,9 +103,6 @@ export class CatalogPanelPage implements OnInit {
         error: (error) => {
           console.error(error);
         },
-        complete: () => {
-          console.log('complete');
-        },
       }),
     );
   }
@@ -125,15 +120,11 @@ export class CatalogPanelPage implements OnInit {
           console.error(error);
           this.attempt = false;
         },
-        complete: () => {
-          console.log('complete');
-        },
       }),
     );
   }
 
   onScroll(): void {
-    console.log('onScroll');
     this.getProducts();
   }
 
@@ -159,7 +150,6 @@ export class CatalogPanelPage implements OnInit {
         })
         .subscribe({
           next: (products) => {
-            console.log(products);
             this.products = [...this.products, ...products.items];
             this.page++;
             if (products.items.length === 0) {
@@ -170,9 +160,6 @@ export class CatalogPanelPage implements OnInit {
           error: (error) => {
             console.error(error);
             this.productsAttempt = false;
-          },
-          complete: () => {
-            console.log('complete');
           },
         }),
     );
@@ -234,7 +221,6 @@ export class CatalogPanelPage implements OnInit {
   }
 
   deleteProduct(id: number): void {
-    console.log(id);
     this.products = this.products.filter((product) => product.id !== id);
   }
 

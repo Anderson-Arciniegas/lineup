@@ -14,6 +14,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 
+/**
+ * Enlaces del negocio a redes sociales: catálogo maestro de redes, asociación URL por red
+ * y eliminación con confirmación.
+ */
 @Component({
   selector: 'app-social-medias-page',
   imports: [CommonModule, Button, TranslateModule, ProgressSpinner],
@@ -57,7 +61,6 @@ export class SocialMediasPage implements OnInit {
     this._subscriptions.add(
       this._socialMediaService.findAllMySocialNetworkBusinesses().subscribe({
         next: (socialNetworkBusinesses) => {
-          console.log(socialNetworkBusinesses);
           if (socialNetworkBusinesses.length > 0) {
             this.businessSocialNetworks = socialNetworkBusinesses;
             if (this.socialMedias.length > 0) {
@@ -76,9 +79,6 @@ export class SocialMediasPage implements OnInit {
           console.error(error);
           this.attempt = false;
         },
-        complete: () => {
-          console.log('Social network businesses fetched');
-        },
       }),
     );
   }
@@ -88,7 +88,6 @@ export class SocialMediasPage implements OnInit {
     this._subscriptions.add(
       this._socialMediaService.getSocialNetworks().subscribe({
         next: (socialNetworks) => {
-          console.log(socialNetworks);
           if (socialNetworks.length > 0) {
             this.socialMedias = [...socialNetworks];
             if (this.businessSocialNetworks.length > 0) {
@@ -106,9 +105,6 @@ export class SocialMediasPage implements OnInit {
         error: (error) => {
           console.error(error);
           this.attempt = false;
-        },
-        complete: () => {
-          console.log('Social networks fetched');
         },
       }),
     );

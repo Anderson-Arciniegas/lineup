@@ -14,6 +14,7 @@ a {
 
 .business-card {
   border-radius: var(--border-radius);
+  position: relative;
 }
 
 .business-data-content {
@@ -51,4 +52,11 @@ a {
 
 .w-92 {
   width: 92%;
+}
+
+.note-container {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  top: 15px;
 }

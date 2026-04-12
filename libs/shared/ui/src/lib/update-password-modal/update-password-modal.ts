@@ -24,6 +24,7 @@ export interface UpdatePasswordModalData {
   type: UpdatePasswordModalType;
 }
 
+/** Validador de grupo: nueva contraseña y confirmación deben coincidir. */
 function passwordMatchValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const newPassword = control.get('newPassword')?.value;
@@ -37,6 +38,9 @@ function passwordMatchValidator(): ValidatorFn {
   };
 }
 
+/**
+ * Cambio de contraseña autenticado: delega en API de usuario o de negocio según `data.type`.
+ */
 @Component({
   selector: 'lib-update-password-modal',
   imports: [

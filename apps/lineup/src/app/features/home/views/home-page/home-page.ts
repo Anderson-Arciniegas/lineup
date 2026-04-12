@@ -51,6 +51,12 @@ interface CarouselBreakpointConfig {
 }
 
 // gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Página de inicio pública: carruseles de negocios, catálogos, productos y colecciones,
+ * con lógica responsive para PrimeNG Carousel (evita mutación compartida de `responsiveOptions`)
+ * y optimizaciones LCP (preload de miniatura del producto principal).
+ */
 @Component({
   selector: 'app-home-page',
   imports: [
@@ -143,6 +149,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private static readonly leadProductPreloadLinkId =
     'lineup-preload-lead-product-thumbnail';
 
+  /**
+   * Tras el render en el cliente, escucha `resize` con debounce para recalcular
+   * `numVisible` de los carruseles y forzar remount cuando cambia el breakpoint efectivo.
+   */
   constructor() {
     afterNextRender(() => {
       if (!isPlatformBrowser(this.platformId)) return;
@@ -152,6 +162,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /** Dispara las peticiones de contenido destacado y etiquetas principales. */
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       const w = window.innerWidth;
@@ -173,11 +184,13 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.getMainTags();
   }
 
+  /** Sincroniza el ancho inicial del viewport para los computed de carrusel. */
   ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
     this.windowInnerWidth.set(window.innerWidth);
   }
 
+  /** Cancela suscripciones y elimina el `<link rel="preload">` del LCP si existía. */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
     if (!isPlatformBrowser(this.platformId)) return;
@@ -206,6 +219,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return this.products.length > 0 && this.products[0].id === product.id;
   }
 
+  /**
+   * Inserta un preload de la miniatura del primer producto de la primera colección
+   * para mejorar LCP en auditorías de rendimiento.
+   */
   private injectLeadProductImagePreload(): void {
     if (
       !isPlatformBrowser(this.platformId) ||
@@ -246,6 +263,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return itemCount < nv;
   }
 
+  /** Actualiza signals de ancho y fuerza remount de carruseles si cambió `numVisible`. */
   private onWindowResizeForCarousels(): void {
     const w = window.innerWidth;
     const ns = this.resolveNumVisibleForWidth(
@@ -298,6 +316,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return numVisible;
   }
 
+  /** Carga negocios destacados (paginación fija en primera página). */
   private getFeaturedBusinesses(): void {
     this.businessesAttempt = true;
     this._subscription.add(
@@ -305,7 +324,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         .featuredBusinesses({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.businesses = [...this.businesses, ...response.items];
             this.businessesAttempt = false;
           },
@@ -313,13 +331,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             console.error(error);
             this.businessesAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Carga catálogos destacados. */
   private getFeaturedCatalogs(): void {
     this.catalogsAttempt = true;
     this._subscription.add(
@@ -327,7 +343,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         .featuredCatalogs({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.catalogs = [...this.catalogs, ...response.items];
             this.catalogsAttempt = false;
           },
@@ -335,13 +350,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             console.error(error);
             this.catalogsAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Carga productos destacados. */
   private getFeaturedProducts(): void {
     this.productsAttempt = true;
     this._subscription.add(
@@ -349,7 +362,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         .featuredProducts({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            console.log(response);
             this.products = [...this.products, ...response.items];
             this.productsAttempt = false;
           },
@@ -357,20 +369,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             console.error(error);
             this.productsAttempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
+  /** Obtiene colecciones de productos para el carrusel agrupado. */
   private getProductCollections(): void {
     this.collectionsAttempt = true;
     this._subscription.add(
       this._productPublicService.productCollections().subscribe({
         next: (response) => {
           this.productCollections = [...this.productCollections, ...response];
-          console.log(this.productCollections);
           this.collectionsAttempt = false;
           this.injectLeadProductImagePreload();
         },
@@ -378,24 +387,22 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           console.error(error);
           this.collectionsAttempt = false;
         },
-        complete: () => {
-          console.log('complete');
-        },
       }),
     );
   }
 
+  /** Etiquetas principales para navegación rápida hacia búsqueda por tag. */
   private getMainTags(): void {
     this._subscription.add(
       this._productPublicService.getMainTags(8).subscribe({
         next: (response) => {
-          console.log(response);
           this.tags = response;
         },
       }),
     );
   }
 
+  /** Navega a la ruta de búsqueda global con el término indicado. */
   onSearchSubmit(query: string): void {
     if (query === '') return;
 

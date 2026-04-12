@@ -21,6 +21,7 @@
       />
       }
     </div>
+
     <div class="flex flex-col items-center md:items-start justify-center gap-2">
       <div
         class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-4 w-full"
@@ -204,6 +205,24 @@
             ></lib-button>
           </div>
         </div>
+        @if (discount) {
+        <div class="flex flex-row justify-start items-center w-full">
+          <div
+            class="bg-primary-100 rounded-full min-h-7 flex flex-row justify-center items-center shadow-md px-3"
+          >
+            @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+            <span class="text-sm text-center font-medium">
+              {{discount.value}}% {{'general.discount' | translate}}
+            </span>
+            } @else {
+            <span class="text-sm text-center font-medium">
+              {{ discount.value }}{{ discountCurrencyCode() | currencySymbol }}
+              {{ 'general.discount' | translate }}
+            </span>
+            }
+          </div>
+        </div>
+        }
       </div>
     </div>
   </div>
@@ -278,6 +297,24 @@
         ></lib-button>
       </div>
     </div>
+    @if (discount) {
+    <div class="flex flex-row justify-start items-center w-full">
+      <div
+        class="bg-primary-100 rounded-full min-h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}}% {{'general.discount' | translate}}
+        </span>
+        } @else {
+        <span class="text-sm text-center font-medium">
+          {{ discount.value }}{{ discountCurrencyCode() | currencySymbol }} {{
+          'general.discount' | translate }}
+        </span>
+        }
+      </div>
+    </div>
+    }
   </div>
 </div>
 

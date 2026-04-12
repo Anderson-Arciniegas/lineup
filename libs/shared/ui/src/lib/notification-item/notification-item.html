@@ -1,21 +1,67 @@
-<button
-  type="button"
-  class="notification-item w-full text-left rounded-lg px-3 py-2 transition-colors hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
-  [class.notification-item--unread]="!notification.readAt"
-  (click)="onActivate()"
->
-  <div class="flex flex-col gap-0.5">
-    <span class="text-sm font-semibold text-surface-900 line-clamp-2">{{
-      notification.title
-    }}</span>
-    <span class="text-xs text-surface-600 line-clamp-3">{{
-      notification.body
-    }}</span>
-    <time
-      class="text-xs text-surface-500 mt-1"
-      [attr.datetime]="notification.creationDate"
+<ng-template #notificationBody>
+  @let visual = typeVisual();
+  <div class="flex flex-row gap-2.5 items-start min-w-0">
+    <span
+      class="notification-item__badge shrink-0 flex items-center justify-center rounded-full"
+      [ngClass]="visual.badgeClass"
+      aria-hidden="true"
     >
-      {{ notification.creationDate | date: 'short' }}
-    </time>
+      <i [class]="visual.icon"></i>
+    </span>
+    <div class="flex flex-col gap-0.5 min-w-0 flex-1">
+      <span class="text-sm font-semibold text-surface-900 line-clamp-2">{{
+        notification.title
+      }}</span>
+      <span class="text-xs text-surface-600 line-clamp-3">{{
+        notification.body
+      }}</span>
+      <time
+        class="text-xs text-surface-500 mt-1"
+        [attr.datetime]="notification.creationDate"
+      >
+        {{ notification.creationDate | date: 'short' }}
+      </time>
+    </div>
   </div>
-</button>
+</ng-template>
+
+@let productCmds = productPanelRouterCommands();
+@let extHref = externalPayloadHref();
+@let internalPath = internalPayloadRouterLink();
+@if (productCmds) {
+  <a
+    [routerLink]="productCmds"
+    class="notification-item w-full text-left rounded-lg px-3 py-2 transition-colors hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400 no-underline text-inherit block"
+    [class.notification-item--unread]="!notification.readAt"
+    (click)="onActivate()"
+  >
+    <ng-container *ngTemplateOutlet="notificationBody" />
+  </a>
+} @else if (extHref) {
+  <a
+    [href]="extHref"
+    class="notification-item w-full text-left rounded-lg px-3 py-2 transition-colors hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400 no-underline text-inherit block"
+    [class.notification-item--unread]="!notification.readAt"
+    (click)="onActivate()"
+  >
+    <ng-container *ngTemplateOutlet="notificationBody" />
+  </a>
+} @else if (internalPath) {
+  <a
+    [routerLink]="internalPath"
+    class="notification-item w-full text-left rounded-lg px-3 py-2 transition-colors hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400 no-underline text-inherit block"
+    [class.notification-item--unread]="!notification.readAt"
+    (click)="onActivate()"
+  >
+    <ng-container *ngTemplateOutlet="notificationBody" />
+  </a>
+} @else {
+  <button
+    type="button"
+    class="notification-item w-full text-left rounded-lg px-3 py-2 transition-colors hover:bg-primary-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
+    [class.notification-item--unread]="!notification.readAt"
+    (click)="onActivate()"
+  >
+    <ng-container *ngTemplateOutlet="notificationBody" />
+  </button>
+}

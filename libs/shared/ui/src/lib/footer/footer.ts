@@ -5,6 +5,7 @@ import { AuthStore } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Button } from '../button/button';
 
+/** Pie de página público con enlaces legales, contacto y créditos; adapta CTA según sesión. */
 @Component({
   selector: 'lib-footer',
   imports: [CommonModule, RouterModule, TranslateModule, Button],

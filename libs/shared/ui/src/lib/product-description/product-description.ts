@@ -8,6 +8,10 @@ import { Button } from '../button/button';
 import { ProductTags } from '../product-tags/product-tags';
 import { RateModal } from '../rate-modal/rate-modal';
 
+/**
+ * Descripción HTML del producto (sanitizada), etiquetas derivadas de `productTags`
+ * y acceso al modal de valoración para usuarios logueados.
+ */
 @Component({
   selector: 'lib-product-description',
   imports: [CommonModule, ProductTags, CurrencySymbolPipe, Button],
@@ -25,6 +29,7 @@ export class ProductDescription implements OnInit {
 
   userMode = computed(() => this._authStore.isUserLoggedIn());
 
+  /** Extrae nombres de etiquetas y confía HTML del editor tras normalizar guiones en texto. */
   ngOnInit(): void {
     this.tags =
       this.product.productTags
@@ -38,6 +43,7 @@ export class ProductDescription implements OnInit {
     );
   }
 
+  /** Abre el diálogo `RateModal` con el id del producto actual. */
   openRateModal() {
     this._dialogService.open(RateModal, {
       header: this._translate.instant('general.rateProduct'),

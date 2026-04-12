@@ -25,6 +25,10 @@ import { finalize, map, take } from 'rxjs';
 const MAX_NAME_LENGTH = 30;
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
+/**
+ * Edición del perfil del usuario autenticado: datos personales, estado/región, foto de perfil
+ * con recorte y subida al API de archivos de usuario.
+ */
 @Component({
   selector: 'app-profile-page',
   imports: [
@@ -86,11 +90,13 @@ export class ProfilePage implements OnInit {
     idState: [null as number | null],
   });
 
+  /** Carga listas de estados y el perfil actual (`getMe`) para rellenar el formulario. */
   ngOnInit(): void {
     this.loadStates();
     this.loadUser();
   }
 
+  /** Obtiene el perfil actual y rellena el formulario e imagen. */
   private loadUser(): void {
     this.loadingUser = true;
     this.userService
@@ -103,7 +109,6 @@ export class ProfilePage implements OnInit {
       )
       .subscribe({
         next: (me: UserSchema) => {
-          console.log(me);
           this.profileForm.patchValue({
             id: me.id,
             firstName: me.firstName ?? '',
@@ -124,6 +129,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
+  /** Lista de estados/regiones para el selector opcional del perfil. */
   private loadStates(): void {
     this.statesService
       .findAllStates()
@@ -140,10 +146,8 @@ export class ProfilePage implements OnInit {
       });
   }
 
+  /** Persiste cambios vía `updateUser` y muestra feedback con PrimeNG `MessageService`. */
   onSubmit(): void {
-    console.log(this.profileForm.value);
-    console.log(this.profileForm.valid);
-    console.log(this.profileForm.get('idState')?.value);
     if (this.profileForm.invalid || this.saving) return;
 
     const raw = this.profileForm.getRawValue();
@@ -184,6 +188,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
+  /** Abre el recortador de imagen y, al confirmar, sube el archivo resultante. */
   openImageCropper(): void {
     this.ref = this.dialogService.open(ImageCropper, {
       header: this.translateService.instant('general.addImage'),
@@ -210,6 +215,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
+  /** Sube la imagen de perfil al directorio de usuario y actualiza `imgCode` / vista previa. */
   uploadFile(fileBase64: string): void {
     this.loadingFile = true;
 

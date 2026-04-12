@@ -37,6 +37,10 @@ export interface UpdateEmailModalData {
   currentEmail: string;
 }
 
+/**
+ * Actualización de correo: valida que sea distinto al actual, abre verificación por código
+ * y persiste el nuevo email en usuario o negocio.
+ */
 @Component({
   selector: 'lib-update-email-modal',
   imports: [

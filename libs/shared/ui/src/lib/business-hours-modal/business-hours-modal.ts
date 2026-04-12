@@ -21,6 +21,10 @@ interface BusinessHoursModalData {
   preselectedDays?: WeekDayEnum[];
 }
 
+/**
+ * Alta o edición de franjas horarias del negocio: días, apertura/cierre, orden de tramo
+ * y envío vía `BusinessPrivateService` (create/update masivo según modo).
+ */
 @Component({
   selector: 'lib-business-hours-modal',
   standalone: true,

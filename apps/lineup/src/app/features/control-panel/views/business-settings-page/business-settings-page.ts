@@ -20,6 +20,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { take } from 'rxjs';
 
+/**
+ * Preferencias de la cuenta de negocio: visibilidad de precios en bolívares, email enmascarado
+ * y modales para cambiar correo/contraseña (no disponible si el proveedor es Google).
+ */
 @Component({
   selector: 'app-business-settings-page',
   imports: [

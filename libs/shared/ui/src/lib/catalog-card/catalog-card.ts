@@ -1,11 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CatalogSchema, FileThumbnailUrlPipe } from '@lineup/core';
+import {
+  CatalogSchema,
+  CurrencySymbolPipe,
+  DiscountSchema,
+  DiscountScopeEnum,
+  DiscountTypeEnum,
+  FileThumbnailUrlPipe,
+  StatusEnum,
+} from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Button } from '../button/button';
 
+/**
+ * Tarjeta de catálogo: portada (o placeholder), enlaces públicos o acciones de edición en dashboard.
+ */
 @Component({
   selector: 'lib-catalog-card',
   imports: [
@@ -15,6 +27,8 @@ import { Button } from '../button/button';
     RouterLink,
     ProgressSpinnerModule,
     Button,
+    CurrencySymbolPipe,
+    TranslateModule,
   ],
   templateUrl: './catalog-card.html',
   styleUrl: './catalog-card.scss',
@@ -38,10 +52,20 @@ export class CatalogCard implements OnInit {
     'assets/images/products/cooler.webp',
     'assets/images/products/laptop.webp',
   ];
+  discount: DiscountSchema;
+  DiscountTypeEnum = DiscountTypeEnum;
+  DiscountScopeEnum = DiscountScopeEnum;
 
+  /** Asigna imagen aleatoria si el catálogo no tiene `image` y busca descuento con alcance `CATALOG`. */
   ngOnInit(): void {
     if (!this.catalog?.image) {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
     }
+
+    this.discount = this.catalog?.discounts?.find(
+      (discount) =>
+        discount.scope === DiscountScopeEnum.CATALOG &&
+        discount.status === StatusEnum.ACTIVE,
+    );
   }
 }

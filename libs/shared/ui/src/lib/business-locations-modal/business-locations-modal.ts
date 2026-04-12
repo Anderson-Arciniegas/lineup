@@ -17,6 +17,9 @@ import {
 import { Button } from '../button/button';
 import { LocationModal } from '../location-modal/location-modal';
 
+/**
+ * Lista las sedes de un negocio y abre `LocationModal` para ver cada una en mapa.
+ */
 @Component({
   selector: 'lib-business-locations-modal',
   imports: [CommonModule, DialogModule, TranslateModule, Button],

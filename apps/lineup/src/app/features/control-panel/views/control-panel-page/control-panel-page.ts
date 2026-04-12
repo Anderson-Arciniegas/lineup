@@ -16,6 +16,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { forkJoin } from 'rxjs';
 
+/**
+ * Dashboard del negocio autenticado: resume KPIs de engagement, inventario y productos
+ * para el periodo por defecto y reacciona a cambios del `path` en `AuthStore`.
+ */
 @Component({
   selector: 'app-control-panel-page',
   imports: [
@@ -43,6 +47,10 @@ export class ControlPanelPage implements OnInit {
     granularity: TimePeriodGranularityEnum.THIS_MONTH,
   };
 
+  /**
+   * Registra un `effect` que, al cambiar el `path` del negocio en `AuthStore`,
+   * vuelve a pedir negocio y estadísticas consolidadas.
+   */
   constructor() {
     effect(() => {
       const business = this._authStore.business();
@@ -55,6 +63,7 @@ export class ControlPanelPage implements OnInit {
     });
   }
 
+  /** Carga inicial si ya existe negocio con `path` antes de que dispare el effect. */
   ngOnInit(): void {
     const business = this._authStore.business();
     if (!business?.path) return;
@@ -62,6 +71,7 @@ export class ControlPanelPage implements OnInit {
     this.getBusiness();
   }
 
+  /** `forkJoin` de negocio + tres bloques de estadísticas para el mes en curso. */
   getBusiness(): void {
     if (this.attempt) return;
     this.attempt = true;

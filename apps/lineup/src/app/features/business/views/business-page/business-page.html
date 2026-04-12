@@ -7,6 +7,7 @@
     [business]="business"
     [publicMode]="true"
     [hiddenBusiness]="true"
+    [path]="breadcrumbBackPath ?? undefined"
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
   <div
@@ -18,16 +19,49 @@
       [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
       (colorChange)="setColor($event)"
     ></lib-business-data>
+
+    <section
+      class="py-4 px-4 box-border w-full flex flex-col items-center justify-start"
+    >
+      <div
+        class="flex flex-row items-center justify-center lg:justify-end w-full"
+      >
+        <lib-search-bar
+          class="w-full max-w-90 xl:max-w-120"
+          [small]="true"
+          (searchSubmit)="onSearchSubmit($event)"
+        ></lib-search-bar>
+      </div>
+    </section>
+
     @if (products.length > 0) {
     <div class="w-full flex flex-col items-center justify-center gap-10">
       <div
         [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
         class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
       >
+        @if (searchQuery && searchQuery !== '') {
+
+        <h2 class="text-2xl md:text-3xl font-semibold text-left">
+          {{'general.resultsFor' | translate}} "{{searchQuery}}"
+        </h2>
+
+        <lib-button
+          (click)="onClearSearch()"
+          icon="pi pi-times"
+          type="rounded"
+          variant="text"
+          color="secondary"
+          size="large"
+          width="w-13"
+        ></lib-button>
+        }@else {
         <i class="pi pi-crown text-3xl"></i>
         <h2 class="text-2xl md:text-3xl font-semibold text-left">
           {{'general.ourMainProducts' | translate}}
         </h2>
+
+        }
       </div>
       <div class="w-full products-grid">
         @for (product of products; track product.id) {
@@ -40,6 +74,17 @@
         </div>
         }
       </div>
+
+      @if(productsAttempt) {
+      <div class="flex flex-col justify-center items-center w-full">
+        <div class="card flex justify-center p-10">
+          <p-progress-spinner
+            strokeWidth="4"
+            [style]="{ width: '100px', height: '100px' }"
+          />
+        </div>
+      </div>
+      }
     </div>
     }
     <div class="w-full flex flex-col items-center justify-center gap-10">
@@ -60,10 +105,11 @@
         [infiniteScrollDistance]="2"
         [infiniteScrollThrottle]="50"
         [scrollWindow]="true"
-        [infiniteScrollDisabled]="attempt || noMoreResults"
+        [infiniteScrollDisabled]="!business"
         (scrolled)="onScroll()"
       >
-        @if (business && myBusiness && (catalogs.length > 0 || !attempt)) {
+        @if (business && myBusiness && !searchQuery && (catalogs.length > 0 ||
+        !attempt)) {
         <div class="w-full flex flex-col items-center justify-center">
           <lib-create-catalog-card
             [business]="business"
@@ -92,9 +138,7 @@
       >
         {{ 'general.noBusinessCatalogs' | translate }}
       </p>
-      }
-
-      @if(attempt) {
+      } @if(attempt) {
       <div class="flex flex-col justify-center items-center w-full">
         <div class="card flex justify-center p-10">
           <p-progress-spinner

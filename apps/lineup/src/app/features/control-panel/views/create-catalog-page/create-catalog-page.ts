@@ -46,6 +46,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription, take } from 'rxjs';
 
+/**
+ * Formulario de alta o edición de catálogo: metadatos, color, etiquetas, imagen vía cropper
+ * y subida multipart al API de archivos del negocio.
+ */
 @Component({
   selector: 'app-create-catalog-page',
   imports: [
@@ -102,6 +106,7 @@ export class CreateCatalogPage implements OnInit {
   private readonly _authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** Inicializa formulario, negocio desde `AuthStore` y modo edición si la ruta trae `catalogPath`. */
   ngOnInit() {
     this.business = this._authStore.business();
 
@@ -120,6 +125,7 @@ export class CreateCatalogPage implements OnInit {
     }
   }
 
+  /** Sincroniza el color del picker de PrimeNG con el control `hexColor` del formulario. */
   setColor($event: any): void {
     this.createCatalogForm.get('hexColor')?.setValue($event.value);
   }
@@ -128,7 +134,6 @@ export class CreateCatalogPage implements OnInit {
     this._subscription.add(
       this._businessService.getBusinessByPath(this.path).subscribe({
         next: (business) => {
-          console.log(business);
           this.business = business;
         },
       }),
@@ -147,7 +152,7 @@ export class CreateCatalogPage implements OnInit {
   }
 
   private patchValueForm(): void {
-    this.tags = this.catalog.tags || [];
+    this.tags = [...(this.catalog.tags ?? [])];
     this.imgCode = this.catalog.image.name || '';
     this.imageUrl = this.catalog.image.url || '';
     this.createCatalogForm.patchValue({
@@ -156,24 +161,34 @@ export class CreateCatalogPage implements OnInit {
     });
   }
 
+  /** Parsea etiquetas separadas por coma, normaliza y deduplica (máximo 10). */
   addTag() {
-    const tagValue = this._utils.normalizeSpaces(
-      this.createCatalogForm.get('tag')?.value ?? '',
-    );
-    if (this.tags.includes(tagValue.toLowerCase()) || this.tags.length >= 10) {
-      return;
+    const raw = this.createCatalogForm.get('tag')?.value ?? '';
+    const parts = raw
+      .split(',')
+      .map((t) => this._utils.normalizeSpaces(t))
+      .filter((t) => t.length > 0);
+
+    const next = [...this.tags];
+    for (const part of parts) {
+      if (next.length >= 10) {
+        break;
+      }
+      const normalized = part.toLowerCase();
+      if (!next.includes(normalized)) {
+        next.push(normalized);
+      }
     }
-    if (tagValue) {
-      this.tags.push(tagValue.toLowerCase());
-    }
+    this.tags = next;
     this.createCatalogForm.get('tag')?.setValue('');
-    console.log(this.tags);
   }
 
+  /** Elimina una etiqueta de la lista por índice. */
   removeTag(index: number) {
-    this.tags.splice(index, 1);
+    this.tags = this.tags.filter((_, i) => i !== index);
   }
 
+  /** Crea o actualiza el catálogo según presencia de `catalogPath` y navega al listado. */
   createCatalog() {
     if (this.createCatalogForm.invalid || this.attempt) {
       this.createCatalogForm.markAllAsTouched();
@@ -200,7 +215,6 @@ export class CreateCatalogPage implements OnInit {
       this._subscription.add(
         this._catalogService.updateCatalog(updateCatalogInput).subscribe({
           next: (catalog) => {
-            console.log(catalog);
             this.attempt = false;
             this._messageService.add({
               severity: 'success',
@@ -234,7 +248,6 @@ export class CreateCatalogPage implements OnInit {
       this._subscription.add(
         this._catalogService.createCatalog(createCatalogInput).subscribe({
           next: (catalog) => {
-            console.log(catalog);
             this.attempt = false;
             this._messageService.add({
               severity: 'success',
@@ -259,6 +272,7 @@ export class CreateCatalogPage implements OnInit {
     }
   }
 
+  /** Abre el diálogo `ImageCropper` y, al cerrar con imagen, dispara `uploadFile`. */
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
@@ -285,6 +299,7 @@ export class CreateCatalogPage implements OnInit {
       });
   }
 
+  /** Convierte base64 a `File`, envía `FormData` al endpoint de upload y guarda código/URL. */
   uploadFile(fileBase64: any) {
     this.loadingFile = true;
 
@@ -299,13 +314,11 @@ export class CreateCatalogPage implements OnInit {
     fileUpload.append('directory', DirectoriesEnum.CATALOG);
     fileUpload.append('file', image, `image.${extension}`);
 
-    console.log(fileUpload);
     this._subscription.add(
       this._apiFileService
         .post('files/upload', fileUpload)
         .pipe(
           map((response) => {
-            console.log(response);
             switch (response.type) {
               case HttpEventType.Response:
                 if (response.body.file) {

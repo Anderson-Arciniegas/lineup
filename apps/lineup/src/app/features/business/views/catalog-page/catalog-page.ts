@@ -1,5 +1,11 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnInit, PendingTasks, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  PendingTasks,
+  PLATFORM_ID,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -10,9 +16,14 @@ import {
   CatalogPrivateService,
   CatalogPublicService,
   CatalogSchema,
+  CurrencySymbolPipe,
+  DiscountSchema,
+  DiscountScopeEnum,
+  DiscountTypeEnum,
   ProductPublicService,
   ProductSchema,
   SeoService,
+  StatusEnum,
   UserPublicService,
   VisitTypeEnum,
 } from '@lineup/core';
@@ -38,6 +49,10 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+/**
+ * Vista pública de un catálogo: productos paginados, productos primarios en carrusel,
+ * modo grid/lista, descarga PDF (nueva pestaña), compartir y edición de color para el dueño.
+ */
 @Component({
   selector: 'app-catalog-page',
   imports: [
@@ -57,6 +72,7 @@ import { finalize } from 'rxjs/operators';
     PopoverModule,
     ColorPickerModule,
     InputTextModule,
+    CurrencySymbolPipe,
   ],
   templateUrl: 'catalog-page.html',
   styleUrls: ['./catalog-page.scss'],
@@ -93,6 +109,9 @@ export class CatalogPage implements OnInit {
   attemptColor = false;
   ref: DynamicDialogRef | undefined;
   configUrl: string;
+  discount: DiscountSchema;
+  DiscountTypeEnum = DiscountTypeEnum;
+  DiscountScopeEnum = DiscountScopeEnum;
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _businessPublicService = inject(BusinessPublicService);
@@ -120,6 +139,7 @@ export class CatalogPage implements OnInit {
     return 'xs';
   }
 
+  /** Inicializa rutas `business` / `catalogPath` y dispara carga de negocio y catálogo. */
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
@@ -127,6 +147,7 @@ export class CatalogPage implements OnInit {
     this.getCatalog();
   }
 
+  /** Carga el negocio por path y sincroniza colores, SEO y flags de propiedad. */
   private getBusiness(): void {
     const taskDone = this._pendingTasks.add();
     this._subscription.add(
@@ -137,7 +158,8 @@ export class CatalogPage implements OnInit {
           next: (business) => {
             this.business = business;
             this.myBusiness =
-              Number(this._authStore.business()?.id) === Number(this.business.id);
+              Number(this._authStore.business()?.id) ===
+              Number(this.business.id);
             if (this.catalog) {
               if (this.catalog.hexColor) {
                 this.setColor(this.catalog.hexColor);
@@ -164,14 +186,15 @@ export class CatalogPage implements OnInit {
     return !!this.pageBackgroundGradient && !this.isDarkBackground;
   }
 
+  /** Normaliza el valor del selector de layout a `Grid` o `List`. */
   onLayoutModeChange(value: unknown): void {
     if (value !== 'Grid' && value !== 'List') {
       this.layoutMode = 'Grid';
     }
   }
 
+  /** Reinicia lista y paginación y vuelve a pedir productos con el término indicado. */
   onSearchSubmit(query: string): void {
-    console.log(query);
     this.searchQuery = query;
     this.products = [];
     this.page = 1;
@@ -179,6 +202,7 @@ export class CatalogPage implements OnInit {
     this.getProducts();
   }
 
+  /** Resuelve el catálogo por path, SEO, visitas, descuentos activos y carga de productos. */
   private getCatalog(): void {
     if (this.attempt) return;
     this.attempt = true;
@@ -191,7 +215,6 @@ export class CatalogPage implements OnInit {
           next: (catalog) => {
             this.catalog = catalog;
             this.attempt = false;
-            console.log(this.catalog);
             this.getProducts();
             if (this.business) {
               this.getPrimaryProducts();
@@ -208,13 +231,18 @@ export class CatalogPage implements OnInit {
               this.setColor(this.business.hexColor);
             }
             this.applyCatalogSeoIfReady();
+
+            this.discount = this.catalog.discounts.find(
+              (discount) =>
+                discount.scope === DiscountScopeEnum.CATALOG &&
+                discount.status === StatusEnum.ACTIVE,
+            );
           },
           error: (error) => {
             console.error(error);
             this.attempt = false;
           },
           complete: () => {
-            console.log('complete');
             this.attempt = false;
           },
         }),
@@ -227,6 +255,7 @@ export class CatalogPage implements OnInit {
     }
   }
 
+  /** Registra visita al catálogo para usuarios que no son el negocio autenticado. */
   private visitCatalog(): void {
     this._subscription.add(
       this._userService
@@ -234,14 +263,11 @@ export class CatalogPage implements OnInit {
           id: this.catalog.id,
           type: VisitTypeEnum.CATALOG,
         })
-        .subscribe({
-          next: (response) => {
-            console.log(response);
-          },
-        }),
+        .subscribe(),
     );
   }
 
+  /** Paginación de productos del catálogo (solo en navegador, con flags de carga y fin de lista). */
   getProducts(): void {
     if (!isPlatformBrowser(this._platformId)) return;
     if (this.productsAttempt || this.noMoreResults) return;
@@ -255,7 +281,6 @@ export class CatalogPage implements OnInit {
         })
         .subscribe({
           next: (products) => {
-            console.log(products);
             this.productsAttempt = false;
             this.products = [...this.products, ...products.items];
             this.page++;
@@ -268,13 +293,13 @@ export class CatalogPage implements OnInit {
             this.productsAttempt = false;
           },
           complete: () => {
-            console.log('complete');
             this.productsAttempt = false;
           },
         }),
     );
   }
 
+  /** Productos marcados como primarios dentro de este catálogo para el carrusel superior. */
   private getPrimaryProducts(): void {
     if (this.primaryProductsAttempt || this.noMoreResults) return;
     this.primaryProductsAttempt = true;
@@ -287,7 +312,6 @@ export class CatalogPage implements OnInit {
         .subscribe({
           next: (products) => {
             this.primaryProductsAttempt = false;
-            console.log(products);
             this.primaryProducts = products;
           },
           error: (error) => {
@@ -384,16 +408,18 @@ export class CatalogPage implements OnInit {
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
   }
 
+  /** Infinite scroll: solicita la siguiente página de productos. */
   onScroll(): void {
-    console.log('onScroll');
     this.getProducts();
   }
 
+  /** Abre la ruta `/download` en nueva pestaña respetando el layout elegido (grid/list). */
   downloadCatalog(): void {
     const base = window.location.href.replace(/\/$/, '');
     window.open(`${base}/download?layout=${this.layoutMode}`, '_blank');
   }
 
+  /** Diálogo modal con URL actual para compartir el catálogo. */
   share() {
     this.ref = this._dialogService.open(ShareModal, {
       header: this._translate.instant('general.share'),
@@ -412,8 +438,8 @@ export class CatalogPage implements OnInit {
     });
   }
 
+  /** Persiste el color hex del catálogo vía API privada y notifica con toast. */
   saveColor(): void {
-    console.log('saveColor');
     this.attemptColor = true;
     this._subscription.add(
       this._catalogService
@@ -423,8 +449,7 @@ export class CatalogPage implements OnInit {
           title: this.catalog.title,
         })
         .subscribe({
-          next: (response) => {
-            console.log(response);
+          next: () => {
             this.attemptColor = false;
             this._messageService.add({
               severity: 'success',
@@ -437,7 +462,6 @@ export class CatalogPage implements OnInit {
             this.attemptColor = false;
           },
           complete: () => {
-            console.log('complete');
             this.attemptColor = false;
           },
         }),

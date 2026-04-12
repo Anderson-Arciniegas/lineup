@@ -5,6 +5,7 @@
 .sidebar-content {
   max-height: calc(100vh - 80px);
   overflow-y: auto;
+  overflow-x: hidden;
 
   @media screen and (max-width: 639px) {
     max-height: calc(100vh - 72px);
