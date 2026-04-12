@@ -3,7 +3,9 @@ import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
 
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+// admin:serve usa el puerto 4201 (apps/admin/project.json).
+const baseURL = process.env['BASE_URL'] || 'http://localhost:4201';
+const isCi = !!process.env['CI'];
 
 /**
  * Read environment variables from file.
@@ -21,13 +23,18 @@ export default defineConfig({
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    headless: true,
   },
-  /* Run your local dev server before starting the tests */
+  /**
+   * `admin-e2e:e2e` declara `dependsOn: ["admin:build"]` para que en CI no compitan en paralelo
+   * `admin:build` y el `nx serve` del webServer (ECONNREFUSED).
+   */
   webServer: {
     command: 'npx nx run admin:serve',
-    url: 'http://localhost:4200',
-    reuseExistingServer: true,
+    url: baseURL,
+    reuseExistingServer: !isCi,
     cwd: workspaceRoot,
+    timeout: isCi ? 300 * 1000 : 120 * 1000,
   },
   projects: [
     {
