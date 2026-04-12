@@ -34,6 +34,10 @@ import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
+/**
+ * Registro de usuario final con validación de contraseña fuerte, verificación por correo (modal)
+ * y opción de alta con Google limitada al rol consumidor.
+ */
 @Component({
   selector: 'app-register-user-page',
   imports: [
@@ -88,6 +92,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
     this._subscription.unsubscribe();
   }
 
+  /** Registro OAuth solo para rol `USER`; completa sesión si el backend devuelve perfil. */
   private _handleGoogleToken(token: string): void {
     this.attemptGoogle = true;
     this._subscription.add(
@@ -108,6 +113,10 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /**
+   * Abre el flujo de código de verificación; tras confirmación crea el usuario
+   * y redirige vía `AuthService` si la mutación GraphQL tiene éxito.
+   */
   onSubmit(): void {
     if (this.registerUserForm.invalid || this.attempt) {
       this.registerUserForm.markAllAsTouched();
@@ -178,6 +187,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /** Formulario con validador cruzado `MatchPassword` entre password y confirmación. */
   private _createForm(): FormGroup {
     const formOptions: AbstractControlOptions = {
       validators: [PasswordValidation.MatchPassword],

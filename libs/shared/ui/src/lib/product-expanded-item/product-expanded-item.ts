@@ -30,6 +30,10 @@ import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 import { ShareModal } from '../share-modal/share-modal';
 
+/**
+ * Vista ampliada de producto (lista/PDF): imagen principal con nonce en URL, precio con BCV,
+ * stock, like y compartir (ocultos en exportación PDF).
+ */
 @Component({
   selector: 'lib-product-expanded-item',
   imports: [
@@ -73,16 +77,19 @@ export class ProductExpandedItem
 
   private readonly _subscription = new Subscription();
 
+  /** Establece la fuente de la imagen expandida desde el primer archivo del producto. */
   ngOnInit(): void {
     this.setExpandedImageSrc();
   }
 
+  /** Al cambiar el `product`, recalcula la imagen mostrada. */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product']) {
       this.setExpandedImageSrc();
     }
   }
 
+  /** Consulta like, estado de stock y tasas para el precio con descuento. */
   ngAfterViewInit(): void {
     this.hasLikedProduct();
 
@@ -107,10 +114,12 @@ export class ProductExpandedItem
     this.getRates();
   }
 
+  /** Cancela suscripciones a API de producto y tasas. */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
 
+  /** Miniatura `md` con fallback local si no hay archivo. */
   private setExpandedImageSrc(): void {
     const fallback = 'assets/images/products/headphones-min.webp';
     const raw = getFileThumbnailUrl(
@@ -125,6 +134,7 @@ export class ProductExpandedItem
     this.expandedImageSrc = withNonce ?? fallback;
   }
 
+  /** Añade query de bust de caché en URLs http(s) para capturas y CORS. */
   private srcWithCrossOriginNonce(url: string): string {
     if (url.startsWith('data:') || url.startsWith('blob:')) {
       return url;
@@ -136,6 +146,7 @@ export class ProductExpandedItem
     return `${url}${sep}t=${Date.now()}`;
   }
 
+  /** Modal de compartir con URL canónica del producto. */
   share() {
     this.ref = this._dialogService.open(ShareModal, {
       header: this._translate.instant('general.share'),
@@ -154,6 +165,7 @@ export class ProductExpandedItem
     });
   }
 
+  /** Like del producto (usuarios consumidores). */
   likeProduct(): void {
     if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = true;
@@ -170,6 +182,7 @@ export class ProductExpandedItem
     );
   }
 
+  /** Quita like del producto. */
   unlikeProduct(): void {
     if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = false;
@@ -186,6 +199,7 @@ export class ProductExpandedItem
     );
   }
 
+  /** Estado inicial de favorito desde API. */
   hasLikedProduct(): void {
     if (this._authStore.isBusinessLoggedIn()) return;
     this._subscription.add(
@@ -197,6 +211,7 @@ export class ProductExpandedItem
     );
   }
 
+  /** Carga BCV y recalcula precio mostrado con descuento del producto. */
   getRates(): void {
     this._subscription.add(
       this._ratesService.findBcvOfficialRates().subscribe({

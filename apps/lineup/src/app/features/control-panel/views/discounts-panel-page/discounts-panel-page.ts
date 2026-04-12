@@ -16,6 +16,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { forkJoin, Subscription, take } from 'rxjs';
 
+/** Listado de descuentos del negocio con carga agregada, navegación a detalle/edición y baja con confirmación. */
 @Component({
   selector: 'app-discounts-panel-page',
   imports: [

@@ -10,6 +10,9 @@ import {
 import { LocaleDatePipe } from '@lineup/core';
 import { Button } from '../button/button';
 
+/**
+ * Fila/tarjeta de un descuento en listados del panel: datos, fechas y eventos `edit` / `delete`.
+ */
 @Component({
   selector: 'lib-discount-item',
   imports: [
@@ -31,6 +34,7 @@ export class DiscountItem {
 
   readonly DiscountTypeEnum = DiscountTypeEnum;
 
+  /** Trunca títulos largos con puntos suspensivos para layouts compactos. */
   setLabel(title: string | null | undefined, maxLength = 20): string {
     const t = title ?? '';
     return t.length > maxLength ? t.substring(0, maxLength) + '...' : t;

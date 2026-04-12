@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 
+/** Lista de etiquetas de texto renderizadas como `p-tag` de PrimeNG. */
 @Component({
   selector: 'lib-product-tags',
   imports: [CommonModule, TagModule],

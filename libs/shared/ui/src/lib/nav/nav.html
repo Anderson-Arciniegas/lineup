@@ -1,17 +1,25 @@
 <nav
-  class="nav flex flex-row justify-between py-3 px-3 md:px-4 lg:px-9 bg-primary-50 shadow h-18 sm:h-20"
+  class="nav flex flex-row justify-between py-3 px-3 md:px-4 lg:pe-9 bg-primary-50 shadow h-18 sm:h-20"
+  [class.lg:ps-9]="!showSidebarToggle"
 >
-  <div class="flex flex-row items-center gap-3 sm:gap-5">
-    <!-- <div class="flex md:hidden">
-      <lib-button
-        [icon]="'pi pi-bars'"
-        [variant]="'text'"
-        [type]="'rounded'"
-        [size]="'large'"
-        width="w-13"
-        (action)="visible = !visible"
-      ></lib-button>
-    </div> -->
+  <div class="flex flex-row items-center gap-1 sm:gap-5">
+    @if (showSidebarToggle) {
+    <lib-button
+      [icon]="'pi pi-bars'"
+      [variant]="'text'"
+      [type]="'rounded'"
+      [size]="'large'"
+      width="w-13"
+      [attr.aria-expanded]="sidebarOpen"
+      [attr.aria-label]="
+        (sidebarOpen
+          ? 'layout.sidebar.collapseMenu'
+          : 'layout.sidebar.expandMenu'
+        ) | translate
+      "
+      (action)="emitSidebarToggle()"
+    ></lib-button>
+    }
     <a [routerLink]="['/']" class="flex flex-row items-center gap-3">
       <img
         src="assets/images/lineup.png"
@@ -23,8 +31,8 @@
     </a>
   </div>
 
-  <div class="flex flex-row items-center justify-end gap-4">
-    <div class="hidden sm:flex flex-row gap-1 items-center justify-center">
+  <div class="flex flex-row items-center justify-end gap-2 sm:gap-4">
+    <div class="hidden md:flex flex-row gap-1 items-center justify-center">
       <lib-button
         [link]="'/'"
         variant="text"
@@ -38,12 +46,15 @@
         [label]="'general.information' | translate"
       ></lib-button>
     </div>
-    <div class="flex sm:hidden gap-3 flex-row items-center justify-center">
+    @if (!showSidebarToggle) {
+    <div class="flex md:hidden gap-2 flex-row items-center justify-center">
       <lib-button
         class="flex"
         [link]="'/'"
         [type]="'rounded'"
         color="secondary"
+        [fontSize]="'text-2xl'"
+        variant="text"
         icon="pi pi-search"
         width="w-11"
       ></lib-button>
@@ -51,15 +62,16 @@
         class="flex"
         [link]="'/info'"
         [type]="'rounded'"
+        [fontSize]="'text-2xl'"
+        variant="text"
         color="secondary"
         icon="pi pi-info-circle"
         width="w-11"
       ></lib-button>
     </div>
-
-    @if (!logged()) {
+    } @if (!logged()) {
     <lib-button
-      class="hidden sm:flex"
+      class="hidden md:flex"
       [link]="'/login'"
       [type]="'rounded'"
       color="secondary"
@@ -67,24 +79,17 @@
       [label]="'general.signIn' | translate"
     ></lib-button>
     <lib-button
-      class="flex sm:hidden"
+      class="flex md:hidden"
       [link]="'/login'"
       [type]="'rounded'"
       color="secondary"
       icon="pi pi-user"
       width="w-11"
+      variant="text"
+      [fontSize]="'text-2xl'"
     ></lib-button>
     }@else if (!businessMode()) {
-    <p-popover
-      #userNotificationsPopover
-      (onShow)="userNotificationsPanel.refresh()"
-    >
-      <lib-notifications
-        #userNotificationsPanel
-        [businessMode]="false"
-        (countMayHaveChanged)="refreshPendingNotificationsCount()"
-      />
-    </p-popover>
+
     <div
       class="flex items-center justify-center cursor-pointer w-12 h-12"
       role="button"
@@ -102,7 +107,7 @@
       </p-overlay-badge>
     </div>
     <lib-button
-      class="hidden sm:flex"
+      class="hidden md:flex"
       [link]="'/profile'"
       [type]="'rounded'"
       color="secondary"
@@ -112,25 +117,18 @@
     ></lib-button>
 
     <lib-button
-      class="flex sm:hidden"
+      class="flex md:hidden"
       [link]="'/profile'"
       [type]="'rounded'"
       color="secondary"
       icon="pi pi-user"
+      variant="text"
       width="w-11"
+      [fontSize]="'text-2xl'"
     ></lib-button>
 
     }@else if (businessMode()) {
-    <p-popover
-      #businessNotificationsPopover
-      (onShow)="businessNotificationsPanel.refresh()"
-    >
-      <lib-notifications
-        #businessNotificationsPanel
-        [businessMode]="true"
-        (countMayHaveChanged)="refreshPendingNotificationsCount()"
-      />
-    </p-popover>
+
     <div
       class="flex items-center justify-center cursor-pointer w-11 h-11 rounded-full hover:bg-primary-200"
       role="button"
@@ -148,7 +146,7 @@
       </p-overlay-badge>
     </div>
     <lib-button
-      class="hidden sm:flex"
+      class="hidden md:flex"
       [link]="'/dashboard'"
       [type]="'rounded'"
       color="secondary"
@@ -156,11 +154,12 @@
       [label]="'general.dashboard' | translate"
     ></lib-button>
     <lib-button
-      class="flex sm:hidden"
+      class="flex md:hidden"
       [link]="'/dashboard'"
       [type]="'rounded'"
       color="secondary"
       icon="pi pi-home"
+      [fontSize]="'text-2xl'"
       width="w-11"
     ></lib-button>
     }
@@ -244,3 +243,25 @@
   </div>
   }
 </p-drawer> -->
+
+<p-popover
+  #userNotificationsPopover
+  (onShow)="userNotificationsPanel.refresh()"
+>
+  <lib-notifications
+    #userNotificationsPanel
+    [businessMode]="false"
+    (countMayHaveChanged)="refreshPendingNotificationsCount()"
+  />
+</p-popover>
+
+<p-popover
+  #businessNotificationsPopover
+  (onShow)="businessNotificationsPanel.refresh()"
+>
+  <lib-notifications
+    #businessNotificationsPanel
+    [businessMode]="true"
+    (countMayHaveChanged)="refreshPendingNotificationsCount()"
+  />
+</p-popover>

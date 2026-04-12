@@ -13,7 +13,7 @@ export const userRoutes: Routes = [
     component: UserDashboardPage,
   },
   {
-    path: AppConfigService.config.routes.profile,
+    path: AppConfigService.config.routes.edit,
     component: ProfilePage,
   },
   {

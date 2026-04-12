@@ -57,7 +57,6 @@ export class NotificationsSocketService {
 
     const base = this.socketBaseUrl();
     const url = `${base}${NOTIFICATION_SOCKET_NAMESPACE}`;
-    console.log('holaaa connect', url);
     this._status.set('connecting');
 
     this.socket = io(url, {
@@ -66,7 +65,6 @@ export class NotificationsSocketService {
     });
 
     this.socket.on('connect', () => {
-      console.log('holaaa connect connected');
       this._status.set('connected');
       const joinPayload =
         profile === 'user'
@@ -86,7 +84,6 @@ export class NotificationsSocketService {
     });
 
     this.socket.on(NOTIFICATION_SOCKET_EVENT, (payload: NotificationSchema) => {
-      console.log('holaaa connect event', payload);
       this._lastNotification.set(payload);
       this.notificationSubject.next(payload);
     });

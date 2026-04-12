@@ -36,6 +36,10 @@ import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, Subscription } from 'rxjs';
 
+/**
+ * Edición masiva de SKUs de un producto: variaciones color/talla, precios por moneda,
+ * stock y envío batch al servicio privado de producto.
+ */
 @Component({
   selector: 'app-update-product-sku-page',
   imports: [
@@ -179,7 +183,6 @@ export class UpdateProductSkuPage implements OnInit {
             }
             return currency;
           });
-          console.log(this.currencies);
           this.buildSkusFormArray();
           this._cdr.markForCheck();
         },

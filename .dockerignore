@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.github
+.angular
+.nx
+coverage
+**/test-output
+**/.playwright
+**/playwright-report
+**/*.spec.ts
+.env
+.env.*
+*.md
+!README.md

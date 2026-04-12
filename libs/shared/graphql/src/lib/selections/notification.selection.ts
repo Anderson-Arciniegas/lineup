@@ -3,12 +3,14 @@ import { userBasicSelection } from './users.selection';
 
 /** Campos de NotificationPayloadSchema */
 export const notificationPayloadSelection = `{
+  catalogPath
   data
   entity
   id
   idBusiness
   idUser
   link
+  productTitle
   scenario
 }`;
 

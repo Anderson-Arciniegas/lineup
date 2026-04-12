@@ -1,5 +1,9 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, QueryList, ViewChildren } from '@angular/core';
+
+/**
+ * Carrusel circular experimental con GSAP: posiciona ítems sobre un arco (demo / prototipo visual).
+ */
 @Component({
   selector: 'lib-product-carousel',
   imports: [CommonModule],
@@ -21,10 +25,12 @@ export class ProductCarousel implements AfterViewInit {
         @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
   ) {}
 
+  /** Calcula posiciones iniciales en el cliente. */
   ngAfterViewInit(): void {
     void this.positionItems();
   }
 
+  /** Distribuye cada `.carousel-item` sobre la circunferencia usando GSAP. */
   async positionItems(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
     const { gsap } = await import('gsap');
@@ -46,11 +52,13 @@ export class ProductCarousel implements AfterViewInit {
     });
   }
 
+  /** Rota el conjunto un paso en sentido antihorario. */
   rotateLeft(): void {
     this.offset -= Math.PI / this.images.length;
     void this.positionItems();
   }
 
+  /** Rota el conjunto un paso en sentido horario. */
   rotateRight(): void {
     this.offset += Math.PI / this.images.length;
     void this.positionItems();

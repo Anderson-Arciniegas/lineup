@@ -26,6 +26,13 @@ import { QRCodeComponent } from 'angularx-qrcode';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { firstValueFrom } from 'rxjs';
 
+/**
+ * Ruta oculta usada para exportar el catálogo a PDF en el cliente.
+ *
+ * Flujo: carga negocio, catálogo y todos los productos; renderiza páginas “imprimibles”;
+ * captura con html2canvas, recorta márgenes, convierte a JPEG y compone un A4 con jsPDF.
+ * Incluye utilidades para incrustar PrimeIcons e imágenes remotas (CORS/proxy) en el clon del DOM.
+ */
 @Component({
   selector: 'app-catalog-download-page',
   imports: [
@@ -130,6 +137,7 @@ export class CatalogDownloadPage implements OnInit {
     return !!this.pageBackgroundGradient && this.isDarkBackground;
   }
 
+  /** Lee rutas, modo de layout por query y dispara la generación asíncrona del PDF. */
   ngOnInit(): void {
     this._businessPath = this._activatedRoute.snapshot.params['business'];
     this._catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
@@ -168,6 +176,10 @@ export class CatalogDownloadPage implements OnInit {
       luminance < CatalogDownloadPage._LUMINANCE_THRESHOLD;
   }
 
+  /**
+   * Orquesta la generación: datos, pintado, espera de fuentes/imágenes, html2canvas por bloque
+   * y guardado del archivo `.pdf` con nombre derivado del título del catálogo.
+   */
   private async loadAndDownload(): Promise<void> {
     if (!isPlatformBrowser(this._platformId)) return;
     this.isGenerating = true;
@@ -696,6 +708,10 @@ export class CatalogDownloadPage implements OnInit {
     return out;
   }
 
+  /**
+   * Prepara el documento clonado antes de la captura: fuente PrimeIcons embebida
+   * e imágenes remotas sustituidas por `data:` para evitar taint/CORS en el canvas.
+   */
   private static async preparePdfCloneForCapture(
     documentClone: Document,
   ): Promise<void> {

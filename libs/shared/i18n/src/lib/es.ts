@@ -205,6 +205,7 @@ export const es = {
     rateProduct: 'Calificar producto',
     discounts: 'Descuentos',
     createDiscount: 'Crear descuento',
+    editDiscount: 'Editar descuento',
     discountScope: 'Ámbito',
     discountScopeBusiness: 'Todo el negocio',
     discountScopeCatalog: 'Un catálogo',
@@ -219,7 +220,9 @@ export const es = {
     discountInvalidDateRange:
       'La fecha de fin debe ser igual o posterior a la de inicio.',
     discountCreated: 'Descuento creado correctamente.',
+    discountUpdated: 'Descuento actualizado correctamente.',
     errorCreatingDiscount: 'No se pudo crear el descuento.',
+    errorUpdatingDiscount: 'No se pudo actualizar el descuento.',
     discountDeleted: 'Descuento eliminado correctamente.',
     errorDeletingDiscount: 'No se pudo eliminar el descuento.',
     discountLinkedProducts: 'Productos con este descuento',
@@ -300,6 +303,7 @@ export const es = {
     generatingPdf: 'Generando PDF…',
     pdfDownloaded: 'PDF descargado! Puedes cerrar esta pestaña.',
     errorGeneratingPdf: 'Error al generar el PDF. Inténtalo de nuevo.',
+    resultsFor: 'Resultados para',
   },
   businessHoursModal: {
     days: 'Días',
@@ -608,5 +612,11 @@ export const es = {
     markAllRead: 'Marcar todas como leídas',
     loadError: 'No se pudieron cargar las notificaciones.',
     live: 'En vivo',
+  },
+  layout: {
+    sidebar: {
+      expandMenu: 'Expandir menú de navegación',
+      collapseMenu: 'Contraer menú de navegación',
+    },
   },
 };

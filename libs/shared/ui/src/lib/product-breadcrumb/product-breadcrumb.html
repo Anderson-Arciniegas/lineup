@@ -26,6 +26,7 @@
       <a
         class="flex flex-row items-center justify-center gap-3"
         [routerLink]="['/', business.path]"
+        [state]="catalog ? { lineupPublicBack: '/' } : undefined"
       >
         <div
           class="flex flex-row items-center justify-center w-10 md:w-14 h-10 md:h-14 rounded"

@@ -13,6 +13,9 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
+/**
+ * Recorte de imagen con `ngx-image-cropper`: al guardar comprime con `UtilsService` y cierra el diálogo con base64.
+ */
 @Component({
   selector: 'lib-image-cropper',
   standalone: true,
@@ -37,6 +40,7 @@ export class ImageCropper {
   private _utilsService = inject(UtilsService);
   private _subscription: Subscription = new Subscription();
 
+  /** Propaga el evento nativo del `<input type="file">` al cropper. */
   fileChangeEvent(event: Event) {
     const input = event.target as HTMLInputElement | null;
     if (!input || !input.files || input.files.length === 0) {
@@ -48,13 +52,12 @@ export class ImageCropper {
   }
 
   imageCropped(event: ImageCroppedEvent) {
-    console.log(event);
     this.croppedImage = event.objectUrl;
     // this.imageCroppedEvent.emit(this.croppedImage);
   }
 
   imageLoaded(image: LoadedImage) {
-    console.log('Image loaded:', image);
+    void image;
     // show cropper
   }
 
@@ -66,6 +69,7 @@ export class ImageCropper {
     // show message
   }
 
+  /** Comprime y devuelve la imagen recortada al padre vía `DynamicDialogRef.close`. */
   saveCrop() {
     if (this.croppedImage) {
       this._subscription.add(

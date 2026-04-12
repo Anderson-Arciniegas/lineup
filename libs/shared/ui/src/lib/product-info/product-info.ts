@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ProductDescription } from '../product-description/product-description';
 import { ProductDetails } from '../product-details/product-details';
 
+/** Agrupa descripción enriquecida y bloque de detalles (precio, variaciones, acciones) del producto. */
 @Component({
   selector: 'lib-product-info',
   imports: [

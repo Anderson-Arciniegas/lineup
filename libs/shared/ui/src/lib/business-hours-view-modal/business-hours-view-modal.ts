@@ -9,6 +9,7 @@ interface BusinessHoursViewModalData {
   businessHours?: BusinessHourSchema[];
 }
 
+/** Solo lectura: muestra horarios agrupados por día de la semana para visitantes. */
 @Component({
   selector: 'lib-business-hours-view-modal',
   standalone: true,
