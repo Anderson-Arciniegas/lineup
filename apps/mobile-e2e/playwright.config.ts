@@ -2,8 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
 
-// For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+// Puerto distinto del default de Angular (4200), que suele usar `lineup` en local.
+const e2ePort = process.env['MOBILE_E2E_PORT'] || '4202';
+const baseURL =
+  process.env['BASE_URL'] || `http://localhost:${e2ePort}`;
 const isCi = !!process.env['CI'];
 
 /**
@@ -26,11 +28,11 @@ export default defineConfig({
   },
   /**
    * `mobile-e2e:e2e` declara `dependsOn: ["mobile:build"]` para que en CI no compitan en paralelo
-   * `mobile:build` y el `nx serve` del webServer (ECONNREFUSED en :4200).
+   * `mobile:build` y el `nx serve` del webServer (ECONNREFUSED).
    */
   webServer: {
-    command: 'npx nx serve mobile --port=4200',
-    url: 'http://localhost:4200',
+    command: `npx nx serve mobile --port=${e2ePort}`,
+    url: baseURL,
     reuseExistingServer: !isCi,
     cwd: workspaceRoot,
     timeout: isCi ? 300 * 1000 : 120 * 1000,
