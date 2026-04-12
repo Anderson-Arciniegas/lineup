@@ -3,13 +3,13 @@
   [ngClass]="[width, height]"
 >
   <div
-    class="catalog-card p-2 shadow cursor-pointer flex flex-col justify-end bg-primary-50 w-full h-full"
+    class="catalog-card p-2 shadow cursor-pointer flex flex-col items-center justify-end bg-primary-50 w-full h-full"
   >
     <div
       class="catalog-data-content flex flex-row items-center justify-between gap-3 font-medium w-10/10 text-xs"
     >
       <div
-        class="catalog-data-left flex flex-row items-center justify-start gap-1 w-fit px-2 py-2 hidden sm:flex"
+        class="catalog-data-left flex flex-row items-center justify-start gap-2 w-fit px-3 py-2 rounded-full"
       >
         <i class="pi pi-th-large" style="font-size: 0.8rem"></i>
         <span class="font-semibold"
@@ -69,6 +69,24 @@
         />
       </div>
     </div>
+    @if (discount) {
+    <div class="note-container flex flex-row justify-center items-center">
+      <div
+        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}}% {{'general.discount' | translate}}
+        </span>
+        } @else {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}} {{discount.currency?.code | currencySymbol}}
+          {{'general.discount' | translate}}
+        </span>
+        }
+      </div>
+    </div>
+    }
     <div
       class="w-full flex flex-row items-center justify-between title-content"
     >

@@ -1,10 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { Nav, Sidebar } from '@lineup/ui';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 
+/**
+ * Layout para el área de usuario final: menú lateral con accesos a perfil,
+ * listas y ajustes; cierra el sidebar al navegar o al pulsar Escape.
+ */
 @Component({
   selector: 'app-user-layout',
   imports: [CommonModule, RouterModule, Nav, Sidebar],
@@ -14,8 +27,26 @@ import { AuthService } from '../../../core/services/auth.service';
 export class UserLayout implements OnInit {
   items: MenuItem[];
 
-  private _auth = inject(AuthService);
+  /** `true` = panel lateral abierto encima del contenido. Por defecto cerrado. */
+  sidebarOpen = signal(false);
 
+  private _auth = inject(AuthService);
+  private readonly _router = inject(Router);
+  private readonly _destroyRef = inject(DestroyRef);
+
+  /**
+   * Cierra el sidebar en cada fin de navegación para no dejar el overlay activo.
+   */
+  constructor() {
+    this._router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(this._destroyRef),
+      )
+      .subscribe(() => this.closeSidebar());
+  }
+
+  /** Construye la estructura estática del menú (enlaces PrimeNG `MenuItem`). */
   ngOnInit(): void {
     this.items = [
       {
@@ -59,7 +90,26 @@ export class UserLayout implements OnInit {
     ];
   }
 
+  /** Cierra la sesión del consumidor y delega en `AuthService`. */
   signOut() {
     this._auth.signOut();
+  }
+
+  /** Alterna el panel lateral en vistas estrechas. */
+  toggleSidebar(): void {
+    this.sidebarOpen.update((v) => !v);
+  }
+
+  /** Oculta el sidebar de forma explícita. */
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
+
+  /** Escape cierra el menú lateral si está visible. */
+  @HostListener('document:keydown.escape')
+  onDocumentEscape(): void {
+    if (this.sidebarOpen()) {
+      this.closeSidebar();
+    }
   }
 }

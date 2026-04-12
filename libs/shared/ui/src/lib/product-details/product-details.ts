@@ -35,6 +35,10 @@ import { Button } from '../button/button';
 import { ProductVariations } from '../product-variations/product-variations';
 import { ShareModal } from '../share-modal/share-modal';
 
+/**
+ * Bloque de ficha pública: variaciones con sincronización a query params y `sku`,
+ * precios con descuentos y conversión BCV, like/compartir, redes y enlace WhatsApp con mensaje enriquecido.
+ */
 @Component({
   selector: 'lib-product-details',
   imports: [
@@ -80,6 +84,10 @@ export class ProductDetails implements OnChanges {
   private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
 
+  /**
+   * Al cambiar de producto reinicia selección, query params y datos auxiliares;
+   * en cada versión válida recarga redes, like y tasas.
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
       const productId = this.product.id;
@@ -101,15 +109,14 @@ export class ProductDetails implements OnChanges {
   }
 
   /**
-   * Precio mostrado según el SKU que corresponde a las variaciones seleccionadas
-   * (o el primer SKU si aún no hay selección completa).
-   * Con descuento activo usa {@link UtilsService.formatPriceWithDiscount}.
+   * Precio de venta según el SKU que encaja con las variaciones elegidas (o el primero por defecto).
+   * Si hay descuento vigente usa `UtilsService.formatPriceWithDiscount` con tasas BCV.
    */
   get price(): number | null {
     return this.getEffectivePriceDetails()?.salePrice ?? null;
   }
 
-  /** Precio de lista del SKU (sin descuento); solo para mostrar tachado si hay oferta. */
+  /** Precio de lista del SKU sin descuento; se muestra tachado cuando `showDiscountUi` es true. */
   get originalListPrice(): number | null {
     const d = this.getEffectivePriceDetails();
     return d?.showDiscount ? d.listPrice : null;
@@ -120,9 +127,7 @@ export class ProductDetails implements OnChanges {
     return this.getEffectivePriceDetails()?.showDiscount ?? false;
   }
 
-  /**
-   * Precio de venta, precio de lista y si aplica UI de descuento (lista mayor que venta).
-   */
+  /** Calcula precio final, precio lista y si debe mostrarse el tachado (oferta real). */
   private getEffectivePriceDetails(): {
     salePrice: number;
     listPrice: number;
@@ -156,9 +161,7 @@ export class ProductDetails implements OnChanges {
     return sku?.currency ?? null;
   }
 
-  /**
-   * Factor BCV: Bs por 1 USD o 1 EUR. `null` si ya está en Bs o faltan tasas.
-   */
+  /** Factor Bs por 1 USD o 1 EUR según moneda del SKU; `null` si no aplica o faltan tasas. */
   private getBsRateForSkuCurrency(): number | null {
     const sku = this.getSkuForPricing();
     if (!this.rates || sku?.idCurrency == null) return null;
@@ -168,7 +171,7 @@ export class ProductDetails implements OnChanges {
     return null;
   }
 
-  /** Equivalente en Bs del precio de venta (USD/EUR → Bs). */
+  /** Equivalente en bolívares del precio de venta cuando la moneda del SKU es USD/EUR. */
   get equivalentBsSalePrice(): number | null {
     const p = this.price;
     const factor = this.getBsRateForSkuCurrency();
@@ -176,7 +179,7 @@ export class ProductDetails implements OnChanges {
     return p * factor;
   }
 
-  /** Equivalente en Bs del precio de lista tachado, si hay descuento. */
+  /** Equivalente en Bs del precio de lista tachado, solo si hay descuento visible. */
   get equivalentBsOriginalPrice(): number | null {
     if (!this.showDiscountUi) return null;
     const p = this.originalListPrice;
@@ -198,10 +201,7 @@ export class ProductDetails implements OnChanges {
     return !!discount && discount.status === StatusEnum.ACTIVE;
   }
 
-  /**
-   * SKU que coincide con todas las variaciones seleccionadas; `undefined` si falta
-   * alguna opción o no hay coincidencia.
-   */
+  /** SKU cuyas opciones coinciden con todas las variaciones seleccionadas, si existe. */
   private findResolvedSkuForVariations(): ProductSkuSchema | undefined {
     const product = this.product;
     if (!product?.skus?.length) return undefined;
@@ -227,9 +227,7 @@ export class ProductDetails implements OnChanges {
     });
   }
 
-  /**
-   * SKU cuyo precio/moneda se muestran: el resuelto por variaciones o el primero.
-   */
+  /** SKU usado para precios: el resuelto por variaciones o, si no hay, el primero del producto. */
   private getSkuForPricing(): ProductSkuSchema | null {
     const product = this.product;
     if (!product?.skus?.length) return null;
@@ -507,7 +505,6 @@ export class ProductDetails implements OnChanges {
         .findByBusiness(this.product.business.id)
         .subscribe({
           next: (socialNetworkBusinesses) => {
-            console.log(socialNetworkBusinesses);
             if (socialNetworkBusinesses.length > 0) {
               this.businessSocialNetworks = socialNetworkBusinesses;
               const withPhone = this.businessSocialNetworks.find((sn) =>
@@ -524,9 +521,6 @@ export class ProductDetails implements OnChanges {
           error: (error) => {
             console.error(error);
             this.attempt = false;
-          },
-          complete: () => {
-            console.log('Social network businesses fetched');
           },
         }),
     );
@@ -555,16 +549,12 @@ export class ProductDetails implements OnChanges {
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = true;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = false;
-        },
-        complete: () => {
-          console.log('Product liked');
         },
       }),
     );
@@ -575,16 +565,12 @@ export class ProductDetails implements OnChanges {
     this.hasLiked = false;
     this._subscription.add(
       this._productPublicService.unlikeProduct(this.product.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.hasLiked = false;
         },
         error: (error) => {
           console.error(error);
           this.hasLiked = true;
-        },
-        complete: () => {
-          console.log('Product unliked');
         },
       }),
     );
@@ -595,16 +581,13 @@ export class ProductDetails implements OnChanges {
     this._subscription.add(
       this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {
-          console.log(response);
           this.hasLiked = response;
         },
       }),
     );
   }
 
-  /**
-   * Texto para WhatsApp: saludo, producto con variaciones elegidas, precio y URL actual.
-   */
+  /** Arma el cuerpo del mensaje de WhatsApp: intro i18n, producto, variaciones, precio y URL. */
   private buildWhatsappContactMessage(): string {
     const intro = this._translate.instant('general.whatsappContactIntro');
     const title = (this.product?.title ?? '').trim();
@@ -640,8 +623,7 @@ export class ProductDetails implements OnChanges {
   }
 
   /**
-   * Misma resolución que {@link ProductVariations.getOptionLabel}: el valor del SKU
-   * (p. ej. `black`) se mapea a la clave i18n (`colors.black`), no a `instant('black')`.
+   * Misma lógica que `ProductVariations.getOptionLabel`: valores tipo `black` → claves i18n (`colors.black`).
    */
   private resolveVariationOptionLabel(option: string): string {
     const trimmed = String(option ?? '').trim();
@@ -657,7 +639,7 @@ export class ProductDetails implements OnChanges {
     return this._translate.instant(trimmed);
   }
 
-  /** Resumen legible de cada variación seleccionada (mismas claves i18n que la UI). */
+  /** Partes de texto para el resumen de variaciones en el mensaje de WhatsApp. */
   private buildWhatsappVariationSummaryParts(): string[] {
     const parts: string[] = [];
     for (const v of this.productVariationsUnique) {
@@ -686,15 +668,11 @@ export class ProductDetails implements OnChanges {
     this._subscription.add(
       this._ratesService.findBcvOfficialRates().subscribe({
         next: (rates) => {
-          console.log(rates);
           this.rates = rates;
           this.syncWhatsappHref();
         },
         error: (error) => {
           console.error(error);
-        },
-        complete: () => {
-          console.log('Rates fetched');
         },
       }),
     );

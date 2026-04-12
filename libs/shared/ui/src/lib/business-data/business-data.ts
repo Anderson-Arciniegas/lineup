@@ -7,6 +7,7 @@ import {
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -19,10 +20,17 @@ import {
   BusinessPrivateService,
   BusinessPublicService,
   BusinessSchema,
+  CurrencyPrivateService,
+  CurrencySchema,
+  CurrencySymbolPipe,
+  DiscountSchema,
+  DiscountScopeEnum,
+  DiscountTypeEnum,
   FileThumbnailUrlPipe,
   LocationSchema,
   SocialNetworkBusinessSchema,
   SocialNetworkPrivateService,
+  StatusEnum,
   UtilsService,
   WeekDayEnum,
 } from '@lineup/core';
@@ -42,6 +50,11 @@ import { BusinessLocationsModal } from '../business-locations-modal/business-loc
 import { Button } from '../button/button';
 import { LocationModal } from '../location-modal/location-modal';
 import { ShareModal } from '../share-modal/share-modal';
+
+/**
+ * Cabecera rica del negocio en vista pública: marca, descuentos, redes, ubicaciones,
+ * horarios, moneda preferida, seguir/dejar de seguir y modales asociados.
+ */
 @Component({
   selector: 'lib-business-data',
   imports: [
@@ -57,12 +70,13 @@ import { ShareModal } from '../share-modal/share-modal';
     ColorPickerModule,
     FormsModule,
     InputTextModule,
+    CurrencySymbolPipe,
   ],
   templateUrl: './business-data.html',
   styleUrl: './business-data.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class BusinessData implements OnInit, OnChanges {
+export class BusinessData implements OnInit, OnChanges, OnDestroy {
   @Input() business: BusinessSchema;
   @Input() myBusiness: boolean;
   /**
@@ -78,6 +92,11 @@ export class BusinessData implements OnInit, OnChanges {
   followers = 0;
   color = '#ffffff';
   attemptColor = false;
+  discount: DiscountSchema;
+  DiscountTypeEnum = DiscountTypeEnum;
+  DiscountScopeEnum = DiscountScopeEnum;
+  currencies: CurrencySchema[] = [];
+
   private readonly _authStore = inject(AuthStore);
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
@@ -87,6 +106,7 @@ export class BusinessData implements OnInit, OnChanges {
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _businessPrivateService = inject(BusinessPrivateService);
   private readonly _messageService = inject(MessageService);
+  private readonly _currencyService = inject(CurrencyPrivateService);
 
   private _subscriptions = new Subscription();
 
@@ -103,16 +123,31 @@ export class BusinessData implements OnInit, OnChanges {
   userMode = computed(() => this._authStore.isUserLoggedIn());
 
   ngOnInit(): void {
-    console.log(this.business);
+    this._subscriptions.add(
+      this._currencyService.findAllCurrencies().subscribe({
+        next: (currencies) => {
+          this.currencies = currencies ?? [];
+        },
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this._subscriptions.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes', changes);
-    console.log(this.myBusiness);
+    void changes;
     if (this.business) {
       this.followers = this.business.followers;
       this.isFollowingBusiness();
       this.getMySocialNetworkBusinesses();
+
+      this.discount = this.business.discounts.find(
+        (discount) =>
+          discount.scope === DiscountScopeEnum.BUSINESS &&
+          discount.status === StatusEnum.ACTIVE,
+      );
     }
   }
 
@@ -120,6 +155,12 @@ export class BusinessData implements OnInit, OnChanges {
     return this._sanitizer.bypassSecurityTrustHtml(
       this.business?.description ?? '',
     );
+  }
+
+  discountCurrencyCode(): string | undefined {
+    const id = this.discount?.idCurrency;
+    if (id == null) return undefined;
+    return this.currencies.find((c) => c.id === id)?.code;
   }
 
   getSocialNetworkUrl(id: number) {
@@ -145,7 +186,6 @@ export class BusinessData implements OnInit, OnChanges {
     this._subscriptions.add(
       this._socialMediaService.findByBusiness(this.business.id).subscribe({
         next: (socialNetworkBusinesses) => {
-          console.log(socialNetworkBusinesses);
           if (socialNetworkBusinesses.length > 0) {
             this.businessSocialNetworks = socialNetworkBusinesses;
           } else {
@@ -156,9 +196,6 @@ export class BusinessData implements OnInit, OnChanges {
         error: (error) => {
           console.error(error);
           this.attempt = false;
-        },
-        complete: () => {
-          console.log('Social network businesses fetched');
         },
       }),
     );
@@ -415,9 +452,6 @@ export class BusinessData implements OnInit, OnChanges {
           error: (error) => {
             console.error(error);
           },
-          complete: () => {
-            console.log('Business is following');
-          },
         }),
     );
   }
@@ -426,16 +460,13 @@ export class BusinessData implements OnInit, OnChanges {
     this.following = true;
     this._subscriptions.add(
       this._businessPublicService.followBusiness(this.business.id).subscribe({
-        next: (response) => {
+        next: () => {
           this.following = true;
           this.followers++;
         },
         error: (error) => {
           console.error(error);
           this.following = false;
-        },
-        complete: () => {
-          console.log('Business followed');
         },
       }),
     );
@@ -445,8 +476,7 @@ export class BusinessData implements OnInit, OnChanges {
     this.following = false;
     this._subscriptions.add(
       this._businessPublicService.unfollowBusiness(this.business.id).subscribe({
-        next: (response) => {
-          console.log(response);
+        next: () => {
           this.following = false;
           this.followers--;
         },
@@ -454,15 +484,11 @@ export class BusinessData implements OnInit, OnChanges {
           console.error(error);
           this.following = true;
         },
-        complete: () => {
-          console.log('Business unfollowed');
-        },
       }),
     );
   }
 
   saveColor() {
-    console.log('saveColor', this.color);
     this.attemptColor = true;
     this._subscriptions.add(
       this._businessPrivateService
@@ -471,8 +497,7 @@ export class BusinessData implements OnInit, OnChanges {
           hexColor: this.color,
         })
         .subscribe({
-          next: (response) => {
-            console.log(response);
+          next: () => {
             this.attemptColor = false;
             this._messageService.add({
               severity: 'success',
@@ -486,9 +511,6 @@ export class BusinessData implements OnInit, OnChanges {
             console.error(error);
             this.attemptColor = false;
           },
-          complete: () => {
-            console.log('Business color updated');
-          },
         }),
     );
   }
@@ -499,7 +521,6 @@ export class BusinessData implements OnInit, OnChanges {
   }
 
   setColor() {
-    console.log('setColor', this.color);
     this.colorChange.emit(this.color);
   }
 

@@ -11,6 +11,9 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 
+/**
+ * Negocios que el usuario sigue (favoritos), con scroll infinito sobre la API pública paginada.
+ */
 @Component({
   selector: 'app-favorites-page',
   imports: [
@@ -36,6 +39,7 @@ export class FavoritesPage implements OnInit {
     this.getFavoritesBusinesses();
   }
 
+  /** Acumula páginas de `findFollowedBusinesses` hasta recibir página vacía. */
   getFavoritesBusinesses(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
@@ -44,7 +48,6 @@ export class FavoritesPage implements OnInit {
         .findFollowedBusinesses({ page: this.page, limit: 20 })
         .subscribe({
           next: (businesses) => {
-            console.log(businesses);
             this.attempt = false;
             this.businesses = [...this.businesses, ...businesses.items];
             this.page++;
@@ -56,15 +59,11 @@ export class FavoritesPage implements OnInit {
             console.error(error);
             this.attempt = false;
           },
-          complete: () => {
-            console.log('complete');
-          },
         }),
     );
   }
 
   onScroll(): void {
-    console.log('onScroll');
     this.getFavoritesBusinesses();
   }
 }

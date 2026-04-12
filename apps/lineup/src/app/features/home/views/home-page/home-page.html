@@ -48,8 +48,16 @@
     </div>
   </section>
 
-  @defer (on viewport; prefetch on idle) { @if(!collectionsAttempt) { @for
-  (productCollection of productCollections; track productCollection.id) {
+  @defer (on idle) {
+  @if (collectionsAttempt) {
+  <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '100px', height: '100px' }"
+    />
+  </div>
+  } @else {
+  @for (productCollection of productCollections; track productCollection.id) {
   <div
     class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
   >
@@ -74,6 +82,7 @@
         [numVisible]="carouselNumVisibleCollections()"
         [numScroll]="1"
         [showIndicators]="true"
+        [autoplayInterval]="6000"
       >
         <ng-template let-product #item>
           <div
@@ -83,6 +92,9 @@
               class="cursor-pointer w-54 md:w-65"
               [width]="'w-54 md:w-65'"
               [height]="'h-80 md:h-100'"
+              [imageFetchPriority]="
+                isLeadCollectionProduct(productCollection, product)
+              "
               [product]="product"
             ></lib-product-card>
           </div>
@@ -91,14 +103,9 @@
       }
     </div>
   </div>
-  } @if(collectionsAttempt) {
-  <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-    <p-progress-spinner
-      strokeWidth="4"
-      [style]="{ width: '100px', height: '100px' }"
-    />
-  </div>
-  } } } @placeholder {
+  }
+  }
+  } @placeholder {
   <div
     class="home-defer-placeholder home-defer-placeholder--collections"
     aria-hidden="true"
@@ -111,7 +118,15 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
-    @defer (on viewport; prefetch on idle) { @if(!businessesAttempt) {
+    @defer (on idle) {
+    @if (businessesAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else {
     <div
       class="card w-10/10 home-carousel"
       [class.home-carousel--few]="
@@ -124,6 +139,7 @@
         [circular]="businesses.length >= carouselNumVisibleStandard()"
         [numVisible]="carouselNumVisibleStandard()"
         [numScroll]="1"
+        [autoplayInterval]="6000"
         [showIndicators]="true"
       >
         <ng-template let-business #item>
@@ -141,14 +157,8 @@
       </p-carousel>
       }
     </div>
-    } @if(businessesAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } } @placeholder {
+    }
+    } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--carousel"
       aria-hidden="true"
@@ -161,7 +171,15 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
-    @defer (on viewport; prefetch on idle) { @if(!catalogsAttempt) {
+    @defer (on idle) {
+    @if (catalogsAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else {
     <div
       class="card w-10/10 home-carousel"
       [class.home-carousel--few]="
@@ -174,6 +192,7 @@
         [circular]="catalogs.length >= carouselNumVisibleStandard()"
         [numVisible]="carouselNumVisibleStandard()"
         [numScroll]="1"
+        [autoplayInterval]="6000"
         [showIndicators]="true"
       >
         <ng-template let-catalog #item>
@@ -191,14 +210,8 @@
       </p-carousel>
       }
     </div>
-    } @if(catalogsAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } } @placeholder {
+    }
+    } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--carousel"
       aria-hidden="true"
@@ -212,7 +225,15 @@
     <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
       {{ 'general.featuredProducts' | translate }}
     </h3>
-    @defer (on viewport; prefetch on idle) {
+    @defer (on idle) {
+    @if (productsAttempt) {
+    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else {
     <div class="products-grid">
       @for (product of products; track product.id) {
       <div class="w-full flex flex-col items-center justify-center">
@@ -220,20 +241,14 @@
           class="my-1 sm:my-3"
           [width]="'w-65'"
           [height]="'h-100'"
+          [imageFetchPriority]="isLeadFeaturedProduct(product)"
           [product]="product"
         ></lib-product-card>
       </div>
       }
     </div>
-
-    @if(productsAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } } @placeholder {
+    }
+    } @placeholder {
     <div
       class="home-defer-placeholder home-defer-placeholder--grid"
       aria-hidden="true"

@@ -13,6 +13,7 @@ import {
   Button
 } from "@lineup/ui";
 
+/** Contenedor de pantallas de autenticación con botón volver usando el historial del navegador. */
 @Component({
     selector: 'app-auth-layout',
     imports: [CommonModule, RouterModule, Button],
@@ -22,6 +23,7 @@ import {
 export class AuthLayout {
     private location = inject(Location);
 
+    /** Navega un paso atrás en el historial (`Location.back`). */
     goBack(): void {
         this.location.back();
     }

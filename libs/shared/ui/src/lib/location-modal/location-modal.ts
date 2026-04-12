@@ -43,6 +43,9 @@ interface GoogleMapsWindow {
   google?: { maps: GoogleMapsApi };
 }
 
+/**
+ * Muestra una ubicación en mapa estático (Google Maps JS): carga script, marker y centro en coordenadas.
+ */
 @Component({
   selector: 'lib-location-modal',
   imports: [CommonModule, DialogModule, TranslateModule, Button],

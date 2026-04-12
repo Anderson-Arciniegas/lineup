@@ -201,6 +201,7 @@ export const en = {
     rateProduct: 'Rate product',
     discounts: 'Discounts',
     createDiscount: 'Create discount',
+    editDiscount: 'Edit discount',
     discountScope: 'Scope',
     discountScopeBusiness: 'Entire business',
     discountScopeCatalog: 'One catalog',
@@ -214,7 +215,9 @@ export const en = {
     endDate: 'End date',
     discountInvalidDateRange: 'End date must be on or after the start date.',
     discountCreated: 'Discount created successfully.',
+    discountUpdated: 'Discount updated successfully.',
     errorCreatingDiscount: 'Could not create the discount.',
+    errorUpdatingDiscount: 'Could not update the discount.',
     discountDeleted: 'Discount deleted successfully.',
     errorDeletingDiscount: 'Could not delete the discount.',
     discountLinkedProducts: 'Products included in this discount',
@@ -291,6 +294,10 @@ export const en = {
     showProductPriceEquivalentsInBs:
       'Show product price equivalents in BS (BCV Rate)',
     productPriceInBs: 'Product price in BS',
+    generatingPdf: 'Generating PDF…',
+    pdfDownloaded: 'PDF downloaded! You can close this tab.',
+    errorGeneratingPdf: 'Error generating the PDF. Please try again.',
+    resultsFor: 'Results for',
   },
   businessHoursModal: {
     days: 'Days',
@@ -592,5 +599,12 @@ export const en = {
     empty: 'You have no notifications yet.',
     markAllRead: 'Mark all as read',
     loadError: 'Could not load notifications.',
+    live: 'Live',
+  },
+  layout: {
+    sidebar: {
+      expandMenu: 'Expand navigation menu',
+      collapseMenu: 'Collapse navigation menu',
+    },
   },
 };

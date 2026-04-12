@@ -10,6 +10,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 
+/** Historial paginado de valoraciones que el usuario ha dejado en productos. */
 @Component({
   selector: 'app-my-ratings-page',
   imports: [
@@ -36,6 +37,7 @@ export class MyRatingsPage implements OnInit {
     this.loadRatings();
   }
 
+  /** Pide la siguiente página de ratings hasta agotar `total` del servidor. */
   loadRatings(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;

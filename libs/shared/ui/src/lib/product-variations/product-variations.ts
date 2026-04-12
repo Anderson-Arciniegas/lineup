@@ -11,6 +11,10 @@ import {
 import { BASIC_COLORS, BASIC_SIZES } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+/**
+ * Selector de una variación de producto (color/talla u otras): chips con etiquetas i18n,
+ * colores hex cuando aplica y `output` al cambiar la opción.
+ */
 @Component({
   selector: 'lib-product-variations',
   imports: [CommonModule, TranslateModule],
@@ -45,14 +49,19 @@ export class ProductVariations implements OnInit, OnChanges {
     }));
   });
 
+  /** Valida la selección inicial frente a las opciones disponibles. */
   ngOnInit(): void {
     this.ensureSelection();
   }
 
+  /** Revalida cuando el padre actualiza `options` o `selectedOption`. */
   ngOnChanges(): void {
     this.ensureSelection();
   }
 
+  /**
+   * Evita selección inválida tras cambiar opciones; no impone default si el padre aún no definió valor (SSR/URL).
+   */
   private ensureSelection(): void {
     const options = this.options();
 
@@ -80,6 +89,7 @@ export class ProductVariations implements OnInit, OnChanges {
     return String(value ?? '').trim();
   }
 
+  /** Resuelve clave de traducción para colores/tallas predefinidos o devuelve el valor crudo. */
   getOptionLabel(option: string): string {
     return (
       this.colorsVariations.find((c) => c.value === option)?.name ??
@@ -88,10 +98,12 @@ export class ProductVariations implements OnInit, OnChanges {
     );
   }
 
+  /** Hex del color si la opción coincide con `BASIC_COLORS`. */
   getColor(option: string): string {
     return this.colorsVariations.find((c) => c.value === option)?.hex ?? null;
   }
 
+  /** Emite `selectedOptionChange` cuando el usuario elige otra opción. */
   selectOption(option: string): void {
     if (this.selectedOption === option) return;
     this.selectedOption = option;

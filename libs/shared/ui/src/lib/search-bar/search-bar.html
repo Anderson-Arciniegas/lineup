@@ -1,6 +1,9 @@
 <div class="w-full flex flex-row items-center justify-center search-container">
   <div
-    class="search flex flex-row items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4 sm:px-8"
+    class="search flex flex-row items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4"
+    [class.sm:px-4]="small"
+    [class.sm:px-8]="!small"
+    [class.small]="small"
   >
     <p-iconfield class="w-full max-width">
       <p-inputicon class="pi pi-search" />
@@ -32,5 +35,6 @@
   </div>
   <div
     class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
+    [class.small]="small"
   ></div>
 </div>

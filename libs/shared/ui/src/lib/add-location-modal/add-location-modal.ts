@@ -101,6 +101,10 @@ export interface SelectedLocation {
   formattedAddress?: string;
 }
 
+/**
+ * Alta/edición de ubicación con autocompletado Places, mapa interactivo y geocodificación inversa
+ * para persistir coordenadas y dirección formateada.
+ */
 @Component({
   selector: 'lib-add-location-modal',
   standalone: true,
@@ -361,7 +365,6 @@ export class AddLocationModal implements OnInit {
     this.geocoder.geocode(
       { location: { lat, lng } },
       (results: GeocoderResultLike[], status: string) => {
-        console.log(results);
         const address =
           status === 'OK' && results?.[0]
             ? results[0].formatted_address

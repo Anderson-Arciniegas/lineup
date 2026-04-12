@@ -30,6 +30,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 
+/**
+ * Tarjeta de producto pública con flip 3D (GSAP), like, precio con BCV/descuento,
+ * modo exportación PDF (sin animación) y `fetchpriority` opcional para LCP.
+ */
 @Component({
   selector: 'lib-product-card',
   imports: [
@@ -51,9 +55,13 @@ export class ProductCard
   @Input() product: ProductSchema;
   @Input() width = 'w-65';
   @Input() height = 'h-100';
+  /** Primera imagen above-the-fold (p. ej. carrusel): mejora LCP con fetchpriority. */
+  @Input() imageFetchPriority = false;
   @Input() dashboardMode: boolean;
   /** Catálogo PDF: sin botones, flip fijado en la cara del título. */
   @Input() pdfExportAttempt = false;
+  /** Estado opcional al ir al negocio (p. ej. `{ lineupPublicBack: '/' }` desde catálogo). */
+  @Input() businessNavigateState?: Record<string, unknown>;
   image: string;
   businessImage: string;
   imageLoaded: boolean;
@@ -87,6 +95,7 @@ export class ProductCard
   private readonly _subscription = new Subscription();
   private _flipInitTimeoutId: ReturnType<typeof setTimeout> | undefined;
   private _teardownFlipListeners: (() => void) | undefined;
+  private _teardownFlipWarmup: (() => void) | undefined;
   private _gsap: typeof import('gsap').gsap | null = null;
 
   /** Id único por instancia para el contenedor flip (DOM / GSAP). */
@@ -95,6 +104,7 @@ export class ProductCard
     `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
   }`;
 
+  /** Resuelve miniaturas, URL al detalle, precios iniciales y disponibilidad por SKUs. */
   ngOnInit(): void {
     if (this.product) {
       this.image = this.srcWithCrossOriginNonce(
@@ -135,6 +145,7 @@ export class ProductCard
     }
   }
 
+  /** Marca imagen cargada si viene de caché, inicializa flip y consulta si el usuario dio like. */
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
@@ -149,6 +160,7 @@ export class ProductCard
     this.hasLikedProduct();
   }
 
+  /** Al cambiar `product` o `pdfExportAttempt`, actualiza imágenes y estado del flip. */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
       this.imageLoaded = false;
@@ -171,8 +183,8 @@ export class ProductCard
   }
 
   /**
-   * Si la imagen ya está en caché del navegador, `complete` es true pero `(load)` puede no
-   * dispararse; el PDF (waitForImages + html2canvas) capturaba el spinner indefinidamente.
+   * Si la imagen ya está en caché, `complete` es true pero el evento `load` puede no dispararse;
+   * sin esto el PDF (waitForImages + html2canvas) dejaba el spinner visible indefinidamente.
    */
   private syncImageLoadedIfCached(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -183,9 +195,7 @@ export class ProductCard
     }
   }
 
-  /**
-   * Igual que catalog-carousel: `?t=` para URLs remotas (canvas / html2canvas / CORS).
-   */
+  /** Añade `?t=` a URLs http(s) para forzar bust de caché en capturas (html2canvas / CORS). */
   private srcWithCrossOriginNonce(
     url: string | undefined | null,
   ): string | undefined {
@@ -202,7 +212,7 @@ export class ProductCard
     return `${url}${sep}t=${Date.now()}`;
   }
 
-  /** PDF: cara frontal (título). Normal: hover flip si aplica. */
+  /** En PDF fija la cara frontal; en vista normal prepara hover/touch para el flip con GSAP. */
   private syncFlipForExportState(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -219,7 +229,6 @@ export class ProductCard
   }
 
   private async syncFlipForExportStateAsync(): Promise<void> {
-    const gsap = await this.ensureGsap();
     const flipBox = document.getElementById(this.cardFlipId);
     const inner = flipBox?.querySelector('.flip-inner');
     if (!flipBox || !inner) {
@@ -228,15 +237,42 @@ export class ProductCard
 
     this._teardownFlipListeners?.();
     this._teardownFlipListeners = undefined;
-    gsap.killTweensOf(inner);
+    this._teardownFlipWarmup?.();
+    this._teardownFlipWarmup = undefined;
 
     if (this.pdfExportAttempt) {
+      const gsap = await this.ensureGsap();
+      gsap.killTweensOf(inner);
       gsap.set(inner, { rotateX: 0 });
       this._teardownFlipListeners = (): void => {
         gsap.killTweensOf(inner);
       };
       return;
     }
+
+    this._gsap?.killTweensOf(inner);
+
+    const onWarmup = (): void => {
+      void this.attachFlipHoverAfterWarmup(flipBox, inner);
+    };
+
+    flipBox.addEventListener('mouseenter', onWarmup, { passive: true });
+    flipBox.addEventListener('touchstart', onWarmup, { passive: true });
+    this._teardownFlipWarmup = (): void => {
+      flipBox.removeEventListener('mouseenter', onWarmup);
+      flipBox.removeEventListener('touchstart', onWarmup);
+    };
+  }
+
+  private async attachFlipHoverAfterWarmup(
+    flipBox: HTMLElement,
+    inner: Element,
+  ): Promise<void> {
+    this._teardownFlipWarmup?.();
+    this._teardownFlipWarmup = undefined;
+
+    const gsap = await this.ensureGsap();
+    gsap.killTweensOf(inner);
 
     const onEnter = (): void => {
       gsap.to(inner, {
@@ -260,16 +296,23 @@ export class ProductCard
       flipBox.removeEventListener('mouseleave', onLeave);
       gsap.killTweensOf(inner);
     };
+
+    if (flipBox.matches(':hover')) {
+      onEnter();
+    }
   }
 
+  /** Limpia timeouts, listeners GSAP y suscripciones HTTP. */
   ngOnDestroy(): void {
     if (this._flipInitTimeoutId !== undefined) {
       clearTimeout(this._flipInitTimeoutId);
     }
+    this._teardownFlipWarmup?.();
     this._teardownFlipListeners?.();
     this._subscription.unsubscribe();
   }
 
+  /** Registra like vía API (no aplica si el negocio está logueado como dueño). */
   likeProduct(): void {
     if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = true;
@@ -286,6 +329,7 @@ export class ProductCard
     );
   }
 
+  /** Quita el like del producto en backend. */
   unlikeProduct(): void {
     if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
     this.hasLiked = false;
@@ -302,6 +346,7 @@ export class ProductCard
     );
   }
 
+  /** Consulta estado inicial de favorito para usuarios consumidores. */
   hasLikedProduct(): void {
     if (this._authStore.isBusinessLoggedIn()) return;
     this._subscription.add(
@@ -313,6 +358,7 @@ export class ProductCard
     );
   }
 
+  /** Trunca título largo evitando cortar en medio de una palabra cuando es posible. */
   setTitle(title: string): string {
     return title.length > 50
       ? (title[49] === ' ' ? title.substring(0, 49) : title.substring(0, 50)) +
@@ -320,12 +366,16 @@ export class ProductCard
       : title;
   }
 
+  /** Navega al perfil público del negocio con `state` opcional (p. ej. breadcrumb atrás). */
   navigateToBusiness(): void {
     if (this.product?.business?.path) {
-      this._router.navigate([`/${this.product.business.path}`]);
+      this._router.navigate([`/${this.product.business.path}`], {
+        state: this.businessNavigateState,
+      });
     }
   }
 
+  /** Obtiene tasas BCV y recalcula precio mostrado con descuento de producto. */
   getRates(): void {
     this._subscription.add(
       this._ratesService.findBcvOfficialRates().subscribe({

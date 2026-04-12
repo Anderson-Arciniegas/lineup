@@ -1,4 +1,5 @@
 import { businessBasicSelection } from './businesses.selection';
+import { currencySelection } from './currency.selection';
 import { fileSelection } from './file.selection';
 
 export const catalogSelection = `{
@@ -15,6 +16,21 @@ export const catalogSelection = `{
   path
   productsCount
   visits
+   discounts {
+    id
+    idCatalog
+    idCreationBusiness
+    idCurrency
+    creationDate
+    modificationDate
+    startDate
+    endDate
+    status
+    scope
+    value
+    discountType
+    currency ${currencySelection}
+  }
   products {
     id
     title

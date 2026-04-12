@@ -1,0 +1,16 @@
+# Uso: docker compose up --build
+# La app SSR escucha en el puerto 4000. Detrás de un proxy (Nginx, Caddy) expón 80/443
+# y reenvía Host / X-Forwarded-* para que las URLs absolutas del SSR sean correctas.
+
+services:
+  lineup-ssr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: production
+      PORT: '4000'
+      HOST: '0.0.0.0'
+    restart: unless-stopped

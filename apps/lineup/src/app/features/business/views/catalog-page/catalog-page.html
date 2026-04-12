@@ -19,7 +19,24 @@
       {{ catalog.title || 'Catalogo' }}
     </h3>
 
-    @if (myBusiness) {
+    @if (discount) {
+    <div class="note-container flex flex-row justify-center items-center">
+      <div
+        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
+      >
+        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}}% {{'general.discount' | translate}}
+        </span>
+        } @else {
+        <span class="text-sm text-center font-medium">
+          {{discount.value}} {{discount.currency?.code | currencySymbol}}
+          {{'general.discount' | translate}}
+        </span>
+        }
+      </div>
+    </div>
+    } @if (myBusiness) {
     <div class="flex flex-row items-center justify-center">
       <lib-button
         [icon]="'pi pi-palette'"
@@ -165,9 +182,10 @@
       (scrolled)="onScroll()"
     >
       @if (myBusiness && ((!productsAttempt && !attempt) || (products.length > 0
-      || noMoreResults))) {
+      || noMoreResults)) && catalogPath) {
       <div class="w-full flex flex-col items-center justify-center">
         <lib-create-product-card
+          [catalogPath]="catalogPath"
           [width]="'w-65'"
           [height]="'h-100'"
         ></lib-create-product-card>
@@ -180,6 +198,7 @@
           [height]="'h-100'"
           [product]="product"
           [pdfExportAttempt]="false"
+          [businessNavigateState]="{ lineupPublicBack: '/' }"
         />
       </div>
       }

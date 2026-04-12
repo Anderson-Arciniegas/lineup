@@ -16,6 +16,10 @@ import { map, Subscription, take } from 'rxjs';
 import { Button } from '../button/button';
 import { ImageCropper } from '../image-cropper/image-cropper';
 
+/**
+ * Modal legacy de creación rápida de catálogo con nombre e imagen (subida multipart);
+ * parte del flujo quedó sustituido por páginas del panel pero el componente se mantiene en la librería.
+ */
 @Component({
   selector: 'lib-create-catalog-modal',
   imports: [CommonModule, DialogModule, FormsModule, TranslateModule, Button],
@@ -40,8 +44,11 @@ export class CreateCatalogModal {
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
   private readonly destroyRef = inject(DestroyRef);
 
-  createCatalog() {
-    console.log(this.catalogName, this.imageUrl);
+  createCatalog(): void {
+    const name = this.catalogName.trim();
+    if (!name || !this.imgCode) {
+      return;
+    }
   }
 
   enterCreateCatalog() {
@@ -94,7 +101,6 @@ export class CreateCatalogModal {
         .post('files/upload', fileUpload)
         .pipe(
           map((response) => {
-            console.log(response);
             switch (response.type) {
               case HttpEventType.Response:
                 if (response.body.file) {

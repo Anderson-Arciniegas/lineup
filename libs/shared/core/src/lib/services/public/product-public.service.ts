@@ -8,6 +8,7 @@ import {
   GET_ALL_BY_CATALOG_QUERY,
   GET_ALL_BY_TAG_QUERY,
   GET_ALL_BY_TAGS_QUERY,
+  GET_ALL_BY_BUSINESS_QUERY,
   GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
   GET_MAIN_TAGS_QUERY,
   HAS_LIKED_PRODUCT_QUERY,
@@ -207,6 +208,23 @@ export class ProductPublicService {
         },
       })
       .pipe(map((result) => result.data.getAllPrimaryProductsByBusiness));
+  }
+
+  getAllByBusiness(
+    idBusiness: number,
+    pagination: InfinityScrollInput,
+  ): Observable<PaginatedProducts> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ getAllByBusiness: PaginatedProducts }>({
+        query: GET_ALL_BY_BUSINESS_QUERY,
+        variables: { idBusiness: Math.trunc(idBusiness), pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllByBusiness));
   }
 
   productCollections(): Observable<ProductCollectionSchema[]> {

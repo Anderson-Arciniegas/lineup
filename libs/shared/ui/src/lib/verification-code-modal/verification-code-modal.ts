@@ -31,6 +31,10 @@ export interface VerificationCodeModalData {
   email?: string | null;
 }
 
+/**
+ * Envío y verificación de código OTP por email (usuario público o negocio privado según `type`).
+ * Cierra con `true` si la verificación es correcta.
+ */
 @Component({
   selector: 'lib-verification-code-modal',
   imports: [

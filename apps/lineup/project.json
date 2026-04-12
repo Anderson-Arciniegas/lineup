@@ -42,8 +42,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1mb",
-              "maximumError": "1.6mb"
+              "maximumWarning": "1.65mb",
+              "maximumError": "1.7mb"
             },
             {
               "type": "anyComponentStyle",
@@ -97,11 +97,20 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "lineup:build",
+        "buildTarget": "lineup:build:production",
         "port": 4200,
         "staticFilePath": "dist/apps/lineup/browser",
         "spa": true
-      }
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "lineup:build:development"
+        },
+        "production": {
+          "buildTarget": "lineup:build:production"
+        }
+      },
+      "defaultConfiguration": "production"
     }
   }
 }

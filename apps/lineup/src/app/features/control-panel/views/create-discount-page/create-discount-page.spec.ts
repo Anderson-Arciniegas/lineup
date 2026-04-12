@@ -11,6 +11,7 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { CreateDiscountPage } from './create-discount-page';
 
@@ -56,7 +57,20 @@ describe('CreateDiscountPage', () => {
               of([{ id: 2, name: 'USD', code: 'USD' } as any]),
           },
         },
-        { provide: DiscountPrivateService, useValue: { createDiscount } },
+        {
+          provide: DiscountPrivateService,
+          useValue: {
+            createDiscount,
+            findOneDiscount: jest.fn(),
+            updateDiscount: jest.fn(),
+          },
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { paramMap: { get: () => null as string | null } },
+          },
+        },
         { provide: UtilsService, useValue: { navigate } },
         { provide: MessageService, useValue: { add: messageAdd } },
       ],

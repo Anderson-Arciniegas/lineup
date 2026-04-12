@@ -19,6 +19,10 @@ const FOLLOWED_PAGE_LIMIT = 20;
 const MAX_BUSINESSES_FOR_PRODUCTS = 8;
 const MAX_RECENT_PRODUCTS = 12;
 
+/**
+ * Home del usuario autenticado: negocios seguidos, destacados con promociones activas
+ * y mosaico de productos recientes deduplicados y ordenados por fecha de creación.
+ */
 @Component({
   selector: 'app-user-dashboard-page',
   imports: [
@@ -54,6 +58,10 @@ export class UserDashboardPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
+  /**
+   * Obtiene negocios seguidos y, en cadena, los productos primarios de un subconjunto
+   * de IDs para construir el carrusel de novedades sin duplicar entradas.
+   */
   private loadFollowedAndProducts(): void {
     this.followedLoading = true;
     this._subscription.add(
@@ -103,6 +111,7 @@ export class UserDashboardPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Une listas por `id`, ordena por `creationDate` descendente y recorta al máximo configurado. */
   private mergeAndSortRecentProducts(lists: ProductSchema[][]): ProductSchema[] {
     const byId = new Map<number, ProductSchema>();
     for (const list of lists) {
@@ -125,6 +134,7 @@ export class UserDashboardPage implements OnInit, OnDestroy {
       .slice(0, MAX_RECENT_PRODUCTS);
   }
 
+  /** Filtra negocios que tengan al menos un descuento activo en el rango de fechas actual. */
   private filterBusinessesWithActivePromotions(
     businesses: BusinessSchema[],
   ): BusinessSchema[] {
@@ -133,6 +143,7 @@ export class UserDashboardPage implements OnInit, OnDestroy {
     );
   }
 
+  /** Comprueba estado `ACTIVE` y ventana temporal `[startDate, endDate]` respecto a `Date.now`. */
   private isActiveDiscount(d: DiscountSchemaFields): boolean {
     if (d.status !== StatusEnum.ACTIVE) {
       return false;

@@ -25,6 +25,9 @@ import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 import { ShareModal } from '../share-modal/share-modal';
 
+/**
+ * Slide de producto dentro del carrusel de catálogo: precio con BCV, stock, like y compartir.
+ */
 @Component({
   selector: 'lib-catalog-carousel-item',
   imports: [
@@ -58,6 +61,7 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _subscription = new Subscription();
 
+  /** Inicializa precios, disponibilidad, tasas BCV y estado de favorito. */
   ngAfterViewInit(): void {
     this.hasLikedProduct();
 

@@ -34,6 +34,10 @@ import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
+/**
+ * Registro de cuenta de negocio: formulario con verificación por email y alta opcional con Google.
+ * Tras crear el negocio, `AuthService` recibe la sesión y puede marcar onboarding.
+ */
 @Component({
   selector: 'app-register-business-page',
   imports: [
@@ -88,6 +92,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
     this._subscription.unsubscribe();
   }
 
+  /** Registro OAuth de negocio; al éxito delega en `handleSuccessLogin` con flag de registro. */
   private _handleGoogleToken(token: string): void {
     this.attemptGoogle = true;
     this._subscription.add(
@@ -110,6 +115,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /** Verificación por código y creación del negocio con manejo de errores GraphQL en toast. */
   onSubmit(): void {
     if (this.registerBusinessForm.invalid || this.attempt) {
       this.registerBusinessForm.markAllAsTouched();
@@ -177,6 +183,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /** Formulario con validación de contraseña y coincidencia con confirmación. */
   private _createForm(): FormGroup {
     const formOptions: AbstractControlOptions = {
       validators: [PasswordValidation.MatchPassword],

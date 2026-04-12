@@ -11,6 +11,7 @@ export * from './entity-audit.schema';
 export * from './currency.schema';
 export * from './file.schema';
 export * from './location.schema';
+export * from './notification-payload.schema';
 export * from './notification.schema';
 export * from './permission.schema';
 export * from './product.schema';

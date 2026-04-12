@@ -11,7 +11,10 @@
   >
     <div class="flex flex-row items-center justify-between gap-4 flex-wrap">
       <h2 class="text-3xl font-medium">
-        {{ 'general.createDiscount' | translate }}
+        {{
+          (isEditMode ? 'general.editDiscount' : 'general.createDiscount')
+            | translate
+        }}
       </h2>
       <lib-button
         type="rounded"
@@ -22,6 +25,11 @@
       ></lib-button>
     </div>
 
+    @if (loadingDiscount) {
+    <div class="w-full flex flex-col items-center justify-center gap-4 py-16">
+      <p-progress-spinner strokeWidth="4" class="w-14 h-14" />
+    </div>
+    } @else {
     <form class="w-full flex flex-col gap-8" [formGroup]="discountForm">
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-scope"
@@ -256,5 +264,6 @@
         ></lib-button>
       </div>
     </form>
+    }
   </div>
 </div>

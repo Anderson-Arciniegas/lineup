@@ -18,7 +18,7 @@ import { ApiClient } from '../graphql.service';
 @Injectable({
   providedIn: 'root',
 })
-export class BusinessNotificationsPublicService {
+export class UserNotificationsPublicService {
   private apollo = inject(Apollo);
 
   myNotifications(

@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 
+/** Listado paginado de catálogos propios del negocio con tarjetas y acceso a creación. */
 @Component({
   selector: 'app-catalogs-page',
   imports: [
@@ -42,9 +43,9 @@ export class CatalogsPage implements OnInit {
     this.getCatalogs();
 
     this.business = this._authStore.business();
-    console.log(this.business);
   }
 
+  /** Carga incremental de catálogos hasta que el backend devuelve página vacía. */
   getCatalogs(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
@@ -55,7 +56,6 @@ export class CatalogsPage implements OnInit {
           next: (response) => {
             if (response.items.length > 0) {
               this.catalogs = [...this.catalogs, ...response.items];
-              console.log(this.catalogs);
               this.page++;
             } else {
               this.noMoreResults = true;
@@ -65,9 +65,6 @@ export class CatalogsPage implements OnInit {
           error: (error) => {
             console.error(error);
             this.attempt = false;
-          },
-          complete: () => {
-            console.log('complete');
           },
         }),
     );

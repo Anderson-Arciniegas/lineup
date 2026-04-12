@@ -1,6 +1,42 @@
-<div
-  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
->
+<div class="w-full py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
+  <div
+    class="flex flex-row flex-wrap items-center justify-between w-full gap-3 min-h-14"
+  >
+    <lib-button
+      [icon]="'pi pi-arrow-left'"
+      [width]="'w-13'"
+      [color]="'secondary'"
+      [variant]="'text'"
+      [size]="'large'"
+      [type]="'rounded'"
+      (action)="goBack()"
+    ></lib-button>
+    <div class="flex flex-row gap-3 flex-wrap justify-end w-full md:w-auto">
+      <lib-button
+        icon="pi pi-pencil"
+        width="w-38"
+        [label]="'general.edit' | translate"
+        type="rounded"
+        color="warn"
+        (action)="navigateToEdit()"
+      ></lib-button>
+      <lib-button
+        icon="pi pi-box"
+        width="w-38"
+        [label]="'general.inventory' | translate"
+        type="rounded"
+        (action)="navigateToInventory()"
+      ></lib-button>
+      <lib-button
+        icon="pi pi-trash"
+        width="w-38"
+        [label]="'general.delete' | translate"
+        type="rounded"
+        color="danger"
+        (action)="deleteProduct()"
+      ></lib-button>
+    </div>
+  </div>
   @if (loading) {
   <div class="w-full flex justify-center p-10 mt-10">
     <p-progress-spinner
@@ -14,44 +50,6 @@
     class="w-full flex flex-col gap-5 sm:gap-8 sm:py-4 sm:px-4 lg:px-10 xl:px-18 rounded-lg border-grey xl:container"
   >
     <!-- Acciones superiores -->
-    <div
-      class="flex flex-row flex-wrap items-center justify-between w-full gap-3"
-    >
-      <lib-button
-        [icon]="'pi pi-arrow-left'"
-        [width]="'w-13'"
-        [color]="'secondary'"
-        [variant]="'text'"
-        [size]="'large'"
-        [type]="'rounded'"
-        (action)="goBack()"
-      ></lib-button>
-      <div class="flex flex-row gap-3 flex-wrap justify-end w-full md:w-auto">
-        <lib-button
-          icon="pi pi-pencil"
-          width="w-38"
-          [label]="'general.edit' | translate"
-          type="rounded"
-          color="warn"
-          (action)="navigateToEdit()"
-        ></lib-button>
-        <lib-button
-          icon="pi pi-box"
-          width="w-38"
-          [label]="'general.inventory' | translate"
-          type="rounded"
-          (action)="navigateToInventory()"
-        ></lib-button>
-        <lib-button
-          icon="pi pi-trash"
-          width="w-38"
-          [label]="'general.delete' | translate"
-          type="rounded"
-          color="danger"
-          (action)="deleteProduct()"
-        ></lib-button>
-      </div>
-    </div>
 
     <!-- Cabecera del producto -->
     <div class="flex flex-col md:flex-row items-start gap-6 w-full">
@@ -85,11 +83,11 @@
             [link]="productUrl"
           ></lib-button>
         </div>
-        <h2 class="text-xl lg:text-3xl font-semibold text-gray-800">
+        <h2 class="text-lg lg:text-2xl font-semibold text-gray-800">
           {{ product.title }}
         </h2>
         @if (product.subtitle) {
-        <p class="text-base md:text-lg text-gray-500">{{ product.subtitle }}</p>
+        <p class="text-sm md:text-base text-gray-500">{{ product.subtitle }}</p>
         } @if (product.catalog) {
         <div class="flex flex-row justify-start items-center gap-4">
           <span

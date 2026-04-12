@@ -1,7 +1,5 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div
-  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
->
+<div class="page w-full py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
   <lib-product-breadcrumb
     [business]="business"
     class="w-full"
@@ -16,7 +14,7 @@
   } @else {
   <form
     [formGroup]="createProductForm"
-    class="w-full flex flex-col gap-5 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+    class="flex flex-col gap-5 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey max-w-7xl w-full"
   >
     <div class="flex flex-row items-center justify-between">
       @if(idProduct){

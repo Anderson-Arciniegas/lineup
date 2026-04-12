@@ -1,23 +1,39 @@
-<section class="sidebar-content w-full px-1 sm:px-2 py-5 lg:px-4 xl:px-5">
+<section class="sidebar-content w-full px-1 py-5 px-4 xl:px-5">
   <div class="flex flex-col justify-between gap-2 sm:gap-3 layout">
     <div class="flex flex-col gap-2 layout justify-start items-center">
       @for (item of items.slice(0, items.length - 1); track $index) {
       <a
         [routerLink]="item.url"
+        [state]="item['navigationState']"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"
         #rla="routerLinkActive"
         [class.bg-primary-200]="rla.isActive"
-        class="w-11 lg:w-full min-w-11 h-11 lg:h-12 flex flex-row gap-3 justify-center lg:justify-start items-center cursor-pointer lg:p-3 xl:py-3 xl:px-4 rounded-full hover:bg-primary-200 transition-all duration-300"
+        class="min-w-12 h-12 flex flex-row gap-3 items-center cursor-pointer rounded-full hover:bg-primary-200 transition-all duration-300"
+        [ngClass]="
+          iconOnly
+            ? 'w-full justify-start p-3'
+            : overlayMode
+              ? 'w-full min-h-12 lg:h-12 justify-start p-3 xl:py-3 xl:px-4'
+              : 'w-12 lg:w-full lg:h-12 justify-start lg:justify-start lg:p-3 xl:py-3 xl:px-4'
+        "
       >
         <i class="{{ item.icon }}" style="font-size: 1.5rem"></i>
-        <span class="hidden lg:block font-medium text-sm xl:text-base"
+        <span
+          class="font-medium text-sm xl:text-base whitespace-nowrap"
+          [ngClass]="
+            iconOnly
+              ? 'hidden'
+              : overlayMode
+                ? 'block'
+                : 'hidden lg:block'
+          "
           >{{ item.label | translate }}</span
         >
       </a>
       }
     </div>
-    <div class="flex flex-col gap-2justify-start items-center">
+    <div class="flex flex-col gap-2 justify-start items-center">
       @for (item of items.slice( items.length - 1, items.length); track $index)
       {
       <div
@@ -26,10 +42,25 @@
         [tabIndex]="0"
         tabindex="0"
         role="button"
-        class="w-11 lg:w-full min-w-11 h-11 lg:h-12 flex flex-row gap-3 justify-center lg:justify-start items-center cursor-pointer lg:p-3 xl:py-3 xl:px-4 hover:bg-primary-200 transition-all duration-300 rounded-full"
+        class="min-w-12 h-12 flex flex-row gap-3 items-center cursor-pointer hover:bg-primary-200 transition-all duration-300 rounded-full"
+        [ngClass]="
+          iconOnly
+            ? 'w-full justify-start p-3'
+            : overlayMode
+              ? 'w-full min-h-12 lg:h-12 justify-start p-3 xl:py-3 xl:px-4'
+              : 'w-12 lg:w-full lg:h-12 justify-start lg:justify-start lg:p-3 xl:py-3 xl:px-4'
+        "
       >
         <i class="{{ item.icon }}" style="font-size: 1.5rem"></i>
-        <span class="hidden lg:block font-medium text-sm xl:text-base"
+        <span
+          class="font-medium text-sm xl:text-base whitespace-nowrap"
+          [ngClass]="
+            iconOnly
+              ? 'hidden'
+              : overlayMode
+                ? 'block'
+                : 'hidden lg:block'
+          "
           >{{ item.label | translate }}</span
         >
       </div>

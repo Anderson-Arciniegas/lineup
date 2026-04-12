@@ -15,6 +15,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Button } from '../button/button';
 
+/**
+ * Diálogo para elegir un catálogo del negocio: lista precargada o fetch de `findAllMyCatalogs`.
+ * Cierra con `id` del catálogo seleccionado o sin valor al cancelar.
+ */
 @Component({
   selector: 'lib-select-catalog-modal',
   imports: [
@@ -39,10 +43,12 @@ export class SelectCatalogModal implements OnInit {
   readonly loading = signal(true);
   readonly loadError = signal(false);
 
+  /** Fija el título del diálogo traducido. */
   constructor() {
     this.config.header = this.translate.instant('general.selectCatalog');
   }
 
+  /** Usa `data.catalogs` si viene en config; si no, carga desde API. */
   ngOnInit(): void {
     const preloaded = this.config.data?.catalogs as CatalogSchema[] | undefined;
     if (preloaded !== undefined) {
@@ -66,10 +72,12 @@ export class SelectCatalogModal implements OnInit {
       });
   }
 
+  /** Confirma la selección devolviendo el id del catálogo. */
   select(catalog: CatalogSchema): void {
     this.ref.close(catalog.id);
   }
 
+  /** Cierra sin resultado. */
   cancel(): void {
     this.ref.close();
   }
