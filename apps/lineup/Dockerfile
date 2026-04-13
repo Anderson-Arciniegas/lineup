@@ -27,7 +27,7 @@ RUN npm ci --omit=dev --ignore-scripts && node scripts/patch-primeicons-font-dis
 COPY --from=builder /app/dist/apps/lineup ./dist/apps/lineup
 COPY apps/lineup/nginx.lineup.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 4200
 
 USER node
 

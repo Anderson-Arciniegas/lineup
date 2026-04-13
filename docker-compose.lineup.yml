@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: apps/lineup/Dockerfile
     ports:
-      - "4200:80"
+      - "4200:4200"
     environment:
       NODE_ENV: production
       PORT: "4200"
