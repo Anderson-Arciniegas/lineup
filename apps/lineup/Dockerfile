@@ -25,8 +25,9 @@ COPY scripts/patch-primeicons-font-display.mjs ./scripts/patch-primeicons-font-d
 RUN npm ci --omit=dev --ignore-scripts && node scripts/patch-primeicons-font-display.mjs && npm cache clean --force
 
 COPY --from=builder /app/dist/apps/lineup ./dist/apps/lineup
+COPY apps/lineup/nginx.lineup.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 4200
+EXPOSE 80
 
 USER node
 

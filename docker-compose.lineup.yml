@@ -6,7 +6,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: apps/lineup/Dockerfile
     ports:
       - "4200:80"
     environment:
