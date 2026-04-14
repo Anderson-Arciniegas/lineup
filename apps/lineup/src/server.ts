@@ -5,6 +5,7 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import { getContext } from '@netlify/angular-runtime/context.mjs';
+import compression from 'compression';
 import express from 'express';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -45,12 +46,24 @@ if (isMainModule(import.meta.url)) {
   const browserDistFolder = join(serverDistFolder, '../browser');
   const angularNodeAppEngine = new AngularNodeAppEngine();
   const app = express();
+  app.disable('x-powered-by');
+  app.use(
+    compression({
+      threshold: 1024,
+    }),
+  );
 
   app.use(
     express.static(browserDistFolder, {
       maxAge: '1y',
+      immutable: true,
       index: false,
       redirect: false,
+      setHeaders: (response, filePath) => {
+        if (filePath.endsWith('.html')) {
+          response.setHeader('Cache-Control', 'no-cache');
+        }
+      },
     }),
   );
 
@@ -59,6 +72,13 @@ if (isMainModule(import.meta.url)) {
       .handle(req)
       .then(async (response) => {
         if (response) {
+          const contentType = response.headers.get('content-type') ?? '';
+          if (
+            contentType.includes('text/html') &&
+            !response.headers.has('cache-control')
+          ) {
+            response.headers.set('Cache-Control', 'no-store');
+          }
           await writeResponseToNodeResponse(response, res);
         } else {
           next();
