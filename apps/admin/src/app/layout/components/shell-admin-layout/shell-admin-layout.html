@@ -1,0 +1,28 @@
+<div class="w-full min-h-screen flex flex-col">
+  <app-top-nav-admin
+    [showSidebarToggle]="true"
+    [sidebarOpen]="sidebarOpen()"
+    (sidebarToggle)="toggleSidebar()"
+  ></app-top-nav-admin>
+  <section class="layout-main h-100vh-calc w-full min-w-0">
+    @if (sidebarOpen()) {
+      <div
+        class="sidebar-backdrop"
+        (click)="closeSidebar()"
+        role="presentation"
+        aria-hidden="true"
+      ></div>
+    }
+    <div class="sidebar-dock" [class.sidebar-dock--open]="sidebarOpen()">
+      <lib-sidebar
+        class="sidebar-dock__sidebar"
+        [items]="items()"
+        [iconOnly]="!sidebarOpen()"
+        [overlayMode]="sidebarOpen()"
+      ></lib-sidebar>
+    </div>
+    <div class="page layout-main__content">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</div>

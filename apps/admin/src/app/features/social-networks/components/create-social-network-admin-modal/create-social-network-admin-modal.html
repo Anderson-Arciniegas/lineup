@@ -1,0 +1,97 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(32rem, 94vw)' }"
+  [header]="dialogHeaderKey | translate"
+  (onHide)="onDialogHide()"
+>
+  <div class="flex flex-col gap-10 pt-1">
+    <div class="flex flex-col sm:flex-row gap-4 items-start">
+      <div
+        class="create-social-network-admin-modal__preview shrink-0"
+        [class.create-social-network-admin-modal__preview--empty]="!previewUrl()"
+      >
+        @if (previewUrl(); as src) {
+        <img
+          [src]="src"
+          alt=""
+          class="create-social-network-admin-modal__img"
+        />
+        } @else {
+        <i class="pi pi-image text-2xl text-primary-400" aria-hidden="true"></i>
+        }
+      </div>
+      <div class="flex flex-col gap-2 min-w-0 flex-1 w-full">
+        <lib-button
+          type="rounded"
+          icon="pi pi-upload"
+          [label]="'admin.socialNetworkModal.chooseImage' | translate"
+          [loading]="loadingFile()"
+          [disabled]="loadingFile()"
+          (action)="openImageCropper()"
+        ></lib-button>
+        @if (uploadFailed()) {
+        <p class="text-sm text-red-600 m-0">
+          {{ 'admin.socialNetworkModal.uploadError' | translate }}
+        </p>
+        }
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-10">
+      <p-floatlabel class="w-full">
+        <input
+          pInputText
+          class="w-full"
+          id="sn-admin-name"
+          formControlName="name"
+          autocomplete="off"
+          [pSize]="'small'"
+        />
+        <label for="sn-admin-name" class="font-medium"
+          >{{ 'admin.socialNetworkModal.name' | translate }}</label
+        >
+      </p-floatlabel>
+
+      <p-floatlabel class="w-full">
+        <input
+          pInputText
+          class="w-full font-mono uppercase"
+          id="sn-admin-code"
+          formControlName="code"
+          autocomplete="off"
+          [pSize]="'small'"
+        />
+        <label for="sn-admin-code" class="font-medium"
+          >{{ 'admin.socialNetworkModal.code' | translate }}</label
+        >
+      </p-floatlabel>
+      @if (form.controls.code.enabled && form.controls.code.touched &&
+      form.controls.code.invalid) {
+      <p class="text-xs text-red-600 m-0">
+        {{ 'admin.socialNetworkModal.codeHint' | translate }}
+      </p>
+      }
+
+      <div class="flex flex-wrap justify-end gap-2 pt-2">
+        <lib-button
+          type="rounded"
+          variant="text"
+          [label]="'admin.socialNetworkModal.cancel' | translate"
+          [disabled]="attempt()"
+          (action)="close()"
+        ></lib-button>
+        <lib-button
+          type="rounded"
+          [label]="'admin.socialNetworkModal.save' | translate"
+          [loading]="attempt()"
+          [disabled]="attempt() || form.invalid || loadingFile()"
+          [buttonType]="'submit'"
+        ></lib-button>
+      </div>
+    </form>
+  </div>
+</p-dialog>

@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import {
   BusinessApiFilePrivateService,
   BusinessPrivateService,
@@ -46,6 +46,10 @@ describe('CreateProductPage', () => {
                 business: 'test-business',
                 catalogPath: 'my-cat',
               },
+              paramMap: convertToParamMap({
+                business: 'test-business',
+                catalogPath: 'my-cat',
+              }),
             },
           },
         },

@@ -34,7 +34,7 @@
           [label]="'general.explore'"
         ></lib-button>
         <lib-button
-          [link]="'/info'"
+          [link]="infoPath"
           variant="text"
           color="secondary"
           [label]="'general.information'"
@@ -61,6 +61,29 @@
           [label]="'general.dashboard'"
         ></lib-button>
         }
+      </nav>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="font-semibold text-primary-800 tracking-wide">
+        {{ 'footer.legal' | translate }}
+      </span>
+      <nav
+        class="flex flex-col gap-1 items-start"
+        [attr.aria-label]="'footer.legal' | translate"
+      >
+        <lib-button
+          [link]="termsPath"
+          variant="text"
+          color="secondary"
+          [label]="'footer.terms'"
+        ></lib-button>
+        <lib-button
+          [link]="privacyPath"
+          variant="text"
+          color="secondary"
+          [label]="'footer.privacy'"
+        ></lib-button>
       </nav>
     </div>
 

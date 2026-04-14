@@ -26,6 +26,7 @@ export interface EnvironmentConfig {
   userApi: string;
   userApiFile: string;
   businessApiFile: string;
+  adminApiFile: string;
   google: {
     GOOGLE_ID: string;
     GOOGLE_MAPS_API_KEY: string;
@@ -65,6 +66,7 @@ export const environment: EnvironmentConfig = {
   userApi: 'https://users.api.lineup.com.ve/graphql',
   userApiFile: 'https://users.api.lineup.com.ve/',
   businessApiFile: 'https://businesses.api.lineup.com.ve/',
+  adminApiFile: 'https://admin.api.lineup.com.ve/',
   google: {
     GOOGLE_ID:
       '193526416514-fnmifm4h0k4rfqrgb1f436okag52ef9s.apps.googleusercontent.com',
@@ -93,6 +95,7 @@ export const PROD: EnvironmentConfig = {
   userApi: 'https://users.api.lineup.com.ve/graphql',
   userApiFile: 'https://users.api.lineup.com.ve/',
   businessApiFile: 'https://businesses.api.lineup.com.ve/',
+  adminApiFile: 'https://admin.api.lineup.com.ve/',
   google: {
     GOOGLE_ID:
       '193526416514-fnmifm4h0k4rfqrgb1f436okag52ef9s.apps.googleusercontent.com',

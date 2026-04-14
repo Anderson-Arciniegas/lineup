@@ -1,0 +1,103 @@
+<div class="container w-full px-4 sm:px-6 md:px-8 py-6 md:py-8">
+  <h1 class="text-2xl md:text-3xl font-semibold text-primary-900 mb-2">
+    {{ 'admin.nav.businesses' | translate }}
+  </h1>
+  <p class="text-primary-600 mb-2">
+    {{ 'admin.placeholder.businesses' | translate }}
+  </p>
+  @if (!loadingInitial() && !error()) {
+  <p class="text-sm text-primary-500 mb-6">
+    {{ 'admin.feature.totalRecords' | translate }}: {{ total() }}
+  </p>
+  }
+
+  @if (loadingInitial()) {
+  <p class="text-primary-500">{{ 'admin.feature.loading' | translate }}</p>
+  } @else if (error()) {
+  <p class="text-red-600">{{ error() | translate }}</p>
+  } @else {
+  <div
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="100"
+    [scrollWindow]="true"
+    [infiniteScrollDisabled]="busy() || noMore()"
+    (scrolled)="onScroll()"
+  >
+    <ul class="flex flex-col gap-2 w-full">
+      @for (b of items(); track b.id) {
+      @let url = lineupPublicUrl(b);
+      <li
+        class="rounded-lg border border-primary-200 bg-primary-50 p-0 overflow-hidden"
+      >
+        @if (url) {
+        <a
+          [href]="url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex flex-wrap gap-2 items-center justify-between px-4 py-3 w-full text-inherit no-underline outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-400 hover:bg-primary-100/90"
+          [attr.title]="'admin.businesses.openInLineup' | translate"
+        >
+          <div class="min-w-0 flex-1">
+            <p class="font-medium truncate">{{ b.name }}</p>
+            <p class="text-sm text-primary-600 truncate font-mono">
+              /{{ b.path }}
+            </p>
+            <p class="text-sm text-primary-600 truncate">{{ b.email }}</p>
+          </div>
+          <span
+            class="text-xs font-medium shrink-0 px-2 py-1 rounded-md pointer-events-none"
+            [class.bg-emerald-100]="b.isOnline"
+            [class.text-emerald-800]="b.isOnline"
+            [class.bg-slate-200]="!b.isOnline"
+            [class.text-slate-700]="!b.isOnline"
+          >
+            @if (b.isOnline) {
+            {{ 'admin.businesses.online' | translate }}
+            } @else {
+            {{ 'admin.businesses.offline' | translate }}
+            }
+          </span>
+        </a>
+        } @else {
+        <div
+          class="flex flex-wrap gap-2 items-center justify-between px-4 py-3 w-full"
+        >
+          <div class="min-w-0 flex-1">
+            <p class="font-medium truncate">{{ b.name }}</p>
+            <p class="text-sm text-primary-600 truncate font-mono">
+              /{{ b.path }}
+            </p>
+            <p class="text-sm text-primary-600 truncate">{{ b.email }}</p>
+          </div>
+          <span
+            class="text-xs font-medium shrink-0 px-2 py-1 rounded-md"
+            [class.bg-emerald-100]="b.isOnline"
+            [class.text-emerald-800]="b.isOnline"
+            [class.bg-slate-200]="!b.isOnline"
+            [class.text-slate-700]="!b.isOnline"
+          >
+            @if (b.isOnline) {
+            {{ 'admin.businesses.online' | translate }}
+            } @else {
+            {{ 'admin.businesses.offline' | translate }}
+            }
+          </span>
+        </div>
+        }
+      </li>
+      }
+    </ul>
+    @if (items().length === 0) {
+    <p class="text-primary-500 mt-4">
+      {{ 'admin.feature.emptyList' | translate }}
+    </p>
+    }
+    @if (loadingMore()) {
+    <div class="flex justify-center py-6 w-full">
+      <p-progress-spinner strokeWidth="4" [style]="{ width: '2.5rem', height: '2.5rem' }" />
+    </div>
+    }
+  </div>
+  }
+</div>
