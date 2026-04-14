@@ -1,0 +1,23 @@
+<article
+  class="legal-page flex flex-col gap-8 w-9/10 sm:w-8/10 lg:w-7/10 max-w-4xl mx-auto pt-10 px-5 pb-20 md:pb-28"
+>
+  <header class="flex flex-col gap-2">
+    <h1 class="text-3xl md:text-4xl font-semibold text-primary-900">
+      {{ 'legal.terms.title' | translate }}
+    </h1>
+    <p class="text-sm text-primary-600 leading-relaxed">
+      {{ 'legal.disclaimer' | translate }}
+    </p>
+  </header>
+
+  @for (n of [1,2,3,4,5,6,7,8,9,10,11]; track n) {
+    <section class="flex flex-col gap-3">
+      <h2 class="text-xl font-semibold text-primary-800">
+        {{ ('legal.terms.section' + n + 'Title') | translate }}
+      </h2>
+      <p class="text-base text-primary-700 leading-relaxed">
+        {{ ('legal.terms.section' + n + 'Body') | translate }}
+      </p>
+    </section>
+  }
+</article>

@@ -144,6 +144,15 @@ export const appConfig: ApplicationConfig = {
           cache: new InMemoryCache(),
           defaultOptions,
         },
+        adminAPI: {
+          link: httpLink.create({
+            uri: environment.adminApi,
+            withCredentials: true,
+          }),
+          connectToDevTools: true,
+          cache: new InMemoryCache(),
+          defaultOptions,
+        },
       };
     }),
   ],

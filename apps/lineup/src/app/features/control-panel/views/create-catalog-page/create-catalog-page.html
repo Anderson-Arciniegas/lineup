@@ -23,7 +23,7 @@
       <div class="flex flex-col items-start justify-center gap-2 w-full">
         <div class="flex flex-row items-end justify-start gap-2">
           <label for="title" class="font-medium text-lg"
-            >{{'general.catalogName' | translate}}:</label
+            >{{'general.catalogName' | translate}}<span class="text-red-500">*</span>:</label
           >
         </div>
         <input
@@ -35,6 +35,11 @@
           class="input w-full h-11"
           placeholder="{{'general.catalogNamePlaceholder' | translate}}"
         />
+        @if (catalogNameControl?.invalid && catalogNameControl?.touched) {
+        <small class="text-red-500 text-sm" role="alert">
+          {{ 'validation.fieldRequired' | translate }}
+        </small>
+        }
         <small
           id="catalogName-help"
           class="text-color-secondary text-xs mt-1 block"
@@ -68,7 +73,7 @@
       </div>
       <div class="flex flex-col items-start justify-start gap-2 w-full">
         <label for="image" class="font-medium w-full text-lg"
-          >{{'general.imageUpload' | translate}}:</label
+          >{{'general.imageUpload' | translate}}<span class="text-red-500">*</span>:</label
         >
         <div
           class="file-upload w-48 border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 h-48 flex items-center justify-center"
@@ -94,6 +99,11 @@
           </div>
           }
         </div>
+        @if (submitAttempted && !imgCode) {
+        <small class="text-red-500 text-sm" role="alert">
+          {{ 'validation.fieldRequired' | translate }}
+        </small>
+        }
       </div>
       <div class="flex flex-col items-start justify-center gap-2 w-full">
         <div class="flex flex-row items-end justify-start gap-2">
