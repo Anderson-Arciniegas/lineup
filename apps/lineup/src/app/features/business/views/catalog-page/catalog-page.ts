@@ -25,6 +25,7 @@ import {
   SeoService,
   StatusEnum,
   UserPublicService,
+  UtilsService,
   VisitTypeEnum,
 } from '@lineup/core';
 import {
@@ -120,7 +121,7 @@ export class CatalogPage implements OnInit {
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _pendingTasks = inject(PendingTasks);
   private readonly _seoService = inject(SeoService);
-
+  private readonly _utils = inject(UtilsService);
   private readonly _authStore = inject(AuthStore);
   private readonly _userService = inject(UserPublicService);
   private readonly _dialogService = inject(DialogService);
@@ -143,6 +144,8 @@ export class CatalogPage implements OnInit {
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
+    this.searchQuery =
+      this._activatedRoute.snapshot.queryParams?.['search'] ?? '';
     this.getBusiness();
     this.getCatalog();
   }
@@ -195,7 +198,25 @@ export class CatalogPage implements OnInit {
 
   /** Reinicia lista y paginación y vuelve a pedir productos con el término indicado. */
   onSearchSubmit(query: string): void {
+    if (query === '') {
+      if (this.searchQuery && this.searchQuery !== '') {
+        this.onClearSearch();
+      }
+      return;
+    }
     this.searchQuery = query;
+    this._utils.navigate([this.business.path, this.catalogPath], {
+      queryParams: { search: this.searchQuery },
+    });
+    this.products = [];
+    this.page = 1;
+    this.noMoreResults = false;
+    this.getProducts();
+  }
+
+  onClearSearch(): void {
+    this._utils.navigate([this.business.path, this.catalogPath]);
+    this.searchQuery = '';
     this.products = [];
     this.page = 1;
     this.noMoreResults = false;

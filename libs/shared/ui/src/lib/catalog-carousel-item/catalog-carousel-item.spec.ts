@@ -47,6 +47,7 @@ describe('CatalogCarouselItem', () => {
           provide: AuthStore,
           useValue: {
             isBusinessLoggedIn: () => false,
+            isUserLoggedIn: () => false,
           },
         },
       ],

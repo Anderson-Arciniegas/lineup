@@ -5,6 +5,7 @@ import {
   AuthStore,
   ProductPublicService,
   RatesPrivateService,
+  ReactionTypeEnum,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -18,7 +19,6 @@ import { ProductCard } from './product-card';
 describe('ProductCard', () => {
   let component: ProductCard;
   let fixture: ComponentFixture<ProductCard>;
-  let hasLikedProduct: jest.Mock;
 
   const productBase = {
     id: 1,
@@ -29,11 +29,9 @@ describe('ProductCard', () => {
     },
     catalog: { path: 'cat-1' },
     skus: [{ price: 10, quantity: 5, currency: { code: 'USD' } }],
-  };
+  } as unknown as import('@lineup/core').ProductSchema;
 
   beforeEach(async () => {
-    hasLikedProduct = jest.fn(() => of(false));
-
     await TestBed.configureTestingModule({
       imports: [ProductCard, TranslateModule.forRoot()],
       providers: [
@@ -51,7 +49,7 @@ describe('ProductCard', () => {
         {
           provide: ProductPublicService,
           useValue: {
-            hasLikedProduct,
+            hasLikedProduct: jest.fn(() => of(false)),
             likeProduct: jest.fn(() => of({})),
             unlikeProduct: jest.fn(() => of({})),
           },
@@ -73,7 +71,7 @@ describe('ProductCard', () => {
 
     fixture = TestBed.createComponent(ProductCard);
     component = fixture.componentInstance;
-    component.product = productBase as any;
+    component.product = productBase;
     fixture.detectChanges();
   });
 
@@ -116,12 +114,22 @@ describe('ProductCard', () => {
   });
 
   /**
-   * Consulta de “me gusta” solo para sesiones que no son negocio.
+   * El estado de “me gusta” se infiere desde `product.reactions` (sin llamada a API).
    */
   describe('hasLikedProduct', () => {
-    it('debe consultar al API cuando el usuario no es negocio', () => {
+    it('debe dejar hasLiked en false si no hay reacciones', () => {
       component.hasLikedProduct();
-      expect(hasLikedProduct).toHaveBeenCalledWith(1);
+      expect(component.hasLiked).toBe(false);
+    });
+
+    it('debe marcar hasLiked en true si existe reacción LIKE', () => {
+      component.product = {
+        ...productBase,
+        reactions: [{ type: ReactionTypeEnum.LIKE }],
+      } as unknown as import('@lineup/core').ProductSchema;
+      fixture.detectChanges();
+      component.hasLikedProduct();
+      expect(component.hasLiked).toBe(true);
     });
   });
 });

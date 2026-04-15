@@ -150,7 +150,7 @@
   <div class="w-full flex flex-col items-center gap-6 md:gap-20">
     @if (products.length > 0) {
     <div class="w-full flex flex-col items-center gap-6 md:gap-6">
-      @if (primaryProducts.length > 0) {
+      @if (primaryProducts.length > 0 && !searchQuery) {
       <div class="flex flex-row items-center justify-center w-10/10">
         <lib-catalog-carousel
           [products]="primaryProducts"
@@ -170,6 +170,25 @@
           (searchSubmit)="onSearchSubmit($event)"
         ></lib-search-bar>
       </div>
+    </div>
+    } @if (searchQuery && searchQuery !== '') {
+    <div
+      [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+      class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+    >
+      <h2 class="text-2xl md:text-3xl font-semibold text-left">
+        {{'general.resultsFor' | translate}} "{{searchQuery}}"
+      </h2>
+
+      <lib-button
+        (click)="onClearSearch()"
+        icon="pi pi-times"
+        type="rounded"
+        variant="text"
+        color="secondary"
+        size="large"
+        width="w-13"
+      ></lib-button>
     </div>
     }
     <div
@@ -212,6 +231,25 @@
         class="w-full max-w-200"
         (searchSubmit)="onSearchSubmit($event)"
       ></lib-search-bar>
+    </div>
+    } @if (searchQuery && searchQuery !== '') {
+    <div
+      [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+      class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
+    >
+      <h2 class="text-2xl md:text-3xl font-semibold text-left">
+        {{'general.resultsFor' | translate}} "{{searchQuery}}"
+      </h2>
+
+      <lib-button
+        (click)="onClearSearch()"
+        icon="pi pi-times"
+        type="rounded"
+        variant="text"
+        color="secondary"
+        size="large"
+        width="w-13"
+      ></lib-button>
     </div>
     }
     <div

@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  FEATURED_PRODUCTS_QUERY,
   FIND_ALL_PRODUCTS_QUERY,
   FIND_LIKED_PRODUCTS_QUERY,
   FIND_ONE_PRODUCT_QUERY,
@@ -36,22 +35,6 @@ import {
 })
 export class ProductPublicService {
   private apollo = inject(Apollo);
-
-  featuredProducts(
-    pagination: InfinityScrollInput,
-  ): Observable<PaginatedProducts> {
-    return this.apollo
-      .use('userAPI')
-      .query<{ featuredProducts: PaginatedProducts }>({
-        query: FEATURED_PRODUCTS_QUERY,
-        variables: { pagination },
-        fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
-      })
-      .pipe(map((result) => result.data.featuredProducts));
-  }
 
   findAllProducts(
     pagination: InfinityScrollInput,

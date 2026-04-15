@@ -61,40 +61,15 @@ export const HAS_LIKED_PRODUCT_QUERY = gql`
 `;
 
 /**
- * Query para obtener negocios destacados
+ * Query unificada para obtener colecciones destacadas (negocios, catálogos, productos)
  */
-export const FEATURED_BUSINESSES_QUERY = gql`
-  query FeaturedBusinesses($pagination: InfinityScrollInput!) {
-    featuredBusinesses(pagination: $pagination) {
-      items ${businessFullSelection}
-      limit
-      page
-      total
-    }
-  }
-`;
-
-/**
- * Query para obtener catálogos destacados
- */
-export const FEATURED_CATALOGS_QUERY = gql`
-  query FeaturedCatalogs($pagination: InfinityScrollInput!) {
-    featuredCatalogs(pagination: $pagination) {
-      items ${catalogSelection}
-      limit
-      page
-      total
-    }
-  }
-`;
-
-/**
- * Query para obtener productos destacados
- */
-export const FEATURED_PRODUCTS_QUERY = gql`
-  query FeaturedProducts($pagination: InfinityScrollInput!) {
-    featuredProducts(pagination: $pagination) {
-      items ${productSelection}
+export const FEATURED_COLLECTIONS_QUERY = gql`
+  query Featured($pagination: InfinityScrollInput!) {
+    featured(pagination: $pagination) {
+      featuredBusinesses ${businessFullSelection}
+      featuredCatalogs ${catalogSelection}
+      featuredProducts ${productSelection}
+      recentlyAddedProducts ${productSelection}
       limit
       page
       total

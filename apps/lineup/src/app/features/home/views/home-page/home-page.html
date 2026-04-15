@@ -119,7 +119,7 @@
       {{ 'general.featuredBusinesses' | translate }}
     </h3>
     @defer (on idle) {
-    @if (businessesAttempt) {
+    @if (featuredAttempt) {
     <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
       <p-progress-spinner
         strokeWidth="4"
@@ -172,7 +172,7 @@
       {{ 'general.featuredCatalogs' | translate }}
     </h3>
     @defer (on idle) {
-    @if (catalogsAttempt) {
+    @if (featuredAttempt) {
     <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
       <p-progress-spinner
         strokeWidth="4"
@@ -226,7 +226,7 @@
       {{ 'general.featuredProducts' | translate }}
     </h3>
     @defer (on idle) {
-    @if (productsAttempt) {
+    @if (featuredAttempt) {
     <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
       <p-progress-spinner
         strokeWidth="4"
