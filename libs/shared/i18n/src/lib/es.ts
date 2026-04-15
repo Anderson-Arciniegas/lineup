@@ -561,10 +561,94 @@ export const es = {
     verificationFailed:
       'No se pudo verificar el código. Revisa el código e inténtalo de nuevo.',
   },
+  legal: {
+    disclaimer:
+      'Texto orientativo alineado con el propósito de LineUp. Debe ser revisado por asesoría legal según tu jurisdicción, normativa comercial y fiscal.',
+    terms: {
+      title: 'Términos y condiciones',
+      section1Title: '1. Objeto del servicio',
+      section1Body:
+        'LineUp es una plataforma digital que permite a negocios crear y mostrar catálogos en línea (vitrina digital), gestionar información de productos, inventario y presencia comercial, y a usuarios finales descubrir negocios, explorar catálogos, guardar favoritos, listas de deseos y valoraciones, y contactar a los negocios a través de los medios que estos publiquen (por ejemplo, WhatsApp u otras redes). LineUp facilita la visibilidad y el contacto; salvo que se indique expresamente lo contrario en un momento dado, las ventas, pagos, entregas, garantías y reclamaciones son responsabilidad exclusiva de cada negocio y de las partes que interactúan fuera o dentro de los canales del negocio.',
+      section2Title: '2. Aceptación',
+      section2Body:
+        'Al registrarte, acceder o usar LineUp, declaras haber leído y aceptado estos términos y nuestra política de privacidad. Si no estás de acuerdo, no debes usar el servicio. Podemos actualizar estos términos; el uso continuado tras la publicación de cambios puede implicar la aceptación de los mismos, según lo que indiquemos en cada caso.',
+      section3Title: '3. Tipos de cuenta y elegibilidad',
+      section3Body:
+        'Puedes crear una cuenta como usuario final o como representante de un negocio. Debes ser mayor de edad según la ley de tu país o contar con la autorización de quien te represente. La información de registro (nombre, correo y demás datos solicitados) debe ser veraz y actualizada. Eres responsable de la confidencialidad de tu contraseña y de toda actividad realizada con tu cuenta. Debes notificarnos de inmediato cualquier uso no autorizado.',
+      section4Title: '4. Uso por parte de los negocios',
+      section4Body:
+        'Los negocios son responsables del contenido que publican: nombre comercial, descripciones, imágenes, precios mostrados, disponibilidad, ubicaciones, horarios, redes sociales y enlaces de contacto. Te comprometes a cumplir la normativa aplicable (publicidad, consumo, propiedad intelectual, datos personales de terceros que incorpores, etc.). No debes publicar productos o servicios ilícitos, engañosos o que infrinjan derechos de terceros. Los descuentos, promociones y estadísticas que uses en la plataforma deben reflejar prácticas leales y no inducir a error. LineUp puede retirar contenido o restringir cuentas ante incumplimientos graves o reiterados.',
+      section5Title: '5. Uso por parte de los usuarios finales',
+      section5Body:
+        'Los usuarios finales se comprometen a un uso lícito y respetuoso del servicio: no suplantar identidades, no manipular valoraciones o el funcionamiento de la plataforma, no extraer datos de forma masiva no autorizada y no utilizar LineUp para acosar a negocios o a otras personas. Las valoraciones y comentarios, cuando existan, deben basarse en experiencias reales y no contener contenido difamatorio, ilegal u ofensivo.',
+      section6Title: '6. Propiedad intelectual y licencia sobre el contenido',
+      section6Body:
+        'LineUp y sus elementos distintivos (marca, diseño de la plataforma, software) están protegidos. Te otorgamos una licencia limitada, no exclusiva y revocable para usar el servicio conforme a estos términos. Conservas los derechos sobre el contenido que subes; al publicarlo nos concedes una licencia para alojarlo, mostrarlo, reproducirlo técnicamente y operar el servicio (incluida mejora y seguridad), en la medida necesaria para prestar LineUp. Declaras tener derecho a usar todo el material que cargas.',
+      section7Title: '7. Conductas prohibidas',
+      section7Body:
+        'Queda prohibido: introducir malware o vulnerar la seguridad; realizar ingeniería inversa no permitida; usar bots o scraping agresivo sin autorización; spam o uso comercial del servicio ajeno a su finalidad; publicar contenido ilegal, violento, discriminatorio o sexualmente explícito; y cualquier actividad que dañe a otros usuarios, a LineUp o a terceros.',
+      section8Title: '8. Independencia de las transacciones con terceros',
+      section8Body:
+        'Los enlaces o integraciones (por ejemplo, a WhatsApp, mapas o redes sociales) pueden dirigirte fuera de LineUp. Las condiciones de compra, envío, devolución y atención al cliente las define cada negocio. LineUp no garantiza la disponibilidad, calidad o legalidad de los bienes y servicios ofrecidos por los negocios ni se hace parte de los contratos entre usuario final y negocio, salvo disposición expresa en el futuro.',
+      section9Title: '9. Disponibilidad, modificaciones y terminación',
+      section9Body:
+        'Podemos modificar, suspender o discontinuar funcionalidades con el fin de mejorar el servicio, mantenimiento o por causas legales o de seguridad. Puedes dejar de usar LineUp y solicitar la baja de tu cuenta según las opciones disponibles. Podemos suspender o cancelar cuentas que incumplan estos términos o la ley, previa notificación cuando sea razonable.',
+      section10Title: '10. Exención de garantías y limitación de responsabilidad',
+      section10Body:
+        'LineUp se ofrece «tal cual» y «según disponibilidad». En la medida máxima permitida por la ley, no garantizamos resultados comerciales concretos ni ausencia de errores. No seremos responsables por lucro cesante, pérdida de datos indirecta o daños consecuenciales, salvo que la normativa imperativa disponga lo contrario. Nuestra responsabilidad total frente a ti, cuando proceda, se limitará en conjunto a lo que resulte razonable según el caso.',
+      section11Title: '11. Ley aplicable y contacto',
+      section11Body:
+        'Para la resolución de controversias puede aplicarse la legislación que corresponda según tu lugar de residencia o el de LineUp, sin perjuicio de derechos irrenunciables del consumidor. Para consultas sobre estos términos puedes contactarnos a través del correo indicado en el sitio (por ejemplo, lineup@lineup.com.ve) u otros canales oficiales que publiquemos.',
+    },
+    privacy: {
+      title: 'Política de privacidad',
+      section1Title: '1. Responsable y alcance',
+      section1Body:
+        'La presente política describe cómo LineUp trata los datos personales en el marco de la plataforma de vitrinas digitales y catálogos para negocios locales y la experiencia de descubrimiento para usuarios finales. El «responsable» del tratamiento será la entidad que opere LineUp según se publique en el sitio o en el aviso legal; ante dudas puedes escribirnos al correo de contacto oficial.',
+      section2Title: '2. Datos que recopilamos de usuarios y negocios',
+      section2Body:
+        'Datos de cuenta y perfil: nombre, apellidos o razón social, correo electrónico, credenciales de acceso (contraseña de forma cifrada o equivalente), rol (usuario o negocio), imagen de perfil si la subes, y datos que elijas completar en ajustes. Datos de verificación: códigos enviados por correo para validar el email. Datos de uso y técnica: dirección IP, tipo de navegador, identificadores de sesión, registros de seguridad y, según configuración, datos de localización cuando uses funciones de mapas o tiendas físicas. Datos de interacción: favoritos, listas de deseos, valoraciones, notificaciones y actividad relacionada con catálogos y productos.',
+      section3Title: '3. Contenido publicado por negocios',
+      section3Body:
+        'Los negocios publican datos que pueden ser visibles públicamente: nombre comercial, descripción, rutas o enlaces a la vitrina, catálogos, productos, precios, imágenes, ubicaciones, horarios, redes sociales y medios de contacto. Ese contenido puede ser indexado o compartido dentro del servicio. Si incorporas datos personales de terceros (por ejemplo, en fichas de empleados), debes contar con base legal y informarles cuando corresponda.',
+      section4Title: '4. Finalidades del tratamiento',
+      section4Body:
+        'Prestar el servicio: registro, autenticación, paneles de negocio, inventario, estadísticas básicas, descargas de catálogo cuando existan y funciones sociales permitidas. Seguridad y prevención de fraude: monitorizar abusos y proteger la plataforma. Comunicaciones operativas: verificación de correo, avisos sobre la cuenta o cambios relevantes en el servicio o en esta política. Mejora del producto: análisis agregados o estadísticos que no identifiquen a personas de forma directa cuando sea posible. Cumplimiento legal: requerimientos de autoridades cuando la ley lo exija.',
+      section5Title: '5. Base legal',
+      section5Body:
+        'Tratamos datos según la base que aplique en cada caso: ejecución del contrato o condiciones de uso al usar LineUp; consentimiento cuando lo solicitemos de forma explícita (por ejemplo, ciertas comunicaciones opcionales); interés legítimo en seguridad, mejora moderada del servicio y prevención de abusos, equilibrado con tus derechos; y obligación legal cuando corresponda.',
+      section6Title: '6. Proveedores, autenticación con Google y encargados',
+      section6Body:
+        'Podemos utilizar proveedores de infraestructura, alojamiento, correo transaccional, mapas y analítica, que tratan datos en nuestro nombre y bajo instrucciones (encargados). Si inicias sesión o te registras con Google, Google tratará datos según su propia política; LineUp recibirá la información necesaria para crear o vincular tu cuenta (por ejemplo, identificador y correo). Te recomendamos revisar la configuración de privacidad de Google.',
+      section7Title: '7. Conservación',
+      section7Body:
+        'Conservamos los datos el tiempo necesario para las finalidades descritas y según plazos legales. Tras la baja de la cuenta, podemos conservar cierta información anonimizada o bloqueada el tiempo exigido para reclamaciones, impuestos o seguridad, y luego suprimirla o anonimizarla cuando proceda.',
+      section8Title: '8. Seguridad',
+      section8Body:
+        'Aplicamos medidas técnicas y organizativas razonables (cifrado en tránsito cuando corresponda, controles de acceso, verificación por código, etc.). Ningún sistema es 100% seguro; debes proteger tu contraseña y dispositivos.',
+      section9Title: '9. Tus derechos',
+      section9Body:
+        'Según la normativa aplicable (por ejemplo, GDPR o leyes locales de protección de datos), puedes solicitar acceso, rectificación, supresión, limitación u oposición al tratamiento, y en algunos casos portabilidad o retirar el consentimiento sin afectar tratamientos previos lícitos. Puedes ejercerlos contactándonos por el correo oficial. También puedes reclamar ante la autoridad de protección de datos de tu país si lo consideras oportuno.',
+      section10Title: '10. Menores, transferencias y cambios',
+      section10Body:
+        'LineUp no está dirigido a menores de edad; si eres padre, madre o tutor y detectas datos de un menor, contáctanos para tomar medidas. Si tratamos datos en otros países, adoptaremos salvaguardas cuando la ley lo exija. Podemos actualizar esta política; publicaremos la versión vigente en el sitio con la fecha de actualización cuando sea posible. El uso continuado tras cambios relevantes puede implicar tu aceptación, salvo que la ley exija un consentimiento adicional.',
+    },
+  },
+  auth: {
+    acceptTermsIntro: 'He leído y acepto los',
+    termsLink: 'términos y condiciones',
+    acceptTermsAnd: 'y la',
+    privacyLink: 'política de privacidad',
+    googleRequiresTerms:
+      'Marca la casilla de aceptación para usar el registro con Google.',
+  },
   footer: {
     tagline:
       'Descubre negocios locales y lista tus productos favoritos en un solo lugar.',
     navigation: 'Navegación',
+    legal: 'Legal',
+    terms: 'Términos y condiciones',
+    privacy: 'Política de privacidad',
     contact: 'Contacto',
     contactHint:
       '¿Dudas o comentarios? Escríbenos y te responderemos lo antes posible.',
@@ -617,6 +701,74 @@ export const es = {
     sidebar: {
       expandMenu: 'Expandir menú de navegación',
       collapseMenu: 'Contraer menú de navegación',
+    },
+  },
+  admin: {
+    title: 'LineUp Admin',
+    nav: {
+      dashboard: 'Inicio',
+      stats: 'Estadísticas',
+      users: 'Usuarios',
+      businesses: 'Negocios',
+      roles: 'Roles',
+      socialNetworks: 'Redes sociales',
+      settings: 'Configuración',
+      signOut: 'Cerrar sesión',
+    },
+    placeholder: {
+      dashboard:
+        'Vista principal del panel. Aquí irá el resumen y métricas del administrador.',
+      stats: 'Indicadores globales del ecosistema (catálogo, usuarios, negocios, etc.).',
+      users: 'Listado de usuarios del sistema.',
+      businesses: 'Negocios registrados en la plataforma.',
+      roles: 'Roles disponibles y su código.',
+      socialNetworks: 'Redes sociales configuradas en la plataforma.',
+      settings: 'Ajustes del panel de administración (pendiente de implementar).',
+    },
+    feature: {
+      loading: 'Cargando…',
+      loadError: 'No se pudieron cargar los datos. Comprueba tu sesión o inténtalo de nuevo.',
+      emptyList: 'No hay elementos para mostrar.',
+      totalRecords: 'Total de registros',
+    },
+    businesses: {
+      online: 'En línea',
+      offline: 'Fuera de línea',
+      openInLineup: 'Ver tienda en LineUp (nueva pestaña)',
+    },
+    socialNetworkModal: {
+      addButton: 'Agregar red social',
+      createTitle: 'Nueva red social',
+      editTitle: 'Editar red social',
+      name: 'Nombre',
+      code: 'Código',
+      codeHint: 'Indica un código único (p. ej. INSTAGRAM).',
+      chooseImage: 'Elegir imagen',
+      imageRequired: 'Sube un icono o imagen para la red.',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      uploadError: 'No se pudo subir la imagen. Inténtalo de nuevo.',
+      saveError: 'No se pudo guardar. Revisa los datos o tu sesión.',
+      createOk: 'Red social creada.',
+      updateOk: 'Red social actualizada.',
+      delete: 'Eliminar',
+      deleteOk: 'Red social eliminada.',
+      deleteError: 'No se pudo eliminar la red social.',
+    },
+    stats: {
+      catalog: 'Catálogo global',
+      totalProducts: 'Productos',
+      totalSkus: 'SKUs',
+      productsWithoutStock: 'Sin stock',
+      users: 'Usuarios',
+      totalUsers: 'Usuarios registrados',
+      businesses: 'Negocios',
+      onlineCount: 'En línea',
+      discounts: 'Descuentos',
+      expiringSoon: 'Próximos a vencer',
+      engagement: 'Engagement',
+      visitsSeriesHint:
+        'Series de visitas (negocio, catálogo, producto) disponibles en el API para gráficos futuros.',
     },
   },
 };

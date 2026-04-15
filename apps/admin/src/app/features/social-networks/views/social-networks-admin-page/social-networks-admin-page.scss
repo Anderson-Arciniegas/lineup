@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.social-networks-admin-page__thumb {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  background: var(--p-primary-100);
+  border: 1px solid var(--p-primary-200);
+}
+
+.social-networks-admin-page__thumb-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: var(--p-primary-200);
+  border: 1px solid var(--p-primary-200);
+  color: var(--p-primary-600);
+  font-size: 1.125rem;
+}

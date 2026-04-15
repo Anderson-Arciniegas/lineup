@@ -33,7 +33,8 @@
     <form class="w-full flex flex-col gap-8" [formGroup]="discountForm">
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-scope"
-          >{{ 'general.discountScope' | translate }}</label
+          >{{ 'general.discountScope' | translate }}
+          <span class="text-red-500">*</span></label
         >
         <p-select
           inputId="discount-scope"
@@ -54,12 +55,17 @@
             {{ option.labelKey | translate }}
           </ng-template>
         </p-select>
+        @if ( discountForm.get('scope')?.invalid && discountForm.get('scope')?.touched ) {
+        <small class="text-red-500 text-sm" role="alert"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
+        }
       </div>
 
       @if (showCatalogField) {
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-catalog"
-          >{{ 'general.catalog' | translate }}</label
+          >{{ 'general.catalog' | translate }} <span class="text-red-500">*</span></label
         >
         <p-select
           inputId="discount-catalog"
@@ -84,7 +90,7 @@
       } @if (showProductField) {
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-product"
-          >{{ 'general.product' | translate }}</label
+          >{{ 'general.product' | translate }} <span class="text-red-500">*</span></label
         >
         <p-select
           inputId="discount-product"
@@ -110,7 +116,8 @@
 
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-type"
-          >{{ 'general.discountType' | translate }}</label
+          >{{ 'general.discountType' | translate }}
+          <span class="text-red-500">*</span></label
         >
         <p-select
           inputId="discount-type"
@@ -131,12 +138,18 @@
             {{ option.labelKey | translate }}
           </ng-template>
         </p-select>
+        @if ( discountForm.get('discountType')?.invalid &&
+        discountForm.get('discountType')?.touched ) {
+        <small class="text-red-500 text-sm" role="alert"
+          >{{ 'validation.fieldRequired' | translate }}</small
+        >
+        }
       </div>
 
       @if (showCurrencyField) {
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-currency"
-          >{{ 'general.currency' | translate }}</label
+          >{{ 'general.currency' | translate }} <span class="text-red-500">*</span></label
         >
         <p-select
           inputId="discount-currency"
@@ -188,7 +201,8 @@
 
       <div class="w-full flex flex-col gap-2">
         <label class="font-medium text-lg" for="discount-value"
-          >{{ 'general.discountValue' | translate }}</label
+          >{{ 'general.discountValue' | translate }}
+          <span class="text-red-500">*</span></label
         >
         <p-inputnumber
           inputId="discount-value"
@@ -223,7 +237,8 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         <div class="w-full flex flex-col gap-2">
           <label class="font-medium text-lg" for="discount-start"
-            >{{ 'general.startDate' | translate }}</label
+            >{{ 'general.startDate' | translate }}
+            <span class="text-red-500">*</span></label
           >
           <input
             pInputText
@@ -232,10 +247,17 @@
             formControlName="startDate"
             class="w-full h-11"
           />
+          @if ( discountForm.get('startDate')?.invalid &&
+          discountForm.get('startDate')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
         </div>
         <div class="w-full flex flex-col gap-2">
           <label class="font-medium text-lg" for="discount-end"
-            >{{ 'general.endDate' | translate }}</label
+            >{{ 'general.endDate' | translate }}
+            <span class="text-red-500">*</span></label
           >
           <input
             pInputText
@@ -244,6 +266,12 @@
             formControlName="endDate"
             class="w-full h-11"
           />
+          @if ( discountForm.get('endDate')?.invalid &&
+          discountForm.get('endDate')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
         </div>
       </div>
       @if (discountForm.errors?.['dateOrder'] && discountForm.touched) {

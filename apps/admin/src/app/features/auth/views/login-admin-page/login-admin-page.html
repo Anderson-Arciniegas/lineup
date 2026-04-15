@@ -1,0 +1,56 @@
+<section
+  class="min-h-screen flex flex-col gap-10 sm:gap-15 items-center justify-center p-0 lg:p-5 w-full"
+>
+  <h2 class="text-center text-4xl lg:text-5xl font-medium">
+    {{ 'admin.title' | translate }}
+  </h2>
+
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg"
+  >
+    <h4 class="text-center text-2xl lg:text-3xl font-medium">
+      {{ 'general.login' | translate }}
+    </h4>
+
+    <p-floatlabel class="w-10/10 max-w-xs mt-2">
+      <input
+        pInputText
+        class="w-10/10 font-medium"
+        formControlName="email"
+        id="admin-email"
+        [pSize]="'small'"
+        autocomplete="username"
+      />
+      <label for="admin-email" class="font-medium">{{
+        'general.usernameOrEmail' | translate
+      }}</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-10/10 max-w-xs mt-2">
+      <p-password
+        [feedback]="false"
+        class="w-10/10 font-medium"
+        formControlName="password"
+        [fluid]="true"
+        [size]="'small'"
+        [toggleMask]="true"
+        inputId="admin-password"
+      />
+      <label for="admin-password" class="font-medium">{{
+        'general.password' | translate
+      }}</label>
+    </p-floatlabel>
+
+    <div class="w-full flex justify-center mt-3">
+      <lib-button
+        class="max-w-xs w-full sm:w-auto"
+        [label]="'general.signIn' | translate"
+        [loading]="attempt"
+        [disabled]="loginForm.invalid"
+        [buttonType]="'submit'"
+      ></lib-button>
+    </div>
+  </form>
+</section>

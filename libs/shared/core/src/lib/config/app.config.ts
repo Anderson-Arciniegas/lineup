@@ -3,6 +3,7 @@ import { LanguageEnum } from '../enums';
 export const appRoutes: AppRoutes = {
   home: '/',
   controlPanel: 'control-panel',
+  setup: 'setup',
   create: 'create',
   info: 'info',
   login: 'login',
@@ -31,6 +32,8 @@ export const appRoutes: AppRoutes = {
   favorites: 'favorites',
   wishlist: 'wishlist',
   myRatings: 'my-ratings',
+  termsAndConditions: 'terminos-y-condiciones',
+  privacyPolicy: 'politica-de-privacidad',
 };
 
 export const languagesList: Language[] = [
@@ -60,6 +63,7 @@ export interface Language {
 export interface AppRoutes {
   home: string;
   controlPanel: string;
+  setup: string;
   create: string;
   info: string;
   login: string;
@@ -88,4 +92,6 @@ export interface AppRoutes {
   favorites: string;
   wishlist: string;
   myRatings: string;
+  termsAndConditions: string;
+  privacyPolicy: string;
 }

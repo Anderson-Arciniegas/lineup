@@ -1,9 +1,9 @@
 <section
   class="login flex flex-col gap-6 sm:gap-8 items-center justify-start px-0 lg:px-5 w-10/10"
 >
-  <h2 class="text-center text-4xl lg:text-5xl font-medium">
+  <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
     {{'general.lineUp' | translate}}
-  </h2>
+  </a>
 
   <form
     [formGroup]="registerBusinessForm"
@@ -14,8 +14,16 @@
       {{'general.businessRegister' | translate}}
     </h4>
 
-    <div class="w-8/10 flex flex-col items-center justify-center">
+    <div
+      class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 h-10"
+    >
+      @if (registerBusinessForm.get('acceptTerms')?.value) {
       <div #googleBtn class="google-signin-btn"></div>
+      } @else {
+      <p class="text-xs text-center text-primary-600 px-1">
+        {{ 'auth.googleRequiresTerms' | translate }}
+      </p>
+      }
     </div>
     <p-floatlabel class="w-10/10 max-w-xs">
       <input
@@ -73,6 +81,37 @@
         >{{'general.confirmPassword' | translate}}</label
       >
     </p-floatlabel>
+
+    <div
+      class="w-10/10 max-w-xs flex flex-row items-start gap-3 text-sm text-primary-800"
+    >
+      <input
+        type="checkbox"
+        id="acceptTermsBusiness"
+        formControlName="acceptTerms"
+        class="mt-1 shrink-0 accent-primary-600"
+      />
+      <label for="acceptTermsBusiness" class="leading-snug cursor-pointer">
+        <span>{{ 'auth.acceptTermsIntro' | translate }}</span>
+        <a
+          [routerLink]="termsPath"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary-600 underline font-medium"
+          (click)="$event.stopPropagation()"
+          >{{ 'auth.termsLink' | translate }}</a
+        >
+        <span> {{ 'auth.acceptTermsAnd' | translate }} </span>
+        <a
+          [routerLink]="privacyPath"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary-600 underline font-medium"
+          (click)="$event.stopPropagation()"
+          >{{ 'auth.privacyLink' | translate }}</a
+        >.
+      </label>
+    </div>
 
     <div class="w-8/10 flex flex-col items-center justify-center mt-3 gap-5">
       <lib-button

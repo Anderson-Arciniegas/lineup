@@ -8,6 +8,7 @@ import {
 } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BusinessPrivateService } from '@lineup/core';
 import {
   TranslateModule,
@@ -53,6 +54,7 @@ describe('RegisterBusinessPage', () => {
         RegisterBusinessPage,
         TranslateModule.forRoot(),
         HttpClientTestingModule,
+        RouterTestingModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
@@ -104,6 +106,7 @@ describe('RegisterBusinessPage', () => {
         email: 'shop@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       expect(component.registerBusinessForm.valid).toBe(true);
     });
@@ -124,6 +127,7 @@ describe('RegisterBusinessPage', () => {
         email: 't@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       expect(dialogOpen.mock.calls[0][1].data).toEqual(
@@ -137,6 +141,7 @@ describe('RegisterBusinessPage', () => {
         email: 't@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       onClose$.next(true);
@@ -155,6 +160,7 @@ describe('RegisterBusinessPage', () => {
         email: 't@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       onClose$.next(true);
@@ -165,11 +171,18 @@ describe('RegisterBusinessPage', () => {
   });
 
   describe('Google Sign-Up', () => {
-    it('debe invocar renderButton', () => {
+    it('debe invocar renderButton cuando se aceptan términos', fakeAsync(() => {
+      expect(renderButton).not.toHaveBeenCalled();
+      component.registerBusinessForm.patchValue({ acceptTerms: true });
+      fixture.detectChanges();
+      tick(150);
       expect(renderButton).toHaveBeenCalled();
-    });
+    }));
 
     it('debe registrar negocio con Google', fakeAsync(() => {
+      component.registerBusinessForm.patchValue({ acceptTerms: true });
+      fixture.detectChanges();
+      tick(150);
       credential$.next('jwt');
       tick();
       expect(registerWithGoogle).toHaveBeenCalled();

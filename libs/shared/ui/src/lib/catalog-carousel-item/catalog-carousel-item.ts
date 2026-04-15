@@ -109,7 +109,7 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   }
 
   likeProduct(): void {
-    if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    if (this.hasLiked || !this._authStore.isUserLoggedIn()) return;
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({
@@ -125,7 +125,7 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   }
 
   unlikeProduct(): void {
-    if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    if (!this.hasLiked || !this._authStore.isUserLoggedIn()) return;
     this.hasLiked = false;
     this._subscription.add(
       this._productPublicService.unlikeProduct(this.product.id).subscribe({
@@ -141,7 +141,7 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   }
 
   hasLikedProduct(): void {
-    if (this._authStore.isBusinessLoggedIn()) return;
+    if (!this._authStore.isUserLoggedIn()) return;
     this._subscription.add(
       this._productPublicService.hasLikedProduct(this.product.id).subscribe({
         next: (response) => {

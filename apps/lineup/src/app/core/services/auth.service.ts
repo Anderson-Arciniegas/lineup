@@ -20,6 +20,8 @@ import { environment } from '@lineup/envs';
   providedIn: 'root',
 })
 export class AuthService {
+  private static readonly BUSINESS_ONBOARDING_PENDING_KEY =
+    'businessOnboardingPending';
   private _api = inject(ApiService);
   private _authStore = inject(AuthStore);
   private _utilsService = inject(UtilsService);
@@ -77,15 +79,22 @@ export class AuthService {
     if (loggedBusiness) {
       this.setBusiness(loggedBusiness);
       if (newUser) {
+        this._storageService.set(
+          AuthService.BUSINESS_ONBOARDING_PENDING_KEY,
+          true,
+        );
         this._utilsService.navigate([
           AppConfigService.config.routes.dashboard,
+          AppConfigService.config.routes.setup,
           AppConfigService.config.routes.edit,
         ]);
       } else {
+        this._storageService.remove(AuthService.BUSINESS_ONBOARDING_PENDING_KEY);
         this._utilsService.navigate([AppConfigService.config.routes.dashboard]);
       }
     } else if (loggedUser) {
       this.setUser(loggedUser);
+      this._storageService.remove(AuthService.BUSINESS_ONBOARDING_PENDING_KEY);
       this._utilsService.navigate([AppConfigService.config.routes.profile]);
     }
   }

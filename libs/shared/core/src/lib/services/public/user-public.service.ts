@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   CHANGE_PASSWORD_MUTATION,
   CREATE_USER_MUTATION,
+  FEATURED_COLLECTIONS_QUERY,
   GET_ME_QUERY,
   GET_USER_BY_ID_QUERY,
   LOGIN_MUTATION,
@@ -29,6 +30,7 @@ import {
   UpdateUserInput,
 } from '../../models';
 import type {
+  FeaturedCollectionsSchema,
   InfinityScrollInput,
   LoginResponse,
   PaginatedSearchResults,
@@ -170,6 +172,20 @@ export class UserPublicService {
         },
       })
       .pipe(map((result) => result.data!.recordVisit));
+  }
+
+  featured(pagination: InfinityScrollInput): Observable<FeaturedCollectionsSchema> {
+    return this.apollo
+      .use('userAPI')
+      .query<{ featured: FeaturedCollectionsSchema }>({
+        query: FEATURED_COLLECTIONS_QUERY,
+        variables: { pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.featured));
   }
 
   search(

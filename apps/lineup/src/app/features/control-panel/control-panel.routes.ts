@@ -2,7 +2,9 @@ import { Routes } from '@angular/router';
 
 import { AppConfigService } from '@lineup/core';
 import { BusinessAuthGuard } from '../../core';
+import { BusinessOnboardingGuard } from '../../core/guards/business-onboarding.guard';
 import { ControlPanelLayout } from '../../layout/components/control-panel-layout/control-panel-layout';
+import { BusinessOnboardingLayout } from '../../layout/components/business-onboarding-layout/business-onboarding-layout';
 import { BusinessHoursPage } from './views/business-hours-page/business-hours-page';
 import { BusinessSettingsPage } from './views/business-settings-page/business-settings-page';
 import { CatalogPanelPage } from './views/catalog-panel-page/catalog-panel-page';
@@ -23,6 +25,36 @@ import { StatisticsPage } from './views/statistics-page/statistics-page';
 import { UpdateProductSkuPage } from './views/update-product-sku-page/update-product-sku-page';
 
 export const controlPanelRoutes: Routes = [
+  {
+    path: AppConfigService.config.routes.setup,
+    canActivate: [BusinessAuthGuard, BusinessOnboardingGuard],
+    component: BusinessOnboardingLayout,
+    data: { onboardingFlow: true },
+    children: [
+      {
+        path: AppConfigService.config.routes.edit,
+        component: EditBusinessPage,
+      },
+      {
+        path: AppConfigService.config.routes.createCatalog,
+        component: CreateCatalogPage,
+      },
+      {
+        path: 'catalog/:catalogPath',
+        children: [
+          {
+            path: AppConfigService.config.routes.createProduct,
+            component: CreateProductPage,
+          },
+        ],
+      },
+      {
+        path: '**',
+        redirectTo: AppConfigService.config.routes.edit,
+        pathMatch: 'full',
+      },
+    ],
+  },
   {
     path: '',
     canActivate: [BusinessAuthGuard],

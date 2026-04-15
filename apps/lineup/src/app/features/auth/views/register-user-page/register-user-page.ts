@@ -9,6 +9,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControlOptions,
@@ -18,6 +19,8 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  AppConfigService,
+  appRoutes,
   CreateUserInput,
   PasswordValidation,
   RolesCodesEnum,
@@ -30,7 +33,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { Subscription, take } from 'rxjs';
+import { startWith, Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 
@@ -42,6 +45,7 @@ import { GoogleAuthService } from '../../../../core/services/google-auth.service
   selector: 'app-register-user-page',
   imports: [
     CommonModule,
+    RouterLink,
     Button,
     InputTextModule,
     FloatLabelModule,
@@ -54,6 +58,9 @@ import { GoogleAuthService } from '../../../../core/services/google-auth.service
 })
 export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('googleBtn') googleBtnRef!: ElementRef<HTMLDivElement>;
+  private readonly _routes = AppConfigService.config.routes ?? appRoutes;
+  readonly termsPath = `/${this._routes.info}/${this._routes.termsAndConditions}`;
+  readonly privacyPath = `/${this._routes.info}/${this._routes.privacyPolicy}`;
   registerUserForm!: FormGroup;
   attempt = false;
   attemptGoogle = false;
@@ -73,14 +80,18 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      const el = this.googleBtnRef?.nativeElement;
-      if (el) {
-        this._googleAuth.renderButton(el, {
-          text: 'signup_with',
-        });
-      }
-    }, 100);
+    const acceptCtrl = this.registerUserForm.get('acceptTerms');
+    if (acceptCtrl) {
+      this._subscription.add(
+        acceptCtrl.valueChanges
+          .pipe(startWith(acceptCtrl.value))
+          .subscribe((accepted) => {
+            if (accepted) {
+              setTimeout(() => this._renderGoogleButton(), 100);
+            }
+          }),
+      );
+    }
     this._subscription.add(
       this._googleAuth.credential$.subscribe((token) =>
         this._handleGoogleToken(token),
@@ -92,8 +103,20 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
     this._subscription.unsubscribe();
   }
 
+  private _renderGoogleButton(): void {
+    const el = this.googleBtnRef?.nativeElement;
+    if (!el) return;
+    el.innerHTML = '';
+    this._googleAuth.renderButton(el, {
+      text: 'signup_with',
+    });
+  }
+
   /** Registro OAuth solo para rol `USER`; completa sesión si el backend devuelve perfil. */
   private _handleGoogleToken(token: string): void {
+    if (!this.registerUserForm.get('acceptTerms')?.value) {
+      return;
+    }
     this.attemptGoogle = true;
     this._subscription.add(
       this._users
@@ -219,6 +242,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
             ),
           ],
         ],
+        acceptTerms: [false, [Validators.requiredTrue]],
       },
       formOptions,
     );

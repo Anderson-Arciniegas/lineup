@@ -4,9 +4,8 @@ import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
-  BusinessPublicService,
-  CatalogPublicService,
   ProductPublicService,
+  UserPublicService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -37,15 +36,14 @@ describe('HomePage', () => {
         TranslateStore,
         { provide: Apollo, useValue: apolloMock },
         {
-          provide: BusinessPublicService,
+          provide: UserPublicService,
           useValue: {
-            featuredBusinesses: () => of({ items: [] }),
-          },
-        },
-        {
-          provide: CatalogPublicService,
-          useValue: {
-            featuredCatalogs: () => of({ items: [] }),
+            featured: () =>
+              of({
+                featuredBusinesses: [],
+                featuredCatalogs: [],
+                featuredProducts: [],
+              }),
           },
         },
         {
