@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  FEATURED_BUSINESSES_QUERY,
   FIND_ALL_BUSINESSES_QUERY,
   FIND_FOLLOWED_BUSINESSES_QUERY,
   FOLLOW_BUSINESS_MUTATION,
@@ -20,22 +19,6 @@ import { BusinessFollowerSchema, BusinessSchema } from '../../schemas';
 })
 export class BusinessPublicService {
   private apollo = inject(Apollo);
-
-  featuredBusinesses(
-    pagination: InfinityScrollInput
-  ): Observable<PaginatedBusinesses> {
-    return this.apollo
-      .use('userAPI')
-      .query<{ featuredBusinesses: PaginatedBusinesses }>({
-        query: FEATURED_BUSINESSES_QUERY,
-        variables: { pagination },
-        fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
-      })
-      .pipe(map((result) => result.data.featuredBusinesses));
-  }
 
   findAllBusinesses(
     pagination: InfinityScrollInput

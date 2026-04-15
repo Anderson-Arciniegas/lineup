@@ -20,6 +20,7 @@ import {
   ProductPublicService,
   ProductSchema,
   RatesPrivateService,
+  ReactionTypeEnum,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -167,7 +168,7 @@ export class ProductExpandedItem
 
   /** Like del producto (usuarios consumidores). */
   likeProduct(): void {
-    if (this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    if (this.hasLiked || !this._authStore.isUserLoggedIn()) return;
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({
@@ -184,7 +185,7 @@ export class ProductExpandedItem
 
   /** Quita like del producto. */
   unlikeProduct(): void {
-    if (!this.hasLiked || this._authStore.isBusinessLoggedIn()) return;
+    if (!this.hasLiked || !this._authStore.isUserLoggedIn()) return;
     this.hasLiked = false;
     this._subscription.add(
       this._productPublicService.unlikeProduct(this.product.id).subscribe({
@@ -201,14 +202,11 @@ export class ProductExpandedItem
 
   /** Estado inicial de favorito desde API. */
   hasLikedProduct(): void {
-    if (this._authStore.isBusinessLoggedIn()) return;
-    this._subscription.add(
-      this._productPublicService.hasLikedProduct(this.product.id).subscribe({
-        next: (response) => {
-          this.hasLiked = response;
-        },
-      }),
-    );
+    if (!this._authStore.isUserLoggedIn()) return;
+    this.hasLiked =
+      this.product.reactions?.some(
+        (reaction) => reaction.type === ReactionTypeEnum.LIKE,
+      ) ?? false;
   }
 
   /** Carga BCV y recalcula precio mostrado con descuento del producto. */

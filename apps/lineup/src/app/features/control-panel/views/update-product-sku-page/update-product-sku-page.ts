@@ -134,27 +134,12 @@ export class UpdateProductSkuPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.path = this._activatedRoute.snapshot.params['business'];
     this.idProduct = this._activatedRoute.snapshot.params['idProduct'];
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
 
-    if (this.path) {
-      this.getBusiness();
-    }
     if (this.idProduct) {
       this.loadProductAndCurrencies();
     }
-  }
-
-  private getBusiness(): void {
-    this._subscription.add(
-      this._businessService.getBusinessByPath(this.path).subscribe({
-        next: (business) => {
-          this.business = business;
-          this._cdr.markForCheck();
-        },
-      }),
-    );
   }
 
   private loadProductAndCurrencies(): void {
@@ -168,6 +153,7 @@ export class UpdateProductSkuPage implements OnInit {
       }).subscribe({
         next: ({ product, currencies }) => {
           this.product = product;
+          this.business = product.business;
           this.image = product.productFiles?.[0]?.file?.url ?? undefined;
           this.currencies = this.currencies.map((currency) => {
             const currencyFound = currencies.find(

@@ -1,9 +1,9 @@
 <section
   class="login flex flex-col gap-6 sm:gap-8 items-center justify-start px-0 lg:px-5 w-10/10"
 >
-  <h2 class="text-center text-4xl lg:text-5xl font-medium">
+  <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
     {{'general.lineUp' | translate}}
-  </h2>
+  </a>
 
   <form
     [formGroup]="registerBusinessForm"
@@ -14,13 +14,15 @@
       {{'general.businessRegister' | translate}}
     </h4>
 
-    <div class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2">
+    <div
+      class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 h-10"
+    >
       @if (registerBusinessForm.get('acceptTerms')?.value) {
-        <div #googleBtn class="google-signin-btn"></div>
+      <div #googleBtn class="google-signin-btn"></div>
       } @else {
-        <p class="text-xs text-center text-primary-600 px-1">
-          {{ 'auth.googleRequiresTerms' | translate }}
-        </p>
+      <p class="text-xs text-center text-primary-600 px-1">
+        {{ 'auth.googleRequiresTerms' | translate }}
+      </p>
       }
     </div>
     <p-floatlabel class="w-10/10 max-w-xs">

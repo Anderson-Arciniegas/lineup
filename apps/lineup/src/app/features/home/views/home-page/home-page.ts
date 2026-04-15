@@ -26,15 +26,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import {
   AppConfigService,
-  BusinessPublicService,
   BusinessSchema,
-  CatalogPublicService,
   CatalogSchema,
   getFileThumbnailUrl,
   ProductCollectionSchema,
   ProductPublicService,
   ProductSchema,
   TagSchema,
+  UserPublicService,
   UtilsService,
 } from '@lineup/core';
 import { ButtonModule } from 'primeng/button';
@@ -136,12 +135,21 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   catalogs: CatalogSchema[] = [];
   businesses: BusinessSchema[] = [];
   productCollections: ProductCollectionSchema[] = [];
-  catalogsAttempt: boolean;
-  productsAttempt: boolean;
-  businessesAttempt: boolean;
-  collectionsAttempt: boolean;
-  private readonly _businessPublicService = inject(BusinessPublicService);
-  private readonly _catalogPublicService = inject(CatalogPublicService);
+  featuredAttempt = false;
+  collectionsAttempt = false;
+
+  get businessesAttempt(): boolean {
+    return this.featuredAttempt;
+  }
+
+  get catalogsAttempt(): boolean {
+    return this.featuredAttempt;
+  }
+
+  get productsAttempt(): boolean {
+    return this.featuredAttempt;
+  }
+  private readonly _userPublicService = inject(UserPublicService);
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _utils = inject(UtilsService);
   private readonly _subscription = new Subscription();
@@ -177,9 +185,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       );
     }
 
-    this.getFeaturedBusinesses();
-    this.getFeaturedCatalogs();
-    this.getFeaturedProducts();
+    this.getFeatured();
     this.getProductCollections();
     this.getMainTags();
   }
@@ -316,58 +322,22 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return numVisible;
   }
 
-  /** Carga negocios destacados (paginación fija en primera página). */
-  private getFeaturedBusinesses(): void {
-    this.businessesAttempt = true;
+  /** Carga en una sola petición los negocios, catálogos y productos destacados. */
+  private getFeatured(): void {
+    this.featuredAttempt = true;
     this._subscription.add(
-      this._businessPublicService
-        .featuredBusinesses({ page: 1, limit: 10 })
+      this._userPublicService
+        .featured({ page: 1, limit: 10 })
         .subscribe({
           next: (response) => {
-            this.businesses = [...this.businesses, ...response.items];
-            this.businessesAttempt = false;
+            this.businesses = [...this.businesses, ...response.featuredBusinesses];
+            this.catalogs = [...this.catalogs, ...response.featuredCatalogs];
+            this.products = [...this.products, ...response.featuredProducts];
+            this.featuredAttempt = false;
           },
           error: (error) => {
             console.error(error);
-            this.businessesAttempt = false;
-          },
-        }),
-    );
-  }
-
-  /** Carga catálogos destacados. */
-  private getFeaturedCatalogs(): void {
-    this.catalogsAttempt = true;
-    this._subscription.add(
-      this._catalogPublicService
-        .featuredCatalogs({ page: 1, limit: 10 })
-        .subscribe({
-          next: (response) => {
-            this.catalogs = [...this.catalogs, ...response.items];
-            this.catalogsAttempt = false;
-          },
-          error: (error) => {
-            console.error(error);
-            this.catalogsAttempt = false;
-          },
-        }),
-    );
-  }
-
-  /** Carga productos destacados. */
-  private getFeaturedProducts(): void {
-    this.productsAttempt = true;
-    this._subscription.add(
-      this._productPublicService
-        .featuredProducts({ page: 1, limit: 10 })
-        .subscribe({
-          next: (response) => {
-            this.products = [...this.products, ...response.items];
-            this.productsAttempt = false;
-          },
-          error: (error) => {
-            console.error(error);
-            this.productsAttempt = false;
+            this.featuredAttempt = false;
           },
         }),
     );
