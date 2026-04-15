@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { BusinessPrivateService, UserPublicService } from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
@@ -40,6 +41,7 @@ import { GoogleAuthService } from '../../../../core/services/google-auth.service
     PasswordModule,
     TranslateModule,
     ReactiveFormsModule,
+    RouterModule,
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',

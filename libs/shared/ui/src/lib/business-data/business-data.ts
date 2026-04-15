@@ -142,7 +142,7 @@ export class BusinessData implements OnInit, OnChanges, OnDestroy {
       this.followers = this.business.followers;
       this.isFollowingBusiness();
       this.getMySocialNetworkBusinesses();
-
+      this.color = this.business.hexColor ?? '#ffffff';
       this.discount = this.business.discounts.find(
         (discount) =>
           discount.scope === DiscountScopeEnum.BUSINESS &&

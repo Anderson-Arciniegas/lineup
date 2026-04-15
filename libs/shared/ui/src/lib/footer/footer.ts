@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthStore } from '@lineup/core';
+import { AppConfigService, appRoutes, AuthStore } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Button } from '../button/button';
 
@@ -14,6 +14,10 @@ import { Button } from '../button/button';
 })
 export class Footer {
   readonly currentYear = new Date().getFullYear();
+  private readonly _routes = AppConfigService.config.routes ?? appRoutes;
+  readonly infoPath = `/${this._routes.info}`;
+  readonly termsPath = `/${this._routes.info}/${this._routes.termsAndConditions}`;
+  readonly privacyPath = `/${this._routes.info}/${this._routes.privacyPolicy}`;
   readonly gmailComposeUrl =
     'https://mail.google.com/mail/?view=cm&fs=1&to=lineup@lineup.com.ve';
 

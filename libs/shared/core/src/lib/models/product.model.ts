@@ -1,4 +1,4 @@
-import type { ProductSchema } from '../schemas';
+import type { BusinessSchema, CatalogSchema, ProductSchema } from '../schemas';
 import type { InfinityScrollInput } from './catalog.model';
 
 export interface ProductImageInput {
@@ -96,6 +96,16 @@ export interface PaginatedProducts {
   items: ProductSchema[];
   limit: number;
   page: number;
+  total: number;
+}
+
+export interface FeaturedCollectionsSchema {
+  featuredBusinesses: BusinessSchema[];
+  featuredCatalogs: CatalogSchema[];
+  featuredProducts: ProductSchema[];
+  limit: number;
+  page: number;
+  recentlyAddedProducts: ProductSchema[];
   total: number;
 }
 

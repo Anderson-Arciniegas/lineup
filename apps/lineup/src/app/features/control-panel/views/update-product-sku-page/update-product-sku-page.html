@@ -1,6 +1,4 @@
-<div
-  class="page w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center"
->
+<div class="w-full py-4 sm:py-5 px-2 sm:px-10 gap-8 flex flex-col items-center">
   @if (business) {
   <lib-product-breadcrumb
     [business]="business"
@@ -16,7 +14,7 @@
   } @else {
   <form
     [formGroup]="skuProductForm"
-    class="w-full flex flex-col items-center justify-start gap-8 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container"
+    class="w-full flex flex-col items-center justify-start gap-8 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container pb-30"
   >
     <div class="flex flex-row items-center justify-start w-full">
       <h2 class="text-3xl font-medium">

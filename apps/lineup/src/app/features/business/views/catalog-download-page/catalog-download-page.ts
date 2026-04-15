@@ -60,9 +60,13 @@ export class CatalogDownloadPage implements OnInit {
   hasError = false;
   catalogUrl = '';
 
+  /** Fondo cuando no hay color de marca; sólido para evitar transparencias en la captura. */
+  private static readonly _DEFAULT_PDF_BACKGROUND = '#ffffff';
   private static readonly _GRADIENT_TOP_LIGHTEN = 0.25;
   private static readonly _GRADIENT_BOTTOM_LIGHTEN = 0.6;
   private static readonly _LUMINANCE_THRESHOLD = 0.45;
+  /** Por encima de esto el degradado + lighten es casi blanco y el recorte por “margen” deformaba el PDF. */
+  private static readonly _LIGHT_SOLID_BACKGROUND_LUMINANCE = 0.88;
 
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
@@ -154,6 +158,17 @@ export class CatalogDownloadPage implements OnInit {
   private setColor(raw: string): void {
     const rgb = CatalogDownloadPage.parseColorToRgb(raw);
     if (!rgb) return;
+    const baseLum = CatalogDownloadPage.relativeLuminance(
+      rgb.r,
+      rgb.g,
+      rgb.b,
+    );
+    if (baseLum >= CatalogDownloadPage._LIGHT_SOLID_BACKGROUND_LUMINANCE) {
+      // Sin degradado ni lighten: fondo casi blanco ya; evita captura rara y mantiene el tono (#fafafa, etc.).
+      this.pageBackgroundGradient = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      this.isDarkBackground = baseLum < CatalogDownloadPage._LUMINANCE_THRESHOLD;
+      return;
+    }
     const top = CatalogDownloadPage.lightenRgb(
       rgb.r,
       rgb.g,
@@ -201,6 +216,10 @@ export class CatalogDownloadPage implements OnInit {
         this.setColor(catalog.hexColor);
       } else if (business.hexColor) {
         this.setColor(business.hexColor);
+      } else {
+        this.pageBackgroundGradient =
+          CatalogDownloadPage._DEFAULT_PDF_BACKGROUND;
+        this.isDarkBackground = false;
       }
 
       const allProducts = await firstValueFrom(
@@ -654,6 +673,10 @@ export class CatalogDownloadPage implements OnInit {
     doc.head.appendChild(style);
   }
 
+  /**
+   * Solo recorta franjas totalmente transparentes. No tratar blanco/gris muy claro como “margen”:
+   * con fondos #fff / #fafafa recortaba el lienzo y cambiaba width/height → PDF deformado.
+   */
   private static trimCanvasPdfMargins(
     source: HTMLCanvasElement,
   ): HTMLCanvasElement {
@@ -666,45 +689,75 @@ export class CatalogDownloadPage implements OnInit {
       const i = (y * w0 + x) * 4;
       return [data[i], data[i + 1], data[i + 2], data[i + 3]] as const;
     };
-    const isMarginPixel = (p: readonly [number, number, number, number]) =>
-      p[3] < 20 || (p[0] > 247 && p[1] > 247 && p[2] > 247 && p[3] > 247);
+    const isFullyTransparent = (p: readonly [number, number, number, number]) =>
+      p[3] < 20;
 
+    let cropX = 0;
     let cropW = w0;
     let cropH = h0;
 
-    while (cropW > 1) {
-      const x = cropW - 1;
-      let allMargin = true;
+    while (cropX < cropW - 1) {
+      let allTransparent = true;
       for (let y = 0; y < cropH; y++) {
-        if (!isMarginPixel(pixel(x, y))) {
-          allMargin = false;
+        if (!isFullyTransparent(pixel(cropX, y))) {
+          allTransparent = false;
           break;
         }
       }
-      if (!allMargin) break;
+      if (!allTransparent) break;
+      cropX++;
+    }
+
+    while (cropW > cropX + 1) {
+      const x = cropW - 1;
+      let allTransparent = true;
+      for (let y = 0; y < cropH; y++) {
+        if (!isFullyTransparent(pixel(x, y))) {
+          allTransparent = false;
+          break;
+        }
+      }
+      if (!allTransparent) break;
       cropW--;
     }
 
-    while (cropH > 1) {
-      const y = cropH - 1;
-      let allMargin = true;
-      for (let x = 0; x < cropW; x++) {
-        if (!isMarginPixel(pixel(x, y))) {
-          allMargin = false;
+    let cropY0 = 0;
+    while (cropY0 < cropH - 1) {
+      let allTransparent = true;
+      for (let x = cropX; x < cropW; x++) {
+        if (!isFullyTransparent(pixel(x, cropY0))) {
+          allTransparent = false;
           break;
         }
       }
-      if (!allMargin) break;
+      if (!allTransparent) break;
+      cropY0++;
+    }
+
+    while (cropH > cropY0 + 1) {
+      const y = cropH - 1;
+      let allTransparent = true;
+      for (let x = cropX; x < cropW; x++) {
+        if (!isFullyTransparent(pixel(x, y))) {
+          allTransparent = false;
+          break;
+        }
+      }
+      if (!allTransparent) break;
       cropH--;
     }
 
-    if (cropW === w0 && cropH === h0) return source;
+    const finalW = cropW - cropX;
+    const finalH = cropH - cropY0;
+    if (cropX === 0 && cropY0 === 0 && finalW === w0 && finalH === h0) {
+      return source;
+    }
     const out = document.createElement('canvas');
-    out.width = cropW;
-    out.height = cropH;
+    out.width = finalW;
+    out.height = finalH;
     const octx = out.getContext('2d');
     if (!octx) return source;
-    octx.drawImage(source, 0, 0, cropW, cropH, 0, 0, cropW, cropH);
+    octx.drawImage(source, cropX, cropY0, finalW, finalH, 0, 0, finalW, finalH);
     return out;
   }
 

@@ -1,5 +1,5 @@
 <a
-  [routerLink]="catalog ? (dashboardMode ? (catalog.path) : ('/' + catalog.business.path + '/' + catalog.path)) : ('/business-1/catalog-1')"
+  [routerLink]="catalog ? (dashboardMode ? (catalog.path) : ('/' + catalog.business?.path + '/' + catalog.path)) : ('/business-1/catalog-1')"
   [ngClass]="[width, height]"
 >
   <div

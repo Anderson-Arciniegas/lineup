@@ -549,10 +549,94 @@ export const en = {
     verificationFailed:
       'We could not verify the code. Please check it and try again.',
   },
+  legal: {
+    disclaimer:
+      "Informational text aligned with LineUp's purpose. Have it reviewed by legal counsel for your jurisdiction, commercial rules, and tax obligations.",
+    terms: {
+      title: 'Terms and conditions',
+      section1Title: '1. Nature of the service',
+      section1Body:
+        "LineUp is a digital platform that lets businesses build and showcase online catalogs (a digital showroom), manage product information, inventory, and commercial presence, and lets end users discover businesses, browse catalogs, save favorites and wishlists, leave ratings, and contact businesses through channels the business publishes (for example, WhatsApp or other social links). LineUp improves visibility and connection; unless we explicitly state otherwise, sales, payments, shipping, warranties, and claims are solely between each business and the parties interacting through the business's channels.",
+      section2Title: '2. Acceptance',
+      section2Body:
+        'By registering, accessing, or using LineUp, you confirm you have read and agree to these terms and our privacy policy. If you do not agree, you must not use the service. We may update these terms; continued use after we publish changes may mean you accept them, as described when we post updates.',
+      section3Title: '3. Account types and eligibility',
+      section3Body:
+        'You may register as an end user or as a business representative. You must meet the legal age in your country or have proper authorization. Registration details (name, email, and other requested fields) must be accurate and kept up to date. You are responsible for password confidentiality and all activity under your account. Notify us promptly of any unauthorized use.',
+      section4Title: '4. Business users',
+      section4Body:
+        'Businesses are responsible for their published content: trade name, descriptions, images, displayed prices, availability, locations, hours, social links, and contact methods. You must comply with applicable law (advertising, consumer protection, intellectual property, personal data of third parties you include, etc.). You must not list unlawful, misleading, or rights-infringing products or services. Discounts, promotions, and statistics should be fair and not misleading. LineUp may remove content or restrict accounts for serious or repeated breaches.',
+      section5Title: '5. End users',
+      section5Body:
+        'End users agree to use the service lawfully and respectfully: no impersonation, no manipulation of ratings or platform behavior, no unauthorized bulk scraping or data extraction, and no use of LineUp to harass businesses or individuals. Ratings and comments, where available, should reflect genuine experiences and must not be defamatory, illegal, or abusive.',
+      section6Title: '6. Intellectual property and content license',
+      section6Body:
+        'LineUp and its distinctive elements (brand, platform design, software) are protected. We grant you a limited, non-exclusive, revocable license to use the service under these terms. You keep rights to content you upload; by publishing it you grant LineUp a license to host, display, technically reproduce, and operate the service (including security and improvement) as needed. You represent you have the rights to all material you upload.',
+      section7Title: '7. Prohibited conduct',
+      section7Body:
+        'You may not: introduce malware or compromise security; reverse engineer except as allowed by law; use bots or aggressive scraping without permission; send spam or misuse the service; publish illegal, violent, discriminatory, or sexually explicit content; or harm other users, LineUp, or third parties.',
+      section8Title: '8. Third-party transactions',
+      section8Body:
+        'Links or integrations (e.g., WhatsApp, maps, social networks) may take you outside LineUp. Purchase, shipping, return, and support terms are set by each business. LineUp does not guarantee availability, quality, or legality of goods and services offered by businesses and is not a party to contracts between end users and businesses unless we say so explicitly in the future.',
+      section9Title: '9. Availability, changes, and termination',
+      section9Body:
+        'We may change, suspend, or discontinue features for improvement, maintenance, legal, or security reasons. You may stop using LineUp and request account closure where available. We may suspend or terminate accounts that breach these terms or the law, with notice when reasonable.',
+      section10Title: '10. Disclaimer and limitation of liability',
+      section10Body:
+        'LineUp is provided “as is” and “as available.” To the fullest extent permitted by law, we do not guarantee specific commercial results or error-free operation. We are not liable for lost profits, indirect data loss, or consequential damages unless mandatory law says otherwise. Our total liability to you, where it applies, will be limited to what is reasonable in the circumstances.',
+      section11Title: '11. Governing law and contact',
+      section11Body:
+        "Disputes may be governed by applicable law based on your residence or LineUp's operating entity, without limiting non-waivable consumer rights. For questions about these terms, contact us via the email shown on the site (for example, lineup@lineup.com.ve) or other official channels we publish.",
+    },
+    privacy: {
+      title: 'Privacy policy',
+      section1Title: '1. Controller and scope',
+      section1Body:
+        'This policy explains how LineUp processes personal data for its digital showroom and catalog platform for local businesses and the discovery experience for end users. The “controller” will be the entity operating LineUp as published on the site or legal notice; if in doubt, email our official contact address.',
+      section2Title: '2. Data we collect from users and businesses',
+      section2Body:
+        'Account and profile data: name, business name, email, access credentials (password or equivalent, stored securely), role (user or business), profile image if you upload it, and fields you choose in settings. Verification data: codes sent by email to validate your address. Usage and technical data: IP address, browser type, session identifiers, security logs, and, depending on features, location data when you use maps or store locations. Interaction data: favorites, wishlists, ratings, notifications, and activity related to catalogs and products.',
+      section3Title: '3. Business-published content',
+      section3Body:
+        'Businesses publish data that may be public: trade name, description, paths or links to the showroom, catalogs, products, prices, images, locations, hours, social profiles, and contact methods. That content may be indexed or shared within the service. If you include personal data about third parties (e.g., staff), you must have a legal basis and inform them when required.',
+      section4Title: '4. Purposes of processing',
+      section4Body:
+        'Provide the service: registration, authentication, business dashboards, inventory, basic statistics, catalog downloads where offered, and permitted social features. Security and fraud prevention: detect abuse and protect the platform. Operational communications: email verification, account notices, and important service or policy changes. Product improvement: aggregated or statistical analysis that does not directly identify individuals when possible. Legal compliance: respond to lawful requests from authorities.',
+      section5Title: '5. Legal bases',
+      section5Body:
+        'We rely on the basis that applies in each case: performance of the contract or terms when you use LineUp; consent when we ask explicitly (e.g., optional communications); legitimate interests in security, moderate service improvement, and abuse prevention, balanced against your rights; and legal obligation where required.',
+      section6Title: '6. Vendors, Google sign-in, and processors',
+      section6Body:
+        "We may use infrastructure, hosting, transactional email, maps, and analytics vendors who process data on our behalf under instructions (processors). If you sign in or sign up with Google, Google processes data under its own policy; LineUp receives what is needed to create or link your account (e.g., identifier and email). Review Google's privacy settings.",
+      section7Title: '7. Retention',
+      section7Body:
+        'We keep data as long as needed for the purposes above and as required by law. After account closure, we may retain certain information in anonymized or restricted form for claims, tax, or security, then delete or anonymize it when appropriate.',
+      section8Title: '8. Security',
+      section8Body:
+        'We apply reasonable technical and organizational measures (encryption in transit where appropriate, access controls, verification codes, etc.). No system is 100% secure; protect your password and devices.',
+      section9Title: '9. Your rights',
+      section9Body:
+        'Under applicable law (e.g., GDPR or local privacy laws), you may request access, rectification, erasure, restriction, or objection, and in some cases portability or withdrawal of consent without affecting prior lawful processing. Contact us via the official email. You may also complain to your local data protection authority.',
+      section10Title: '10. Children, transfers, and changes',
+      section10Body:
+        "LineUp is not directed at minors; if you are a parent or guardian and notice a child's data, contact us. If we transfer data across borders, we use safeguards when the law requires. We may update this policy; we will post the current version on the site with an update date when possible. Continued use after material changes may mean acceptance unless the law requires separate consent.",
+    },
+  },
+  auth: {
+    acceptTermsIntro: 'I have read and accept the',
+    termsLink: 'terms and conditions',
+    acceptTermsAnd: 'and the',
+    privacyLink: 'privacy policy',
+    googleRequiresTerms:
+      'Check the acceptance box to sign up with Google.',
+  },
   footer: {
     tagline:
       'Discover local businesses and list your favorite products in one place.',
     navigation: 'Navigation',
+    legal: 'Legal',
+    terms: 'Terms and conditions',
+    privacy: 'Privacy policy',
     contact: 'Contact',
     contactHint:
       'Questions or feedback? Write to us and we will get back to you.',
@@ -605,6 +689,74 @@ export const en = {
     sidebar: {
       expandMenu: 'Expand navigation menu',
       collapseMenu: 'Collapse navigation menu',
+    },
+  },
+  admin: {
+    title: 'LineUp Admin',
+    nav: {
+      dashboard: 'Home',
+      stats: 'Statistics',
+      users: 'Users',
+      businesses: 'Businesses',
+      roles: 'Roles',
+      socialNetworks: 'Social networks',
+      settings: 'Settings',
+      signOut: 'Sign out',
+    },
+    placeholder: {
+      dashboard:
+        'Main admin view. Summary and metrics will go here.',
+      stats: 'Global metrics across the platform (catalog, users, businesses, etc.).',
+      users: 'System user list.',
+      businesses: 'Businesses registered on the platform.',
+      roles: 'Available roles and their codes.',
+      socialNetworks: 'Social networks configured on the platform.',
+      settings: 'Admin panel settings (to be implemented).',
+    },
+    feature: {
+      loading: 'Loading…',
+      loadError: 'Could not load data. Check your session or try again.',
+      emptyList: 'Nothing to show.',
+      totalRecords: 'Total records',
+    },
+    businesses: {
+      online: 'Online',
+      offline: 'Offline',
+      openInLineup: 'View store on LineUp (opens in a new tab)',
+    },
+    socialNetworkModal: {
+      addButton: 'Add social network',
+      createTitle: 'New social network',
+      editTitle: 'Edit social network',
+      name: 'Name',
+      code: 'Code',
+      codeHint: 'Use a unique code (e.g. INSTAGRAM).',
+      chooseImage: 'Choose image',
+      imageRequired: 'Upload an icon or image for the network.',
+      save: 'Save',
+      cancel: 'Cancel',
+      uploadError: 'Could not upload the image. Try again.',
+      saveError: 'Could not save. Check the data or your session.',
+      createOk: 'Social network created.',
+      updateOk: 'Social network updated.',
+      delete: 'Delete',
+      deleteOk: 'Social network removed.',
+      deleteError: 'Could not remove the social network.',
+    },
+    stats: {
+      catalog: 'Global catalog',
+      totalProducts: 'Products',
+      totalSkus: 'SKUs',
+      productsWithoutStock: 'Out of stock',
+      users: 'Users',
+      totalUsers: 'Registered users',
+      businesses: 'Businesses',
+      onlineCount: 'Online',
+      discounts: 'Discounts',
+      expiringSoon: 'Expiring soon',
+      engagement: 'Engagement',
+      visitsSeriesHint:
+        'Visit time series (business, catalog, product) are available from the API for future charts.',
     },
   },
 };

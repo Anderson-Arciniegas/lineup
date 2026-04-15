@@ -8,6 +8,7 @@ import {
 } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { UserPublicService } from '@lineup/core';
 import {
   TranslateModule,
@@ -54,6 +55,7 @@ describe('RegisterUserPage', () => {
         RegisterUserPage,
         TranslateModule.forRoot(),
         HttpClientTestingModule,
+        RouterTestingModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
@@ -106,6 +108,7 @@ describe('RegisterUserPage', () => {
         email: 'ana@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       expect(component.registerUserForm.valid).toBe(true);
     });
@@ -138,6 +141,7 @@ describe('RegisterUserPage', () => {
         email: 'ana@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       expect(dialogOpen).toHaveBeenCalled();
@@ -154,6 +158,7 @@ describe('RegisterUserPage', () => {
         email: 'ana@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       onClose$.next(true);
@@ -175,6 +180,7 @@ describe('RegisterUserPage', () => {
         email: 'ana@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       onClose$.next(false);
@@ -192,6 +198,7 @@ describe('RegisterUserPage', () => {
         email: 'ana@test.com',
         password: VALID_PASSWORD,
         confirmPassword: VALID_PASSWORD,
+        acceptTerms: true,
       });
       component.onSubmit();
       onClose$.next(true);
@@ -205,11 +212,18 @@ describe('RegisterUserPage', () => {
    * Registro con token de Google y `registerWithGoogle`.
    */
   describe('Google Sign-Up', () => {
-    it('debe invocar renderButton tras el timeout de vista', () => {
+    it('debe invocar renderButton cuando se aceptan términos', fakeAsync(() => {
+      expect(renderButton).not.toHaveBeenCalled();
+      component.registerUserForm.patchValue({ acceptTerms: true });
+      fixture.detectChanges();
+      tick(150);
       expect(renderButton).toHaveBeenCalled();
-    });
+    }));
 
     it('debe registrar con Google y completar sesión', fakeAsync(() => {
+      component.registerUserForm.patchValue({ acceptTerms: true });
+      fixture.detectChanges();
+      tick(150);
       credential$.next('jwt-google');
       tick();
       expect(registerWithGoogle).toHaveBeenCalled();

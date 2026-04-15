@@ -36,6 +36,7 @@ import {
   ProductSchema,
   ProductVariationInput,
   Size,
+  StorageService,
   UpdateProductInput,
   UtilsService,
 } from '@lineup/core';
@@ -108,6 +109,7 @@ export class CreateProductPage implements OnInit {
   uploadFailed = false;
   adultContent = false;
   attempt = false;
+  submitAttempted = false;
 
   maxTitleLength = 80;
   maxSubtitleLength = 100;
@@ -123,6 +125,7 @@ export class CreateProductPage implements OnInit {
   private readonly _utils = inject(UtilsService);
   private readonly _messageService = inject(MessageService);
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
+  private readonly _storage = inject(StorageService);
 
   private readonly _subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
@@ -156,7 +159,10 @@ export class CreateProductPage implements OnInit {
   ngOnInit(): void {
     this.path = this._activatedRoute.snapshot.params['business'];
     this.idProduct = this._activatedRoute.snapshot.params['idProduct'];
-    this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
+    this.catalogPath =
+      this._activatedRoute.snapshot.paramMap.get('catalogPath') ??
+      this._activatedRoute.parent?.snapshot.paramMap.get('catalogPath') ??
+      undefined;
     if (this.path) {
       this.getBusiness();
     }
@@ -189,33 +195,33 @@ export class CreateProductPage implements OnInit {
       this.ref.onClose
         .pipe(take(1), takeUntilDestroyed(this.destroyRef))
         .subscribe((catalogId: number | undefined) => {
-        if (catalogId == null) {
-          return;
-        }
-        const currentId =
-          this.product.catalog?.id ?? this.catalog?.id ?? null;
-        if (catalogId === currentId) {
-          return;
-        }
-        this._subscription.add(
-          this._catalogService.findOneCatalog(catalogId).subscribe({
-            next: (catalog) => {
-              this.catalog = catalog;
-              this.catalogPath = catalog.path;
-              this.createProductForm.patchValue({ idCatalog: catalogId });
-              this._cdr.markForCheck();
-            },
-            error: (err) => {
-              console.error(err);
-              this._messageService.add({
-                severity: 'error',
-                summary: this._translate.instant('general.error'),
-                detail: this._translate.instant('general.errorLoadingData'),
-              });
-            },
-          }),
-        );
-      }),
+          if (catalogId == null) {
+            return;
+          }
+          const currentId =
+            this.product.catalog?.id ?? this.catalog?.id ?? null;
+          if (catalogId === currentId) {
+            return;
+          }
+          this._subscription.add(
+            this._catalogService.findOneCatalog(catalogId).subscribe({
+              next: (catalog) => {
+                this.catalog = catalog;
+                this.catalogPath = catalog.path;
+                this.createProductForm.patchValue({ idCatalog: catalogId });
+                this._cdr.markForCheck();
+              },
+              error: (err) => {
+                console.error(err);
+                this._messageService.add({
+                  severity: 'error',
+                  summary: this._translate.instant('general.error'),
+                  detail: this._translate.instant('general.errorLoadingData'),
+                });
+              },
+            }),
+          );
+        }),
     );
   }
 
@@ -509,7 +515,7 @@ export class CreateProductPage implements OnInit {
       });
   }
 
-  uploadFile(fileBase64: any) {
+  uploadFile(fileBase64: string) {
     this.loadingFile = true;
 
     const image: File = this._utils.blobToFile(
@@ -595,6 +601,7 @@ export class CreateProductPage implements OnInit {
   }
 
   createProduct(): void {
+    this.submitAttempted = true;
     if (this.createProductForm.invalid) {
       this.createProductForm.markAllAsTouched();
       return;
@@ -720,23 +727,16 @@ export class CreateProductPage implements OnInit {
               summary: this._translate.instant('general.success'),
               detail: this._translate.instant('general.productCreated'),
             });
-            if (this.business && this.catalog) {
-              this._utils.navigate([
-                this.business.path,
-
-                this.catalog?.path,
-                product.id,
-                AppConfigService.config.routes.inventory,
-              ]);
-            } else {
-              this._utils.navigate([
-                AppConfigService.config.routes.dashboard,
-                AppConfigService.config.routes.catalogs,
-                this.catalogPath,
-                product.id,
-                AppConfigService.config.routes.inventory,
-              ]);
+            if (this._isOnboardingFlow()) {
+              this._storage.remove('businessOnboardingPending');
             }
+            this._utils.navigate([
+              AppConfigService.config.routes.dashboard,
+              AppConfigService.config.routes.catalogs,
+              this.catalog?.path ?? this.catalogPath ?? '',
+              product.id,
+              AppConfigService.config.routes.inventory,
+            ]);
           },
           error: (err) => {
             this.isSubmitting = false;
@@ -751,5 +751,16 @@ export class CreateProductPage implements OnInit {
         }),
       );
     }
+  }
+
+  private _isOnboardingFlow(): boolean {
+    let current: ActivatedRoute | null = this._activatedRoute;
+    while (current) {
+      if (current.snapshot.data?.['onboardingFlow'] === true) {
+        return true;
+      }
+      current = current.parent;
+    }
+    return false;
   }
 }

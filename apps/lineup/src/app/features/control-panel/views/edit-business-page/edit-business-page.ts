@@ -9,7 +9,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import {
+  AppConfigService,
   AuthStore,
   BusinessApiFilePrivateService,
   BusinessSchema,
@@ -65,6 +67,7 @@ export class EditBusinessPage implements OnInit {
   loadingFile = false;
   uploadFailed = false;
   adultContent = false;
+  saveAttempted = false;
   attempt = false;
   business: BusinessSchema;
   tags: string[] = [];
@@ -78,6 +81,7 @@ export class EditBusinessPage implements OnInit {
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
+  private readonly _route = inject(ActivatedRoute);
   private _authStore = inject(AuthStore);
   private _subscription: Subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
@@ -214,7 +218,14 @@ export class EditBusinessPage implements OnInit {
 
   /** Valida formulario e imagen obligatoria, arma `UpdateBusinessInput` y sincroniza sesión. */
   updateBusiness(): void {
+    this.saveAttempted = true;
     if (this.businessForm.invalid || this.attempt || !this.imgCode) {
+      this.businessForm.markAllAsTouched();
+      this._messageService.add({
+        severity: 'warn',
+        summary: this._translate.instant('general.warning'),
+        detail: this._translate.instant('validation.fieldRequired'),
+      });
       return;
     }
     this.attempt = true;
@@ -250,6 +261,13 @@ export class EditBusinessPage implements OnInit {
               'toast.businessUpdatedSuccessfully',
             ),
           });
+          if (this._isOnboardingFlow()) {
+            this._utils.navigate([
+              AppConfigService.config.routes.dashboard,
+              AppConfigService.config.routes.setup,
+              AppConfigService.config.routes.createCatalog,
+            ]);
+          }
         },
         error: (error) => {
           console.error(error);
@@ -261,6 +279,10 @@ export class EditBusinessPage implements OnInit {
 
   get businessPathControl() {
     return this.businessForm.get('businessPath');
+  }
+
+  get nameControl() {
+    return this.businessForm.get('name');
   }
 
   /** Obtiene el negocio actual del backend para modo edición. */
@@ -289,5 +311,16 @@ export class EditBusinessPage implements OnInit {
         },
       }),
     );
+  }
+
+  private _isOnboardingFlow(): boolean {
+    let current: ActivatedRoute | null = this._route;
+    while (current) {
+      if (current.snapshot.data?.['onboardingFlow'] === true) {
+        return true;
+      }
+      current = current.parent;
+    }
+    return false;
   }
 }

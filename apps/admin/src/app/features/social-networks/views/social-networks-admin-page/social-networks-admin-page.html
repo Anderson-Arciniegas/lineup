@@ -1,0 +1,86 @@
+<div class="container w-full px-4 sm:px-6 md:px-8 py-6 md:py-8">
+  <div class="flex flex-wrap items-start justify-between gap-4 mb-2">
+    <h1 class="text-2xl md:text-3xl font-semibold text-primary-900 m-0">
+      {{ 'admin.nav.socialNetworks' | translate }}
+    </h1>
+    <lib-button
+      icon="pi pi-plus"
+      [label]="'admin.socialNetworkModal.addButton' | translate"
+      type="rounded"
+      (action)="openCreate()"
+    ></lib-button>
+  </div>
+  <p class="text-primary-600 mb-6">
+    {{ 'admin.placeholder.socialNetworks' | translate }}
+  </p>
+
+  <app-create-social-network-admin-modal
+    [visible]="dialogVisible()"
+    (visibleChange)="dialogVisible.set($event)"
+    [network]="dialogNetwork()"
+    (saved)="onModalSaved()"
+  />
+
+  @if (loading()) {
+  <p class="text-primary-500">{{ 'admin.feature.loading' | translate }}</p>
+  } @else if (error()) {
+  <p class="text-red-600">{{ error() | translate }}</p>
+  } @else {
+  <ul class="flex flex-col gap-2 w-full">
+    @for (n of networks(); track n.id) { @let thumbUrl = n.image?.url;
+    <li
+      class="rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 flex flex-wrap gap-3 items-center justify-between hover:bg-primary-100 transition-colors"
+    >
+      <div
+        role="button"
+        tabindex="0"
+        class="flex flex-1 min-w-0 items-center justify-between gap-3 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary-400 rounded-md"
+        (click)="openEdit(n)"
+        (keyup.enter)="openEdit(n)"
+      >
+        <div class="flex items-center gap-3 min-w-0">
+          @if (thumbUrl) {
+          <img
+            [src]="thumbUrl"
+            [alt]="n.name"
+            class="social-networks-admin-page__thumb shrink-0"
+            width="40"
+            height="40"
+            loading="lazy"
+            decoding="async"
+          />
+          } @else {
+          <span
+            class="social-networks-admin-page__thumb-placeholder shrink-0"
+            aria-hidden="true"
+          >
+            <i class="pi pi-image"></i>
+          </span>
+          }
+          <span class="font-medium truncate">{{ n.name }}</span>
+        </div>
+        <span class="text-sm text-primary-600 font-mono shrink-0"
+          >{{ n.code }}</span
+        >
+      </div>
+      <div class="shrink-0 flex items-center">
+        <lib-button
+          icon="pi pi-trash"
+          variant="text"
+          color="danger"
+          type="rounded"
+          [width]="'w-11'"
+          [attr.aria-label]="'admin.socialNetworkModal.delete' | translate"
+          [disabled]="attemptDelete()"
+          (action)="confirmRemoveSocialNetwork(n)"
+        ></lib-button>
+      </div>
+    </li>
+    }
+  </ul>
+  @if (networks().length === 0) {
+  <p class="text-primary-500 mt-4">
+    {{ 'admin.feature.emptyList' | translate }}
+  </p>
+  } }
+</div>

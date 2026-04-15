@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AppConfigService,
   BASIC_COLORS,
@@ -85,7 +85,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private readonly _utils = inject(UtilsService);
-  private readonly _location = inject(Location);
+  private readonly _router = inject(Router);
   private readonly _dialogService = inject(DialogService);
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _subscription = new Subscription();
@@ -172,7 +172,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this._location.back();
+    void this._router.navigate(['..'], { relativeTo: this._activatedRoute });
   }
 
   navigateToEdit(): void {

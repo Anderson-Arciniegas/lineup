@@ -89,6 +89,7 @@ export class CreateCatalogPage implements OnInit {
   path: string;
   tags: string[] = [];
   attempt = false;
+  submitAttempted = false;
   maxLengthCatalogName = 50;
   readonly defaultCatalogHexColor = '#ffffff';
 
@@ -190,8 +191,22 @@ export class CreateCatalogPage implements OnInit {
 
   /** Crea o actualiza el catálogo según presencia de `catalogPath` y navega al listado. */
   createCatalog() {
+    this.submitAttempted = true;
     if (this.createCatalogForm.invalid || this.attempt) {
       this.createCatalogForm.markAllAsTouched();
+      this._messageService.add({
+        severity: 'warn',
+        summary: this._translate.instant('general.warning'),
+        detail: this._translate.instant('validation.fieldRequired'),
+      });
+      return;
+    }
+    if (!this.imgCode) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: this._translate.instant('general.warning'),
+        detail: this._translate.instant('validation.fieldRequired'),
+      });
       return;
     }
 
@@ -254,11 +269,21 @@ export class CreateCatalogPage implements OnInit {
               summary: this._translate.instant('general.success'),
               detail: this._translate.instant('toast.catalogCreated'),
             });
-            this._utils.navigate([
-              AppConfigService.config.routes.dashboard,
-              AppConfigService.config.routes.catalogs,
-              catalog.path,
-            ]);
+            if (this._isOnboardingFlow()) {
+              this._utils.navigate([
+                AppConfigService.config.routes.dashboard,
+                AppConfigService.config.routes.setup,
+                'catalog',
+                catalog.path,
+                AppConfigService.config.routes.createProduct,
+              ]);
+            } else {
+              this._utils.navigate([
+                AppConfigService.config.routes.dashboard,
+                AppConfigService.config.routes.catalogs,
+                catalog.path,
+              ]);
+            }
           },
           error: (error) => {
             console.error(error);
@@ -270,6 +295,21 @@ export class CreateCatalogPage implements OnInit {
         }),
       );
     }
+  }
+
+  get catalogNameControl() {
+    return this.createCatalogForm.get('catalogName');
+  }
+
+  private _isOnboardingFlow(): boolean {
+    let current: ActivatedRoute | null = this._activatedRoute;
+    while (current) {
+      if (current.snapshot.data?.['onboardingFlow'] === true) {
+        return true;
+      }
+      current = current.parent;
+    }
+    return false;
   }
 
   /** Abre el diálogo `ImageCropper` y, al cerrar con imagen, dispara `uploadFile`. */
