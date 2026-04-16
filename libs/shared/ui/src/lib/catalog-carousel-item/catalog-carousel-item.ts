@@ -33,8 +33,6 @@ import { ShareModal } from '../share-modal/share-modal';
   imports: [
     CommonModule,
     Button,
-    Skeleton,
-    CurrencySymbolPipe,
     RouterModule,
     TranslateModule,
   ],

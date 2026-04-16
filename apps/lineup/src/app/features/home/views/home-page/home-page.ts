@@ -183,11 +183,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         this.carouselBreakpointsCollections,
         w,
       );
+      this.loadInitialBrowserData();
     }
-
-    this.getFeatured();
-    this.getProductCollections();
-    this.getMainTags();
   }
 
   /** Sincroniza el ancho inicial del viewport para los computed de carrusel. */
@@ -377,5 +374,15 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     if (query === '') return;
 
     this._utils.navigate([AppConfigService.config.routes.search, query]);
+  }
+
+  /**
+   * Evita bloquear el SSR de la portada con peticiones HTTP no críticas para el primer render.
+   * Estas cargas se ejecutan solo en navegador tras hidratar.
+   */
+  private loadInitialBrowserData(): void {
+    this.getFeatured();
+    this.getProductCollections();
+    this.getMainTags();
   }
 }

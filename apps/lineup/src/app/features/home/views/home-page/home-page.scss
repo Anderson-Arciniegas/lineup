@@ -6,27 +6,43 @@
   background: color-mix(in srgb, var(--p-surface-100, #f4f4f5) 85%, transparent);
 
   &--collections {
-    min-height: 14rem;
+    min-height: 34rem;
 
     @media (min-width: 640px) {
-      min-height: 18rem;
+      min-height: 44rem;
     }
   }
 
   &--carousel {
-    min-height: 12rem;
+    min-height: 20rem;
 
     @media (min-width: 640px) {
-      min-height: 15rem;
+      min-height: 26rem;
     }
   }
 
   &--grid {
-    min-height: 16rem;
+    min-height: 22rem;
 
     @media (min-width: 640px) {
-      min-height: 22rem;
+      min-height: 34rem;
     }
+  }
+}
+
+.home-tags-placeholder {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .home-tags-placeholder {
+    min-height: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-tags-placeholder {
+    min-height: 3.5rem;
   }
 }
 

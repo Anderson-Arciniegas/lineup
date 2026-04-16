@@ -16,6 +16,7 @@ import { ButtonModule } from 'primeng/button';
 })
 export class Button {
   @Input() label: string;
+  @Input() ariaLabel: string;
   @Input() icon: string;
   @Input() loading = false;
   @Input() disabled = false;

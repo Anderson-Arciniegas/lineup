@@ -14,7 +14,7 @@ import { RateModal } from '../rate-modal/rate-modal';
  */
 @Component({
   selector: 'lib-product-description',
-  imports: [CommonModule, ProductTags, CurrencySymbolPipe, Button],
+  imports: [CommonModule, ProductTags, Button],
   templateUrl: './product-description.html',
   styleUrl: './product-description.scss',
 })

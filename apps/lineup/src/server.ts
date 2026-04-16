@@ -11,6 +11,27 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const angularAppEngine = new AngularAppEngine();
+const EDGE_CACHE_CONTROL_HEADER =
+  'public, max-age=0, s-maxage=300, stale-while-revalidate=86400';
+const NO_STORE_CACHE_CONTROL_HEADER = 'no-store';
+
+function isCacheablePublicRoute(pathname: string): boolean {
+  return pathname === '/' || pathname === '/home';
+}
+
+function resolveHtmlCacheControlHeader(
+  requestMethod: string,
+  pathname: string,
+  hasCookie: boolean,
+): string {
+  const isGetLikeMethod = requestMethod === 'GET' || requestMethod === 'HEAD';
+  if (!isGetLikeMethod || hasCookie) {
+    return NO_STORE_CACHE_CONTROL_HEADER;
+  }
+  return isCacheablePublicRoute(pathname)
+    ? EDGE_CACHE_CONTROL_HEADER
+    : NO_STORE_CACHE_CONTROL_HEADER;
+}
 
 export async function netlifyAppEngineHandler(
   request: Request,
@@ -77,7 +98,14 @@ if (isMainModule(import.meta.url)) {
             contentType.includes('text/html') &&
             !response.headers.has('cache-control')
           ) {
-            response.headers.set('Cache-Control', 'no-store');
+            const host = req.headers.host ?? 'localhost';
+            const pathname = new URL(req.originalUrl, `http://${host}`).pathname;
+            const cacheControlHeader = resolveHtmlCacheControlHeader(
+              req.method,
+              pathname,
+              Boolean(req.headers.cookie),
+            );
+            response.headers.set('Cache-Control', cacheControlHeader);
           }
           await writeResponseToNodeResponse(response, res);
         } else {
