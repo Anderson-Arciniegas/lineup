@@ -41,8 +41,6 @@ import { Notifications } from '../notifications/notifications';
     RouterLink,
     DrawerModule,
     TranslateModule,
-    InputIcon,
-    IconField,
     OverlayBadgeModule,
     PopoverModule,
     Notifications,

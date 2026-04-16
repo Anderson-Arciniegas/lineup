@@ -17,7 +17,6 @@ import { Subscription } from 'rxjs';
   selector: 'app-catalogs-page',
   imports: [
     CommonModule,
-    Button,
     TranslateModule,
     CatalogCard,
     CreateCatalogCard,

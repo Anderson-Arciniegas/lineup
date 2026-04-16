@@ -19,7 +19,6 @@ import { ProductCard } from "../product-card/product-card";
     InputIconModule,
     InputTextModule,
     SkeletonModule,
-    ProductCard
 ],
   templateUrl: './ui.html',
   styleUrl: './ui.css',

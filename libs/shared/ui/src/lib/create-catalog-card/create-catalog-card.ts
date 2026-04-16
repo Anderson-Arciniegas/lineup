@@ -23,7 +23,6 @@ import { Button } from '../button/button';
     ButtonModule,
     IftaLabelModule,
     FormsModule,
-    Button,
   ],
   templateUrl: './create-catalog-card.html',
   styleUrl: './create-catalog-card.scss',
