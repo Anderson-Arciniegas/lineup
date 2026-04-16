@@ -132,6 +132,14 @@ describe('EditBusinessPage', () => {
   describe('updateBusiness', () => {
     it('no debe enviar sin código de imagen', () => {
       component.imgCode = '';
+      component.imageUrl = 'https://example.com/i.png';
+      component.updateBusiness();
+      expect(updateBusiness).not.toHaveBeenCalled();
+    });
+
+    it('no debe enviar sin URL de imagen', () => {
+      component.imgCode = 'img-code';
+      component.imageUrl = '';
       component.updateBusiness();
       expect(updateBusiness).not.toHaveBeenCalled();
     });

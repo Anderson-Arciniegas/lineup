@@ -87,7 +87,7 @@ if (isMainModule(import.meta.url)) {
       .catch(next);
   });
 
-  const port = Number(process.env['PORT'] ?? 4000);
+  const port = Number(process.env['PORT'] ?? 4200);
   const host = process.env['HOST'] ?? '0.0.0.0';
   app.listen(port, host, () => {
     console.log(`SSR listening on http://${host}:${port}`);

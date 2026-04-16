@@ -73,6 +73,8 @@ export class EditBusinessPage implements OnInit {
   tags: string[] = [];
   ref: DynamicDialogRef | undefined;
   readonly maxNameLength = 30;
+  /** Máximo de etiquetas distintas permitidas para el negocio. */
+  readonly maxTags = 10;
   private _utils = inject(UtilsService);
   private readonly _fb = inject(FormBuilder);
   private readonly _businessService = inject(BusinessPrivateService);
@@ -122,7 +124,7 @@ export class EditBusinessPage implements OnInit {
 
     const next = [...this.tags];
     for (const part of parts) {
-      if (next.length >= 10) {
+      if (next.length >= this.maxTags) {
         break;
       }
       const normalized = part.toLowerCase();
@@ -216,10 +218,18 @@ export class EditBusinessPage implements OnInit {
     );
   }
 
+  /** Indica si hay imagen de marca cargada (código y vista previa). */
+  private _hasBusinessImage(): boolean {
+    return (
+      Boolean((this.imgCode ?? '').trim()) &&
+      Boolean((this.imageUrl ?? '').trim())
+    );
+  }
+
   /** Valida formulario e imagen obligatoria, arma `UpdateBusinessInput` y sincroniza sesión. */
   updateBusiness(): void {
     this.saveAttempted = true;
-    if (this.businessForm.invalid || this.attempt || !this.imgCode) {
+    if (this.businessForm.invalid || this.attempt || !this._hasBusinessImage()) {
       this.businessForm.markAllAsTouched();
       this._messageService.add({
         severity: 'warn',

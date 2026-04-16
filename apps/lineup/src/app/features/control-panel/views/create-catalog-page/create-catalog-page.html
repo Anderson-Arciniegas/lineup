@@ -120,12 +120,14 @@
             (keyup.enter)="addTag()"
             class="input w-full h-11"
             placeholder="{{'general.tagsPlaceholder' | translate}}"
+            [disabled]="tags.length >= maxTags"
           />
           <lib-button
             icon="pi pi-plus"
             label="{{ 'general.addTag' | translate }}"
             [width]="'w-60'"
             type="rounded"
+            [disabled]="tags.length >= maxTags"
             (click)="addTag()"
           ></lib-button>
         </div>
@@ -139,6 +141,9 @@
           />
           }
         </div>
+        <small class="text-color-secondary text-xs mt-1 block">
+          {{ tags.length }} / {{ maxTags }}
+        </small>
       </div>
 
       <div class="w-full flex flex-row item-center justify-center">

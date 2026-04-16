@@ -91,6 +91,8 @@ export class CreateCatalogPage implements OnInit {
   attempt = false;
   submitAttempted = false;
   maxLengthCatalogName = 50;
+  /** Máximo de etiquetas distintas permitidas en el catálogo. */
+  readonly maxTags = 10;
   readonly defaultCatalogHexColor = '#ffffff';
 
   private readonly _subscription: Subscription = new Subscription();
@@ -162,7 +164,7 @@ export class CreateCatalogPage implements OnInit {
     });
   }
 
-  /** Parsea etiquetas separadas por coma, normaliza y deduplica (máximo 10). */
+  /** Parsea etiquetas separadas por coma, normaliza y deduplica (máximo `maxTags`). */
   addTag() {
     const raw = this.createCatalogForm.get('tag')?.value ?? '';
     const parts = raw
@@ -172,7 +174,7 @@ export class CreateCatalogPage implements OnInit {
 
     const next = [...this.tags];
     for (const part of parts) {
-      if (next.length >= 10) {
+      if (next.length >= this.maxTags) {
         break;
       }
       const normalized = part.toLowerCase();

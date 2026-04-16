@@ -13,10 +13,19 @@
     >
       <div class="flex flex-col justify-center items-center gap-3">
         <h3 class="text-lg font-medium">
-          {{'general.profilePicture' | translate}}
+          {{'general.profilePicture' | translate}}<span class="text-red-500">*</span>
         </h3>
         <div
+          id="business-profile-image"
           tabindex="0"
+          role="button"
+          [attr.aria-required]="true"
+          [attr.aria-invalid]="saveAttempted && (!imgCode || !imageUrl)"
+          [attr.aria-describedby]="
+            saveAttempted && (!imgCode || !imageUrl)
+              ? 'business-image-required-error'
+              : null
+          "
           (keyup.enter)="openImageCropper()"
           (click)="openImageCropper()"
           class="image-placeholder flex flex-row justify-center items-center w-38 h-38 bg-gray-100 cursor-pointer"
@@ -40,8 +49,12 @@
           <i class="pi pi-camera" style="font-size: 4rem"></i>
           }
         </div>
-        @if (saveAttempted && !imgCode) {
-        <small class="text-red-500 text-xs mt-1 block" role="alert">
+        @if (saveAttempted && (!imgCode || !imageUrl)) {
+        <small
+          id="business-image-required-error"
+          class="text-red-500 text-xs mt-1 block"
+          role="alert"
+        >
           {{ 'validation.fieldRequired' | translate }}
         </small>
         }
@@ -159,6 +172,7 @@
                 formControlName="tag"
                 (keyup.enter)="addTag()"
                 autocomplete="off"
+                [disabled]="tags.length >= maxTags"
               />
               <label for="tags" class="font-medium"
                 >{{'general.tags' | translate}}</label
@@ -169,6 +183,7 @@
               label="{{ 'general.add' | translate }}"
               color="secondary"
               type="rounded"
+              [disabled]="tags.length >= maxTags"
               (click)="addTag()"
             ></lib-button>
           </div>
@@ -182,6 +197,9 @@
             />
             }
           </div>
+          <small class="text-color-secondary text-xs mt-1 block">
+            {{ tags.length }} / {{ maxTags }}
+          </small>
         </div>
 
         <div class="flex flex-row items-center gap-3 w-full">
