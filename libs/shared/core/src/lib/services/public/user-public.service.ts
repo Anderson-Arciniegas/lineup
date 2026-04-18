@@ -180,7 +180,11 @@ export class UserPublicService {
       .query<{ featured: FeaturedCollectionsSchema }>({
         query: FEATURED_COLLECTIONS_QUERY,
         variables: { pagination },
-        fetchPolicy: 'network-only',
+        // `no-cache`: no escribe esta respuesta en InMemoryCache. Evita que catálogos
+        // compartidos (mismo `id`/`__typename`) con ramas parciales de la misma query
+        // (p. ej. `featuredBusinesses` → `catalogs` sin `business`) dejen `business`
+        // ausente al materializar `featuredCatalogs`.
+        fetchPolicy: 'no-cache',
         context: {
           withCredentials: true,
         },

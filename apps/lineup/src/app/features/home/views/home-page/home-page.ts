@@ -197,9 +197,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
     if (!isPlatformBrowser(this.platformId)) return;
-    this.document
-      .getElementById(HomePage.leadProductPreloadLinkId)
-      ?.remove();
+    this.document.getElementById(HomePage.leadProductPreloadLinkId)?.remove();
   }
 
   /**
@@ -233,8 +231,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     ) {
       return;
     }
-    const file = this.productCollections[0]?.products?.[0]?.productFiles?.[0]
-      ?.file;
+    const file =
+      this.productCollections[0]?.products?.[0]?.productFiles?.[0]?.file;
     if (!file) return;
     const href = getFileThumbnailUrl(file, 'sm');
     if (!href || !/^https?:\/\//i.test(href)) return;
@@ -323,20 +321,21 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private getFeatured(): void {
     this.featuredAttempt = true;
     this._subscription.add(
-      this._userPublicService
-        .featured({ page: 1, limit: 10 })
-        .subscribe({
-          next: (response) => {
-            this.businesses = [...this.businesses, ...response.featuredBusinesses];
-            this.catalogs = [...this.catalogs, ...response.featuredCatalogs];
-            this.products = [...this.products, ...response.featuredProducts];
-            this.featuredAttempt = false;
-          },
-          error: (error) => {
-            console.error(error);
-            this.featuredAttempt = false;
-          },
-        }),
+      this._userPublicService.featured({ page: 1, limit: 10 }).subscribe({
+        next: (response) => {
+          this.businesses = [
+            ...this.businesses,
+            ...response.featuredBusinesses,
+          ];
+          this.catalogs = [...this.catalogs, ...response.featuredCatalogs];
+          this.products = [...this.products, ...response.featuredProducts];
+          this.featuredAttempt = false;
+        },
+        error: (error) => {
+          console.error(error);
+          this.featuredAttempt = false;
+        },
+      }),
     );
   }
 

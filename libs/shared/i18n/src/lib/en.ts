@@ -345,7 +345,7 @@ export const en = {
       'Contact businesses instantly to ask questions, request quotes, or schedule appointments.',
     withLineUpYouCanCreateYourDigitalShowroom:
       'With LineUp you can create your digital Showroom',
-    contactUs: 'Contact us',
+    contactUs: 'Contact',
     contactUsDescription:
       'Contact our team, we are attentive to resolve your doubts and advise you on everything you need.',
   },
@@ -627,8 +627,7 @@ export const en = {
     termsLink: 'terms and conditions',
     acceptTermsAnd: 'and the',
     privacyLink: 'privacy policy',
-    googleRequiresTerms:
-      'Check the acceptance box to sign up with Google.',
+    googleRequiresTerms: 'Check the acceptance box to sign up with Google.',
   },
   footer: {
     tagline:
@@ -704,9 +703,9 @@ export const en = {
       signOut: 'Sign out',
     },
     placeholder: {
-      dashboard:
-        'Main admin view. Summary and metrics will go here.',
-      stats: 'Global metrics across the platform (catalog, users, businesses, etc.).',
+      dashboard: 'Main admin view. Summary and metrics will go here.',
+      stats:
+        'Global metrics across the platform (catalog, users, businesses, etc.).',
       users: 'System user list.',
       businesses: 'Businesses registered on the platform.',
       roles: 'Available roles and their codes.',

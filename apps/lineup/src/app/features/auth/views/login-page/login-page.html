@@ -1,14 +1,20 @@
 <section
-  class="login flex flex-col gap-10 sm:gap-15 items-center justify-center p-0 lg:p-5 w-10/10"
+  class="login flex flex-col gap-5 sm:gap-8 items-center justify-center p-0 lg:p-5 w-10/10"
 >
   <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
-    {{'general.lineUp' | translate}}
+    <img
+      src="assets/images/lineup.png"
+      alt="Lineup logo"
+      width="571"
+      height="505"
+      class="h-30 w-auto object-contain cursor-pointer"
+    />
   </a>
 
   <form
     [formGroup]="loginForm"
     (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg"
+    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
   >
     <h4 class="text-center text-2xl lg:text-3xl font-medium">
       {{'general.login' | translate}}
