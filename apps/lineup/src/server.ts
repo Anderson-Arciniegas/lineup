@@ -5,6 +5,7 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import { getContext } from '@netlify/angular-runtime/context.mjs';
+import { environment } from '@lineup/envs';
 import compression from 'compression';
 import express from 'express';
 import { dirname, join } from 'node:path';
@@ -17,6 +18,65 @@ const NO_STORE_CACHE_CONTROL_HEADER = 'no-store';
 
 function isCacheablePublicRoute(pathname: string): boolean {
   return pathname === '/' || pathname === '/home';
+}
+
+/**
+ * Mismo contrato que `proxy.conf.json` y `public/_redirects`: el cliente del PDF
+ * hace `fetch` same-origin a `catalogPdfMediaProxy.localPathPrefix`; sin este
+ * proxy en Node, la petición cae en Angular y devuelve HTML → las imágenes no se incrustan.
+ */
+function createCatalogPdfMediaProxy(): express.RequestHandler {
+  const cfg = environment.catalogPdfMediaProxy;
+  if (!cfg) {
+    return (_req, _res, next) => next();
+  }
+  const originBase = cfg.s3OriginPrefix.replace(/\/$/, '');
+  const prefix = cfg.localPathPrefix.replace(/\/$/, '');
+
+  return async (req, res, next) => {
+    const matchesPath =
+      req.originalUrl.startsWith(`${prefix}/`) || req.originalUrl === prefix;
+    if (!matchesPath) {
+      next();
+      return;
+    }
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.status(405).end();
+      return;
+    }
+    const tail =
+      req.originalUrl.length <= prefix.length
+        ? '/'
+        : req.originalUrl.slice(prefix.length);
+    const upstreamUrl = `${originBase}${tail.startsWith('/') ? tail : `/${tail}`}`;
+    try {
+      const upstream = await fetch(upstreamUrl, {
+        method: req.method,
+        redirect: 'follow',
+        headers: {
+          'User-Agent': (req.headers['user-agent'] as string) || 'lineup-ssr-media-proxy',
+        },
+      });
+      res.status(upstream.status);
+      const passHeader = (name: string) => {
+        const v = upstream.headers.get(name);
+        if (v) res.setHeader(name, v);
+      };
+      passHeader('content-type');
+      passHeader('cache-control');
+      passHeader('etag');
+      passHeader('content-length');
+      passHeader('last-modified');
+      if (req.method === 'HEAD') {
+        res.end();
+        return;
+      }
+      const body = Buffer.from(await upstream.arrayBuffer());
+      res.send(body);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 function resolveHtmlCacheControlHeader(
@@ -73,6 +133,8 @@ if (isMainModule(import.meta.url)) {
       threshold: 1024,
     }),
   );
+
+  app.use(createCatalogPdfMediaProxy());
 
   app.use(
     express.static(browserDistFolder, {

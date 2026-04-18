@@ -1,14 +1,20 @@
 <section
-  class="login flex flex-col gap-6 sm:gap-8 items-center justify-start px-0 lg:px-5 w-10/10"
+  class="login flex flex-col gap-5 sm:gap-8 items-center justify-center px-0 lg:px-5 w-10/10"
 >
   <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
-    {{'general.lineUp' | translate}}
+    <img
+      src="assets/images/lineup.png"
+      alt="Lineup logo"
+      width="571"
+      height="505"
+      class="h-30 w-auto object-contain cursor-pointer"
+    />
   </a>
 
   <form
     [formGroup]="registerUserForm"
     (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-3"
+    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
   >
     <h4 class="text-center text-2xl lg:text-3xl font-medium">
       {{'general.userRegister' | translate}}
@@ -96,7 +102,7 @@
     </p-floatlabel>
 
     <div
-      class="w-10/10 max-w-xs flex flex-row items-start gap-3 text-sm text-primary-800"
+      class="w-10/10 max-w-xs flex flex-row items-start gap-3 text-xs text-primary-800"
     >
       <input
         type="checkbox"

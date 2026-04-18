@@ -134,7 +134,7 @@ export const es = {
     create: 'Crear',
     details: 'Detalles',
     select: 'Seleccionar',
-    contactUs: 'Contactanos',
+    contactUs: 'Contactar',
     whatsappContactIntro: 'Hola! Me interesa:',
     follow: 'Seguir',
     following: 'Siguiendo',
@@ -593,7 +593,8 @@ export const es = {
       section9Title: '9. Disponibilidad, modificaciones y terminación',
       section9Body:
         'Podemos modificar, suspender o discontinuar funcionalidades con el fin de mejorar el servicio, mantenimiento o por causas legales o de seguridad. Puedes dejar de usar LineUp y solicitar la baja de tu cuenta según las opciones disponibles. Podemos suspender o cancelar cuentas que incumplan estos términos o la ley, previa notificación cuando sea razonable.',
-      section10Title: '10. Exención de garantías y limitación de responsabilidad',
+      section10Title:
+        '10. Exención de garantías y limitación de responsabilidad',
       section10Body:
         'LineUp se ofrece «tal cual» y «según disponibilidad». En la medida máxima permitida por la ley, no garantizamos resultados comerciales concretos ni ausencia de errores. No seremos responsables por lucro cesante, pérdida de datos indirecta o daños consecuenciales, salvo que la normativa imperativa disponga lo contrario. Nuestra responsabilidad total frente a ti, cuando proceda, se limitará en conjunto a lo que resulte razonable según el caso.',
       section11Title: '11. Ley aplicable y contacto',
@@ -718,16 +719,19 @@ export const es = {
     placeholder: {
       dashboard:
         'Vista principal del panel. Aquí irá el resumen y métricas del administrador.',
-      stats: 'Indicadores globales del ecosistema (catálogo, usuarios, negocios, etc.).',
+      stats:
+        'Indicadores globales del ecosistema (catálogo, usuarios, negocios, etc.).',
       users: 'Listado de usuarios del sistema.',
       businesses: 'Negocios registrados en la plataforma.',
       roles: 'Roles disponibles y su código.',
       socialNetworks: 'Redes sociales configuradas en la plataforma.',
-      settings: 'Ajustes del panel de administración (pendiente de implementar).',
+      settings:
+        'Ajustes del panel de administración (pendiente de implementar).',
     },
     feature: {
       loading: 'Cargando…',
-      loadError: 'No se pudieron cargar los datos. Comprueba tu sesión o inténtalo de nuevo.',
+      loadError:
+        'No se pudieron cargar los datos. Comprueba tu sesión o inténtalo de nuevo.',
       emptyList: 'No hay elementos para mostrar.',
       totalRecords: 'Total de registros',
     },
