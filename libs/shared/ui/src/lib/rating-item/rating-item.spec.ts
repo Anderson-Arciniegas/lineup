@@ -30,7 +30,27 @@ describe('RatingItem', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debe devolver null sin datos de ruta del producto', () => {
+    expect(component.productUrl).toBeNull();
+    expect(component.productImageUrl).toBeUndefined();
+  });
+
+  it('debe construir URL pública del producto', () => {
+    component.rating = {
+      ...component.rating,
+      product: {
+        id: 10,
+        title: 'Test',
+        business: { path: 'tienda' },
+        catalog: { path: 'cat-1' },
+        productFiles: [{ file: { url: 'https://img.test/p.jpg' } }],
+      } as never,
+    };
+    expect(component.productUrl).toBe('/tienda/cat-1/10');
+    expect(component.productImageUrl).toBe('https://img.test/p.jpg');
   });
 });

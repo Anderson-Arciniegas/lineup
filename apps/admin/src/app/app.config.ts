@@ -9,6 +9,7 @@ import {
   ApplicationConfig,
   importProvidersFrom,
   inject,
+  isDevMode,
   LOCALE_ID,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
@@ -115,6 +116,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideNamedApollo(() => {
       const httpLink = inject(HttpLink);
+      const connectToDevTools = isDevMode();
 
       const defaultOptions = {
         watchQuery: {
@@ -131,7 +133,7 @@ export const appConfig: ApplicationConfig = {
             uri: environment.userApi,
             withCredentials: true,
           }),
-          connectToDevTools: true,
+          connectToDevTools,
           cache: new InMemoryCache(),
           defaultOptions,
         },
@@ -140,7 +142,7 @@ export const appConfig: ApplicationConfig = {
             uri: environment.businessApi,
             withCredentials: true,
           }),
-          connectToDevTools: true,
+          connectToDevTools,
           cache: new InMemoryCache(),
           defaultOptions,
         },
@@ -149,7 +151,7 @@ export const appConfig: ApplicationConfig = {
             uri: environment.adminApi,
             withCredentials: true,
           }),
-          connectToDevTools: true,
+          connectToDevTools,
           cache: new InMemoryCache(),
           defaultOptions,
         },

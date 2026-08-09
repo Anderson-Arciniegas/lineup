@@ -127,3 +127,82 @@ describe('CatalogDownloadPage query layout', () => {
     expect(cmp.layoutMode).toBe('List');
   });
 });
+
+describe('CatalogDownloadPage browser', () => {
+  beforeEach(() => {
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 1400,
+    });
+  });
+
+  async function setupBrowser(
+    catalog: Record<string, unknown> = { id: 1, title: 'Cat' },
+    business: Record<string, unknown> = { id: 1, name: 'Biz' },
+  ) {
+    await TestBed.configureTestingModule({
+      imports: [CatalogDownloadPage],
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'browser' },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              params: { business: 'b', catalogPath: 'c' },
+              queryParams: {},
+            },
+          },
+        },
+        {
+          provide: BusinessPublicService,
+          useValue: { findBusinessByPath: () => of(business) },
+        },
+        {
+          provide: CatalogPublicService,
+          useValue: { findOneCatalogByPath: () => of(catalog) },
+        },
+        {
+          provide: ProductPublicService,
+          useValue: {
+            getAllByCatalog: () =>
+              of([{ id: 1, title: 'P1' }, { id: 2, title: 'P2' }]),
+          },
+        },
+      ],
+    }).compileComponents();
+    const fix = TestBed.createComponent(CatalogDownloadPage);
+    return fix;
+  }
+
+  it('pdfCardHeight debe ser constante', async () => {
+    const fix = await setupBrowser();
+    expect(fix.componentInstance.pdfCardHeight).toBe('h-100');
+  });
+
+  it('pdfPageMinHeight calcula altura según viewport', async () => {
+    const fix = await setupBrowser();
+    const h = fix.componentInstance.pdfPageMinHeight;
+    expect(h.endsWith('px')).toBe(true);
+    expect(parseInt(h, 10)).toBeGreaterThan(0);
+  });
+
+  it('layout List cambia chunks por página', async () => {
+    const fix = await setupBrowser();
+    const cmp = fix.componentInstance;
+    cmp.layoutMode = 'List';
+    cmp.products = Array.from({ length: 5 }, (_, i) => ({ id: i + 1 })) as any[];
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 1400,
+    });
+    expect(cmp.pdfProductPageChunks.flat().length).toBe(5);
+  });
+
+  it('brandToneLight depende del fondo oscuro', async () => {
+    const fix = await setupBrowser();
+    const cmp = fix.componentInstance;
+    cmp.pageBackgroundGradient = 'linear-gradient(black, black)';
+    cmp.isDarkBackground = true;
+    expect(cmp.brandToneLight).toBe(true);
+  });
+});

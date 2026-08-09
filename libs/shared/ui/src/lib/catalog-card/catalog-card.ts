@@ -58,7 +58,6 @@ export class CatalogCard implements OnInit {
 
   /** Asigna imagen aleatoria si el catálogo no tiene `image` y busca descuento con alcance `CATALOG`. */
   ngOnInit(): void {
-    console.log(this.catalog);
     if (!this.catalog?.image) {
       this.image = this.images[Math.floor(Math.random() * this.images.length)];
     }

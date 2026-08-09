@@ -30,4 +30,16 @@ describe('DraggableImageList', () => {
       imageCodes: ['code2'],
     });
   });
+
+  it('should emit imagesChange when drop reorders items', () => {
+    const emitSpy = jest.spyOn(component.imagesChange, 'emit');
+    component.drop({
+      previousIndex: 0,
+      currentIndex: 1,
+    } as import('@angular/cdk/drag-drop').CdkDragDrop<string[]>);
+    expect(emitSpy).toHaveBeenCalledWith({
+      urls: ['url2.jpg', 'url1.jpg'],
+      imageCodes: ['code2', 'code1'],
+    });
+  });
 });

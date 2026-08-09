@@ -3,6 +3,7 @@ import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   afterNextRender,
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -38,7 +39,7 @@ import {
 } from '@lineup/core';
 import { ButtonModule } from 'primeng/button';
 import { Carousel } from 'primeng/carousel';
-import { ProgressSpinner } from 'primeng/progressspinner';
+import { SkeletonModule } from 'primeng/skeleton';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -69,10 +70,11 @@ interface CarouselBreakpointConfig {
     TranslateModule,
     FormsModule,
     SearchBar,
-    ProgressSpinner,
+    SkeletonModule,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
@@ -126,29 +128,43 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   readonly carouselRemountStandard = signal(0);
   readonly carouselRemountCollections = signal(0);
 
+  /** Dos bloques esqueleto (título + carrusel) alineados con las colecciones típicas. */
+  readonly collectionSkeletonBlocks = [1, 2] as const;
+
+  /** Silueta de fila de cards (business/catalog) dentro del carrusel estándar. */
+  readonly standardSkeletonCards = [1, 2, 3, 4, 5] as const;
+
+  /** Silueta de la parrilla de productos destacados. */
+  readonly productSkeletonCards = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+  /** Pills skeleton de tags del hero. */
+  readonly tagSkeletonPills = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
   private prevNumVisibleStandard = -1;
   private prevNumVisibleCollections = -1;
 
-  tags: TagSchema[] = [];
+  readonly tags = signal<TagSchema[]>([]);
+  readonly products = signal<ProductSchema[]>([]);
+  readonly catalogs = signal<CatalogSchema[]>([]);
+  readonly businesses = signal<BusinessSchema[]>([]);
+  readonly productCollections = signal<ProductCollectionSchema[]>([]);
+  readonly featuredAttempt = signal(false);
+  readonly collectionsAttempt = signal(false);
+  readonly tagsAttempt = signal(false);
 
-  products: ProductSchema[] = [];
-  catalogs: CatalogSchema[] = [];
-  businesses: BusinessSchema[] = [];
-  productCollections: ProductCollectionSchema[] = [];
-  featuredAttempt = false;
-  collectionsAttempt = false;
-
+  /** Alias de compatibilidad para tests / consumidores que leen attempt por sección. */
   get businessesAttempt(): boolean {
-    return this.featuredAttempt;
+    return this.featuredAttempt();
   }
 
   get catalogsAttempt(): boolean {
-    return this.featuredAttempt;
+    return this.featuredAttempt();
   }
 
   get productsAttempt(): boolean {
-    return this.featuredAttempt;
+    return this.featuredAttempt();
   }
+
   private readonly _userPublicService = inject(UserPublicService);
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _utils = inject(UtilsService);
@@ -162,6 +178,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
    * `numVisible` de los carruseles y forzar remount cuando cambia el breakpoint efectivo.
    */
   constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.featuredAttempt.set(true);
+      this.collectionsAttempt.set(true);
+      this.tagsAttempt.set(true);
+    }
     afterNextRender(() => {
       if (!isPlatformBrowser(this.platformId)) return;
       fromEvent(window, 'resize')
@@ -207,7 +228,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     collection: ProductCollectionSchema,
     product: ProductSchema,
   ): boolean {
-    const first = this.productCollections[0];
+    const first = this.productCollections()[0];
     return (
       !!first &&
       first.id === collection.id &&
@@ -217,7 +238,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   /** Primer producto de la parrilla “destacados”. */
   isLeadFeaturedProduct(product: ProductSchema): boolean {
-    return this.products.length > 0 && this.products[0].id === product.id;
+    const products = this.products();
+    return products.length > 0 && products[0].id === product.id;
   }
 
   /**
@@ -232,7 +254,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const file =
-      this.productCollections[0]?.products?.[0]?.productFiles?.[0]?.file;
+      this.productCollections()[0]?.products?.[0]?.productFiles?.[0]?.file;
     if (!file) return;
     const href = getFileThumbnailUrl(file, 'sm');
     if (!href || !/^https?:\/\//i.test(href)) return;
@@ -317,57 +339,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return numVisible;
   }
 
-  /** Carga en una sola petición los negocios, catálogos y productos destacados. */
-  private getFeatured(): void {
-    this.featuredAttempt = true;
-    this._subscription.add(
-      this._userPublicService.featured({ page: 1, limit: 10 }).subscribe({
-        next: (response) => {
-          this.businesses = [
-            ...this.businesses,
-            ...response.featuredBusinesses,
-          ];
-          this.catalogs = [...this.catalogs, ...response.featuredCatalogs];
-          this.products = [...this.products, ...response.featuredProducts];
-          this.featuredAttempt = false;
-        },
-        error: (error) => {
-          console.error(error);
-          this.featuredAttempt = false;
-        },
-      }),
-    );
-  }
-
-  /** Obtiene colecciones de productos para el carrusel agrupado. */
-  private getProductCollections(): void {
-    this.collectionsAttempt = true;
-    this._subscription.add(
-      this._productPublicService.productCollections().subscribe({
-        next: (response) => {
-          this.productCollections = [...this.productCollections, ...response];
-          this.collectionsAttempt = false;
-          this.injectLeadProductImagePreload();
-        },
-        error: (error) => {
-          console.error(error);
-          this.collectionsAttempt = false;
-        },
-      }),
-    );
-  }
-
-  /** Etiquetas principales para navegación rápida hacia búsqueda por tag. */
-  private getMainTags(): void {
-    this._subscription.add(
-      this._productPublicService.getMainTags(8).subscribe({
-        next: (response) => {
-          this.tags = response;
-        },
-      }),
-    );
-  }
-
   /** Navega a la ruta de búsqueda global con el término indicado. */
   onSearchSubmit(query: string): void {
     if (query === '') return;
@@ -377,11 +348,65 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Evita bloquear el SSR de la portada con peticiones HTTP no críticas para el primer render.
-   * Estas cargas se ejecutan solo en navegador tras hidratar.
+   * Tres peticiones en paralelo e independientes: cada una pinta su sección al completar.
    */
   private loadInitialBrowserData(): void {
-    this.getFeatured();
-    this.getProductCollections();
-    this.getMainTags();
+    this.collectionsAttempt.set(true);
+    this.featuredAttempt.set(true);
+    this.tagsAttempt.set(true);
+
+    this._subscription.add(
+      this._productPublicService.productCollections().subscribe({
+        next: (productCollections) => {
+          this.productCollections.update((collections) => [
+            ...collections,
+            ...productCollections,
+          ]);
+          this.collectionsAttempt.set(false);
+          this.injectLeadProductImagePreload();
+        },
+        error: (error) => {
+          console.error(error);
+          this.collectionsAttempt.set(false);
+        },
+      }),
+    );
+
+    this._subscription.add(
+      this._userPublicService.featured({ page: 1, limit: 10 }).subscribe({
+        next: (featured) => {
+          this.businesses.update((businesses) => [
+            ...businesses,
+            ...featured.featuredBusinesses,
+          ]);
+          this.catalogs.update((catalogs) => [
+            ...catalogs,
+            ...featured.featuredCatalogs,
+          ]);
+          this.products.update((products) => [
+            ...products,
+            ...featured.featuredProducts,
+          ]);
+          this.featuredAttempt.set(false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.featuredAttempt.set(false);
+        },
+      }),
+    );
+
+    this._subscription.add(
+      this._productPublicService.getMainTags(8).subscribe({
+        next: (mainTags) => {
+          this.tags.set(mainTags);
+          this.tagsAttempt.set(false);
+        },
+        error: (error) => {
+          console.error(error);
+          this.tagsAttempt.set(false);
+        },
+      }),
+    );
   }
 }

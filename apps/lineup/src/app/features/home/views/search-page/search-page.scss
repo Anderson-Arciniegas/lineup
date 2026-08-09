@@ -13,6 +13,12 @@
     position: fixed;
     top: 50px;
   }
+
+  .search-skeleton-cell {
+    width: 100% !important;
+    height: 24rem !important;
+    border-radius: var(--border-radius, 12px) !important;
+  }
 }
 
 .products-grid {

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { environment } from '@lineup/envs';
 import { Subject } from 'rxjs';
-import { io, type Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 
 import {
   NOTIFICATION_SOCKET_EVENT,
@@ -26,6 +26,7 @@ export class NotificationsSocketService {
   private readonly platformId = inject(PLATFORM_ID);
 
   private socket: Socket | null = null;
+  private pendingConnection: symbol | null = null;
 
   private readonly notificationSubject = new Subject<NotificationSchema>();
   readonly notification$ = this.notificationSubject.asObservable();
@@ -44,7 +45,10 @@ export class NotificationsSocketService {
    * Conecta al namespace con cookies (`withCredentials`).
    * Tras `connect`, emite `notifications` con `{ type, id }` para unirse a la room.
    */
-  connect(profile: NotificationsSessionProfile, entityId: number): void {
+  async connect(
+    profile: NotificationsSessionProfile,
+    entityId: number,
+  ): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -57,39 +61,56 @@ export class NotificationsSocketService {
 
     const base = this.socketBaseUrl();
     const url = `${base}${NOTIFICATION_SOCKET_NAMESPACE}`;
+    const connectionId = Symbol('notifications-socket-connection');
+    this.pendingConnection = connectionId;
     this._status.set('connecting');
 
-    this.socket = io(url, {
+    const socketIoClient = await import('socket.io-client').catch((): null => {
+      if (this.pendingConnection === connectionId) {
+        this._status.set('error');
+      }
+      return null;
+    });
+    if (!socketIoClient) {
+      return;
+    }
+    if (this.pendingConnection !== connectionId) {
+      return;
+    }
+
+    const socket = socketIoClient.io(url, {
       transports: ['websocket', 'polling'],
       withCredentials: true,
     });
+    this.socket = socket;
 
-    this.socket.on('connect', () => {
+    socket.on('connect', () => {
       this._status.set('connected');
       const joinPayload =
         profile === 'user'
           ? { type: 'user' as const, id: entityId }
           : { type: 'business' as const, id: entityId };
-      this.socket?.emit(NOTIFICATION_SOCKET_JOIN_EVENT, joinPayload);
+      socket.emit(NOTIFICATION_SOCKET_JOIN_EVENT, joinPayload);
     });
 
-    this.socket.on('connect_error', () => {
+    socket.on('connect_error', () => {
       this._status.set('error');
     });
 
-    this.socket.on('disconnect', () => {
-      if (this.socket) {
+    socket.on('disconnect', () => {
+      if (this.socket === socket) {
         this._status.set('disconnected');
       }
     });
 
-    this.socket.on(NOTIFICATION_SOCKET_EVENT, (payload: NotificationSchema) => {
+    socket.on(NOTIFICATION_SOCKET_EVENT, (payload: NotificationSchema) => {
       this._lastNotification.set(payload);
       this.notificationSubject.next(payload);
     });
   }
 
   disconnect(): void {
+    this.pendingConnection = null;
     if (this.socket) {
       this.socket.removeAllListeners();
       this.socket.disconnect();

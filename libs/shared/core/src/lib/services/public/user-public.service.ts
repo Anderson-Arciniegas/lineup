@@ -19,6 +19,14 @@ import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchTargetEnum } from '../../enums';
+import type {
+  FeaturedCollectionsSchema,
+  InfinityScrollInput,
+  LoginResponse,
+  PaginatedSearchResults,
+  ProductSearchFiltersInput,
+  SearchResultItem,
+} from '../../models';
 import {
   ChangePasswordInput,
   CreateUserInput,
@@ -28,14 +36,6 @@ import {
   RegisterGoogleInput,
   UpdateUserEmailInput,
   UpdateUserInput,
-} from '../../models';
-import type {
-  FeaturedCollectionsSchema,
-  InfinityScrollInput,
-  LoginResponse,
-  PaginatedSearchResults,
-  ProductSearchFiltersInput,
-  SearchResultItem,
 } from '../../models';
 import { UserSchema } from '../../schemas';
 
@@ -174,7 +174,9 @@ export class UserPublicService {
       .pipe(map((result) => result.data!.recordVisit));
   }
 
-  featured(pagination: InfinityScrollInput): Observable<FeaturedCollectionsSchema> {
+  featured(
+    pagination: InfinityScrollInput,
+  ): Observable<FeaturedCollectionsSchema> {
     return this.apollo
       .use('userAPI')
       .query<{ featured: FeaturedCollectionsSchema }>({
@@ -195,7 +197,7 @@ export class UserPublicService {
   search(
     pagination: InfinityScrollInput,
     target: SearchTargetEnum,
-    productFilters?: ProductSearchFiltersInput | null
+    productFilters?: ProductSearchFiltersInput | null,
   ): Observable<PaginatedSearchResults> {
     const compact = this.compactProductFilters(productFilters);
     return this.apollo
@@ -216,10 +218,12 @@ export class UserPublicService {
         map((result) => {
           const data = result.data.search;
           const normalizedItems = data.items.map((item) =>
-            this.normalizeSearchItem(item as unknown as Record<string, unknown>)
+            this.normalizeSearchItem(
+              item as unknown as Record<string, unknown>,
+            ),
           ) as PaginatedSearchResults['items'];
           return { ...data, items: normalizedItems };
-        })
+        }),
       );
   }
 
@@ -250,7 +254,7 @@ export class UserPublicService {
   }
 
   private compactProductFilters(
-    filters?: ProductSearchFiltersInput | null
+    filters?: ProductSearchFiltersInput | null,
   ): ProductSearchFiltersInput | undefined {
     if (!filters) {
       return undefined;
@@ -277,14 +281,22 @@ export class UserPublicService {
    */
   private normalizeSearchItem(item: Record<string, unknown>): SearchResultItem {
     const description =
-      item['businessDescription'] ?? item['productDescription'] ?? item['description'];
+      item['businessDescription'] ??
+      item['productDescription'] ??
+      item['description'];
     const rawTags =
-      item['businessTags'] ?? item['catalogTags'] ?? item['productTags'] ?? item['tags'];
-    const tags = Array.isArray(rawTags) && rawTags.length > 0 && typeof rawTags[0] === 'object'
-      ? (rawTags as Array<{ tag?: { name?: string } }>)
-          .map((pt) => pt.tag?.name)
-          .filter((n): n is string => n != null)
-      : rawTags;
+      item['businessTags'] ??
+      item['catalogTags'] ??
+      item['productTags'] ??
+      item['tags'];
+    const tags =
+      Array.isArray(rawTags) &&
+      rawTags.length > 0 &&
+      typeof rawTags[0] === 'object'
+        ? (rawTags as Array<{ tag?: { name?: string } }>)
+            .map((pt) => pt.tag?.name)
+            .filter((n): n is string => n != null)
+        : rawTags;
     const rest = { ...item };
     delete rest['businessDescription'];
     delete rest['productDescription'];

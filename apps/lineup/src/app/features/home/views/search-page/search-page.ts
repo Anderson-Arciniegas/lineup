@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -20,20 +28,15 @@ import {
   ProductCard,
   SearchBar,
   SearchFilters,
-  Ui,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
 import { ButtonModule } from 'primeng/button';
-import { Carousel } from 'primeng/carousel';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Tag } from 'primeng/tag';
+import { SkeletonModule } from 'primeng/skeleton';
 import {
   combineLatest,
   filter,
@@ -62,25 +65,31 @@ import {
     DialogModule,
     TranslateModule,
     FormsModule,
-    ProgressSpinner,
+    SkeletonModule,
     SearchBar,
     InfiniteScrollDirective,
   ],
   templateUrl: './search-page.html',
   styleUrl: './search-page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchPage implements OnInit {
+export class SearchPage implements OnInit, OnDestroy {
   visible: boolean;
-  searchQuery = '';
-  items: SearchResultItem[] = [];
-  attempt = false;
-  page = 1;
+  private readonly searchQuerySignal = signal('');
+  private readonly itemsSignal = signal<SearchResultItem[]>([]);
+  private readonly attemptSignal = signal(false);
+
+  /** Celdas de esqueleto mientras `attempt` (misma rejilla que los resultados). */
+  readonly searchSkeletonSlots = [1, 2, 3, 4, 5, 6] as const;
+  private readonly pageSignal = signal(1);
   ref: DynamicDialogRef;
-  noMoreResults: boolean;
-  searchTypeFilter: SearchTargetEnum = SearchTargetEnum.ALL;
-  productFilters: ProductSearchFiltersInput = {};
+  private readonly noMoreResultsSignal = signal(false);
+  private readonly searchTypeFilterSignal = signal<SearchTargetEnum>(
+    SearchTargetEnum.ALL,
+  );
+  private readonly productFiltersSignal = signal<ProductSearchFiltersInput>({});
   /** Desde `data.searchMode` de la ruta (`search` vs `tag`). */
-  searchMode: 'search' | 'tag' = 'search';
+  private readonly searchModeSignal = signal<'search' | 'tag'>('search');
   private readonly searchTrigger$ = new Subject<void>();
   private readonly _userService = inject(UserPublicService);
   private readonly _productPublicService = inject(ProductPublicService);
@@ -92,6 +101,38 @@ export class SearchPage implements OnInit {
 
   private readonly _subscription = new Subscription();
 
+  get searchQuery(): string {
+    return this.searchQuerySignal();
+  }
+
+  get items(): SearchResultItem[] {
+    return this.itemsSignal();
+  }
+
+  get attempt(): boolean {
+    return this.attemptSignal();
+  }
+
+  get page(): number {
+    return this.pageSignal();
+  }
+
+  get noMoreResults(): boolean {
+    return this.noMoreResultsSignal();
+  }
+
+  get searchTypeFilter(): SearchTargetEnum {
+    return this.searchTypeFilterSignal();
+  }
+
+  get productFilters(): ProductSearchFiltersInput {
+    return this.productFiltersSignal();
+  }
+
+  get searchMode(): 'search' | 'tag' {
+    return this.searchModeSignal();
+  }
+
   /**
    * Configura el pipeline reactivo de búsqueda (`searchTrigger$` + `switchMap`)
    * y reacciona a `paramMap` / `data` para alternar modo texto vs tag.
@@ -102,7 +143,7 @@ export class SearchPage implements OnInit {
         .pipe(
           filter(() => !this.noMoreResults),
           tap(() => {
-            this.attempt = true;
+            this.attemptSignal.set(true);
           }),
           switchMap(() => {
             if (this.searchMode === 'tag') {
@@ -110,7 +151,7 @@ export class SearchPage implements OnInit {
                 .getAllByTag({ page: this.page, limit: 10 }, this.searchQuery)
                 .pipe(
                   finalize(() => {
-                    this.attempt = false;
+                    this.attemptSignal.set(false);
                   }),
                 );
             }
@@ -122,7 +163,7 @@ export class SearchPage implements OnInit {
               )
               .pipe(
                 finalize(() => {
-                  this.attempt = false;
+                  this.attemptSignal.set(false);
                 }),
               );
           }),
@@ -130,12 +171,12 @@ export class SearchPage implements OnInit {
         .subscribe({
           next: (results) => {
             if (results.items.length > 0) {
-              this.page++;
+              this.pageSignal.update((page) => page + 1);
             } else {
-              this.noMoreResults = true;
+              this.noMoreResultsSignal.set(true);
             }
 
-            this.items = [...this.items, ...results.items];
+            this.itemsSignal.update((items) => [...items, ...results.items]);
           },
           error: (error) => {
             console.error(error);
@@ -148,11 +189,13 @@ export class SearchPage implements OnInit {
         this._activatedRoute.paramMap,
         this._activatedRoute.data,
       ]).subscribe(([params, data]) => {
-        this.searchQuery = params.get('query') ?? params.get('tag') ?? '';
-        this.searchMode = (data['searchMode'] as 'search' | 'tag') ?? 'search';
-        this.items = [];
-        this.noMoreResults = false;
-        this.page = 1;
+        this.searchQuerySignal.set(
+          params.get('query') ?? params.get('tag') ?? '',
+        );
+        this.searchModeSignal.set(
+          (data['searchMode'] as 'search' | 'tag') ?? 'search',
+        );
+        this.resetSearchState();
         if (this.searchQuery) {
           this.getSearchResults();
         }
@@ -163,14 +206,12 @@ export class SearchPage implements OnInit {
   /** Navega a la URL de búsqueda y reinicia paginación y resultados. */
   onSearchSubmit(query: string): void {
     if (query === '') return;
-    this.searchQuery = query;
+    this.searchQuerySignal.set(query);
     this._utils.navigate([
       AppConfigService.config.routes.search,
       this.searchQuery,
     ]);
-    this.items = [];
-    this.noMoreResults = false;
-    this.page = 1;
+    this.resetSearchState();
     this.getSearchResults();
   }
 
@@ -205,17 +246,25 @@ export class SearchPage implements OnInit {
 
   /** Aplica objetivo de búsqueda y filtros de producto devueltos por el modal. */
   setFilters(payload: SearchFiltersApplyPayload): void {
-    this.searchTypeFilter = payload.target;
-    this.productFilters = { ...payload.productFilters };
+    this.searchTypeFilterSignal.set(payload.target);
+    this.productFiltersSignal.set({ ...payload.productFilters });
 
-    this.items = [];
-    this.noMoreResults = false;
-    this.page = 1;
+    this.resetSearchState();
     this.getSearchResults();
   }
 
   /** Handler de infinite scroll: pide la siguiente página si aún hay resultados. */
   onScroll(): void {
     this.getSearchResults();
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
+  private resetSearchState(): void {
+    this.itemsSignal.set([]);
+    this.noMoreResultsSignal.set(false);
+    this.pageSignal.set(1);
   }
 }

@@ -105,5 +105,93 @@ describe('CreateCatalogPage', () => {
       component.createCatalog();
       expect(createCatalog).not.toHaveBeenCalled();
     });
+
+    it('no debe enviar sin imagen', () => {
+      component.createCatalogForm.patchValue({ catalogName: 'Cat' });
+      component.imgCode = '';
+      component.createCatalog();
+      expect(createCatalog).not.toHaveBeenCalled();
+    });
+
+    it('addTag y removeTag gestionan etiquetas', () => {
+      component.createCatalogForm.patchValue({ tag: ' verano , VERANO ' });
+      component.addTag();
+      expect(component.tags).toEqual(['verano']);
+      component.removeTag(0);
+      expect(component.tags).toEqual([]);
+    });
+
+    it('setColor actualiza hexColor', () => {
+      component.setColor({ value: '#ff0000' });
+      expect(component.createCatalogForm.get('hexColor')?.value).toBe('#ff0000');
+    });
+  });
+
+  describe('modo edición', () => {
+    let updateCatalog: jest.Mock;
+    let findOneCatalogByPath: jest.Mock;
+
+    beforeEach(async () => {
+      updateCatalog = jest.fn(() => of({ id: 2, path: 'edit-cat' }));
+      findOneCatalogByPath = jest.fn(() =>
+        of({
+          id: 2,
+          title: 'Cat existente',
+          path: 'edit-cat',
+          hexColor: '#aabbcc',
+          tags: ['tag1'],
+          image: { name: 'img-code', url: 'https://img/x.png' },
+        }),
+      );
+      createCatalog = jest.fn();
+      navigate = jest.fn();
+      await TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [CreateCatalogPage, TranslateModule.forRoot(), HttpClientTestingModule],
+        providers: [
+          { provide: ActivatedRoute, useValue: { snapshot: { params: { catalogPath: 'edit-cat' } } } },
+          TranslateService,
+          TranslateStore,
+          { provide: DialogService, useValue: { open: jest.fn(() => ({ onClose: of(undefined) })) } },
+          { provide: MessageService, useValue: { add: jest.fn() } },
+          { provide: Apollo, useValue: createApolloMock().mock },
+          { provide: AuthStore, useValue: { business: () => ({ id: 10, path: 'biz' }) } },
+          {
+            provide: CatalogPrivateService,
+            useValue: { createCatalog, findOneCatalogByPath, updateCatalog },
+          },
+          { provide: BusinessPrivateService, useValue: { getBusinessByPath: jest.fn() } },
+          {
+            provide: BusinessApiFilePrivateService,
+            useValue: { post: jest.fn(() => of({})) },
+          },
+          {
+            provide: UtilsService,
+            useValue: {
+              normalizeSpaces: (s: string) => String(s ?? '').trim(),
+              navigate,
+              blobToFile: jest.fn(),
+              getExtensionFile: jest.fn(() => 'png'),
+            },
+          },
+        ],
+      }).compileComponents();
+      fixture = TestBed.createComponent(CreateCatalogPage);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('debe cargar catálogo y rellenar formulario', () => {
+      expect(findOneCatalogByPath).toHaveBeenCalledWith('edit-cat');
+      expect(component.catalog?.title).toBe('Cat existente');
+      expect(component.tags).toEqual(['tag1']);
+    });
+
+    it('debe actualizar catálogo existente', () => {
+      component.createCatalogForm.patchValue({ catalogName: 'Nuevo título' });
+      component.createCatalog();
+      expect(updateCatalog).toHaveBeenCalled();
+      expect(navigate).toHaveBeenCalled();
+    });
   });
 });
