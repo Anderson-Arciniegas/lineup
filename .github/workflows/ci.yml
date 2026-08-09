@@ -46,6 +46,11 @@ jobs:
       # - run: npx nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       # When you enable task distribution, run the e2e-ci task instead of e2e
-      - run: npx nx affected -t lint test build e2e --verbose
+      # Lint / build / e2e (sin config ci)
+      - run: npx nx affected -t lint build e2e --verbose
+      # Unit tests with coverage thresholds (≥80%)
+      - run: npx nx affected -t test --configuration=ci --verbose
+      # Gate: mapa e2e journey ≥80% de checkboxes marcados
+      - run: node scripts/check-e2e-journey-coverage.mjs
 
     

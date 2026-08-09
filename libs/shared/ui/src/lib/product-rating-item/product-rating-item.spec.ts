@@ -33,7 +33,48 @@ describe('ProductRatingItem', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debe usar username como nombre visible', () => {
+    expect(component.creatorDisplayName).toBe('testuser');
+  });
+
+  it('debe concatenar nombre y apellido sin username', () => {
+    component.rating = {
+      ...component.rating,
+      creationUser: {
+        ...component.rating.creationUser!,
+        username: '',
+      },
+    };
+    expect(component.creatorDisplayName).toBe('Test User');
+  });
+
+  it('debe devolver undefined sin imagen de perfil', () => {
+    expect(component.creatorProfileImageUrl).toBeUndefined();
+  });
+
+  it('debe devolver URL de avatar recortada', () => {
+    component.rating = {
+      ...component.rating,
+      creationUser: {
+        ...component.rating.creationUser!,
+        profileImage: { url: '  https://cdn.test/avatar.png  ' } as never,
+      },
+    };
+    expect(component.creatorProfileImageUrl).toBe('https://cdn.test/avatar.png');
+  });
+
+  it('debe ignorar URL de avatar vacía', () => {
+    component.rating = {
+      ...component.rating,
+      creationUser: {
+        ...component.rating.creationUser!,
+        profileImage: { url: '   ' } as never,
+      },
+    };
+    expect(component.creatorProfileImageUrl).toBeUndefined();
   });
 });

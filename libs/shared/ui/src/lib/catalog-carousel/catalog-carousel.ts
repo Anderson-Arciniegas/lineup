@@ -6,10 +6,9 @@ import {
   EventEmitter,
   inject,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
-import { generateRandomProducts, Product, ProductSchema } from '@lineup/core'; // Ajusta @your-org según tu scope
+import { ProductSchema } from '@lineup/core';
 import { FastAverageColor } from 'fast-average-color';
 import { Carousel } from 'primeng/carousel';
 import { ImageModule } from 'primeng/image';
@@ -24,59 +23,36 @@ import { CatalogCarouselItem } from '../catalog-carousel-item/catalog-carousel-i
   templateUrl: './catalog-carousel.html',
   styleUrl: './catalog-carousel.scss',
 })
-export class CatalogCarousel implements OnInit, AfterViewInit {
+export class CatalogCarousel implements AfterViewInit {
   @Input() products: ProductSchema[] = [];
   @Input() predefinedColor: boolean;
   @Input() useLightText?: boolean;
   @Output() setColor = new EventEmitter<string>();
-  responsiveOptions: any[] | undefined;
-
-  productsExamples: Product[] = [];
-  bgColor: string | undefined;
-  images: string[] = [
-    'assets/images/products/headphones-min.webp',
-    'assets/images/products/makeup.webp',
-    'assets/images/products/shoes-min.webp',
-    'assets/images/products/phone-min.webp',
-    'assets/images/products/skincare-min.webp',
-    'assets/images/products/tomato-min.webp',
-    'assets/images/products/camera.webp',
-    'assets/images/products/cooler.webp',
-    'assets/images/products/laptop.webp',
+  responsiveOptions = [
+    {
+      breakpoint: '1400px',
+      numVisible: 1,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '1199px',
+      numVisible: 1,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '767px',
+      numVisible: 1,
+      numScroll: 1,
+    },
+    {
+      breakpoint: '575px',
+      numVisible: 1,
+      numScroll: 1,
+    },
   ];
+  bgColor: string | undefined;
 
   private _cdr = inject(ChangeDetectorRef);
-
-  /** Configura breakpoints del carousel y datos de ejemplo si se usan placeholders. */
-  ngOnInit() {
-    this.responsiveOptions = [
-      {
-        breakpoint: '1400px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '1199px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '767px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '575px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-    ];
-
-    this.productsExamples = generateRandomProducts(10);
-    this.productsExamples.forEach((product, index) => {
-      product.image = this.images[index % this.images.length];
-    });
-  }
 
   /** Dispara cálculo de color para la primera página visible. */
   ngAfterViewInit(): void {

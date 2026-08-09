@@ -2,7 +2,6 @@ export * from './config';
 export * from './constants';
 export * from './enums';
 export * from './interfaces';
-export * from './mocks';
 export * from './models';
 export * from './pipes';
 export * from './schemas';

@@ -1,27 +1,71 @@
-// Reserva espacio bajo el pliegue mientras @defer espera al viewport (menos CLS).
-.home-defer-placeholder {
+// Sección bajo el hero: misma altura mínima en @placeholder y en contenido diferido (menos CLS al activar @defer).
+.home-feed-section {
   width: 100%;
   box-sizing: border-box;
-  border-radius: var(--border-radius, 8px);
-  background: color-mix(in srgb, var(--p-surface-100, #f4f4f5) 85%, transparent);
 
   &--collections {
-    min-height: 34rem;
+    min-height: 46rem;
 
     @media (min-width: 640px) {
-      min-height: 44rem;
+      min-height: 56rem;
     }
   }
 
-  &--carousel {
-    min-height: 20rem;
+  // Título (≈2.75–3rem) + gap-5 + ranura estándar (coincide con .home-carousel-slot--standard).
+  &--standard {
+    min-height: calc(2.75rem + 1.25rem + 19rem);
+
+    @media (min-width: 640px) {
+      min-height: calc(3rem + 1.25rem + 26rem);
+    }
+  }
+
+  // pt-5 / sm:pt-10 + título + gap + ranura productos.
+  &--products {
+    min-height: calc(1.25rem + 2.75rem + 1.25rem + 22rem);
+
+    @media (min-width: 640px) {
+      min-height: calc(2.5rem + 3rem + 1.25rem + 34rem);
+    }
+  }
+}
+
+.home-section-heading {
+  flex-shrink: 0;
+  min-height: 2.75rem;
+  line-height: 1.25;
+
+  @media (min-width: 640px) {
+    min-height: 3rem;
+  }
+}
+
+// Contenedor de altura fija: mismo hueco en @placeholder, mientras carga HTTP y con el carrusel cargado (menos CLS).
+.home-carousel-slot {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+
+  // Dos colecciones esqueleto (~2 × título + carrusel + separación).
+  &--collections {
+    min-height: 46rem;
+
+    @media (min-width: 640px) {
+      min-height: 56rem;
+    }
+  }
+
+  &--standard {
+    min-height: 19rem;
 
     @media (min-width: 640px) {
       min-height: 26rem;
     }
   }
 
-  &--grid {
+  &--products {
     min-height: 22rem;
 
     @media (min-width: 640px) {
@@ -44,6 +88,32 @@
   .home-tags-placeholder {
     min-height: 3.5rem;
   }
+}
+
+// Siluetas de skeleton alineadas con cards / tags reales.
+.home-skeleton-carousel-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.home-skeleton-carousel-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.home-skeleton-indicators {
+  flex-shrink: 0;
+  height: 1.75rem;
+  margin-top: 0.25rem;
 }
 
 ::ng-deep {
@@ -91,15 +161,6 @@
     }
   }
 
-  // .p-carousel-item {
-  //   display: flex;
-  //   flex-direction: row;
-  //   align-items: center;
-  //   justify-content: center;
-  //   box-sizing: border-box !important;
-  //   padding: 6px;
-  // }
-
   .input {
     border-radius: var(--border-radius);
     border: 1px solid var(--p-primary-200);
@@ -110,6 +171,58 @@
 
   .p-carousel-indicator-button {
     border-radius: 50% !important;
+  }
+
+  // Esqueleto genérico (carruseles de colección).
+  .home-slot-skeleton {
+    width: 100% !important;
+    flex: 1 1 auto;
+    border-radius: var(--border-radius, 12px) !important;
+  }
+
+  // Franja de un carrusel de colección (una por bloque; van dos en la plantilla).
+  .home-slot-skeleton--collection-row {
+    width: 100% !important;
+    min-height: 17rem !important;
+
+    @media (min-width: 640px) {
+      min-height: 22rem !important;
+    }
+  }
+
+  .home-skeleton-card {
+    border-radius: var(--border-radius, 12px) !important;
+  }
+
+  // Aproxima lib-business-card / lib-catalog-card: w-45 sm:w-60, h-55 sm:h-70.
+  .home-skeleton-card--standard {
+    width: 11.25rem !important;
+    height: 13.75rem !important;
+
+    @media (min-width: 640px) {
+      width: 15rem !important;
+      height: 17.5rem !important;
+    }
+  }
+
+  // Aproxima lib-product-card de la parrilla: w-65 / h-100.
+  .home-skeleton-card--product {
+    width: 16.25rem !important;
+    height: 25rem !important;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+
+    @media (min-width: 640px) {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  // Pills de tags (min-w-30, small rounded).
+  .home-skeleton-tag {
+    width: 7.5rem !important;
+    height: 2rem !important;
+    border-radius: 9999px !important;
   }
 
   .iconfield {

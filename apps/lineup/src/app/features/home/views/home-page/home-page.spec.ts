@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import {
   AppConfigService,
@@ -75,7 +75,9 @@ describe('HomePage', () => {
       expect(component.businessesAttempt).toBe(false);
       expect(component.catalogsAttempt).toBe(false);
       expect(component.productsAttempt).toBe(false);
-      expect(component.collectionsAttempt).toBe(false);
+      expect(component.collectionsAttempt()).toBe(false);
+      expect(component.featuredAttempt()).toBe(false);
+      expect(component.tagsAttempt()).toBe(false);
     });
   });
 
@@ -102,9 +104,39 @@ describe('HomePage', () => {
    */
   describe('fewerItemsThanCarouselViewport', () => {
     it('debe devolver false sin ítems', () => {
+      expect(component.fewerItemsThanCarouselViewport(0, 'standard')).toBe(
+        false,
+      );
+    });
+
+    it('debe devolver true si hay menos ítems que numVisible', () => {
+      component.products.set([{ id: 1 } as never]);
+      expect(component.fewerItemsThanCarouselViewport(1, 'standard')).toBe(true);
+    });
+  });
+
+  describe('isLeadFeaturedProduct', () => {
+    it('debe identificar el primer producto destacado', () => {
+      component.products.set([{ id: 10 }, { id: 11 }] as never[]);
+      expect(component.isLeadFeaturedProduct({ id: 10 } as never)).toBe(true);
+      expect(component.isLeadFeaturedProduct({ id: 11 } as never)).toBe(false);
+    });
+  });
+
+  describe('isLeadCollectionProduct', () => {
+    it('debe identificar el primer producto de la primera colección', () => {
+      component.productCollections.set([
+        {
+          id: 1,
+          products: [{ id: 100 }],
+        },
+      ] as never[]);
       expect(
-        component.fewerItemsThanCarouselViewport(0, 'standard'),
-      ).toBe(false);
+        component.isLeadCollectionProduct(
+          { id: 1, products: [{ id: 100 }] } as never,
+          { id: 100 } as never,
+        ),
+      ).toBe(true);
     });
   });
 });

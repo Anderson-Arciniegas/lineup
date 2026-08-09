@@ -1,8 +1,60 @@
 <section
   class="flex flex-col gap-6 sm:gap-10 items-center justify-start w-full my-1 pt-1 pb-30 container"
 >
+  <ng-template #collectionsSkeletonTpl>
+    <div class="flex flex-col gap-10 sm:gap-12 w-full">
+      @for (block of collectionSkeletonBlocks; track block) {
+      <div
+        class="flex flex-col items-start justify-center w-full box-border gap-5"
+      >
+        <div class="home-section-heading pl-5 sm:pl-10 w-full box-border">
+          <p-skeleton
+            borderRadius="30px"
+            height="3rem"
+            width="min(18rem, 72%)"
+          />
+        </div>
+        <div class="card w-10/10 w-full">
+          <p-skeleton
+            styleClass="home-slot-skeleton home-slot-skeleton--collection-row"
+          />
+        </div>
+      </div>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #standardCarouselSkeletonTpl>
+    <div class="home-skeleton-carousel-row" aria-hidden="true">
+      <div class="home-skeleton-carousel-track">
+        @for (card of standardSkeletonCards; track card) {
+        <div
+          class="flex flex-row items-center justify-center my-2 sm:my-4 shrink-0"
+        >
+          <p-skeleton
+            styleClass="home-skeleton-card home-skeleton-card--standard"
+          />
+        </div>
+        }
+      </div>
+      <div class="home-skeleton-indicators"></div>
+    </div>
+  </ng-template>
+
+  <ng-template #productsGridSkeletonTpl>
+    <div class="products-grid" aria-hidden="true">
+      @for (card of productSkeletonCards; track card) {
+      <div class="w-full flex flex-col items-center justify-center">
+        <p-skeleton
+          styleClass="home-skeleton-card home-skeleton-card--product"
+        />
+      </div>
+      }
+    </div>
+  </ng-template>
+
   <section
-    class="py-6 sm:py-8 sm:py-14 px-4 box-border w-full flex flex-col gap-14 items-center justify-start"
+    class="home-hero py-6 sm:py-8 sm:py-14 px-4 box-border w-full flex flex-col gap-14 items-center justify-start"
   >
     <div
       class="w-full flex flex-col items-center justify-center gap-2 sm:gap-6"
@@ -11,19 +63,21 @@
         <div>
           <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
             {{ 'searchPage.discoverLocalBusinessesAndCuratedCatalogs' |
-            translate}}
+            translate }}
           </h2>
         </div>
         <div>
           <h3 class="text-md md:text-xl lg:text-3xl">
-            {{ 'searchPage.findTheProductsYouLoveFastAndEasy' | translate}}
+            {{ 'searchPage.findTheProductsYouLoveFastAndEasy' | translate }}
           </h3>
         </div>
       </div>
       <div class="flex flex-col items-center justify-center w-full gap-6">
         <div class="hidden sm:block w-full home-tags-placeholder">
           <div class="flex flex-wrap gap-2 w-full items-center justify-center">
-            @for (tag of tags; track tag.id) {
+            @if (tagsAttempt()) { @for (pill of tagSkeletonPills; track pill) {
+            <p-skeleton styleClass="home-skeleton-tag" />
+            } } @else { @for (tag of tags(); track tag.id) {
             <lib-button
               width="min-w-30"
               [label]="tag.name"
@@ -33,7 +87,7 @@
               [size]="'small'"
             >
             </lib-button>
-            }
+            } }
           </div>
         </div>
         <div
@@ -48,211 +102,257 @@
     </div>
   </section>
 
-  @defer (on idle) {
-  @if (collectionsAttempt) {
-  <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-    <p-progress-spinner
-      strokeWidth="4"
-      [style]="{ width: '100px', height: '100px' }"
-    />
-  </div>
-  } @else {
-  @for (productCollection of productCollections; track productCollection.id) {
+  @defer (on viewport) {
   <div
-    class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
+    class="home-feed-section home-feed-section--collections w-full px-1 sm:px-4 box-border"
   >
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
-      {{ productCollection.title }}
-    </h3>
     <div
-      class="card w-10/10 home-carousel"
-      [class.home-carousel--few]="
-        fewerItemsThanCarouselViewport(
-          productCollection.products.length,
-          'collections'
-        )
-      "
+      class="home-carousel-slot home-carousel-slot--collections w-full box-border"
+      [attr.aria-busy]="collectionsAttempt() ? true : null"
     >
-      @for (remount of [carouselRemountCollections()]; track remount) {
-      <p-carousel
-        [value]="productCollection.products"
-        [circular]="
-          productCollection.products.length >= carouselNumVisibleCollections()
-        "
-        [numVisible]="carouselNumVisibleCollections()"
-        [numScroll]="1"
-        [showIndicators]="true"
-        [autoplayInterval]="6000"
-      >
-        <ng-template let-product #item>
-          <div
-            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+      @if (collectionsAttempt()) {
+      <ng-container *ngTemplateOutlet="collectionsSkeletonTpl" />
+      } @else {
+      <div class="flex flex-col gap-10 sm:gap-12 w-full">
+        @for (productCollection of productCollections(); track
+        productCollection.id) {
+        <div
+          class="flex flex-col items-start justify-center w-full box-border gap-5"
+        >
+          <h3
+            class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
           >
-            <lib-product-card
-              class="cursor-pointer w-54 md:w-65"
-              [width]="'w-54 md:w-65'"
-              [height]="'h-80 md:h-100'"
-              [imageFetchPriority]="
-                isLeadCollectionProduct(productCollection, product)
+            {{ productCollection.title }}
+          </h3>
+          <div
+            class="card w-10/10 home-carousel"
+            [class.home-carousel--few]="
+              fewerItemsThanCarouselViewport(
+                productCollection.products.length,
+                'collections'
+              )
+            "
+          >
+            @for (remount of [carouselRemountCollections()]; track remount) {
+            <p-carousel
+              [value]="productCollection.products"
+              [circular]="
+                productCollection.products.length >=
+                carouselNumVisibleCollections()
               "
-              [product]="product"
-            ></lib-product-card>
+              [numVisible]="carouselNumVisibleCollections()"
+              [numScroll]="1"
+              [showIndicators]="true"
+              [autoplayInterval]="6000"
+            >
+              <ng-template let-product #item>
+                <div
+                  class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+                >
+                  <lib-product-card
+                    class="cursor-pointer w-54 md:w-65"
+                    [width]="'w-54 md:w-65'"
+                    [height]="'h-80 md:h-100'"
+                    [imageFetchPriority]="
+                      isLeadCollectionProduct(productCollection, product)
+                    "
+                    [product]="product"
+                  ></lib-product-card>
+                </div>
+              </ng-template>
+            </p-carousel>
+            }
           </div>
-        </ng-template>
-      </p-carousel>
-      }
-    </div>
-  </div>
-  }
-  }
-  } @placeholder {
-  <div
-    class="home-defer-placeholder home-defer-placeholder--collections"
-    aria-hidden="true"
-  ></div>
-  }
-
-  <div
-    class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
-  >
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
-      {{ 'general.featuredBusinesses' | translate }}
-    </h3>
-    @defer (on idle) {
-    @if (featuredAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } @else {
-    <div
-      class="card w-10/10 home-carousel"
-      [class.home-carousel--few]="
-        fewerItemsThanCarouselViewport(businesses.length, 'standard')
-      "
-    >
-      @for (remount of [carouselRemountStandard()]; track remount) {
-      <p-carousel
-        [value]="businesses"
-        [circular]="businesses.length >= carouselNumVisibleStandard()"
-        [numVisible]="carouselNumVisibleStandard()"
-        [numScroll]="1"
-        [autoplayInterval]="6000"
-        [showIndicators]="true"
-      >
-        <ng-template let-business #item>
-          <div
-            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
-          >
-            <lib-business-card
-              class="cursor-pointer w-45 sm:w-60"
-              [width]="'w-45 sm:w-60'"
-              [height]="'h-55 sm:h-70'"
-              [business]="business"
-            ></lib-business-card>
-          </div>
-        </ng-template>
-      </p-carousel>
-      }
-    </div>
-    }
-    } @placeholder {
-    <div
-      class="home-defer-placeholder home-defer-placeholder--carousel"
-      aria-hidden="true"
-    ></div>
-    }
-  </div>
-  <div
-    class="flex flex-col items-start justify-center w-full px-4 box-border gap-5"
-  >
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
-      {{ 'general.featuredCatalogs' | translate }}
-    </h3>
-    @defer (on idle) {
-    @if (featuredAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } @else {
-    <div
-      class="card w-10/10 home-carousel"
-      [class.home-carousel--few]="
-        fewerItemsThanCarouselViewport(catalogs.length, 'standard')
-      "
-    >
-      @for (remount of [carouselRemountStandard()]; track remount) {
-      <p-carousel
-        [value]="catalogs"
-        [circular]="catalogs.length >= carouselNumVisibleStandard()"
-        [numVisible]="carouselNumVisibleStandard()"
-        [numScroll]="1"
-        [autoplayInterval]="6000"
-        [showIndicators]="true"
-      >
-        <ng-template let-catalog #item>
-          <div
-            class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
-          >
-            <lib-catalog-card
-              class="cursor-pointer w-45 sm:w-60"
-              [width]="'w-45 sm:w-60'"
-              [height]="'h-55 sm:h-70'"
-              [catalog]="catalog"
-            ></lib-catalog-card>
-          </div>
-        </ng-template>
-      </p-carousel>
-      }
-    </div>
-    }
-    } @placeholder {
-    <div
-      class="home-defer-placeholder home-defer-placeholder--carousel"
-      aria-hidden="true"
-    ></div>
-    }
-  </div>
-
-  <div
-    class="flex flex-col items-start justify-center gap-5 w-full px-4 pt-5 sm:pt-10 box-border"
-  >
-    <h3 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
-      {{ 'general.featuredProducts' | translate }}
-    </h3>
-    @defer (on idle) {
-    @if (featuredAttempt) {
-    <div class="flex flex-row items-center justify-center p-10 mt-10 w-full">
-      <p-progress-spinner
-        strokeWidth="4"
-        [style]="{ width: '100px', height: '100px' }"
-      />
-    </div>
-    } @else {
-    <div class="products-grid">
-      @for (product of products; track product.id) {
-      <div class="w-full flex flex-col items-center justify-center">
-        <lib-product-card
-          class="my-1 sm:my-3"
-          [width]="'w-65'"
-          [height]="'h-100'"
-          [imageFetchPriority]="isLeadFeaturedProduct(product)"
-          [product]="product"
-        ></lib-product-card>
+        </div>
+        }
       </div>
       }
     </div>
-    }
-    } @placeholder {
-    <div
-      class="home-defer-placeholder home-defer-placeholder--grid"
-      aria-hidden="true"
-    ></div>
-    }
   </div>
+  } @placeholder {
+  <div
+    class="home-feed-section home-feed-section--collections w-full px-1 sm:px-4 box-border"
+    aria-hidden="true"
+  >
+    <div
+      class="home-carousel-slot home-carousel-slot--collections w-full box-border"
+    >
+      <ng-container *ngTemplateOutlet="collectionsSkeletonTpl" />
+    </div>
+  </div>
+  } @defer (on viewport) {
+  <div
+    class="home-feed-section home-feed-section--standard flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredBusinesses' | translate }}
+    </h3>
+    <div
+      class="home-carousel-slot home-carousel-slot--standard w-full card w-10/10"
+      [attr.aria-busy]="featuredAttempt() ? true : null"
+    >
+      @if (featuredAttempt()) {
+      <ng-container *ngTemplateOutlet="standardCarouselSkeletonTpl" />
+      } @else {
+      <div
+        class="home-carousel"
+        [class.home-carousel--few]="
+          fewerItemsThanCarouselViewport(businesses().length, 'standard')
+        "
+      >
+        @for (remount of [carouselRemountStandard()]; track remount) {
+        <p-carousel
+          [value]="businesses()"
+          [circular]="businesses().length >= carouselNumVisibleStandard()"
+          [numVisible]="carouselNumVisibleStandard()"
+          [numScroll]="1"
+          [showIndicators]="true"
+        >
+          <ng-template let-business #item>
+            <div
+              class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+            >
+              <lib-business-card
+                class="cursor-pointer w-45 sm:w-60"
+                [width]="'w-45 sm:w-60'"
+                [height]="'h-55 sm:h-70'"
+                [business]="business"
+              ></lib-business-card>
+            </div>
+          </ng-template>
+        </p-carousel>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  } @placeholder {
+  <div
+    class="home-feed-section home-feed-section--standard flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+    aria-hidden="true"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredBusinesses' | translate }}
+    </h3>
+    <div
+      class="home-carousel-slot home-carousel-slot--standard w-full card w-10/10"
+    >
+      <ng-container *ngTemplateOutlet="standardCarouselSkeletonTpl" />
+    </div>
+  </div>
+  } @defer (on viewport) {
+  <div
+    class="home-feed-section home-feed-section--standard flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredCatalogs' | translate }}
+    </h3>
+    <div
+      class="home-carousel-slot home-carousel-slot--standard w-full card w-10/10"
+      [attr.aria-busy]="featuredAttempt() ? true : null"
+    >
+      @if (featuredAttempt()) {
+      <ng-container *ngTemplateOutlet="standardCarouselSkeletonTpl" />
+      } @else {
+      <div
+        class="home-carousel"
+        [class.home-carousel--few]="
+          fewerItemsThanCarouselViewport(catalogs().length, 'standard')
+        "
+      >
+        @for (remount of [carouselRemountStandard()]; track remount) {
+        <p-carousel
+          [value]="catalogs()"
+          [circular]="catalogs().length >= carouselNumVisibleStandard()"
+          [numVisible]="carouselNumVisibleStandard()"
+          [numScroll]="1"
+          [showIndicators]="true"
+        >
+          <ng-template let-catalog #item>
+            <div
+              class="flex flex-row items-center justify-center my-2 sm:my-4 lg:min-w-70"
+            >
+              <lib-catalog-card
+                class="cursor-pointer w-45 sm:w-60"
+                [width]="'w-45 sm:w-60'"
+                [height]="'h-55 sm:h-70'"
+                [catalog]="catalog"
+              ></lib-catalog-card>
+            </div>
+          </ng-template>
+        </p-carousel>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  } @placeholder {
+  <div
+    class="home-feed-section home-feed-section--standard flex flex-col items-start justify-center w-full px-4 box-border gap-5"
+    aria-hidden="true"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredCatalogs' | translate }}
+    </h3>
+    <div
+      class="home-carousel-slot home-carousel-slot--standard w-full card w-10/10"
+    >
+      <ng-container *ngTemplateOutlet="standardCarouselSkeletonTpl" />
+    </div>
+  </div>
+  } @defer (on viewport) {
+  <div
+    class="home-feed-section home-feed-section--products flex flex-col items-start justify-center gap-5 w-full px-4 pt-5 sm:pt-10 box-border"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredProducts' | translate }}
+    </h3>
+    <div
+      class="home-carousel-slot home-carousel-slot--products w-full"
+      [attr.aria-busy]="featuredAttempt() ? true : null"
+    >
+      @if (featuredAttempt()) {
+      <ng-container *ngTemplateOutlet="productsGridSkeletonTpl" />
+      } @else {
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+        <div class="w-full flex flex-col items-center justify-center">
+          <lib-product-card
+            class="my-1 sm:my-3"
+            [width]="'w-65'"
+            [height]="'h-100'"
+            [imageFetchPriority]="isLeadFeaturedProduct(product)"
+            [product]="product"
+          ></lib-product-card>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  } @placeholder {
+  <div
+    class="home-feed-section home-feed-section--products flex flex-col items-start justify-center gap-5 w-full px-4 pt-5 sm:pt-10 box-border"
+    aria-hidden="true"
+  >
+    <h3
+      class="home-section-heading font-medium text-xl sm:text-3xl pl-5 sm:pl-10"
+    >
+      {{ 'general.featuredProducts' | translate }}
+    </h3>
+    <div class="home-carousel-slot home-carousel-slot--products w-full">
+      <ng-container *ngTemplateOutlet="productsGridSkeletonTpl" />
+    </div>
+  </div>
+  }
 </section>

@@ -1,18 +1,16 @@
-
 import { TranslateLoader } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { en } from './en';
-import { es } from './es';
+import { from, Observable } from 'rxjs';
 
 export class UniversalTranslateLoader implements TranslateLoader {
-    getTranslation(lang: string): Observable<any> {
-        return new Observable((observer) => {
-            if (lang === 'es') {
-                observer.next(es);
-            } else {
-                observer.next(en);
-            }
-            observer.complete();
-        });
+  getTranslation(lang: string): Observable<Record<string, unknown>> {
+    return from(this.loadTranslations(lang));
+  }
+
+  private loadTranslations(lang: string): Promise<Record<string, unknown>> {
+    if (lang === 'en') {
+      return import('./en').then(({ en }) => en);
     }
+
+    return import('./es').then(({ es }) => es);
+  }
 }

@@ -136,14 +136,18 @@
           </div>
           } }
         </div>
-        } @if(attempt) {
-        <div class="card flex flex-col items-center justify-center p-10 w-full">
-          <p-progress-spinner
-            strokeWidth="4"
-            [style]="{ width: '100px', height: '100px' }"
-          />
+        } @if (attempt) {
+        <div
+          class="card w-full p-6 sm:p-10"
+          [attr.aria-busy]="true"
+        >
+          <div class="w-full products-grid">
+            @for (s of searchSkeletonSlots; track s) {
+            <p-skeleton styleClass="search-skeleton-cell" />
+            }
+          </div>
         </div>
-        } @else if(items.length === 0) {
+        } @else if (items.length === 0) {
         <div
           class="card flex flex-col items-center justify-center mt-10 p-10 w-full"
         >
