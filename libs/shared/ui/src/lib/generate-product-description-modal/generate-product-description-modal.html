@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-5">
+  <p class="text-sm text-gray-600 leading-relaxed m-0">
+    {{ 'general.aiDescriptionModalInfo' | translate }}
+  </p>
+
+  <div class="flex flex-col gap-2">
+    <label for="aiUserPrompt" class="text-sm font-medium text-gray-700">
+      {{ 'general.aiPromptLabel' | translate }}
+    </label>
+    <textarea
+      pTextarea
+      id="aiUserPrompt"
+      rows="4"
+      class="w-full resize-none"
+      [(ngModel)]="userPrompt"
+      [placeholder]="'general.aiPromptPlaceholder' | translate"
+      [disabled]="isGenerating()"
+      [maxlength]="1000"
+    ></textarea>
+  </div>
+
+  <div
+    class="flex flex-col sm:flex-row justify-center items-center gap-4 w-full pt-2"
+  >
+    <lib-button
+      [label]="'general.cancel' | translate"
+      [width]="'w-35'"
+      [type]="'rounded'"
+      [color]="'secondary'"
+      [buttonType]="'button'"
+      [disabled]="isGenerating()"
+      (action)="cancel()"
+    />
+    <lib-button
+      [label]="'general.generateDescriptionWithAi' | translate"
+      icon="pi pi-sparkles"
+      [width]="'w-auto'"
+      [type]="'rounded'"
+      [buttonType]="'button'"
+      [loading]="isGenerating()"
+      [disabled]="isGenerating()"
+      (action)="generate()"
+    />
+  </div>
+</div>

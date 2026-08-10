@@ -14,7 +14,7 @@
   <form
     [formGroup]="registerUserForm"
     (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
+    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-8/10 max-w-xl p-10 bg-white radius shadow-lg mb-15"
   >
     <h4 class="text-center text-2xl lg:text-3xl font-medium">
       {{'general.userRegister' | translate}}
@@ -23,134 +23,189 @@
     <div
       class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 h-10"
     >
-      @if (registerUserForm.get('acceptTerms')?.value) {
       <div #googleBtn class="google-signin-btn"></div>
-      } @else {
-      <p class="text-xs text-center text-primary-600 px-1">
-        {{ 'auth.googleRequiresTerms' | translate }}
-      </p>
-      }
     </div>
-    <p-floatlabel class="w-10/10 max-w-xs">
-      <input
-        pInputText
-        class="w-10/10 font-medium"
-        formControlName="firstName"
-        id="firstName"
-        [pSize]="'small'"
-        autocomplete="off"
-      />
-      <label for="firstName" class="font-medium"
-        >{{'general.firstName' | translate}}</label
+    <div class="flex flex-col gap-4 items-center justify-start w-full">
+      <div
+        class="w-10/10 flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6"
       >
-    </p-floatlabel>
-    <p-floatlabel class="w-10/10 max-w-xs">
-      <input
-        pInputText
-        class="w-10/10 font-medium"
-        formControlName="lastName"
-        id="lastName"
-        [pSize]="'small'"
-        autocomplete="off"
-      />
-      <label for="lastName" class="font-medium"
-        >{{'general.lastName' | translate}}</label
-      >
-    </p-floatlabel>
-    <p-floatlabel class="w-10/10 max-w-xs">
-      <input
-        pInputText
-        class="w-10/10 font-medium"
-        formControlName="email"
-        id="email"
-        [pSize]="'small'"
-        autocomplete="off"
-      />
-      <label for="email" class="font-medium"
-        >{{'general.email' | translate}}</label
-      >
-    </p-floatlabel>
+        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
+          <p-floatlabel class="w-10/10">
+            <input
+              pInputText
+              class="w-10/10 font-medium"
+              formControlName="firstName"
+              id="firstName"
+              [pSize]="'small'"
+              autocomplete="off"
+            />
+            <label for="firstName" class="font-medium"
+              >{{'general.firstName' | translate}}</label
+            >
+          </p-floatlabel>
+          <small
+            class="text-red-500 text-xs block w-full h-8 leading-tight"
+            role="alert"
+          >
+            @if (requiredError(firstNameControl); as err) { {{ err.key |
+            translate: err.params }} }
+          </small>
+        </div>
+        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
+          <p-floatlabel class="w-10/10">
+            <input
+              pInputText
+              class="w-10/10 font-medium"
+              formControlName="lastName"
+              id="lastName"
+              [pSize]="'small'"
+              autocomplete="off"
+            />
+            <label for="lastName" class="font-medium"
+              >{{'general.lastName' | translate}}</label
+            >
+          </p-floatlabel>
+          <small
+            class="text-red-500 text-xs block w-full h-8 leading-tight"
+            role="alert"
+          >
+            @if (requiredError(lastNameControl); as err) { {{ err.key |
+            translate: err.params }} }
+          </small>
+        </div>
+      </div>
 
-    <p-floatlabel class="w-10/10 max-w-xs">
-      <p-password
-        [feedback]="false"
-        class="w-10/10 font-medium"
-        formControlName="password"
-        [fluid]="true"
-        [size]="'small'"
-        [toggleMask]="true"
-        inputId="password"
-      />
-      <label for="password" class="font-medium"
-        >{{'general.password' | translate}}</label
-      >
-    </p-floatlabel>
-
-    <p-floatlabel class="w-10/10 max-w-xs">
-      <p-password
-        [feedback]="false"
-        class="w-10/10 font-medium"
-        formControlName="confirmPassword"
-        [fluid]="true"
-        [size]="'small'"
-        [toggleMask]="true"
-        inputId="confirmPassword"
-      />
-      <label for="confirmPassword" class="font-medium"
-        >{{'general.confirmPassword' | translate}}</label
-      >
-    </p-floatlabel>
-
-    <div
-      class="w-10/10 max-w-xs flex flex-row items-start gap-3 text-xs text-primary-800"
-    >
-      <input
-        type="checkbox"
-        id="acceptTermsUser"
-        formControlName="acceptTerms"
-        class="mt-1 shrink-0 accent-primary-600"
-      />
-      <label for="acceptTermsUser" class="leading-snug cursor-pointer">
-        <span>{{ 'auth.acceptTermsIntro' | translate }}</span>
-        <a
-          [routerLink]="termsPath"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-primary-600 underline font-medium"
-          (click)="$event.stopPropagation()"
-          >{{ 'auth.termsLink' | translate }}</a
+      <div class="w-10/10 flex flex-col items-start">
+        <p-floatlabel class="w-10/10">
+          <input
+            pInputText
+            class="w-10/10 font-medium"
+            formControlName="email"
+            id="email"
+            [pSize]="'small'"
+            autocomplete="off"
+          />
+          <label for="email" class="font-medium"
+            >{{'general.email' | translate}}</label
+          >
+        </p-floatlabel>
+        <small
+          class="text-red-500 text-xs block w-full h-8 leading-tight"
+          role="alert"
         >
-        <span> {{ 'auth.acceptTermsAnd' | translate }} </span>
-        <a
-          [routerLink]="privacyPath"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-primary-600 underline font-medium"
-          (click)="$event.stopPropagation()"
-          >{{ 'auth.privacyLink' | translate }}</a
-        >.
-      </label>
-    </div>
+          @if (emailError(emailControl); as err) { {{ err.key | translate:
+          err.params }} }
+        </small>
+      </div>
 
-    <div class="w-8/10 flex flex-col items-center justify-center mt-3 gap-5">
-      <lib-button
-        label="{{'general.register' | translate}}"
-        [type]="'rounded'"
-        [size]="'small'"
-        [buttonType]="'submit'"
-        [width]="'w-60'"
-        [disabled]="attempt"
-        [loading]="attempt"
-      ></lib-button>
+      <div
+        class="w-10/10 flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6"
+      >
+        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
+          <p-floatlabel class="w-10/10">
+            <p-password
+              [feedback]="false"
+              class="w-10/10 font-medium"
+              formControlName="password"
+              [fluid]="true"
+              [size]="'small'"
+              [toggleMask]="true"
+              inputId="password"
+            />
+            <label for="password" class="font-medium"
+              >{{'general.password' | translate}}</label
+            >
+          </p-floatlabel>
+          <small
+            class="text-red-500 text-xs block w-full h-11 leading-tight"
+            role="alert"
+          >
+            @if (passwordError(passwordControl); as err) { {{ err.key |
+            translate: err.params }} }
+          </small>
+        </div>
+        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
+          <p-floatlabel class="w-10/10">
+            <p-password
+              [feedback]="false"
+              class="w-10/10 font-medium"
+              formControlName="confirmPassword"
+              [fluid]="true"
+              [size]="'small'"
+              [toggleMask]="true"
+              inputId="confirmPassword"
+            />
+            <label for="confirmPassword" class="font-medium"
+              >{{'general.confirmPassword' | translate}}</label
+            >
+          </p-floatlabel>
+          <small
+            class="text-red-500 text-xs block w-full h-11 leading-tight"
+            role="alert"
+          >
+            @if (passwordError(confirmPasswordControl); as err) { {{ err.key |
+            translate: err.params }} }
+          </small>
+        </div>
+      </div>
 
-      <lib-button
-        label="{{'general.login' | translate}}"
-        [link]="'/login'"
-        [type]="'rounded'"
-        [color]="'secondary'"
-        [size]="'small'"
-        [width]="'w-60'"
-      ></lib-button>
+      <div class="w-full flex flex-col items-center justify-center mt-3 gap-5">
+        <div class="w-10/10 flex flex-col items-start text-xs text-primary-800">
+          <div class="flex flex-row items-start gap-3">
+            <input
+              type="checkbox"
+              id="acceptTermsUser"
+              formControlName="acceptTerms"
+              class="mt-1 shrink-0 accent-primary-600"
+            />
+            <label for="acceptTermsUser" class="leading-snug cursor-pointer">
+              <span>{{ 'auth.acceptTermsIntro' | translate }}</span>
+              <a
+                [routerLink]="termsPath"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-600 underline font-medium"
+                (click)="$event.stopPropagation()"
+                >{{ 'auth.termsLink' | translate }}</a
+              >
+              <span> {{ 'auth.acceptTermsAnd' | translate }} </span>
+              <a
+                [routerLink]="privacyPath"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-600 underline font-medium"
+                (click)="$event.stopPropagation()"
+                >{{ 'auth.privacyLink' | translate }}</a
+              >.
+            </label>
+          </div>
+          <small
+            class="text-red-500 text-xs block w-full h-4 leading-tight"
+            role="alert"
+          >
+            @if (requiredError(acceptTermsControl); as err) { {{ err.key |
+            translate: err.params }} }
+          </small>
+        </div>
+        <lib-button
+          label="{{'general.register' | translate}}"
+          [type]="'rounded'"
+          [size]="'small'"
+          [buttonType]="'submit'"
+          [width]="'w-60'"
+          [disabled]="attempt"
+          [loading]="attempt"
+        ></lib-button>
+
+        <lib-button
+          label="{{'general.login' | translate}}"
+          [link]="'/login'"
+          [type]="'rounded'"
+          [color]="'secondary'"
+          [size]="'small'"
+          [width]="'w-60'"
+        ></lib-button>
+      </div>
     </div>
   </form>
 </section>

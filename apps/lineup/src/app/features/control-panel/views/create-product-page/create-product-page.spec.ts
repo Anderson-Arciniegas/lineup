@@ -26,6 +26,7 @@ describe('CreateProductPage', () => {
   let createProduct: jest.Mock;
   let messageAdd: jest.Mock;
   let navigate: jest.Mock;
+  let dialogOpen: jest.Mock;
 
   beforeEach(async () => {
     getBusinessByPath = jest.fn(() =>
@@ -37,6 +38,7 @@ describe('CreateProductPage', () => {
     createProduct = jest.fn(() => of({ id: 500 }));
     messageAdd = jest.fn();
     navigate = jest.fn();
+    dialogOpen = jest.fn(() => ({ onClose: of(undefined) }));
     const { mock: apolloMock } = createApolloMock();
 
     await TestBed.configureTestingModule({
@@ -59,7 +61,7 @@ describe('CreateProductPage', () => {
         },
         TranslateService,
         TranslateStore,
-        { provide: DialogService, useValue: { open: jest.fn(() => ({ onClose: of(undefined) })) } },
+        { provide: DialogService, useValue: { open: dialogOpen } },
         { provide: MessageService, useValue: { add: messageAdd } },
         { provide: Apollo, useValue: apolloMock },
         {
@@ -619,6 +621,59 @@ describe('CreateProductPage', () => {
     it('getProduct error registra en consola y libera attempt', () => {
       expect(component.attempt).toBe(false);
       expect(component.product).toBeUndefined();
+    });
+  });
+
+  /**
+   * Abre el modal de generación IA; al cerrar con HTML setea description.
+   */
+  describe('openGenerateDescriptionModal', () => {
+    it('sin título no abre el modal y muestra toast de validación', () => {
+      component.createProductForm.patchValue({ title: '' });
+      component.openGenerateDescriptionModal();
+      expect(dialogOpen).not.toHaveBeenCalled();
+      expect(messageAdd).toHaveBeenCalledWith(
+        expect.objectContaining({ severity: 'warn' }),
+      );
+    });
+
+    it('abre el modal con título, subtítulo e imageUrls', () => {
+      component.createProductForm.patchValue({
+        title: 'Zapatillas',
+        subtitle: 'Running',
+        description: '',
+      });
+      component.urls = ['https://cdn.example/a.png'];
+      component.openGenerateDescriptionModal();
+      expect(dialogOpen).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          data: {
+            title: 'Zapatillas',
+            subtitle: 'Running',
+            imageUrls: ['https://cdn.example/a.png'],
+          },
+        }),
+      );
+      expect(component.isAiModalOpen).toBe(false);
+    });
+
+    it('al cerrar el modal con HTML setea description', () => {
+      dialogOpen.mockReturnValue({
+        onClose: of('<p>Descripción generada</p>'),
+      });
+      component.createProductForm.patchValue({
+        title: 'Producto',
+        description: '',
+      });
+      component.openGenerateDescriptionModal();
+      expect(component.createProductForm.get('description')?.value).toBe(
+        '<p>Descripción generada</p>',
+      );
+      expect(messageAdd).toHaveBeenCalledWith(
+        expect.objectContaining({ severity: 'success' }),
+      );
+      expect(component.isAiModalOpen).toBe(false);
     });
   });
 

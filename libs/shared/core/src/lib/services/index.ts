@@ -3,6 +3,7 @@ export * from './apollo.service';
 export * from './notifications-socket.service';
 export * from './encryption.service';
 export * from './graphql.service';
+export * from './gemini';
 export * from './seo.service';
 export * from './storage.service';
 export * from './utils.service';

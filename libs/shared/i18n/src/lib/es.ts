@@ -39,6 +39,14 @@ export const es = {
     variations: 'Variaciones',
     add: 'Agregar',
     description: 'Descripción',
+    generateDescriptionWithAi: 'Generar con IA',
+    aiPromptLabel: 'Indicaciones adicionales (opcional)',
+    aiPromptPlaceholder:
+      'Instrucciones opcionales para la IA (tono, público, detalles a destacar…)',
+    aiDescriptionModalInfo:
+      'Se usarán el título, el subtítulo y las fotos del producto para generar una descripción de venta con detalles técnicos, funcionalidades y ventajas.',
+    aiDescriptionGenerated: 'Descripción generada correctamente',
+    aiDescriptionError: 'No se pudo generar la descripción con IA',
     save: 'Guardar',
     cancel: 'Cancelar',
     edit: 'Editar',
@@ -492,6 +500,12 @@ export const es = {
     invalidUrl: 'La URL no es válida (ej: https://instagram.com/username)',
     fieldRequired: 'Este campo es obligatorio.',
     passwordMismatch: 'Las contraseñas no coinciden.',
+    passwordMinLength:
+      'La contraseña debe tener al menos {{min}} caracteres.',
+    passwordMaxLength:
+      'La contraseña no puede superar {{max}} caracteres.',
+    passwordInvalidFormat:
+      'La contraseña debe incluir mayúscula, minúscula, número y un carácter especial.',
     passwordUpdateFailed:
       'No se pudo actualizar la contraseña. Intenta de nuevo.',
     invalidEmail: 'Ingresa un correo electrónico válido.',
@@ -499,6 +513,8 @@ export const es = {
     emailUpdateFailed: 'No se pudo actualizar el correo. Intenta de nuevo.',
     imageRequired: 'Debe agregar al menos una imagen al producto.',
     starsRequired: 'Por favor selecciona al menos 1 estrella.',
+    titleRequiredForAi:
+      'Ingresa un título de producto antes de generar la descripción con IA.',
   },
   toast: {
     socialNetworkBusinessUpdated: 'Red social actualizada',

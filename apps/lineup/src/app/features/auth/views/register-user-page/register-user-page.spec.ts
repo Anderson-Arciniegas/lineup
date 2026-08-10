@@ -212,17 +212,12 @@ describe('RegisterUserPage', () => {
    * Registro con token de Google y `registerWithGoogle`.
    */
   describe('Google Sign-Up', () => {
-    it('debe invocar renderButton cuando se aceptan términos', fakeAsync(() => {
-      expect(renderButton).not.toHaveBeenCalled();
-      component.registerUserForm.patchValue({ acceptTerms: true });
-      fixture.detectChanges();
+    it('debe invocar renderButton al inicializar', fakeAsync(() => {
       tick(150);
       expect(renderButton).toHaveBeenCalled();
     }));
 
     it('debe registrar con Google y completar sesión', fakeAsync(() => {
-      component.registerUserForm.patchValue({ acceptTerms: true });
-      fixture.detectChanges();
       tick(150);
       credential$.next('jwt-google');
       tick();

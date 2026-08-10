@@ -33,9 +33,14 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { startWith, Subscription, take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
+import {
+  getEmailFieldError,
+  getPasswordFieldError,
+  getRequiredFieldError,
+} from '../../utils/form-field-error';
 
 /**
  * Registro de cuenta de negocio: formulario con verificación por email y alta opcional con Google.
@@ -80,18 +85,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const acceptCtrl = this.registerBusinessForm.get('acceptTerms');
-    if (acceptCtrl) {
-      this._subscription.add(
-        acceptCtrl.valueChanges
-          .pipe(startWith(acceptCtrl.value))
-          .subscribe((accepted) => {
-            if (accepted) {
-              setTimeout(() => this._renderGoogleButton(), 100);
-            }
-          }),
-      );
-    }
+    setTimeout(() => this._renderGoogleButton(), 100);
     this._subscription.add(
       this._googleAuth.credential$.subscribe((token) =>
         this._handleGoogleToken(token),
@@ -102,6 +96,30 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
+
+  get nameControl() {
+    return this.registerBusinessForm.get('name');
+  }
+
+  get emailControl() {
+    return this.registerBusinessForm.get('email');
+  }
+
+  get passwordControl() {
+    return this.registerBusinessForm.get('password');
+  }
+
+  get confirmPasswordControl() {
+    return this.registerBusinessForm.get('confirmPassword');
+  }
+
+  get acceptTermsControl() {
+    return this.registerBusinessForm.get('acceptTerms');
+  }
+
+  requiredError = getRequiredFieldError;
+  emailError = getEmailFieldError;
+  passwordError = getPasswordFieldError;
 
   private _renderGoogleButton(): void {
     const el = this.googleBtnRef?.nativeElement;
@@ -114,9 +132,6 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
 
   /** Registro OAuth de negocio; al éxito delega en `handleSuccessLogin` con flag de registro. */
   private _handleGoogleToken(token: string): void {
-    if (!this.registerBusinessForm.get('acceptTerms')?.value) {
-      return;
-    }
     this.attemptGoogle = true;
     this._subscription.add(
       this._business.registerWithGoogle({ token }).subscribe({
