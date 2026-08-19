@@ -30,7 +30,8 @@
         "styles": [
           "libs/shared/ui/src/styles/_styles.scss",
           "apps/admin/src/styles.scss"
-        ]
+        ],
+        "allowedCommonJsDependencies": ["p-retry"]
       },
       "configurations": {
         "production": {

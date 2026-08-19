@@ -4,7 +4,7 @@ import { GeminiService } from './gemini.service';
 
 const generateContent = jest.fn();
 
-jest.mock('@google/genai', () => ({
+jest.mock('@google/genai/web', () => ({
   GoogleGenAI: jest.fn().mockImplementation(() => ({
     models: { generateContent },
   })),

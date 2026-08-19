@@ -32,6 +32,7 @@ jobs:
           cache: 'npm'
 
       - run: npm install
+      - run: node -e "const fs=require('fs'); const dest='libs/shared/environments/src/lib/environments.ts'; if(!fs.existsSync(dest)) fs.copyFileSync('libs/shared/environments/src/lib/environments.example.ts', dest);"
       - run: npm install --save-dev @playwright/test @nx/playwright eslint
       - run: npm install gsap
       - run: npx playwright install --with-deps
@@ -48,6 +49,8 @@ jobs:
       # When you enable task distribution, run the e2e-ci task instead of e2e
       # Lint / build / e2e (sin config ci)
       - run: npx nx affected -t lint build e2e --verbose
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
       # Unit tests with coverage thresholds (≥80%)
       - run: npx nx affected -t test --configuration=ci --verbose
       # Gate: mapa e2e journey ≥80% de checkboxes marcados

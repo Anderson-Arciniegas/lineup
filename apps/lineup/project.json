@@ -35,7 +35,8 @@
         "ssr": {
           "entry": "apps/lineup/src/server.ts"
         },
-        "outputMode": "server"
+        "outputMode": "server",
+        "allowedCommonJsDependencies": ["p-retry"]
       },
       "configurations": {
         "production": {

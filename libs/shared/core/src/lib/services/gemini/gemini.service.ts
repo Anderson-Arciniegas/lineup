@@ -15,7 +15,8 @@ interface InlineImagePart {
 /**
  * Client-side Gemini integration for product description generation.
  * Uses environment.google.GEMINI_API_KEY (exposed in the browser bundle).
- * The `@google/genai` SDK is loaded on demand to keep it out of the initial bundle.
+ * The `@google/genai/web` SDK is loaded on demand to keep it out of the initial
+ * bundle and avoid the Node `google-auth-library` entry during SSR.
  */
 @Injectable({
   providedIn: 'root',
@@ -47,7 +48,7 @@ export class GeminiService {
       throw new Error('GEMINI_MODEL_NOT_SET');
     }
 
-    const { GoogleGenAI } = await import('@google/genai');
+    const { GoogleGenAI } = await import('@google/genai/web');
     const client = new GoogleGenAI({ apiKey: this.apiKey });
 
     const imageUrls = (input.imageUrls ?? []).filter(Boolean);
