@@ -235,7 +235,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(8),
-            Validators.maxLength(20),
+            Validators.maxLength(200),
             Validators.pattern(
               /^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/,
             ),
@@ -246,7 +246,7 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(8),
-            Validators.maxLength(20),
+            Validators.maxLength(200),
             Validators.pattern(
               /^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/,
             ),

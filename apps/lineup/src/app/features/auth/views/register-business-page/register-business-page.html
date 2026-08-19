@@ -34,7 +34,7 @@
             formControlName="name"
             id="name"
             [pSize]="'small'"
-            autocomplete="off"
+            autocomplete="organization"
           />
           <label for="name" class="font-medium"
             >{{'general.businessName' | translate}}</label
@@ -57,8 +57,9 @@
             class="w-10/10 font-medium"
             formControlName="email"
             id="email"
+            type="email"
             [pSize]="'small'"
-            autocomplete="off"
+            autocomplete="email"
           />
           <label for="email" class="font-medium"
             >{{'general.email' | translate}}</label
@@ -87,6 +88,7 @@
               [size]="'small'"
               [toggleMask]="true"
               inputId="password"
+              autocomplete="new-password"
             />
             <label for="password" class="font-medium"
               >{{'general.password' | translate}}</label
@@ -111,6 +113,7 @@
               [size]="'small'"
               [toggleMask]="true"
               inputId="confirmPassword"
+              autocomplete="new-password"
             />
             <label for="confirmPassword" class="font-medium"
               >{{'general.confirmPassword' | translate}}</label

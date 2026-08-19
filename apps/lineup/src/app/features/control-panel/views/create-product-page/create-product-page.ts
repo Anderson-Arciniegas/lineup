@@ -36,7 +36,6 @@ import {
   ProductSchema,
   ProductVariationInput,
   Size,
-  StorageService,
   UpdateProductInput,
   UtilsService,
 } from '@lineup/core';
@@ -127,7 +126,6 @@ export class CreateProductPage implements OnInit {
   private readonly _utils = inject(UtilsService);
   private readonly _messageService = inject(MessageService);
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
-  private readonly _storage = inject(StorageService);
 
   private readonly _subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
@@ -794,9 +792,6 @@ export class CreateProductPage implements OnInit {
               summary: this._translate.instant('general.success'),
               detail: this._translate.instant('general.productCreated'),
             });
-            if (this._isOnboardingFlow()) {
-              this._storage.remove('businessOnboardingPending');
-            }
             this._utils.navigate([
               AppConfigService.config.routes.dashboard,
               AppConfigService.config.routes.catalogs,
@@ -818,16 +813,5 @@ export class CreateProductPage implements OnInit {
         }),
       );
     }
-  }
-
-  private _isOnboardingFlow(): boolean {
-    let current: ActivatedRoute | null = this._activatedRoute;
-    while (current) {
-      if (current.snapshot.data?.['onboardingFlow'] === true) {
-        return true;
-      }
-      current = current.parent;
-    }
-    return false;
   }
 }

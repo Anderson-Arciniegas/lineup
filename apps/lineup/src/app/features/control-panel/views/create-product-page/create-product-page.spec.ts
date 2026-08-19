@@ -1,19 +1,25 @@
+import { HttpEventType } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import {
   BusinessApiFilePrivateService,
   BusinessPrivateService,
+  BusinessSchema,
   CatalogPrivateService,
+  CatalogSchema,
   ProductPrivateService,
-  StorageService,
+  ProductSchema,
   UtilsService,
 } from '@lineup/core';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { HttpEventType } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { createApolloMock } from '../../../../../testing';
 import { CreateProductPage } from './create-product-page';
@@ -42,7 +48,11 @@ describe('CreateProductPage', () => {
     const { mock: apolloMock } = createApolloMock();
 
     await TestBed.configureTestingModule({
-      imports: [CreateProductPage, TranslateModule.forRoot(), HttpClientTestingModule],
+      imports: [
+        CreateProductPage,
+        TranslateModule.forRoot(),
+        HttpClientTestingModule,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -74,7 +84,11 @@ describe('CreateProductPage', () => {
         },
         {
           provide: ProductPrivateService,
-          useValue: { createProduct, findOneProduct: jest.fn(), updateProduct: jest.fn() },
+          useValue: {
+            createProduct,
+            findOneProduct: jest.fn(),
+            updateProduct: jest.fn(),
+          },
         },
         {
           provide: UtilsService,
@@ -124,8 +138,8 @@ describe('CreateProductPage', () => {
         description: 'Descripción mínima',
       });
       component.imgCodes = ['img-code-1'];
-      component.catalog = { id: 99, path: 'my-cat' } as any;
-      component.product = undefined as any;
+      component.catalog = { id: 99, path: 'my-cat' } as CatalogSchema;
+      component.product = undefined as unknown as ProductSchema;
     });
 
     it('no debe enviar si el formulario es inválido', () => {
@@ -179,7 +193,9 @@ describe('CreateProductPage', () => {
     });
 
     it('createProduct error muestra toast de error', () => {
-      createProduct.mockReturnValue(throwError(() => ({ message: 'create fail' })));
+      createProduct.mockReturnValue(
+        throwError(() => ({ message: 'create fail' })),
+      );
       component.createProduct();
       expect(messageAdd).toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error', detail: 'create fail' }),
@@ -198,9 +214,9 @@ describe('CreateProductPage', () => {
 
     it('addSizeVariation debe añadir grupo de talla', () => {
       component.addSizeVariation();
-      expect(component.isSizeVariation(component.variationsFormArray.at(0))).toBe(
-        true,
-      );
+      expect(
+        component.isSizeVariation(component.variationsFormArray.at(0)),
+      ).toBe(true);
     });
 
     it('getPredefinedOptions devuelve colores para variación color', () => {
@@ -293,12 +309,14 @@ describe('CreateProductPage', () => {
           body: { file: { name: 'uploaded.png', url: 'https://cdn/x.png' } },
         }),
       );
-      component['_utils'] = {
-        ...component['_utils'],
-        blobToFile: () => new Blob(['x'], { type: 'image/png' }),
-        getExtensionFile: () => 'png',
-      } as typeof component['_utils'];
-      component['_apiFileService'] = { post: postMock } as typeof component['_apiFileService'];
+      const utils = TestBed.inject(UtilsService);
+      (utils.blobToFile as jest.Mock).mockReturnValue(
+        new Blob(['x'], { type: 'image/png' }),
+      );
+      (utils.getExtensionFile as jest.Mock).mockReturnValue('png');
+      Object.assign(TestBed.inject(BusinessApiFilePrivateService), {
+        post: postMock,
+      });
     });
 
     it('uploadFile debe registrar éxito y códigos de imagen', () => {
@@ -308,21 +326,19 @@ describe('CreateProductPage', () => {
     });
 
     it('uploadFile debe registrar error adultContent', () => {
-      postMock.mockReturnValue(
-        throwError(() => ({ error: { code: 22011 } })),
-      );
+      postMock.mockReturnValue(throwError(() => ({ error: { code: 22011 } })));
       component.uploadFile('data:image/png;base64,abc');
       expect(component.uploadFailed).toBe(true);
       expect(component.adultContent).toBe(true);
     });
 
     it('openImageCropper debe subir imagen al cerrar con base64', () => {
-      const dialogOpen = jest.fn(() => ({
+      const dialog = TestBed.inject(DialogService);
+      (dialog.open as jest.Mock).mockReturnValue({
         onClose: of('data:image/png;base64,abc'),
-      }));
-      component['_dialogService'] = { open: dialogOpen } as typeof component['_dialogService'];
+      });
       component.openImageCropper();
-      expect(dialogOpen).toHaveBeenCalled();
+      expect(dialog.open).toHaveBeenCalled();
       expect(postMock).toHaveBeenCalled();
     });
   });
@@ -359,14 +375,20 @@ describe('CreateProductPage', () => {
               options: ['x'],
             },
           ],
-          productFiles: [{ file: { url: 'https://img/a.png', name: 'code-a' } }],
+          productFiles: [
+            { file: { url: 'https://img/a.png', name: 'code-a' } },
+          ],
         }),
       );
       navigate = jest.fn();
       TestBed.resetTestingModule();
       const { mock: apolloMock } = createApolloMock();
       await TestBed.configureTestingModule({
-        imports: [CreateProductPage, TranslateModule.forRoot(), HttpClientTestingModule],
+        imports: [
+          CreateProductPage,
+          TranslateModule.forRoot(),
+          HttpClientTestingModule,
+        ],
         providers: [
           {
             provide: ActivatedRoute,
@@ -401,12 +423,18 @@ describe('CreateProductPage', () => {
           { provide: Apollo, useValue: apolloMock },
           {
             provide: BusinessPrivateService,
-            useValue: { getBusinessByPath: jest.fn(() => of({ id: 1, path: 'test-business' })) },
+            useValue: {
+              getBusinessByPath: jest.fn(() =>
+                of({ id: 1, path: 'test-business' }),
+              ),
+            },
           },
           {
             provide: CatalogPrivateService,
             useValue: {
-              findOneCatalogByPath: jest.fn(() => of({ id: 99, path: 'my-cat' })),
+              findOneCatalogByPath: jest.fn(() =>
+                of({ id: 99, path: 'my-cat' }),
+              ),
               findOneCatalog: jest.fn(() => of({ id: 101, path: 'other-cat' })),
             },
           },
@@ -430,10 +458,6 @@ describe('CreateProductPage', () => {
           {
             provide: BusinessApiFilePrivateService,
             useValue: { post: jest.fn(() => of({})) },
-          },
-          {
-            provide: StorageService,
-            useValue: { remove: jest.fn() },
           },
         ],
       }).compileComponents();
@@ -460,29 +484,29 @@ describe('CreateProductPage', () => {
     });
 
     it('switchCatalog debe actualizar catálogo seleccionado', () => {
-      component.product = { id: 500, catalog: { id: 99 } } as any;
+      component.product = { id: 500, catalog: { id: 99 } } as ProductSchema;
       component.switchCatalog();
       expect(component.catalog?.id).toBe(101);
     });
 
     it('switchCatalog no hace nada sin producto', () => {
-      component.product = undefined as any;
+      component.product = undefined as unknown as ProductSchema;
       component.switchCatalog();
       expect(component.catalog?.id).toBe(99);
     });
 
     it('switchCatalog no recarga si el catálogo es el mismo', () => {
+      const catalogService = TestBed.inject(CatalogPrivateService);
       const findOneCatalog = jest.fn(() => of({ id: 101, path: 'other-cat' }));
-      (TestBed.inject(CatalogPrivateService) as any).findOneCatalog = findOneCatalog;
-      component['_dialogService'] = {
-        open: jest.fn(() => ({ onClose: of(99) })),
-      } as typeof component['_dialogService'];
+      Object.assign(catalogService, { findOneCatalog });
+      const dialog = TestBed.inject(DialogService);
+      (dialog.open as jest.Mock).mockReturnValue({ onClose: of(99) });
       component.switchCatalog();
       expect(findOneCatalog).not.toHaveBeenCalled();
     });
 
     it('update sin business navega por dashboard', () => {
-      component.business = undefined as any;
+      component.business = undefined as unknown as BusinessSchema;
       component.createProductForm.patchValue({
         title: 'Actualizado',
         description: 'Nueva desc',
@@ -490,7 +514,11 @@ describe('CreateProductPage', () => {
       component.imgCodes = ['code-a'];
       component.createProduct();
       expect(navigate).toHaveBeenCalledWith(
-        expect.arrayContaining([expect.any(String), expect.any(String), 'my-cat']),
+        expect.arrayContaining([
+          expect.any(String),
+          expect.any(String),
+          'my-cat',
+        ]),
       );
     });
 
@@ -544,9 +572,9 @@ describe('CreateProductPage', () => {
 
     it('hasPredefinedOptions detecta color o size', () => {
       component.addColorVariation();
-      expect(component.hasPredefinedOptions(component.variationsFormArray.at(0))).toBe(
-        true,
-      );
+      expect(
+        component.hasPredefinedOptions(component.variationsFormArray.at(0)),
+      ).toBe(true);
     });
   });
 
@@ -556,7 +584,11 @@ describe('CreateProductPage', () => {
       TestBed.resetTestingModule();
       const { mock: apolloMock } = createApolloMock();
       await TestBed.configureTestingModule({
-        imports: [CreateProductPage, TranslateModule.forRoot(), HttpClientTestingModule],
+        imports: [
+          CreateProductPage,
+          TranslateModule.forRoot(),
+          HttpClientTestingModule,
+        ],
         providers: [
           {
             provide: ActivatedRoute,
@@ -582,17 +614,27 @@ describe('CreateProductPage', () => {
           { provide: Apollo, useValue: apolloMock },
           {
             provide: BusinessPrivateService,
-            useValue: { getBusinessByPath: jest.fn(() => of({ id: 1, path: 'test-business' })) },
+            useValue: {
+              getBusinessByPath: jest.fn(() =>
+                of({ id: 1, path: 'test-business' }),
+              ),
+            },
           },
           {
             provide: CatalogPrivateService,
-            useValue: { findOneCatalogByPath: jest.fn(() => of({ id: 99, path: 'my-cat' })) },
+            useValue: {
+              findOneCatalogByPath: jest.fn(() =>
+                of({ id: 99, path: 'my-cat' }),
+              ),
+            },
           },
           {
             provide: ProductPrivateService,
             useValue: {
               createProduct: jest.fn(),
-              findOneProduct: jest.fn(() => throwError(() => new Error('not found'))),
+              findOneProduct: jest.fn(() =>
+                throwError(() => new Error('not found')),
+              ),
               updateProduct: jest.fn(),
             },
           },
@@ -678,15 +720,16 @@ describe('CreateProductPage', () => {
   });
 
   describe('onboarding flow', () => {
-    let storageRemove: jest.Mock;
-
     beforeEach(async () => {
-      storageRemove = jest.fn();
       navigate = jest.fn();
       TestBed.resetTestingModule();
       const { mock: apolloMock } = createApolloMock();
       await TestBed.configureTestingModule({
-        imports: [CreateProductPage, TranslateModule.forRoot(), HttpClientTestingModule],
+        imports: [
+          CreateProductPage,
+          TranslateModule.forRoot(),
+          HttpClientTestingModule,
+        ],
         providers: [
           {
             provide: ActivatedRoute,
@@ -709,11 +752,19 @@ describe('CreateProductPage', () => {
           { provide: Apollo, useValue: apolloMock },
           {
             provide: BusinessPrivateService,
-            useValue: { getBusinessByPath: jest.fn(() => of({ id: 1, path: 'test-business' })) },
+            useValue: {
+              getBusinessByPath: jest.fn(() =>
+                of({ id: 1, path: 'test-business' }),
+              ),
+            },
           },
           {
             provide: CatalogPrivateService,
-            useValue: { findOneCatalogByPath: jest.fn(() => of({ id: 99, path: 'my-cat' })) },
+            useValue: {
+              findOneCatalogByPath: jest.fn(() =>
+                of({ id: 99, path: 'my-cat' }),
+              ),
+            },
           },
           {
             provide: ProductPrivateService,
@@ -736,10 +787,6 @@ describe('CreateProductPage', () => {
             provide: BusinessApiFilePrivateService,
             useValue: { post: jest.fn(() => of({})) },
           },
-          {
-            provide: StorageService,
-            useValue: { remove: storageRemove },
-          },
         ],
       }).compileComponents();
       fixture = TestBed.createComponent(CreateProductPage);
@@ -747,15 +794,21 @@ describe('CreateProductPage', () => {
       fixture.detectChanges();
     });
 
-    it('create exitoso en onboarding limpia storage pendiente', () => {
+    it('create exitoso en onboarding navega a inventario y conserva el flag', () => {
       component.createProductForm.patchValue({
         title: 'Onboarding product',
         description: 'Descripción mínima onboarding',
       });
       component.imgCodes = ['img-code-1'];
-      component.catalog = { id: 99, path: 'my-cat' } as any;
+      component.catalog = { id: 99, path: 'my-cat' } as CatalogSchema;
       component.createProduct();
-      expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
+      expect(navigate).toHaveBeenCalledWith([
+        'dashboard',
+        'catalogs',
+        'my-cat',
+        600,
+        'inventory',
+      ]);
     });
   });
 });
