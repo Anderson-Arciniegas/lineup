@@ -10,8 +10,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AppConfigService,
   BASIC_COLORS,
   BASIC_SIZES,
+  StorageService,
   UpdateProductSkuItemInput,
   UtilsService,
 } from '@lineup/core';
@@ -97,8 +99,12 @@ export class UpdateProductSkuPage implements OnInit {
   private readonly _currencyService = inject(CurrencyPrivateService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly _utils = inject(UtilsService);
+  private readonly _storage = inject(StorageService);
   private readonly _messageService = inject(MessageService);
   private readonly _subscription = new Subscription();
+
+  private static readonly BUSINESS_ONBOARDING_PENDING_KEY =
+    'businessOnboardingPending';
 
   constructor() {
     this.skuProductForm = this._formBuilder.group({
@@ -235,7 +241,7 @@ export class UpdateProductSkuPage implements OnInit {
             summary: this._translate.instant('general.success'),
             detail: this._translate.instant('toast.productInventoryUpdated'),
           });
-          this.loadProductAndCurrencies();
+          this._navigateAfterInventoryUpdate();
         },
         error: (error) => {
           console.error(error);
@@ -254,6 +260,36 @@ export class UpdateProductSkuPage implements OnInit {
         },
       }),
     );
+  }
+
+  /**
+   * Tras inventario: onboarding → perfil público del negocio;
+   * edición normal → panel privado del producto.
+   */
+  private _navigateAfterInventoryUpdate(): void {
+    const isOnboardingPending = !!this._storage.get(
+      UpdateProductSkuPage.BUSINESS_ONBOARDING_PENDING_KEY,
+    );
+
+    if (isOnboardingPending) {
+      this._storage.remove(
+        UpdateProductSkuPage.BUSINESS_ONBOARDING_PENDING_KEY,
+      );
+      const businessPath = this.business?.path ?? this.product?.business?.path;
+      if (businessPath) {
+        this._utils.navigate([businessPath]);
+        return;
+      }
+      this._utils.navigate([AppConfigService.config.routes.dashboard]);
+      return;
+    }
+
+    this._utils.navigate([
+      AppConfigService.config.routes.dashboard,
+      AppConfigService.config.routes.catalogs,
+      this.catalogPath ?? '',
+      this.idProduct ?? '',
+    ]);
   }
 
   getSkuOptions(i: number): string {

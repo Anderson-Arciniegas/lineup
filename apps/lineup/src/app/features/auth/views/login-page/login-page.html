@@ -30,8 +30,9 @@
         class="w-10/10 font-medium"
         formControlName="email"
         id="email"
+        type="email"
         [pSize]="'small'"
-        autocomplete="off"
+        autocomplete="username"
       />
       <label for="email" class="font-medium"
         >{{'general.usernameOrEmail' | translate}}</label
@@ -47,6 +48,7 @@
         [size]="'small'"
         [toggleMask]="true"
         inputId="password"
+        autocomplete="current-password"
       />
       <label for="password" class="font-medium"
         >{{'general.password' | translate}}</label

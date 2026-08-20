@@ -36,6 +36,14 @@ export const en = {
     variations: 'Variations',
     add: 'Add',
     description: 'Description',
+    generateDescriptionWithAi: 'Generate with AI',
+    aiPromptLabel: 'Additional instructions (optional)',
+    aiPromptPlaceholder:
+      'Optional instructions for the AI (tone, audience, details to highlight…)',
+    aiDescriptionModalInfo:
+      'The product title, subtitle, and photos will be used to generate a sales description with technical details, features, and advantages.',
+    aiDescriptionGenerated: 'Description generated successfully',
+    aiDescriptionError: 'Could not generate the description with AI',
     save: 'Save',
     cancel: 'Cancel',
     edit: 'Edit',
@@ -482,12 +490,18 @@ export const en = {
     invalidUrl: 'The URL is not valid (eg: https://instagram.com/username)',
     fieldRequired: 'This field is required.',
     passwordMismatch: 'Passwords do not match.',
+    passwordMinLength: 'Password must be at least {{min}} characters.',
+    passwordMaxLength: 'Password cannot exceed {{max}} characters.',
+    passwordInvalidFormat:
+      'Password must include uppercase, lowercase, a number, and a special character.',
     passwordUpdateFailed: 'Could not update password. Please try again.',
     invalidEmail: 'Enter a valid email address.',
     emailUnchanged: 'Enter a different email than your current one.',
     emailUpdateFailed: 'Could not update email. Please try again.',
     imageRequired: 'At least one image is required for the product.',
     starsRequired: 'Please select at least 1 star.',
+    titleRequiredForAi:
+      'Enter a product title before generating the description with AI.',
   },
   toast: {
     socialNetworkBusinessUpdated: 'Social network business updated',

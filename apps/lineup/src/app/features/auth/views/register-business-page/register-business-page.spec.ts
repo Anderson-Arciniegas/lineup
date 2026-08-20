@@ -171,17 +171,12 @@ describe('RegisterBusinessPage', () => {
   });
 
   describe('Google Sign-Up', () => {
-    it('debe invocar renderButton cuando se aceptan términos', fakeAsync(() => {
-      expect(renderButton).not.toHaveBeenCalled();
-      component.registerBusinessForm.patchValue({ acceptTerms: true });
-      fixture.detectChanges();
+    it('debe invocar renderButton al inicializar', fakeAsync(() => {
       tick(150);
       expect(renderButton).toHaveBeenCalled();
     }));
 
     it('debe registrar negocio con Google', fakeAsync(() => {
-      component.registerBusinessForm.patchValue({ acceptTerms: true });
-      fixture.detectChanges();
       tick(150);
       credential$.next('jwt');
       tick();

@@ -19,6 +19,7 @@ export * from './lib/create-product-card/create-product-card';
 export * from './lib/discount-item/discount-item';
 export * from './lib/draggable-image-list/draggable-image-list';
 export * from './lib/footer/footer';
+export * from './lib/generate-product-description-modal/generate-product-description-modal';
 export * from './lib/image-cropper/image-cropper';
 export * from './lib/location-modal/location-modal';
 export * from './lib/nav/nav';

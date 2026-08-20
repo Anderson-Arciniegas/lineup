@@ -36,13 +36,13 @@ import {
   ProductSchema,
   ProductVariationInput,
   Size,
-  StorageService,
   UpdateProductInput,
   UtilsService,
 } from '@lineup/core';
 import {
   Button,
   DraggableImageList,
+  GenerateProductDescriptionModal,
   ImageCropper,
   ProductBreadcrumb,
   SelectCatalogModal,
@@ -110,6 +110,7 @@ export class CreateProductPage implements OnInit {
   adultContent = false;
   attempt = false;
   submitAttempted = false;
+  isAiModalOpen = false;
 
   maxTitleLength = 80;
   maxSubtitleLength = 100;
@@ -125,7 +126,6 @@ export class CreateProductPage implements OnInit {
   private readonly _utils = inject(UtilsService);
   private readonly _messageService = inject(MessageService);
   private readonly _apiFileService = inject(BusinessApiFilePrivateService);
-  private readonly _storage = inject(StorageService);
 
   private readonly _subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
@@ -600,6 +600,71 @@ export class CreateProductPage implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  /** Opens the AI description modal; on success inserts HTML into the editor. */
+  openGenerateDescriptionModal(): void {
+    if (this.isAiModalOpen) {
+      return;
+    }
+    const title = String(
+      this.createProductForm.get('title')?.value ?? '',
+    ).trim();
+    if (!title) {
+      this.createProductForm.get('title')?.markAsTouched();
+      this._messageService.add({
+        severity: 'warn',
+        summary: this._translate.instant('general.warning'),
+        detail: this._translate.instant('validation.titleRequiredForAi'),
+      });
+      return;
+    }
+
+    const subtitle = String(
+      this.createProductForm.get('subtitle')?.value ?? '',
+    ).trim();
+
+    this.isAiModalOpen = true;
+    this.ref = this._dialogService.open(GenerateProductDescriptionModal, {
+      header: this._translate.instant('general.generateDescriptionWithAi'),
+      width: '520px',
+      style: { maxHeight: '80vh' },
+      breakpoints: {
+        '640px': '90vw',
+        '500px': '92vw',
+        '400px': '95vw',
+      },
+      modal: true,
+      closable: true,
+      dismissableMask: true,
+      data: {
+        title,
+        subtitle: subtitle || undefined,
+        imageUrls: [...this.urls],
+      },
+    });
+
+    this._subscription.add(
+      this.ref.onClose
+        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+        .subscribe((html: string | undefined) => {
+          this.isAiModalOpen = false;
+          if (!html || typeof html !== 'string') {
+            this._cdr.markForCheck();
+            return;
+          }
+          const descriptionControl = this.createProductForm.get('description');
+          descriptionControl?.setValue(html);
+          descriptionControl?.markAsTouched();
+          descriptionControl?.markAsDirty();
+          this._messageService.add({
+            severity: 'success',
+            summary: this._translate.instant('general.success'),
+            detail: this._translate.instant('general.aiDescriptionGenerated'),
+          });
+          this._cdr.markForCheck();
+        }),
+    );
+  }
+
   createProduct(): void {
     this.submitAttempted = true;
     if (this.createProductForm.invalid) {
@@ -727,9 +792,6 @@ export class CreateProductPage implements OnInit {
               summary: this._translate.instant('general.success'),
               detail: this._translate.instant('general.productCreated'),
             });
-            if (this._isOnboardingFlow()) {
-              this._storage.remove('businessOnboardingPending');
-            }
             this._utils.navigate([
               AppConfigService.config.routes.dashboard,
               AppConfigService.config.routes.catalogs,
@@ -751,16 +813,5 @@ export class CreateProductPage implements OnInit {
         }),
       );
     }
-  }
-
-  private _isOnboardingFlow(): boolean {
-    let current: ActivatedRoute | null = this._activatedRoute;
-    while (current) {
-      if (current.snapshot.data?.['onboardingFlow'] === true) {
-        return true;
-      }
-      current = current.parent;
-    }
-    return false;
   }
 }

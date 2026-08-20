@@ -3,7 +3,7 @@
 # para que @netlify/angular-runtime resuelva `project.json` y el SSR.
 
 [build]
-  command = "npx nx build lineup --configuration=production"
+  command = "node -e \"const fs=require('fs'); const dest='libs/shared/environments/src/lib/environments.ts'; if(!fs.existsSync(dest)) fs.copyFileSync('libs/shared/environments/src/lib/environments.example.ts', dest);\" && npx nx build lineup --configuration=production"
   publish = "dist/apps/lineup/browser"
 
 [[plugins]]

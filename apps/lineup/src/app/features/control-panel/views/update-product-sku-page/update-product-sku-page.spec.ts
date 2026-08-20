@@ -6,6 +6,7 @@ import {
   CatalogPrivateService,
   CurrencyPrivateService,
   ProductPrivateService,
+  StorageService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
@@ -20,10 +21,14 @@ describe('UpdateProductSkuPage', () => {
   let fixture: ComponentFixture<UpdateProductSkuPage>;
   let updateProductSkus: jest.Mock;
   let messageAdd: jest.Mock;
+  let navigate: jest.Mock;
+  let storageGet: jest.Mock;
+  let storageRemove: jest.Mock;
 
   const productMock = {
     id: 1,
     title: 'P',
+    business: { id: 1, path: 'mi-negocio' },
     skus: [
       { id: 10, idCurrency: 1, price: 9.99, quantity: 3 },
       { id: 11, idCurrency: null, price: null, quantity: 1 },
@@ -34,6 +39,9 @@ describe('UpdateProductSkuPage', () => {
   beforeEach(async () => {
     updateProductSkus = jest.fn(() => of({}));
     messageAdd = jest.fn();
+    navigate = jest.fn();
+    storageGet = jest.fn(() => null);
+    storageRemove = jest.fn();
 
     await TestBed.configureTestingModule({
       imports: [UpdateProductSkuPage, TranslateModule.forRoot(), HttpClientTestingModule],
@@ -70,7 +78,11 @@ describe('UpdateProductSkuPage', () => {
         { provide: CatalogPrivateService, useValue: {} },
         {
           provide: UtilsService,
-          useValue: { navigate: jest.fn() },
+          useValue: { navigate },
+        },
+        {
+          provide: StorageService,
+          useValue: { get: storageGet, remove: storageRemove },
         },
         { provide: MessageService, useValue: { add: messageAdd } },
       ],
@@ -132,6 +144,32 @@ describe('UpdateProductSkuPage', () => {
       expect(messageAdd).toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'warn' }),
       );
+    });
+
+    it('sin onboarding navega al panel privado del producto', () => {
+      storageGet.mockReturnValue(null);
+      component.updateProductSku();
+      expect(storageRemove).not.toHaveBeenCalled();
+      expect(navigate).toHaveBeenCalledWith(['dashboard', 'catalogs', 'cat', '1']);
+    });
+
+    it('con onboarding limpia el flag y navega al perfil público', () => {
+      storageGet.mockReturnValue(true);
+      component.updateProductSku();
+      expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
+      expect(navigate).toHaveBeenCalledWith(['mi-negocio']);
+    });
+
+    it('con onboarding sin path de negocio navega al dashboard', () => {
+      storageGet.mockReturnValue(true);
+      component.business = undefined as unknown as typeof component.business;
+      component.product = {
+        ...productMock,
+        business: undefined,
+      } as typeof component.product;
+      component.updateProductSku();
+      expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
+      expect(navigate).toHaveBeenCalledWith(['dashboard']);
     });
   });
 });

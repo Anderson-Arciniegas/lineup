@@ -33,9 +33,14 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { startWith, Subscription, take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
+import {
+  getEmailFieldError,
+  getPasswordFieldError,
+  getRequiredFieldError,
+} from '../../utils/form-field-error';
 
 /**
  * Registro de usuario final con validación de contraseña fuerte, verificación por correo (modal)
@@ -80,18 +85,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const acceptCtrl = this.registerUserForm.get('acceptTerms');
-    if (acceptCtrl) {
-      this._subscription.add(
-        acceptCtrl.valueChanges
-          .pipe(startWith(acceptCtrl.value))
-          .subscribe((accepted) => {
-            if (accepted) {
-              setTimeout(() => this._renderGoogleButton(), 100);
-            }
-          }),
-      );
-    }
+    setTimeout(() => this._renderGoogleButton(), 100);
     this._subscription.add(
       this._googleAuth.credential$.subscribe((token) =>
         this._handleGoogleToken(token),
@@ -102,6 +96,34 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
+
+  get firstNameControl() {
+    return this.registerUserForm.get('firstName');
+  }
+
+  get lastNameControl() {
+    return this.registerUserForm.get('lastName');
+  }
+
+  get emailControl() {
+    return this.registerUserForm.get('email');
+  }
+
+  get passwordControl() {
+    return this.registerUserForm.get('password');
+  }
+
+  get confirmPasswordControl() {
+    return this.registerUserForm.get('confirmPassword');
+  }
+
+  get acceptTermsControl() {
+    return this.registerUserForm.get('acceptTerms');
+  }
+
+  requiredError = getRequiredFieldError;
+  emailError = getEmailFieldError;
+  passwordError = getPasswordFieldError;
 
   private _renderGoogleButton(): void {
     const el = this.googleBtnRef?.nativeElement;
@@ -114,9 +136,6 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
 
   /** Registro OAuth solo para rol `USER`; completa sesión si el backend devuelve perfil. */
   private _handleGoogleToken(token: string): void {
-    if (!this.registerUserForm.get('acceptTerms')?.value) {
-      return;
-    }
     this.attemptGoogle = true;
     this._subscription.add(
       this._users
@@ -225,7 +244,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(8),
-            Validators.maxLength(20),
+            Validators.maxLength(200),
             Validators.pattern(
               /^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/,
             ),
@@ -236,7 +255,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(8),
-            Validators.maxLength(20),
+            Validators.maxLength(200),
             Validators.pattern(
               /^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/,
             ),

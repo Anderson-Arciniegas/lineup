@@ -30,6 +30,7 @@
     "@capacitor/core": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
     "@fontsource-variable/montserrat": "^5.2.8",
+    "@google/genai": "^1.46.0",
     "@ionic/angular": "^8.7.3",
     "@netlify/angular-runtime": "3.0.1",
     "@ngrx/effects": "^20.0.1",
