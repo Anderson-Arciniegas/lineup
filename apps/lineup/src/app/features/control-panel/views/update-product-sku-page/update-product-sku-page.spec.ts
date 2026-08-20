@@ -159,5 +159,17 @@ describe('UpdateProductSkuPage', () => {
       expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
       expect(navigate).toHaveBeenCalledWith(['mi-negocio']);
     });
+
+    it('con onboarding sin path de negocio navega al dashboard', () => {
+      storageGet.mockReturnValue(true);
+      component.business = undefined as unknown as typeof component.business;
+      component.product = {
+        ...productMock,
+        business: undefined,
+      } as typeof component.product;
+      component.updateProductSku();
+      expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
+      expect(navigate).toHaveBeenCalledWith(['dashboard']);
+    });
   });
 });

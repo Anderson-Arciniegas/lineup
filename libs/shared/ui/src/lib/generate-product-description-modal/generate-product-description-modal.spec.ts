@@ -90,4 +90,37 @@ describe('GenerateProductDescriptionModal', () => {
     );
     expect(component.isGenerating()).toBe(false);
   });
+
+  it('no cancela ni vuelve a generar mientras está en curso', () => {
+    component.isGenerating.set(true);
+    component.cancel();
+    component.generate();
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    expect(generateProductDescription).not.toHaveBeenCalled();
+  });
+
+  it('exige título para generar', () => {
+    component['_config'].data = { title: '  ', imageUrls: [] };
+    component.generate();
+    expect(generateProductDescription).not.toHaveBeenCalled();
+    expect(messageAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'warn' }),
+    );
+  });
+
+  it('omite subtítulo y prompt vacíos', () => {
+    component['_config'].data = {
+      title: 'Producto',
+      subtitle: '  ',
+      imageUrls: undefined,
+    };
+    component.userPrompt = '   ';
+    component.generate();
+    expect(generateProductDescription).toHaveBeenCalledWith({
+      title: 'Producto',
+      subtitle: undefined,
+      imageUrls: [],
+      userPrompt: undefined,
+    });
+  });
 });
