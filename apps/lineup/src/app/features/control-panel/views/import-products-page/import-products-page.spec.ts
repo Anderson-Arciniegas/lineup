@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
@@ -157,5 +157,115 @@ describe('ImportProductsPage', () => {
       draftProduct.id,
       'edit',
     ]);
+  });
+
+  it('exige un archivo antes de subir', () => {
+    component.selectedFile.set(null);
+
+    component.uploadDocument();
+
+    expect(component.fileValidationKey()).toBe(
+      'importProductsPage.fileRequired',
+    );
+    expect(uploadImportDocument).not.toHaveBeenCalled();
+  });
+
+  it('no sube un archivo con extensión inválida', () => {
+    component.selectedFile.set(new File(['data'], 'products.exe'));
+
+    component.uploadDocument();
+
+    expect(uploadImportDocument).not.toHaveBeenCalled();
+    expect(component.isUploading()).toBe(false);
+  });
+
+  it('reporta progreso de subida y error de negocio en la respuesta', () => {
+    const file = new File(['1234'], 'products.csv', { type: 'text/csv' });
+    uploadImportDocument.mockReturnValueOnce(
+      of(
+        { type: HttpEventType.UploadProgress, loaded: 50, total: 200 },
+        { type: HttpEventType.UploadProgress, loaded: 2 },
+        new HttpResponse({
+          body: { code: 710100, status: false },
+          status: 201,
+        }),
+      ),
+    );
+    component.selectedFile.set(file);
+
+    component.uploadDocument();
+
+    expect(component.isUploading()).toBe(false);
+    expect(component.selectedFile()).toBe(file);
+    expect(messageAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+  });
+
+  it('marca progreso 0 cuando el total es 0', () => {
+    const file = new File([], 'products.csv', { type: 'text/csv' });
+    uploadImportDocument.mockReturnValueOnce(
+      of({ type: HttpEventType.UploadProgress, loaded: 0 }),
+    );
+    component.selectedFile.set(file);
+
+    component.uploadDocument();
+
+    expect(component.uploadProgress()).toBe(0);
+  });
+
+  it('marca error cuando falla la carga de borradores', () => {
+    getAllDraftProducts.mockReturnValueOnce(
+      throwError(() => new Error('fail')),
+    );
+
+    component.refreshDraftProducts();
+
+    expect(component.hasDraftLoadError()).toBe(true);
+    expect(component.isLoadingDrafts()).toBe(false);
+  });
+
+  it('incluye el término de búsqueda al cargar borradores', () => {
+    component.searchControl.setValue('  camisa  ');
+
+    component.refreshDraftProducts();
+
+    expect(getAllDraftProducts).toHaveBeenCalledWith({
+      page: 1,
+      limit: 50,
+      search: 'camisa',
+    });
+  });
+
+  it('no recarga cuando ya no hay más borradores', () => {
+    component.noMoreDrafts.set(true);
+    getAllDraftProducts.mockClear();
+
+    component.loadDraftProducts();
+
+    expect(getAllDraftProducts).not.toHaveBeenCalled();
+  });
+
+  it('limpia selección sin archivos en el input', () => {
+    component.onFileSelected({
+      target: { files: [] },
+    } as unknown as Event);
+
+    expect(component.selectedFile()).toBeNull();
+  });
+
+  it('clearSelectedFile restablece archivo y progreso', () => {
+    component.selectedFile.set(new File(['data'], 'products.csv'));
+    component.uploadProgress.set(40);
+
+    component.clearSelectedFile();
+
+    expect(component.selectedFile()).toBeNull();
+    expect(component.uploadProgress()).toBe(0);
+    expect(component.fileValidationKey()).toBeNull();
+  });
+
+  it('formatFileSize convierte bytes a MB', () => {
+    expect(component.formatFileSize(2 * 1024 * 1024)).toBe('2.00 MB');
   });
 });
