@@ -17,6 +17,17 @@ export const FIND_ALL_PRODUCTS_QUERY = gql`
   }
 `;
 
+export const GET_ALL_DRAFT_PRODUCTS_QUERY = gql`
+  query GetAllDraftProducts($pagination: InfinityScrollInput!) {
+    getAllDraftProducts(pagination: $pagination) {
+      items ${productSelection}
+      limit
+      page
+      total
+    }
+  }
+`;
+
 export const FIND_ONE_PRODUCT_QUERY = gql`
   query FindOneProduct($id: Int!) {
     findOneProduct(id: $id) ${productSelection}

@@ -92,13 +92,24 @@ describe('ProductExpandedItem', () => {
     expect(component.expandedImageSrc).toContain('t=');
   });
 
-  it('debe usar fallback si no hay archivo', () => {
+  it('debe dejar imagen vacía si no hay archivo', () => {
     component.product = {
       ...product,
       productFiles: [],
     } as ProductSchema;
     component.ngOnInit();
-    expect(component.expandedImageSrc).toContain('headphones-min.webp');
+    expect(component.expandedImageSrc).toBeUndefined();
+    expect(component.hasProductImage).toBe(false);
+  });
+
+  it('debe tolerar productFiles ausente', () => {
+    component.product = {
+      ...product,
+      productFiles: undefined,
+    } as ProductSchema;
+    component.ngOnInit();
+    expect(component.expandedImageSrc).toBeUndefined();
+    expect(component.hasProductImage).toBe(false);
   });
 
   it('debe recalcular imagen en ngOnChanges', () => {

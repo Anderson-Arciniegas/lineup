@@ -29,6 +29,7 @@ describe('CreateProductPage', () => {
   let component: CreateProductPage;
   let getBusinessByPath: jest.Mock;
   let findOneCatalogByPath: jest.Mock;
+  let findAllMyCatalogs: jest.Mock;
   let createProduct: jest.Mock;
   let messageAdd: jest.Mock;
   let navigate: jest.Mock;
@@ -40,6 +41,9 @@ describe('CreateProductPage', () => {
     );
     findOneCatalogByPath = jest.fn(() =>
       of({ id: 99, path: 'my-cat', title: 'Cat' }),
+    );
+    findAllMyCatalogs = jest.fn(() =>
+      of({ items: [{ id: 99, path: 'my-cat', title: 'Cat' }] }),
     );
     createProduct = jest.fn(() => of({ id: 500 }));
     messageAdd = jest.fn();
@@ -80,7 +84,7 @@ describe('CreateProductPage', () => {
         },
         {
           provide: CatalogPrivateService,
-          useValue: { findOneCatalogByPath },
+          useValue: { findAllMyCatalogs, findOneCatalogByPath },
         },
         {
           provide: ProductPrivateService,
@@ -157,12 +161,11 @@ describe('CreateProductPage', () => {
       expect(createProduct).not.toHaveBeenCalled();
     });
 
-    it('debe avisar si falta catálogo', () => {
+    it('marca el formulario inválido si falta catálogo', () => {
       component.catalog = null;
+      component.createProductForm.patchValue({ idCatalog: null });
       component.createProduct();
-      expect(messageAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ severity: 'warn' }),
-      );
+      expect(component.createProductForm.get('idCatalog')?.touched).toBe(true);
       expect(createProduct).not.toHaveBeenCalled();
     });
 
@@ -435,7 +438,14 @@ describe('CreateProductPage', () => {
               findOneCatalogByPath: jest.fn(() =>
                 of({ id: 99, path: 'my-cat' }),
               ),
-              findOneCatalog: jest.fn(() => of({ id: 101, path: 'other-cat' })),
+              findAllMyCatalogs: jest.fn(() =>
+                of({
+                  items: [
+                    { id: 99, path: 'my-cat', title: 'Current' },
+                    { id: 101, path: 'other-cat', title: 'Other' },
+                  ],
+                }),
+              ),
             },
           },
           {
@@ -483,26 +493,14 @@ describe('CreateProductPage', () => {
       expect(navigate).toHaveBeenCalled();
     });
 
-    it('switchCatalog debe actualizar catálogo seleccionado', () => {
-      component.product = { id: 500, catalog: { id: 99 } } as ProductSchema;
-      component.switchCatalog();
+    it('onCatalogChange debe actualizar catálogo seleccionado', () => {
+      component.onCatalogChange(101);
       expect(component.catalog?.id).toBe(101);
     });
 
-    it('switchCatalog no hace nada sin producto', () => {
-      component.product = undefined as unknown as ProductSchema;
-      component.switchCatalog();
-      expect(component.catalog?.id).toBe(99);
-    });
-
-    it('switchCatalog no recarga si el catálogo es el mismo', () => {
-      const catalogService = TestBed.inject(CatalogPrivateService);
-      const findOneCatalog = jest.fn(() => of({ id: 101, path: 'other-cat' }));
-      Object.assign(catalogService, { findOneCatalog });
-      const dialog = TestBed.inject(DialogService);
-      (dialog.open as jest.Mock).mockReturnValue({ onClose: of(99) });
-      component.switchCatalog();
-      expect(findOneCatalog).not.toHaveBeenCalled();
+    it('onCatalogChange elimina el catálogo al limpiar el selector', () => {
+      component.onCatalogChange(null);
+      expect(component.catalog).toBeNull();
     });
 
     it('update sin business navega por dashboard', () => {
@@ -623,6 +621,7 @@ describe('CreateProductPage', () => {
           {
             provide: CatalogPrivateService,
             useValue: {
+              findAllMyCatalogs: jest.fn(() => of({ items: [] })),
               findOneCatalogByPath: jest.fn(() =>
                 of({ id: 99, path: 'my-cat' }),
               ),
@@ -761,6 +760,7 @@ describe('CreateProductPage', () => {
           {
             provide: CatalogPrivateService,
             useValue: {
+              findAllMyCatalogs: jest.fn(() => of({ items: [] })),
               findOneCatalogByPath: jest.fn(() =>
                 of({ id: 99, path: 'my-cat' }),
               ),

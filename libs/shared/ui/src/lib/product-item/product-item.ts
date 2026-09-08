@@ -96,12 +96,15 @@ export class ProductItem implements OnInit {
     @Inject(PLATFORM_ID) private platformId: object, // eslint-disable-line
   ) {}
 
+  /** True when the product has a resolvable image URL. */
+  get hasProductImage(): boolean {
+    return !!this.image;
+  }
+
   /** Construye URLs de edición/inventario y menú contextual PrimeNG. */
   ngOnInit(): void {
     if (this.product) {
-      this.image = this.product.productFiles
-        ? this.product.productFiles[0]?.file?.url
-        : '';
+      this.image = this.product.productFiles?.[0]?.file?.url?.trim() || '';
       this.url = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}`;
       this.editUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.edit}`;
       this.inventoryUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.product.catalog.path}/${this.product.id}/${AppConfigService.config.routes.inventory}`;

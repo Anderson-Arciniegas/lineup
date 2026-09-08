@@ -54,8 +54,12 @@ export class ProductExpandedItem
   @Input() reverse = false;
   /** Catálogo PDF: oculta acciones (like / compartir). */
   @Input() pdfExportAttempt = false;
-  /** `src` de la imagen principal (nonce en URLs http(s), v. catalog-carousel). */
-  expandedImageSrc = 'assets/images/products/headphones-min.webp';
+  /** `src` of the main image when a product file exists. */
+  expandedImageSrc: string | undefined;
+  /** True when a resolvable product image URL is available. */
+  get hasProductImage(): boolean {
+    return !!this.expandedImageSrc;
+  }
   imageLoaded = false;
   hasLiked = false;
 
@@ -118,19 +122,18 @@ export class ProductExpandedItem
     this._subscription.unsubscribe();
   }
 
-  /** Miniatura `md` con fallback local si no hay archivo. */
+  /** Thumbnail `md` when a product file exists; otherwise leave src empty for placeholder. */
   private setExpandedImageSrc(): void {
-    const fallback = 'assets/images/products/headphones-min.webp';
     const raw = getFileThumbnailUrl(
       this.product?.productFiles?.[0]?.file,
       'md',
     );
     if (!raw) {
-      this.expandedImageSrc = fallback;
+      this.expandedImageSrc = undefined;
+      this.imageLoaded = false;
       return;
     }
-    const withNonce = this.srcWithCrossOriginNonce(raw);
-    this.expandedImageSrc = withNonce ?? fallback;
+    this.expandedImageSrc = this.srcWithCrossOriginNonce(raw);
   }
 
   /** Añade query de bust de caché en URLs http(s) para capturas y CORS. */

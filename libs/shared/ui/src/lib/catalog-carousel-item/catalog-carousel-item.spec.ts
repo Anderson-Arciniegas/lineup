@@ -209,4 +209,31 @@ describe('CatalogCarouselItem', () => {
     component.getRates();
     expect(component.price).toBe(8);
   });
+
+  it('debe resolver imagen del producto cuando existe', () => {
+    component.ngOnChanges({
+      product: {
+        currentValue: product,
+        previousValue: null,
+        firstChange: true,
+        isFirstChange: () => true,
+      },
+    });
+    expect(component.productImageSrc).toBe('https://example.com/p.jpg');
+    expect(component.hasProductImage).toBe(true);
+  });
+
+  it('debe dejar imagen vacía sin productFiles', () => {
+    component.product = { ...product, productFiles: [] } as ProductSchema;
+    component.ngOnChanges({
+      product: {
+        currentValue: component.product,
+        previousValue: product,
+        firstChange: false,
+        isFirstChange: () => false,
+      },
+    });
+    expect(component.productImageSrc).toBeUndefined();
+    expect(component.hasProductImage).toBe(false);
+  });
 });

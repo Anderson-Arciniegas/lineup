@@ -55,6 +55,13 @@ describe('ControlPanelLayout', () => {
     const items = component.items();
     expect(items.length).toBeGreaterThan(0);
     expect(items.some((i) => i.url === '/dashboard/catalogs')).toBe(true);
+    expect(
+      items.some(
+        (i) =>
+          i.label === 'general.importProducts' &&
+          i.url === '/dashboard/import-products',
+      ),
+    ).toBe(true);
   });
 
   it('toggleSidebar alterna sidebarOpen', () => {

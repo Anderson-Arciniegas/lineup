@@ -11,7 +11,7 @@ describe('ProductPrivateService', () => {
 
   beforeEach(() => {
     const apollo = createApolloMock({
-      query: () => of({ data: {"findAllProducts":{"items":[],"total":0},"getAllByCatalog":[],"getAllByCatalogPaginated":{"items":[],"total":0},"getAllByTag":{"items":[],"total":0},"getAllPrimaryProductsByBusiness":[],"findOneProduct":{"id":1},"getStockByProduct":[],"getStockHistory":[]} as Record<string, unknown> }),
+      query: () => of({ data: {"findAllProducts":{"items":[],"total":0},"getAllDraftProducts":{"items":[],"total":0},"getAllByCatalog":[],"getAllByCatalogPaginated":{"items":[],"total":0},"getAllByTag":{"items":[],"total":0},"getAllPrimaryProductsByBusiness":[],"findOneProduct":{"id":1},"getStockByProduct":[],"getStockHistory":[]} as Record<string, unknown> }),
       mutate: () => of({ data: {"createProduct":{"id":1},"updateProduct":{"id":1},"removeProduct":true,"removeProductSku":true,"adjustStock":{"id":1},"registerSale":[],"updateProductSkus":[],"toggleProductIsPrimary":{"id":1}} as Record<string, unknown> }),
     });
     querySpy = apollo.querySpy;
@@ -30,6 +30,20 @@ describe('ProductPrivateService', () => {
     const result = await firstValueFrom(service.findAllProducts({ limit: 10, page: 0 }));
     expect(result).toBeDefined();
     expect(querySpy).toHaveBeenCalled();
+  });
+
+  it('getAllDraftProducts calls Apollo with pagination', async () => {
+    const pagination = { limit: 10, page: 1, search: 'draft' };
+    const result = await firstValueFrom(
+      service.getAllDraftProducts(pagination),
+    );
+    expect(result).toBeDefined();
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: { pagination },
+        fetchPolicy: 'network-only',
+      }),
+    );
   });
 
   it('getAllByCatalog calls Apollo and returns data', async () => {

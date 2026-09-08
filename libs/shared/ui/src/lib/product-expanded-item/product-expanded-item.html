@@ -91,6 +91,7 @@
   </div>
 
   <a [routerLink]="[product.id]">
+    @if (hasProductImage) {
     <img
       [id]="product.id"
       class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10"
@@ -112,6 +113,15 @@
         [style]="{ width: '50px', height: '50px' }"
       />
     </div>
+    } @else {
+    <div
+      class="expanded-product-image expanded-product-image--placeholder sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10 flex flex-row items-center justify-center"
+      [class.expanded-product-image--pdf]="pdfExportAttempt"
+      aria-hidden="true"
+    >
+      <i class="pi pi-image text-5xl text-gray-300"></i>
+    </div>
+    }
   </a>
 </section>
 }

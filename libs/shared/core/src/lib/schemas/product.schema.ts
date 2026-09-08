@@ -82,7 +82,7 @@ export interface ProductSchema {
   discountProduct?: DiscountProductSchema;
   hasVariations: boolean;
   id: number;
-  idCatalog: number;
+  idCatalog: number | null;
   idCreationBusiness: number;
   idCurrency?: number;
   isPrimary: boolean;

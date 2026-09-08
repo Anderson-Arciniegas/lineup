@@ -60,25 +60,32 @@ export class CatalogCarousel implements AfterViewInit {
   }
 
   /** Al cambiar de slide, muestrea la imagen del producto y emite color de fondo semitransparente. */
-  onPage($event: any) {
-    if (!this.predefinedColor) {
-      const img = new Image();
-      img.crossOrigin = 'anonymous'; // ← ESTO ES CRÍTICO
-      img.src =
-        this.products[$event.page].productFiles[0].file?.url +
-          '?t=' +
-          Date.now() || '';
-
-      img.onload = async () => {
-        const fac = new FastAverageColor();
-
-        fac.getColorAsync(img).then((color) => {
-          const rgba = color.rgba.replace(/[\d.]+\)$/g, '0.5)');
-          this.bgColor = rgba;
-          this.setColor.emit(this.bgColor);
-          this._cdr.detectChanges();
-        });
-      };
+  onPage($event: { page?: number }) {
+    if (this.predefinedColor) {
+      return;
     }
+
+    const page = $event.page ?? 0;
+    const product = this.products?.[page];
+    const imageUrl = product?.productFiles?.[0]?.file?.url?.trim();
+    if (!imageUrl) {
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    const sep = imageUrl.includes('?') ? '&' : '?';
+    img.src = `${imageUrl}${sep}t=${Date.now()}`;
+
+    img.onload = async () => {
+      const fac = new FastAverageColor();
+
+      fac.getColorAsync(img).then((color) => {
+        const rgba = color.rgba.replace(/[\d.]+\)$/g, '0.5)');
+        this.bgColor = rgba;
+        this.setColor.emit(this.bgColor);
+        this._cdr.detectChanges();
+      });
+    };
   }
 }

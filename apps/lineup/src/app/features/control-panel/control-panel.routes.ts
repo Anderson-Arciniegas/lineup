@@ -16,6 +16,7 @@ import { CreateProductPage } from './views/create-product-page/create-product-pa
 import { DiscountPage } from './views/discount-page/discount-page';
 import { DiscountsPanelPage } from './views/discounts-panel-page/discounts-panel-page';
 import { EditBusinessPage } from './views/edit-business-page/edit-business-page';
+import { ImportProductsPage } from './views/import-products-page/import-products-page';
 import { InventoryPage } from './views/inventory-page/inventory-page';
 import { LocationsPage } from './views/locations-page/locations-page';
 import { ProductPanelPage } from './views/product-panel-page/product-panel-page';
@@ -108,6 +109,17 @@ export const controlPanelRoutes: Routes = [
       {
         path: AppConfigService.config.routes.statistics,
         component: StatisticsPage,
+      },
+      {
+        path: AppConfigService.config.routes.importProducts,
+        component: ImportProductsPage,
+      },
+      {
+        path:
+          AppConfigService.config.routes.importProducts +
+          '/:idProduct/' +
+          AppConfigService.config.routes.edit,
+        component: CreateProductPage,
       },
       {
         path: AppConfigService.config.routes.catalogs,

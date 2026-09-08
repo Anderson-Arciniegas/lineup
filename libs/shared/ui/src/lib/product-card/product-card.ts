@@ -105,12 +105,15 @@ export class ProductCard
     `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
   }`;
 
+  /** True when the product has a resolvable image URL. */
+  get hasProductImage(): boolean {
+    return !!this.image;
+  }
+
   /** Resuelve miniaturas, URL al detalle, precios iniciales y disponibilidad por SKUs. */
   ngOnInit(): void {
     if (this.product) {
-      this.image = this.srcWithCrossOriginNonce(
-        getFileThumbnailUrl(this.product.productFiles[0].file, 'sm'),
-      );
+      this.image = this.resolveProductImageSrc();
       if (this.product.business && this.product.catalog) {
         this.url = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
         this.businessImage = this.srcWithCrossOriginNonce(
@@ -165,9 +168,7 @@ export class ProductCard
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
       this.imageLoaded = false;
-      this.image = this.srcWithCrossOriginNonce(
-        getFileThumbnailUrl(this.product.productFiles[0]?.file, 'sm'),
-      );
+      this.image = this.resolveProductImageSrc();
       this.businessImage = this.srcWithCrossOriginNonce(
         getFileThumbnailUrl(this.product.business?.image, 'sm'),
       );
@@ -181,6 +182,13 @@ export class ProductCard
     if (changes['pdfExportAttempt'] && isPlatformBrowser(this.platformId)) {
       this.syncFlipForExportState();
     }
+  }
+
+  /** Thumbnail `sm` from the first product file, or undefined when missing. */
+  private resolveProductImageSrc(): string | undefined {
+    return this.srcWithCrossOriginNonce(
+      getFileThumbnailUrl(this.product?.productFiles?.[0]?.file, 'sm'),
+    );
   }
 
   /**

@@ -23,7 +23,16 @@
     </div>
 
     <div class="flex flex-row items-center justify-center w-full gap-4">
-      <img class="product-image" [src]="image" alt="" />
+      @if (image) {
+      <img class="product-image" [src]="image" [alt]="product.title" />
+      } @else {
+      <div
+        class="product-image product-image--placeholder flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <i class="pi pi-image text-3xl text-gray-300"></i>
+      </div>
+      }
       <span class="text-3xl text-gray-600">#{{product.id}}</span>
       <span class="text-2xl">{{product.title}}</span>
     </div>

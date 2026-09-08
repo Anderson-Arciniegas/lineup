@@ -5,6 +5,7 @@ import {
   CREATE_PRODUCT_MUTATION,
   FIND_ALL_PRODUCTS_QUERY,
   FIND_ONE_PRODUCT_QUERY,
+  GET_ALL_DRAFT_PRODUCTS_QUERY,
   GET_ALL_BY_CATALOG_PAGINATED_QUERY,
   GET_ALL_BY_CATALOG_QUERY,
   GET_ALL_BY_TAG_QUERY,
@@ -58,6 +59,22 @@ export class ProductPrivateService {
         },
       })
       .pipe(map((result) => result.data.findAllProducts));
+  }
+
+  getAllDraftProducts(
+    pagination: InfinityScrollInput,
+  ): Observable<PaginatedProducts> {
+    return this.apollo
+      .use(ApiClient.BUSINESS)
+      .query<{ getAllDraftProducts: PaginatedProducts }>({
+        query: GET_ALL_DRAFT_PRODUCTS_QUERY,
+        variables: { pagination },
+        fetchPolicy: 'network-only',
+        context: {
+          withCredentials: true,
+        },
+      })
+      .pipe(map((result) => result.data.getAllDraftProducts));
   }
 
   getAllByCatalog(

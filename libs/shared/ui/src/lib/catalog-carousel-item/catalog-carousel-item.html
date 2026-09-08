@@ -77,12 +77,23 @@
   </div>
 
   <a [routerLink]="[product.id]">
+    @if (hasProductImage) {
     <img
       [id]="product.id"
       class="expanded-product-image sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10"
-      [src]="product.productFiles[0].file?.url || 'assets/images/products/headphones-min.webp'"
+      [src]="productImageSrc"
+      (load)="imageLoaded = true"
+      [hidden]="!imageLoaded"
       alt=""
     />
+    } @else {
+    <div
+      class="expanded-product-image expanded-product-image--placeholder sm:max-w-100 lg:max-w-125 w-10/10 sm:w-8/10 lg:w-4/10 flex flex-row items-center justify-center"
+      aria-hidden="true"
+    >
+      <i class="pi pi-image text-5xl text-gray-300"></i>
+    </div>
+    }
   </a>
 </section>
 }

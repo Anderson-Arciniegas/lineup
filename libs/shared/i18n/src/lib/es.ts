@@ -110,6 +110,7 @@ export const es = {
     catalogTitle: 'Título del catálogo',
     catalogColor: 'Color del catálogo',
     catalogs: 'Catálogos',
+    importProducts: 'Importar productos',
     editCatalog: 'Editar catálogo',
     subtitle: 'Subtítulo',
     maxLength: 'Longitud máxima',
@@ -312,6 +313,41 @@ export const es = {
     pdfDownloaded: 'PDF descargado! Puedes cerrar esta pestaña.',
     errorGeneratingPdf: 'Error al generar el PDF. Inténtalo de nuevo.',
     resultsFor: 'Resultados para',
+  },
+  importProductsPage: {
+    title: 'Importar productos',
+    description:
+      'Carga un documento para crear productos pendientes y completa su información antes de agregarlos a un catálogo.',
+    uploadTitle: 'Cargar documento',
+    allowedFormats:
+      'Formatos permitidos: CSV, XLSX, XLS, PDF, XML, TXT y JSON. Tamaño máximo: 100 MB.',
+    selectFile: 'Documento de productos',
+    removeFile: 'Quitar archivo seleccionado',
+    uploadAction: 'Importar documento',
+    uploading: 'Cargando documento…',
+    fileRequired: 'Selecciona un documento para continuar.',
+    invalidExtension: 'El formato del archivo no está permitido.',
+    fileTooLarge: 'El archivo supera el tamaño máximo de 100 MB.',
+    importQueued:
+      'Importación en proceso. Los productos aparecerán como pendientes.',
+    uploadFailed:
+      'No se pudo cargar el documento. Revisa el formato e inténtalo de nuevo.',
+    pendingTitle: 'Productos pendientes',
+    pendingDescription:
+      'Agrega imágenes y selecciona un catálogo para publicar estos productos.',
+    searchPlaceholder: 'Buscar productos pendientes',
+    refresh: 'Actualizar productos pendientes',
+    pendingStatus: 'Pendiente',
+    addToCatalog: 'Agregar a catálogo',
+    productActivated: 'Producto agregado al catálogo y activado correctamente.',
+    activationFailed:
+      'No se pudo agregar el producto al catálogo. Inténtalo de nuevo.',
+    noPendingProducts: 'No hay productos pendientes.',
+    noPendingProductsHint:
+      'Importa un documento o actualiza la lista mientras se procesa una importación.',
+    loadingPending: 'Cargando productos pendientes…',
+    loadFailed: 'No se pudieron cargar los productos pendientes.',
+    retry: 'Reintentar',
   },
   businessHoursModal: {
     days: 'Días',

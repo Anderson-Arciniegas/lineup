@@ -141,4 +141,24 @@ describe('ProductPage', () => {
       expect(component.carouselAutoplayInterval).toBe(0);
     });
   });
+
+  describe('carouselSlides', () => {
+    it('debe devolver vacío sin productFiles', () => {
+      expect(component.carouselSlides).toEqual([]);
+    });
+
+    it('debe filtrar archivos sin URL válida', () => {
+      component.product = {
+        ...product,
+        productFiles: [
+          { file: { url: '' } },
+          { file: { url: 'https://cdn.test/valid.jpg' } },
+        ],
+      } as typeof component.product;
+      expect(component.carouselSlides).toHaveLength(1);
+      expect(component.carouselSlides[0].file?.url).toBe(
+        'https://cdn.test/valid.jpg',
+      );
+    });
+  });
 });

@@ -239,12 +239,16 @@ export class ProductPage implements OnInit, OnDestroy {
   }
 
   private _carouselSlideCount(): number {
+    return this.carouselSlides.length;
+  }
+
+  /** Product files with a resolvable thumbnail URL for the gallery. */
+  get carouselSlides() {
     const files = this.product?.productFiles;
     if (!files?.length) {
-      return 0;
+      return [];
     }
-    return files.filter((pf) => !!getFileThumbnailUrl(pf.file, 'md')?.trim())
-      .length;
+    return files.filter((pf) => !!getFileThumbnailUrl(pf.file, 'md')?.trim());
   }
 
   /** Mapea media queries CDK a número de slides visibles del carousel PrimeNG. */

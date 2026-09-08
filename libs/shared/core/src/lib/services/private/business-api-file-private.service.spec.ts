@@ -39,4 +39,23 @@ describe('BusinessApiFilePrivateService', () => {
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
   });
+
+  it('uploadImportDocument posts the document with credentials', () => {
+    const file = new File(['title,description'], 'products.csv', {
+      type: 'text/csv',
+    });
+
+    service.uploadImportDocument(file).subscribe();
+
+    const req = httpMock.expectOne(
+      `${environment.businessApiFile}files/upload-document`,
+    );
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.reportProgress).toBe(true);
+    expect(req.request.body).toBeInstanceOf(FormData);
+    expect((req.request.body as FormData).get('file')).toBe(file);
+    expect(req.request.headers.has('Content-Type')).toBe(false);
+    req.flush({ code: 710100, status: true });
+  });
 });

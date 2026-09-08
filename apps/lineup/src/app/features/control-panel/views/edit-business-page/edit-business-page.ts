@@ -197,13 +197,16 @@ export class EditBusinessPage implements OnInit {
                 return response;
 
               default:
-                break;
+                return response;
             }
           }),
         )
         .subscribe({
           next: (uploadResponse) => {
-            if (typeof uploadResponse === 'object' && uploadResponse.status) {
+            if (
+              uploadResponse.type === HttpEventType.Response &&
+              uploadResponse.status
+            ) {
               this.uploadFailed = false;
               this.adultContent = false;
               this.loadingFile = false;
