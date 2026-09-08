@@ -14,7 +14,7 @@
   } @else {
   <form
     [formGroup]="createProductForm"
-    class="flex flex-col gap-5 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey max-w-7xl w-full"
+    class="flex flex-col gap-4 py-4 sm:py-12 px-4 sm:px-10 xl:px-18 rounded-lg border-grey max-w-7xl w-full"
   >
     <div class="flex flex-row items-center justify-between">
       @if(idProduct){
@@ -27,26 +27,37 @@
       </h2>
       }
     </div>
-    @if(product){
-    <div class="flex sm:flex-row flex-col sm:items-center justify-start gap-3">
-      <span class="text-base text-gray-600 font-medium flex items-center gap-2">
-        <i class="pi pi-folder"></i>
-        {{ catalog?.title }}
-      </span>
-      <lib-button
-        [size]="'small'"
-        [label]="'general.switchCatalog' | translate"
-        type="rounded"
-        color="primary"
-        (action)="switchCatalog()"
-      ></lib-button>
+    <div class="w-full flex flex-col gap-1">
+      <label class="font-medium text-lg" for="product-catalog">
+        {{ 'general.catalog' | translate }}<span class="text-red-500">*</span>:
+      </label>
+      <p-select
+        inputId="product-catalog"
+        formControlName="idCatalog"
+        [options]="catalogs"
+        optionLabel="title"
+        optionValue="id"
+        [placeholder]="'general.selectCatalog' | translate"
+        [loading]="loadingCatalogs"
+        [filter]="true"
+        filterBy="title"
+        class="w-full"
+        (onChange)="onCatalogChange($event.value)"
+      />
+      <div class="min-h-6">
+        @if ( createProductForm.get('idCatalog')?.invalid &&
+        createProductForm.get('idCatalog')?.touched ) {
+        <small class="text-red-500 text-sm" role="alert">
+          {{ 'validation.fieldRequired' | translate }}
+        </small>
+        }
+      </div>
     </div>
-
-    }
-    <div class="w-full flex flex-col gap-2">
+    <div class="w-full flex flex-col gap-1">
       <div class="flex flex-row items-end justify-start gap-2">
         <label for="title" class="font-medium text-lg"
-          >{{ 'general.title' | translate }}<span class="text-red-500">*</span>:</label
+          >{{ 'general.title' | translate }}<span class="text-red-500">*</span
+          >:</label
         >
       </div>
       <input
@@ -57,18 +68,21 @@
         formControlName="title"
         [maxlength]="maxTitleLength"
       />
-      @if (createProductForm.get('title')?.invalid &&
-      createProductForm.get('title')?.touched) {
-      <small class="text-red-500 text-sm" role="alert">
-        {{ 'validation.fieldRequired' | translate }}
-      </small>
-      }
+
       <small id="title-help" class="text-color-secondary text-xs mt-1 block">
         {{ createProductForm.get('title')?.value.length }} / {{ maxTitleLength
         }}
       </small>
+      <div class="min-h-6">
+        @if (createProductForm.get('title')?.invalid &&
+        createProductForm.get('title')?.touched) {
+        <small class="text-red-500 text-sm" role="alert">
+          {{ 'validation.fieldRequired' | translate }}
+        </small>
+        }
+      </div>
     </div>
-    <div class="w-full flex flex-col gap-2">
+    <div class="w-full flex flex-col gap-1">
       <div class="flex flex-row items-end justify-start gap-2">
         <label for="title" class="font-medium text-lg"
           >{{ 'general.subtitle' | translate }}:</label
@@ -89,10 +103,12 @@
     </div>
     <div class="w-full flex flex-row justify-between">
       <div class="w-full md:w-1/2 lg:w-2/3 xl:w-full flex flex-col gap-5">
-        <div class="w-full flex flex-col items-center justify-center gap-2">
+        <div class="w-full flex flex-col items-center justify-center gap-1">
           <div class="w-full flex flex-row flex-wrap items-end justify-start">
             <label for="image" class="font-medium text-lg">
-              {{'general.imagesUpload' | translate}}<span class="text-red-500">*</span>:
+              {{'general.imagesUpload' | translate}}<span class="text-red-500"
+                >*</span
+              >:
             </label>
           </div>
           <div
@@ -127,11 +143,13 @@
               }
             </div>
           </div>
-          @if (submitAttempted && imgCodes.length === 0) {
-          <small class="text-red-500 text-sm" role="alert">
-            {{ 'validation.imageRequired' | translate }}
-          </small>
-          }
+          <div class="min-h-6 self-start">
+            @if (submitAttempted && imgCodes.length === 0) {
+            <small class="text-red-500 text-sm" role="alert">
+              {{ 'validation.imageRequired' | translate }}
+            </small>
+            }
+          </div>
         </div>
         <!-- <div class="w-full flex flex-col gap-1">
           <label for="price" class="font-medium text-lg"
@@ -330,9 +348,14 @@
         </div>
         <div class="w-full flex flex-col gap-1">
           <div class="flex flex-col gap-2 w-full">
-            <div class="flex flex-row flex-wrap items-center justify-between gap-2">
+            <div
+              class="flex flex-row flex-wrap items-center justify-between gap-2"
+            >
               <label for="description" class="font-medium text-lg"
-                >{{ 'general.description' | translate }}<span class="text-red-500">*</span>:</label
+                >{{ 'general.description' | translate }}<span
+                  class="text-red-500"
+                  >*</span
+                >:</label
               >
               <lib-button
                 [label]="'general.generateDescriptionWithAi' | translate"
@@ -357,12 +380,14 @@
             ></textarea>
             }
           </div>
-          @if (createProductForm.get('description')?.invalid &&
-          createProductForm.get('description')?.touched) {
-          <small class="text-red-500 text-sm" role="alert">
-            {{ 'validation.fieldRequired' | translate }}
-          </small>
-          }
+          <div class="min-h-6">
+            @if (createProductForm.get('description')?.invalid &&
+            createProductForm.get('description')?.touched) {
+            <small class="text-red-500 text-sm" role="alert">
+              {{ 'validation.fieldRequired' | translate }}
+            </small>
+            }
+          </div>
         </div>
       </div>
     </div>

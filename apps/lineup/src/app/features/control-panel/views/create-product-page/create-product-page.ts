@@ -45,7 +45,6 @@ import {
   GenerateProductDescriptionModal,
   ImageCropper,
   ProductBreadcrumb,
-  SelectCatalogModal,
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
@@ -59,6 +58,7 @@ import { MenuModule } from 'primeng/menu';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription, take } from 'rxjs';
@@ -87,6 +87,7 @@ import { map, Subscription, take } from 'rxjs';
     DraggableImageList,
     ReactiveFormsModule,
     ProgressSpinner,
+    SelectModule,
   ],
   templateUrl: './create-product-page.html',
   styleUrl: './create-product-page.scss',
@@ -104,7 +105,9 @@ export class CreateProductPage implements OnInit {
   imgCodes: string[] = [];
 
   catalog: CatalogSchema | null = null;
+  catalogs: CatalogSchema[] = [];
   isSubmitting = false;
+  loadingCatalogs = false;
   loadingFile = false;
   uploadFailed = false;
   adultContent = false;
@@ -146,8 +149,7 @@ export class CreateProductPage implements OnInit {
         [Validators.minLength(3), Validators.maxLength(this.maxSubtitleLength)],
       ],
       description: ['', [Validators.required]],
-      /** Solo se usa en modo actualización (cambio de catálogo). */
-      idCatalog: [null as number | null],
+      idCatalog: [null as number | null, Validators.required],
       variations: this._formBuilder.array([]),
     });
   }
@@ -169,60 +171,17 @@ export class CreateProductPage implements OnInit {
     if (this.catalogPath) {
       this.getCatalog();
     }
+    this.loadCatalogs();
     if (this.idProduct) {
       this.getProduct();
     }
   }
 
-  /** Modal para mover el producto a otro catálogo del mismo negocio (solo en edición). */
-  switchCatalog(): void {
-    if (!this.product) {
-      return;
-    }
-    this.ref = this._dialogService.open(SelectCatalogModal, {
-      width: '480px',
-      style: { maxHeight: '80vh' },
-      breakpoints: {
-        '640px': '450px',
-        '500px': '80vw',
-        '400px': '90vw',
-      },
-      modal: true,
-      closable: true,
-      dismissableMask: true,
-    });
-    this._subscription.add(
-      this.ref.onClose
-        .pipe(take(1), takeUntilDestroyed(this.destroyRef))
-        .subscribe((catalogId: number | undefined) => {
-          if (catalogId == null) {
-            return;
-          }
-          const currentId =
-            this.product.catalog?.id ?? this.catalog?.id ?? null;
-          if (catalogId === currentId) {
-            return;
-          }
-          this._subscription.add(
-            this._catalogService.findOneCatalog(catalogId).subscribe({
-              next: (catalog) => {
-                this.catalog = catalog;
-                this.catalogPath = catalog.path;
-                this.createProductForm.patchValue({ idCatalog: catalogId });
-                this._cdr.markForCheck();
-              },
-              error: (err) => {
-                console.error(err);
-                this._messageService.add({
-                  severity: 'error',
-                  summary: this._translate.instant('general.error'),
-                  detail: this._translate.instant('general.errorLoadingData'),
-                });
-              },
-            }),
-          );
-        }),
-    );
+  onCatalogChange(catalogId: number | null): void {
+    this.catalog =
+      this.catalogs.find((catalog) => catalog.id === catalogId) ?? null;
+    this.catalogPath = this.catalog?.path;
+    this._cdr.markForCheck();
   }
 
   private getCatalog(): void {
@@ -231,8 +190,33 @@ export class CreateProductPage implements OnInit {
       this._catalogService.findOneCatalogByPath(this.catalogPath).subscribe({
         next: (catalog) => {
           this.catalog = catalog;
+          this.createProductForm.patchValue({ idCatalog: catalog.id });
         },
       }),
+    );
+  }
+
+  private loadCatalogs(): void {
+    this.loadingCatalogs = true;
+    this._subscription.add(
+      this._catalogService
+        .findAllMyCatalogs({ page: 1, limit: 200 })
+        .subscribe({
+          next: (response) => {
+            this.catalogs = response.items;
+            this.loadingCatalogs = false;
+            this._cdr.markForCheck();
+          },
+          error: () => {
+            this.loadingCatalogs = false;
+            this._messageService.add({
+              severity: 'error',
+              summary: this._translate.instant('general.error'),
+              detail: this._translate.instant('general.errorLoadingData'),
+            });
+            this._cdr.markForCheck();
+          },
+        }),
     );
   }
 
@@ -250,6 +234,8 @@ export class CreateProductPage implements OnInit {
             description: product.description,
             idCatalog: product.catalog?.id ?? null,
           });
+          this.catalog = product.catalog ?? null;
+          this.catalogPath = product.catalog?.path;
           const variations = product.variations ?? [];
           this.variationsFormArray.clear();
           variations.forEach((variation) => {
@@ -543,13 +529,16 @@ export class CreateProductPage implements OnInit {
                 return response;
 
               default:
-                break;
+                return response;
             }
           }),
         )
         .subscribe({
           next: (uploadResponse) => {
-            if (typeof uploadResponse === 'object' && uploadResponse.status) {
+            if (
+              uploadResponse.type === HttpEventType.Response &&
+              uploadResponse.status
+            ) {
               this.uploadFailed = false;
               this.adultContent = false;
               this.loadingFile = false;
@@ -671,6 +660,7 @@ export class CreateProductPage implements OnInit {
       this.createProductForm.markAllAsTouched();
       return;
     }
+    const raw = this.createProductForm.getRawValue();
     if (this.imgCodes.length === 0) {
       this._messageService.add({
         severity: 'warn',
@@ -679,7 +669,8 @@ export class CreateProductPage implements OnInit {
       });
       return;
     }
-    if (!this.catalog?.id) {
+    const idCatalog = raw.idCatalog != null ? Number(raw.idCatalog) : null;
+    if (idCatalog == null) {
       this._messageService.add({
         severity: 'warn',
         summary: this._translate.instant('general.warning'),
@@ -690,7 +681,6 @@ export class CreateProductPage implements OnInit {
     if (this.isSubmitting) {
       return;
     }
-    const raw = this.createProductForm.getRawValue();
 
     const variationsFormatted: CreateProductVariationInput[] = (
       raw.variations ?? []
@@ -719,10 +709,6 @@ export class CreateProductPage implements OnInit {
         })),
       }));
 
-      const idCatalog =
-        raw.idCatalog != null
-          ? Number(raw.idCatalog)
-          : (this.catalog?.id ?? this.product.catalog?.id);
       const data: UpdateProductInput = {
         id: this.product.id,
         title: this._utils.normalizeSpaces(raw.title ?? ''),
@@ -775,7 +761,7 @@ export class CreateProductPage implements OnInit {
         title: this._utils.normalizeSpaces(raw.title ?? ''),
         subtitle: this._utils.normalizeSpaces(raw.subtitle ?? ''),
         description: raw.description,
-        idCatalog: this.catalog.id,
+        idCatalog,
         images,
         isPrimary: false,
         variations:

@@ -80,6 +80,13 @@
     height: auto;
     aspect-ratio: 1;
     max-height: min(72vh, 100vw);
+
+    &--placeholder {
+      background: var(--p-surface-100, #f4f4f5);
+      border: 15px solid var(--p-primary-50);
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
   }
 
   @media screen and (max-width: 639px) {

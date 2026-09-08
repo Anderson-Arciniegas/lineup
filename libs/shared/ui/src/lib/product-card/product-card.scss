@@ -89,6 +89,14 @@ a {
   pointer-events: none;
 }
 
+.product-card__placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--p-surface-100, #f4f4f5);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
 .product-image {
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);

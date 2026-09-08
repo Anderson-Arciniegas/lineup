@@ -108,6 +108,7 @@ export const en = {
     catalogTitle: 'Catalog title',
     catalogColor: 'Catalog color',
     catalogs: 'Catalogs',
+    importProducts: 'Import products',
     editCatalog: 'Edit catalog',
     subtitle: 'Subtitle',
     maxLength: 'Maximum length',
@@ -306,6 +307,42 @@ export const en = {
     pdfDownloaded: 'PDF downloaded! You can close this tab.',
     errorGeneratingPdf: 'Error generating the PDF. Please try again.',
     resultsFor: 'Results for',
+  },
+  importProductsPage: {
+    title: 'Import products',
+    description:
+      'Upload a document to create pending products and complete their details before adding them to a catalog.',
+    uploadTitle: 'Upload document',
+    allowedFormats:
+      'Allowed formats: CSV, XLSX, XLS, PDF, XML, TXT, and JSON. Maximum size: 100 MB.',
+    selectFile: 'Products document',
+    removeFile: 'Remove selected file',
+    uploadAction: 'Import document',
+    uploading: 'Uploading document…',
+    fileRequired: 'Select a document to continue.',
+    invalidExtension: 'This file format is not allowed.',
+    fileTooLarge: 'The file exceeds the 100 MB maximum size.',
+    importQueued:
+      'Import in progress. Products will appear as pending.',
+    uploadFailed:
+      'The document could not be uploaded. Check its format and try again.',
+    pendingTitle: 'Pending products',
+    pendingDescription:
+      'Add images and select a catalog to publish these products.',
+    searchPlaceholder: 'Search pending products',
+    refresh: 'Refresh pending products',
+    pendingStatus: 'Pending',
+    addToCatalog: 'Add to catalog',
+    productActivated:
+      'Product added to the catalog and activated successfully.',
+    activationFailed:
+      'The product could not be added to the catalog. Try again.',
+    noPendingProducts: 'There are no pending products.',
+    noPendingProductsHint:
+      'Import a document or refresh the list while an import is processing.',
+    loadingPending: 'Loading pending products…',
+    loadFailed: 'Pending products could not be loaded.',
+    retry: 'Retry',
   },
   businessHoursModal: {
     days: 'Days',

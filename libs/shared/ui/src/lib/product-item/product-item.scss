@@ -17,3 +17,9 @@
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
   filter: brightness(1) contrast(1.1) saturate(1.2);
 }
+
+.product-item__placeholder {
+  border-radius: var(--border-radius);
+  background: var(--p-surface-100, #f4f4f5);
+  border: 1px solid var(--p-surface-200, #e4e4e7);
+}

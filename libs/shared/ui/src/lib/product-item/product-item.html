@@ -5,6 +5,7 @@
 >
   <div class="col-span-1 sm:col-span-2">
     <a>
+      @if (hasProductImage) {
       <img
         class="product-image lg:w-25 lg:h-25 w-20 h-20"
         (load)="imageLoaded = true"
@@ -14,18 +15,26 @@
         "
         alt=""
       />
+      <div
+        [hidden]="imageLoaded"
+        class="flex flex-row items-center justify-center lg:w-25 lg:h-25 w-20 h-20"
+      >
+        <p-progress-spinner
+          strokeWidth="8"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '50px', height: '50px' }"
+        />
+      </div>
+      } @else {
+      <div
+        class="product-item__placeholder flex items-center justify-center lg:w-25 lg:h-25 w-20 h-20"
+        aria-hidden="true"
+      >
+        <i class="pi pi-image text-2xl text-gray-300"></i>
+      </div>
+      }
     </a>
-    <div
-      [hidden]="imageLoaded"
-      class="flex flex-row items-center justify-center lg:w-25 lg:h-25 w-20 h-20"
-    >
-      <p-progress-spinner
-        strokeWidth="8"
-        fill="transparent"
-        animationDuration=".5s"
-        [style]="{ width: '50px', height: '50px' }"
-      />
-    </div>
   </div>
 
   <div

@@ -65,6 +65,11 @@ export class ControlPanelLayout {
         url: '/dashboard/catalogs',
       },
       {
+        label: 'general.importProducts',
+        icon: 'pi pi-upload',
+        url: '/dashboard/import-products',
+      },
+      {
         label: 'general.discounts',
         icon: 'pi pi-percentage',
         url: '/dashboard/discounts',

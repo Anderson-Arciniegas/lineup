@@ -82,6 +82,15 @@ describe('CatalogCarousel', () => {
     expect(() => component.onPage({ page: 0 })).not.toThrow();
   });
 
+  it('debe tolerar productFiles vacío sin lanzar error', () => {
+    component.products = [{ productFiles: [] }] as ProductSchema[];
+    expect(() => component.onPage({ page: 0 })).not.toThrow();
+  });
+
+  it('debe tolerar índice de página inválido', () => {
+    expect(() => component.onPage({ page: 99 })).not.toThrow();
+  });
+
   it('debe aceptar useLightText como input', () => {
     component.useLightText = true;
     fixture.detectChanges();

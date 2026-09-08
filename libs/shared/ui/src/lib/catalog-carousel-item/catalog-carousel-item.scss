@@ -24,6 +24,16 @@
       /* pequeño zoom */
       filter: brightness(1) contrast(1.1) saturate(1.2);
     }
+
+    &--placeholder {
+      background: var(--p-surface-100, #f4f4f5);
+      filter: none;
+
+      &:hover {
+        transform: none;
+        filter: none;
+      }
+    }
   }
 
   @media screen and (max-width: 639px) {

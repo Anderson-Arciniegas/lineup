@@ -353,6 +353,31 @@ describe('ProductCard', () => {
       } as typeof productBase;
       c.ngOnInit();
       expect(c.image).toBeUndefined();
+      expect(c.hasProductImage).toBe(false);
+    });
+
+    it('debe tolerar productFiles vacío sin lanzar error', () => {
+      const fix = TestBed.createComponent(ProductCard);
+      const c = fix.componentInstance;
+      c.product = {
+        ...productBase,
+        productFiles: [],
+      } as typeof productBase;
+      expect(() => c.ngOnInit()).not.toThrow();
+      expect(c.image).toBeUndefined();
+      expect(c.hasProductImage).toBe(false);
+    });
+
+    it('debe tolerar productFiles ausente sin lanzar error', () => {
+      const fix = TestBed.createComponent(ProductCard);
+      const c = fix.componentInstance;
+      c.product = {
+        ...productBase,
+        productFiles: undefined,
+      } as typeof productBase;
+      expect(() => c.ngOnInit()).not.toThrow();
+      expect(c.image).toBeUndefined();
+      expect(c.hasProductImage).toBe(false);
     });
 
     it('debe añadir nonce a URLs http con query existente', () => {

@@ -10,3 +10,7 @@ setupZoneTestEnv({
   errorOnUnknownElements: true,
   errorOnUnknownProperties: true,
 });
+
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => undefined);
+});

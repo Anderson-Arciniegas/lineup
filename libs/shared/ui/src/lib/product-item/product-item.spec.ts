@@ -95,10 +95,18 @@ describe('ProductItem', () => {
     expect(component.originalPrice).toBe(25);
   });
 
-  it('debe usar imagen placeholder sin productFiles', () => {
+  it('debe usar imagen vacía sin productFiles', () => {
     component.product = { ...product, productFiles: undefined } as ProductSchema;
     component.ngOnInit();
     expect(component.image).toBe('');
+    expect(component.hasProductImage).toBe(false);
+  });
+
+  it('debe tolerar productFiles vacío', () => {
+    component.product = { ...product, productFiles: [] } as ProductSchema;
+    component.ngOnInit();
+    expect(component.image).toBe('');
+    expect(component.hasProductImage).toBe(false);
   });
 
   it('debe leer url de productFiles cuando file existe', () => {
@@ -108,6 +116,7 @@ describe('ProductItem', () => {
     } as ProductSchema;
     component.ngOnInit();
     expect(component.image).toBe('https://cdn.test/img.png');
+    expect(component.hasProductImage).toBe(true);
   });
 
   it('debe manejar producto sin SKUs', () => {

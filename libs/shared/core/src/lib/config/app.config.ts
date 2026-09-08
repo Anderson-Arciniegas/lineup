@@ -18,6 +18,7 @@ export const appRoutes: AppRoutes = {
   createCatalog: 'create-catalog',
   lineup: 'lineup',
   catalogs: 'catalogs',
+  importProducts: 'import-products',
   inventory: 'inventory',
   registerSale: 'register-sale',
   settings: 'settings',
@@ -78,6 +79,7 @@ export interface AppRoutes {
   createCatalog: string;
   lineup: string;
   catalogs: string;
+  importProducts: string;
   inventory: string;
   registerSale: string;
   settings: string;

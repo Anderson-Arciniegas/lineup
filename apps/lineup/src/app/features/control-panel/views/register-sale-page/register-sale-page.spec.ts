@@ -355,6 +355,7 @@ describe('RegisterSalePage', () => {
   });
 
   it('registerSale error muestra mensaje de error', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     registerSale.mockReturnValue(throwError(() => new Error('fail')));
     await debounceWait();
     component.addToCart(component.products[0]);
@@ -362,6 +363,8 @@ describe('RegisterSalePage', () => {
     expect(messageAdd).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 
   it('registerSale avisa cantidad inválida', async () => {
@@ -511,6 +514,7 @@ describe('RegisterSalePage', () => {
   });
 
   it('loadCatalogs error muestra toast de error', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     TestBed.resetTestingModule();
     messageAdd = jest.fn();
     formatPriceWithDiscount = jest.fn(() => 15);
@@ -548,6 +552,8 @@ describe('RegisterSalePage', () => {
     expect(messageAdd).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 
   it('getRates error deja rates undefined sin bloquear ventas', async () => {

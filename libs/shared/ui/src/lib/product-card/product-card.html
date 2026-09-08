@@ -7,6 +7,7 @@
   [ngClass]="[width, height]"
 >
   <div class="product-card__media" [ngClass]="[width, height]">
+    @if (hasProductImage) {
     <img
       class="product-image product-card__image"
       (load)="imageLoaded = true"
@@ -26,6 +27,15 @@
         animationDuration=".5s"
         [style]="{ width: '50px', height: '50px' }"
       />
+    </div>
+    }
+    } @else {
+    <div
+      class="product-card__placeholder flex items-center justify-center"
+      [ngClass]="[width, height]"
+      aria-hidden="true"
+    >
+      <i class="pi pi-image text-4xl text-gray-300"></i>
     </div>
     }
   </div>

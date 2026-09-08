@@ -4,15 +4,17 @@ import {
   Component,
   inject,
   Input,
+  OnChanges,
   OnDestroy,
+  SimpleChanges,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   AuthStore,
   BcvOfficialRatesSchema,
   CurrencySchema,
-  CurrencySymbolPipe,
   DiscountSchema,
+  getFileThumbnailUrl,
   ProductPublicService,
   ProductSchema,
   RatesPrivateService,
@@ -20,7 +22,6 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Skeleton } from 'primeng/skeleton';
 import { Subscription } from 'rxjs';
 import { Button } from '../button/button';
 import { ShareModal } from '../share-modal/share-modal';
@@ -39,9 +40,11 @@ import { ShareModal } from '../share-modal/share-modal';
   templateUrl: './catalog-carousel-item.html',
   styleUrl: './catalog-carousel-item.scss',
 })
-export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
+export class CatalogCarouselItem implements AfterViewInit, OnChanges, OnDestroy {
   @Input() product: ProductSchema;
   @Input() useLightText?: boolean;
+  /** Product image URL when available. */
+  productImageSrc: string | undefined;
   imageLoaded = false;
   hasLiked = false;
   price: number;
@@ -59,8 +62,20 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _subscription = new Subscription();
 
+  /** True when a resolvable product image URL is available. */
+  get hasProductImage(): boolean {
+    return !!this.productImageSrc;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product']) {
+      this.resolveProductImageSrc();
+    }
+  }
+
   /** Inicializa precios, disponibilidad, tasas BCV y estado de favorito. */
   ngAfterViewInit(): void {
+    this.resolveProductImageSrc();
     this.hasLikedProduct();
 
     this.price = this.product.skus?.[0].price ?? null;
@@ -86,6 +101,16 @@ export class CatalogCarouselItem implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  /** Resolves the first product file URL, or clears it for the placeholder. */
+  private resolveProductImageSrc(): void {
+    const raw = getFileThumbnailUrl(
+      this.product?.productFiles?.[0]?.file,
+      'md',
+    );
+    this.productImageSrc = raw?.trim() || undefined;
+    this.imageLoaded = false;
   }
 
   share() {

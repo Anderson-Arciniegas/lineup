@@ -105,6 +105,10 @@ describe('UpdateProductSkuPage', () => {
       expect(component.product?.skus?.length).toBe(2);
       expect(component.skusFormArray.length).toBe(2);
     });
+
+    it('debe dejar image undefined sin productFiles', () => {
+      expect(component.image).toBeUndefined();
+    });
   });
 
   /**
