@@ -361,6 +361,7 @@ describe('StatisticsPage', () => {
     });
 
     it('error al recargar estadísticas muestra toast y detiene loading', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       TestBed.resetTestingModule();
       messageAdd = jest.fn();
       locationBack = jest.fn();
@@ -406,6 +407,8 @@ describe('StatisticsPage', () => {
         expect.objectContaining({ severity: 'error' }),
       );
       expect(component.loading).toBe(false);
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
 
     it('error al cargar monedas registra en consola', async () => {
