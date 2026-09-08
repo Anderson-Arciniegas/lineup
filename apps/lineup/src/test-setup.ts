@@ -48,3 +48,8 @@ setupZoneTestEnv({
   errorOnUnknownElements: true,
   errorOnUnknownProperties: true,
 });
+
+// Los handlers de error de la app llaman a console.error; Jest lo imprime en CI.
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => undefined);
+});
