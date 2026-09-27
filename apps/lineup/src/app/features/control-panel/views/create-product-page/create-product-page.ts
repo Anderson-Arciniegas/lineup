@@ -31,16 +31,19 @@ import {
   CreateProductInput,
   CreateProductVariationInput,
   DirectoriesEnum,
+  isAdultContentUploadError,
   ProductImageInput,
   ProductPrivateService,
   ProductSchema,
   ProductVariationInput,
+  requiredHtmlContent,
   Size,
   UpdateProductInput,
   UtilsService,
 } from '@lineup/core';
 import {
   Button,
+  ConfirmationModal,
   DraggableImageList,
   GenerateProductDescriptionModal,
   ImageCropper,
@@ -62,6 +65,9 @@ import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
 import { map, Subscription, take } from 'rxjs';
+import {
+  getMinLengthFieldError,
+} from '../../../auth/utils/form-field-error';
 
 /**
  * Alta o edición de producto: formulario rico (editor, variaciones, imágenes arrastrables),
@@ -114,6 +120,7 @@ export class CreateProductPage implements OnInit {
   attempt = false;
   submitAttempted = false;
   isAiModalOpen = false;
+  minLengthError = getMinLengthFieldError;
 
   maxTitleLength = 80;
   maxSubtitleLength = 100;
@@ -148,7 +155,7 @@ export class CreateProductPage implements OnInit {
         '',
         [Validators.minLength(3), Validators.maxLength(this.maxSubtitleLength)],
       ],
-      description: ['', [Validators.required]],
+      description: ['', [requiredHtmlContent]],
       idCatalog: [null as number | null, Validators.required],
       variations: this._formBuilder.array([]),
     });
@@ -191,6 +198,7 @@ export class CreateProductPage implements OnInit {
         next: (catalog) => {
           this.catalog = catalog;
           this.createProductForm.patchValue({ idCatalog: catalog.id });
+          this.createProductForm.markAsPristine();
         },
       }),
     );
@@ -209,11 +217,6 @@ export class CreateProductPage implements OnInit {
           },
           error: () => {
             this.loadingCatalogs = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail: this._translate.instant('general.errorLoadingData'),
-            });
             this._cdr.markForCheck();
           },
         }),
@@ -263,6 +266,7 @@ export class CreateProductPage implements OnInit {
           this.imgCodes =
             product.productFiles?.map((file) => file.file?.name || '') ?? [];
 
+          this.createProductForm.markAsPristine();
           this.attempt = false;
         },
         error: (error) => {
@@ -547,7 +551,7 @@ export class CreateProductPage implements OnInit {
           error: (error) => {
             this.uploadFailed = true;
             this.loadingFile = false;
-            this.adultContent = error.error.code === 22011;
+            this.adultContent = isAdultContentUploadError(error);
           },
         }),
     );
@@ -744,15 +748,8 @@ export class CreateProductPage implements OnInit {
               ]);
             }
           },
-          error: (err) => {
+          error: () => {
             this.isSubmitting = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail:
-                err?.message ??
-                this._translate.instant('general.errorUpdatingProduct'),
-            });
           },
         }),
       );
@@ -786,18 +783,73 @@ export class CreateProductPage implements OnInit {
               AppConfigService.config.routes.inventory,
             ]);
           },
-          error: (err) => {
+          error: () => {
             this.isSubmitting = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail:
-                err?.message ??
-                this._translate.instant('general.errorCreatingProduct'),
-            });
           },
         }),
       );
     }
+  }
+
+  cancel(): void {
+    this._confirmDiscardIfDirty(this.createProductForm, () =>
+      this._navigateAfterCancel(),
+    );
+  }
+
+  private _navigateAfterCancel(): void {
+    const catalogPath = this.catalog?.path ?? this.catalogPath;
+
+    if (this.idProduct && catalogPath) {
+      this._utils.navigate([
+        AppConfigService.config.routes.dashboard,
+        AppConfigService.config.routes.catalogs,
+        catalogPath,
+        this.idProduct,
+      ]);
+      return;
+    }
+
+    if (catalogPath) {
+      this._utils.navigate([
+        AppConfigService.config.routes.dashboard,
+        AppConfigService.config.routes.catalogs,
+        catalogPath,
+      ]);
+      return;
+    }
+
+    this._utils.navigate([
+      AppConfigService.config.routes.dashboard,
+      AppConfigService.config.routes.catalogs,
+    ]);
+  }
+
+  private _confirmDiscardIfDirty(
+    form: FormGroup,
+    navigate: () => void,
+  ): void {
+    if (!form.dirty) {
+      navigate();
+      return;
+    }
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant('confirmation.discardUnsavedChanges'),
+        color: 'warn',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          navigate();
+        }
+      });
   }
 }

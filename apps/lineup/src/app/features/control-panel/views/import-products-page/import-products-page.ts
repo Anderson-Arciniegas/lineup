@@ -22,6 +22,7 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   AppConfigService,
+  ApiErrorService,
   BusinessApiFilePrivateService,
   ProductPrivateService,
   ProductSchema,
@@ -70,6 +71,7 @@ export class ImportProductsPage implements OnDestroy {
   private readonly productService = inject(ProductPrivateService);
   private readonly translate = inject(TranslateService);
   private readonly utils = inject(UtilsService);
+  private readonly apiError = inject(ApiErrorService);
   private pollingSubscription?: Subscription;
 
   readonly fileInput =
@@ -91,6 +93,13 @@ export class ImportProductsPage implements OnDestroy {
 
   ngOnDestroy(): void {
     this.pollingSubscription?.unsubscribe();
+  }
+
+  openFilePicker(): void {
+    if (this.isUploading()) {
+      return;
+    }
+    this.fileInput()?.nativeElement.click();
   }
 
   onFileSelected(event: Event): void {
@@ -150,9 +159,9 @@ export class ImportProductsPage implements OnDestroy {
             this.startImportPolling();
           }
         },
-        error: () => {
+        error: (error: unknown) => {
           this.isUploading.set(false);
-          this.showUploadError();
+          this.showUploadError(error);
         },
       });
   }
@@ -263,11 +272,18 @@ export class ImportProductsPage implements OnDestroy {
       });
   }
 
-  private showUploadError(): void {
+  private showUploadError(error?: unknown): void {
+    const mappedKey = error
+      ? this.apiError.normalize(error).i18nKey
+      : 'importProductsPage.uploadFailed';
+    const detailKey =
+      mappedKey && mappedKey !== 'errors.generic'
+        ? mappedKey
+        : 'importProductsPage.uploadFailed';
     this.messageService.add({
       severity: 'error',
       summary: this.translate.instant('general.error'),
-      detail: this.translate.instant('importProductsPage.uploadFailed'),
+      detail: this.translate.instant(detailKey),
       life: 5000,
     });
   }

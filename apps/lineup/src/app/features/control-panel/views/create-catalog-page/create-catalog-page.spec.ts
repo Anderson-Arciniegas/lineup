@@ -22,7 +22,10 @@ describe('CreateCatalogPage', () => {
   let createCatalog: jest.Mock;
   let navigate: jest.Mock;
 
-  function setupRoute(params: Record<string, string>) {
+  function setupRoute(
+    params: Record<string, string>,
+    data: Record<string, unknown> = {},
+  ) {
     TestBed.resetTestingModule();
     createCatalog = jest.fn(() => of({ id: 1, path: 'nuevo-cat' }));
     navigate = jest.fn();
@@ -33,7 +36,10 @@ describe('CreateCatalogPage', () => {
     return TestBed.configureTestingModule({
       imports: [CreateCatalogPage, TranslateModule.forRoot(), HttpClientTestingModule],
       providers: [
-        { provide: ActivatedRoute, useValue: { snapshot: { params } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { params, data }, parent: null },
+        },
         TranslateService,
         TranslateStore,
         { provide: DialogService, useValue: { open: jest.fn(() => ({ onClose: of(undefined) })) } },
@@ -121,9 +127,30 @@ describe('CreateCatalogPage', () => {
       expect(component.tags).toEqual([]);
     });
 
+    it('debe deshabilitar el control tag al alcanzar maxTags', () => {
+      component.tags = Array.from({ length: 9 }, (_, i) => `tag${i}`);
+      component.createCatalogForm.patchValue({ tag: 'decima' });
+      component.addTag();
+
+      expect(component.tags.length).toBe(10);
+      expect(component.createCatalogForm.get('tag')?.disabled).toBe(true);
+
+      component.createCatalogForm.get('tag')?.setValue('extra');
+      component.addTag();
+      expect(component.tags.length).toBe(10);
+
+      component.removeTag(0);
+      expect(component.createCatalogForm.get('tag')?.enabled).toBe(true);
+    });
+
     it('setColor actualiza hexColor', () => {
       component.setColor({ value: '#ff0000' });
       expect(component.createCatalogForm.get('hexColor')?.value).toBe('#ff0000');
+    });
+
+    it('cancel debe navegar al listado de catálogos', () => {
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith(['dashboard', 'catalogs']);
     });
   });
 
@@ -192,6 +219,29 @@ describe('CreateCatalogPage', () => {
       component.createCatalog();
       expect(updateCatalog).toHaveBeenCalled();
       expect(navigate).toHaveBeenCalled();
+    });
+
+    it('cancel debe navegar al panel del catálogo', () => {
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith([
+        'dashboard',
+        'catalogs',
+        'edit-cat',
+      ]);
+    });
+  });
+
+  describe('onboarding', () => {
+    beforeEach(async () => {
+      await setupRoute({}, { onboardingFlow: true });
+      fixture = TestBed.createComponent(CreateCatalogPage);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('cancel debe volver a editar el negocio', () => {
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith(['dashboard', 'setup', 'edit']);
     });
   });
 });

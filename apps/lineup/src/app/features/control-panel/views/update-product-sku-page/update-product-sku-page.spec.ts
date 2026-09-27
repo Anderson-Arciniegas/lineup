@@ -12,6 +12,7 @@ import {
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { of } from 'rxjs';
 import { createApolloMock } from '../../../../../testing';
 import { UpdateProductSkuPage } from './update-product-sku-page';
@@ -24,6 +25,7 @@ describe('UpdateProductSkuPage', () => {
   let navigate: jest.Mock;
   let storageGet: jest.Mock;
   let storageRemove: jest.Mock;
+  let dialogOpen: jest.Mock;
 
   const productMock = {
     id: 1,
@@ -42,6 +44,7 @@ describe('UpdateProductSkuPage', () => {
     navigate = jest.fn();
     storageGet = jest.fn(() => null);
     storageRemove = jest.fn();
+    dialogOpen = jest.fn(() => ({ onClose: of(false) }));
 
     await TestBed.configureTestingModule({
       imports: [UpdateProductSkuPage, TranslateModule.forRoot(), HttpClientTestingModule],
@@ -85,6 +88,7 @@ describe('UpdateProductSkuPage', () => {
           useValue: { get: storageGet, remove: storageRemove },
         },
         { provide: MessageService, useValue: { add: messageAdd } },
+        { provide: DialogService, useValue: { open: dialogOpen } },
       ],
     }).compileComponents();
 
@@ -125,6 +129,50 @@ describe('UpdateProductSkuPage', () => {
         true,
       );
     });
+
+    it('debe dejar el precio en null en todos los SKUs al aplicar sin precio', () => {
+      component.generalFormGroup.get('idCurrency')?.setValue(0);
+      component.applyGeneralToAllSkus();
+      const rows = component.skusFormArray.controls.map(
+        (c) => (c as any).getRawValue(),
+      );
+      expect(rows.every((r) => r.idCurrency === 0 && r.price == null)).toBe(
+        true,
+      );
+    });
+  });
+
+  /**
+   * Moneda «sin precio» deja el monto vacío; en variaciones, otra moneda lo exige.
+   */
+  describe('sincronización moneda-precio', () => {
+    it('debe dejar el monto en null y deshabilitarlo al elegir sin precio', () => {
+      const group = component.skusFormArray.at(0);
+      group.get('idCurrency')?.setValue(0);
+      expect(group.get('price')?.value).toBeNull();
+      expect(group.get('price')?.disabled).toBe(true);
+    });
+
+    it('debe exigir el monto en la variación si hay moneda y el precio está vacío', () => {
+      const group = component.skusFormArray.at(1);
+      group.get('idCurrency')?.setValue(1);
+      expect(group.get('price')?.hasError('required')).toBe(true);
+      expect(group.get('price')?.touched).toBe(true);
+    });
+
+    it('no debe exigir el monto en el bloque general', () => {
+      component.generalFormGroup.get('idCurrency')?.setValue(1);
+      expect(component.generalFormGroup.get('price')?.hasError('required')).toBe(
+        false,
+      );
+    });
+
+    it('debe reactivar el monto al salir de sin precio', () => {
+      const group = component.skusFormArray.at(0);
+      group.get('idCurrency')?.setValue(0);
+      group.get('idCurrency')?.setValue(2);
+      expect(group.get('price')?.disabled).toBe(false);
+    });
   });
 
   /**
@@ -135,10 +183,25 @@ describe('UpdateProductSkuPage', () => {
       component.updateProductSku();
       expect(updateProductSkus).toHaveBeenCalledWith({
         skus: expect.arrayContaining([
-          expect.objectContaining({ id: 10 }),
+          expect.objectContaining({ id: 10, price: 9.99, idCurrency: 1 }),
           expect.objectContaining({ id: 11 }),
         ]),
       });
+    });
+
+    it('debe enviar price e idCurrency en null cuando la moneda es sin precio', () => {
+      component.skusFormArray.at(0).get('idCurrency')?.setValue(0);
+      component.updateProductSku();
+      expect(updateProductSkus).toHaveBeenCalledWith({
+        skus: expect.arrayContaining([
+          expect.objectContaining({
+            id: 10,
+            price: null,
+            idCurrency: null,
+          }),
+        ]),
+      });
+      expect(updateProductSkus.mock.calls[0][0].skus[0].idCurrency).not.toBe(0);
     });
 
     it('debe avisar si no hay SKUs que actualizar', () => {
@@ -174,6 +237,21 @@ describe('UpdateProductSkuPage', () => {
       component.updateProductSku();
       expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
       expect(navigate).toHaveBeenCalledWith(['dashboard']);
+    });
+  });
+
+  describe('cancel', () => {
+    it('debe navegar de inmediato si el formulario está pristine', () => {
+      component.cancel();
+      expect(dialogOpen).not.toHaveBeenCalled();
+      expect(navigate).toHaveBeenCalledWith(['dashboard', 'catalogs', 'cat', '1']);
+    });
+
+    it('debe confirmar si el formulario está dirty', () => {
+      component.skuProductForm.markAsDirty();
+      component.cancel();
+      expect(dialogOpen).toHaveBeenCalled();
+      expect(navigate).not.toHaveBeenCalled();
     });
   });
 });

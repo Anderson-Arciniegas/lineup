@@ -54,11 +54,15 @@
       </div>
     </div>
     <div class="w-full flex flex-col gap-1">
-      <div class="flex flex-row items-end justify-start gap-2">
+      <div class="flex flex-row items-end justify-between gap-4">
         <label for="title" class="font-medium text-lg"
           >{{ 'general.title' | translate }}<span class="text-red-500">*</span
           >:</label
         >
+        <small id="title-help" class="text-color-secondary text-xs mt-1 block">
+          {{ createProductForm.get('title')?.value.length }} / {{ maxTitleLength
+          }}
+        </small>
       </div>
       <input
         pInputText
@@ -68,25 +72,26 @@
         formControlName="title"
         [maxlength]="maxTitleLength"
       />
-
-      <small id="title-help" class="text-color-secondary text-xs mt-1 block">
-        {{ createProductForm.get('title')?.value.length }} / {{ maxTitleLength
-        }}
-      </small>
       <div class="min-h-6">
-        @if (createProductForm.get('title')?.invalid &&
-        createProductForm.get('title')?.touched) {
+        @if ( minLengthError(createProductForm.get('title')); as err ) {
         <small class="text-red-500 text-sm" role="alert">
-          {{ 'validation.fieldRequired' | translate }}
+          {{ err.key | translate: err.params }}
         </small>
         }
       </div>
     </div>
     <div class="w-full flex flex-col gap-1">
-      <div class="flex flex-row items-end justify-start gap-2">
+      <div class="flex flex-row items-end justify-between gap-4">
         <label for="title" class="font-medium text-lg"
           >{{ 'general.subtitle' | translate }}:</label
         >
+        <small
+          id="subtitle-help"
+          class="text-color-secondary text-xs mt-1 block"
+        >
+          {{ createProductForm.get('subtitle')?.value.length }} / {{
+          maxSubtitleLength }}
+        </small>
       </div>
       <input
         pInputText
@@ -96,13 +101,16 @@
         formControlName="subtitle"
         [maxlength]="maxSubtitleLength"
       />
-      <small id="subtitle-help" class="text-color-secondary text-xs mt-1 block">
-        {{ createProductForm.get('subtitle')?.value.length }} / {{
-        maxSubtitleLength }}
-      </small>
+      <div class="min-h-6">
+        @if (minLengthError(createProductForm.get('subtitle')); as err) {
+        <small class="text-red-500 text-sm" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
     </div>
     <div class="w-full flex flex-row justify-between">
-      <div class="w-full md:w-1/2 lg:w-2/3 xl:w-full flex flex-col gap-5">
+      <div class="w-full flex flex-col gap-5">
         <div class="w-full flex flex-col items-center justify-center gap-1">
           <div class="w-full flex flex-row flex-wrap items-end justify-start">
             <label for="image" class="font-medium text-lg">
@@ -144,7 +152,15 @@
             </div>
           </div>
           <div class="min-h-6 self-start">
-            @if (submitAttempted && imgCodes.length === 0) {
+            @if (adultContent) {
+            <small class="text-red-500 text-sm" role="alert">
+              {{ 'errors.file.adultContent' | translate }}
+            </small>
+            } @else if (uploadFailed) {
+            <small class="text-red-500 text-sm" role="alert">
+              {{ 'errors.file.uploadFailed' | translate }}
+            </small>
+            } @else if (submitAttempted && imgCodes.length === 0) {
             <small class="text-red-500 text-sm" role="alert">
               {{ 'validation.imageRequired' | translate }}
             </small>
@@ -191,7 +207,7 @@
             />
           </div>
         </div> -->
-        <div class="w-full flex flex-col gap-3 max-w-5xl">
+        <div class="w-full flex flex-col gap-3">
           <div class="flex flex-row items-center justify-between">
             <label for="title" class="font-medium text-lg"
               >{{ 'general.variations' | translate }}:</label
@@ -207,24 +223,28 @@
               [formGroupName]="$index"
             >
               <div class="w-full flex flex-col gap-2">
-                <div class="w-full flex flex-row items-center justify-between">
+                <div
+                  class="w-full flex flex-col-reverse sm:flex-row items-end sm:items-center justify-between"
+                >
                   <label
                     [attr.for]="'variation-title-' + $index"
-                    class="font-medium text-lg"
+                    class="font-medium text-base w-full sm:w-auto"
                   >
-                    {{ 'general.name' | translate }}: @if
+                    {{ 'general.variationName' | translate }}: @if
                     (hasPredefinedOptions(item)) { &nbsp; {{
-                    (item.get('title')?.value | translate) || ('general.name' |
-                    translate) }} }
+                    (item.get('title')?.value | translate) ||
+                    ('general.variationName' | translate) }} }
                   </label>
-                  <button
-                    type="button"
-                    class="bg-red-100 rounded-full p-1 shadow text-xl p-carousel-prev-button cursor-pointer"
-                    (click)="removeVariation($index)"
-                    [attr.aria-label]="'general.remove' | translate"
-                  >
-                    <i class="pi pi-times" style="color: #ff3535"></i>
-                  </button>
+                  <lib-button
+                    icon="pi pi-times"
+                    type="rounded"
+                    color="danger"
+                    size="small"
+                    [width]="'w-9'"
+                    buttonType="button"
+                    ariaLabel="general.remove"
+                    (action)="removeVariation($index)"
+                  ></lib-button>
                 </div>
                 @if (!hasPredefinedOptions(item)){
                 <input
@@ -240,10 +260,10 @@
               @if (hasPredefinedOptions(item)) {
               <div class="flex flex-col gap-2 w-full mt-2">
                 <label
-                  class="font-medium text-lg"
+                  class="font-medium text-base"
                   [attr.for]="'variation-predefined-' + $index"
                 >
-                  {{ 'general.value' | translate }}:
+                  {{ 'general.variationOptions' | translate }}:
                 </label>
                 <p-multiselect
                   [options]="getPredefinedOptions(item)"
@@ -273,28 +293,35 @@
                 </p-multiselect>
               </div>
               } @else {
-              <div class="flex flex-row items-center gap-2 w-full mt-2">
+              <div
+                class="flex flex-col md:flex-row items-start md:items-center gap-2 w-full mt-2"
+              >
                 <label
                   [attr.for]="'variation-option-' + $index"
-                  class="font-medium text-lg"
+                  class="font-medium text-base"
                 >
-                  {{ 'general.value' | translate }}:
+                  {{ 'general.variationOptions' | translate }}:
                 </label>
-                <input
-                  pInputText
-                  [id]="'variation-option-' + $index"
-                  formControlName="newOption"
-                  [maxlength]="20"
-                  [placeholder]="'general.variationValuePlaceholder' | translate"
-                  (keydown.enter)="$event.preventDefault(); addVariationOption(item)"
-                />
-                <lib-button
-                  [width]="'w-11'"
-                  icon="pi pi-plus"
-                  type="rounded"
-                  (action)="addVariationOption(item)"
-                >
-                </lib-button>
+                <div class="flex flex-row items-center gap-2 w-full min-w-0">
+                  <input
+                    pInputText
+                    class="w-full min-w-0"
+                    [id]="'variation-option-' + $index"
+                    formControlName="newOption"
+                    [maxlength]="20"
+                    [placeholder]="'general.variationValuePlaceholder' | translate"
+                    (keydown.enter)="$event.preventDefault(); addVariationOption(item)"
+                  />
+                  <lib-button
+                    class="shrink-0"
+                    [width]="'w-9'"
+                    size="small"
+                    icon="pi pi-arrow-right"
+                    type="rounded"
+                    (action)="addVariationOption(item)"
+                  >
+                  </lib-button>
+                </div>
               </div>
               <div
                 class="flex flex-row flex-wrap items-end justify-start gap-2 w-full"
@@ -391,12 +418,23 @@
         </div>
       </div>
     </div>
-    <div class="w-full flex flex-row item-center justify-center">
+    <div
+      class="w-full flex flex-col sm:flex-row items-center justify-between gap-5"
+    >
       <lib-button
-        icon="pi pi-plus"
-        [label]="product ? ('general.updateProduct' | translate) : ('general.createProduct' | translate)"
-        [width]="'w-60'"
+        [label]="'general.cancel' | translate"
+        [width]="'w-40'"
         type="rounded"
+        color="secondary"
+        buttonType="button"
+        [disabled]="isSubmitting"
+        (action)="cancel()"
+      ></lib-button>
+      <lib-button
+        [label]="product ? ('general.save' | translate) : ('general.create' | translate)"
+        [width]="'w-40'"
+        type="rounded"
+        buttonType="button"
         [loading]="isSubmitting"
         [disabled]="isSubmitting"
         (action)="createProduct()"

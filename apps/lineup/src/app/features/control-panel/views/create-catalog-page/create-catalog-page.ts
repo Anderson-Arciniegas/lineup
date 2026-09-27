@@ -26,10 +26,11 @@ import {
   CatalogSchema,
   CreateCatalogInput,
   DirectoriesEnum,
+  isAdultContentUploadError,
   UpdateCatalogInput,
   UtilsService,
 } from '@lineup/core';
-import { Button, ImageCropper, ProductBreadcrumb } from '@lineup/ui';
+import { Button, ConfirmationModal, ImageCropper, ProductBreadcrumb } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
 import { MessageService } from 'primeng/api';
@@ -44,6 +45,7 @@ import { PanelModule } from 'primeng/panel';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { map, Subscription, take } from 'rxjs';
 
 /**
@@ -69,6 +71,7 @@ import { map, Subscription, take } from 'rxjs';
     ChipModule,
     ReactiveFormsModule,
     ColorPickerModule,
+    ProgressSpinner,
   ],
   templateUrl: './create-catalog-page.html',
   styleUrl: './create-catalog-page.scss',
@@ -162,10 +165,16 @@ export class CreateCatalogPage implements OnInit {
       catalogName: this.catalog.title,
       hexColor: this.catalog.hexColor || this.defaultCatalogHexColor,
     });
+    this.createCatalogForm.markAsPristine();
+    this.syncTagInputDisabledState();
   }
 
   /** Parsea etiquetas separadas por coma, normaliza y deduplica (máximo `maxTags`). */
   addTag() {
+    if (this.isMaxTagsReached) {
+      return;
+    }
+
     const raw = this.createCatalogForm.get('tag')?.value ?? '';
     const parts = raw
       .split(',')
@@ -184,11 +193,13 @@ export class CreateCatalogPage implements OnInit {
     }
     this.tags = next;
     this.createCatalogForm.get('tag')?.setValue('');
+    this.syncTagInputDisabledState();
   }
 
   /** Elimina una etiqueta de la lista por índice. */
   removeTag(index: number) {
     this.tags = this.tags.filter((_, i) => i !== index);
+    this.syncTagInputDisabledState();
   }
 
   /** Crea o actualiza el catálogo según presencia de `catalogPath` y navega al listado. */
@@ -299,8 +310,84 @@ export class CreateCatalogPage implements OnInit {
     }
   }
 
+  /** Vuelve al paso anterior: onboarding, panel del catálogo o listado. */
+  cancel(): void {
+    this._confirmDiscardIfDirty(() => this._navigateAfterCancel());
+  }
+
+  private _navigateAfterCancel(): void {
+    if (this._isOnboardingFlow()) {
+      this._utils.navigate([
+        AppConfigService.config.routes.dashboard,
+        AppConfigService.config.routes.setup,
+        AppConfigService.config.routes.edit,
+      ]);
+      return;
+    }
+
+    if (this.catalogPath) {
+      this._utils.navigate([
+        AppConfigService.config.routes.dashboard,
+        AppConfigService.config.routes.catalogs,
+        this.catalogPath,
+      ]);
+      return;
+    }
+
+    this._utils.navigate([
+      AppConfigService.config.routes.dashboard,
+      AppConfigService.config.routes.catalogs,
+    ]);
+  }
+
+  private _confirmDiscardIfDirty(navigate: () => void): void {
+    if (!this.createCatalogForm.dirty) {
+      navigate();
+      return;
+    }
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant('confirmation.discardUnsavedChanges'),
+        color: 'warn',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          navigate();
+        }
+      });
+  }
+
   get catalogNameControl() {
     return this.createCatalogForm.get('catalogName');
+  }
+
+  /** `true` cuando ya no se pueden añadir más etiquetas. */
+  get isMaxTagsReached(): boolean {
+    return this.tags.length >= this.maxTags;
+  }
+
+  private syncTagInputDisabledState(): void {
+    const tagControl = this.createCatalogForm.get('tag');
+    if (!tagControl) {
+      return;
+    }
+
+    if (this.isMaxTagsReached) {
+      tagControl.disable({ emitEvent: false });
+      return;
+    }
+
+    if (tagControl.disabled) {
+      tagControl.enable({ emitEvent: false });
+    }
   }
 
   private _isOnboardingFlow(): boolean {
@@ -388,7 +475,7 @@ export class CreateCatalogPage implements OnInit {
           error: (error) => {
             this.uploadFailed = true;
             this.loadingFile = false;
-            this.adultContent = error.error.code === 22011;
+            this.adultContent = isAdultContentUploadError(error);
           },
         }),
     );

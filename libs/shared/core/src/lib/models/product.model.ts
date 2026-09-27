@@ -78,8 +78,8 @@ export interface SalesInput {
 
 export interface UpdateProductSkuItemInput {
   id: number;
-  idCurrency?: number;
-  price?: number;
+  idCurrency?: number | null;
+  price?: number | null;
   quantity?: number;
 }
 

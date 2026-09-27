@@ -7,13 +7,14 @@ import {
   ProductSchema,
   StatusEnum,
   UtilsService,
+  ApiErrorService,
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { ImportProductsPage } from './import-products-page';
 
-describe('ImportProductsPage', () => {
+describe('ImportProductsPage (HU-18)', () => {
   let component: ImportProductsPage;
   let fixture: ComponentFixture<ImportProductsPage>;
   let getAllDraftProducts: jest.Mock;
@@ -69,6 +70,10 @@ describe('ImportProductsPage', () => {
         },
         { provide: UtilsService, useValue: { navigate } },
         { provide: MessageService, useValue: { add: messageAdd } },
+        {
+          provide: ApiErrorService,
+          useValue: { normalize: () => ({ i18nKey: 'errors.generic' }) },
+        },
       ],
     }).compileComponents();
 
@@ -244,6 +249,29 @@ describe('ImportProductsPage', () => {
     component.loadDraftProducts();
 
     expect(getAllDraftProducts).not.toHaveBeenCalled();
+  });
+
+  it('abre el explorador de archivos desde el botón', () => {
+    const input = fixture.nativeElement.querySelector(
+      '#import-products-document',
+    ) as HTMLInputElement;
+    const click = jest.spyOn(input, 'click');
+
+    component.openFilePicker();
+
+    expect(click).toHaveBeenCalled();
+  });
+
+  it('no abre el explorador de archivos mientras se carga', () => {
+    const input = fixture.nativeElement.querySelector(
+      '#import-products-document',
+    ) as HTMLInputElement;
+    const click = jest.spyOn(input, 'click');
+    component.isUploading.set(true);
+
+    component.openFilePicker();
+
+    expect(click).not.toHaveBeenCalled();
   });
 
   it('limpia selección sin archivos en el input', () => {

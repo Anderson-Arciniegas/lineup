@@ -9,7 +9,6 @@
   box-shadow: 0 0.25rem 1rem rgb(15 23 42 / 6%);
 }
 
-.file-input,
 .search-input {
   min-height: 2.75rem;
   border: 1px solid var(--p-surface-300);
@@ -19,7 +18,6 @@
   color: var(--p-text-color);
 }
 
-.file-input:focus-visible,
 .search-input:focus-visible {
   outline: 2px solid var(--p-primary-color);
   outline-offset: 2px;

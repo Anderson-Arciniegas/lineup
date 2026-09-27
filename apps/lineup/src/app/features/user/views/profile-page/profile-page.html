@@ -88,12 +88,14 @@
           <small class="text-color-secondary text-xs mt-1 block">
             {{ 'general.usernameFormatHint' | translate }}
           </small>
-          @if (usernameControl?.invalid && usernameControl?.touched &&
-          usernameControl?.errors?.['pattern']) {
-          <small class="text-red-500 text-xs mt-1 block" role="alert">
-            {{ 'general.usernameInvalidFormat' | translate }}
-          </small>
-          }
+          <div class="min-h-6">
+            @if (usernameControl?.invalid && usernameControl?.touched &&
+            usernameControl?.errors?.['pattern']) {
+            <small class="text-red-500 text-xs mt-1 block" role="alert">
+              {{ 'general.usernameInvalidFormat' | translate }}
+            </small>
+            }
+          </div>
         </div>
 
         <p-floatlabel class="w-full">

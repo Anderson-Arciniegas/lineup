@@ -227,11 +227,6 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
         error: () => {
           this.loadingDiscount = false;
           this.editingDiscountId = null;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant('general.errorLoadingData'),
-          });
         },
       }),
     );
@@ -289,11 +284,6 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
             error: () => {
               this.loadingProducts = false;
               this.products = [];
-              this._messageService.add({
-                severity: 'error',
-                summary: this._translate.instant('general.error'),
-                detail: this._translate.instant('general.errorLoadingData'),
-              });
               runFinish();
             },
           }),
@@ -385,11 +375,6 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
           },
           error: () => {
             this.loadingCatalogs = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail: this._translate.instant('general.errorLoadingData'),
-            });
           },
         }),
     );
@@ -409,11 +394,6 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
           error: () => {
             this.loadingProducts = false;
             this.products = [];
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail: this._translate.instant('general.errorLoadingData'),
-            });
           },
         }),
     );
@@ -429,13 +409,6 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
             code: c.code,
             icon: 'pi pi-money-bill',
           }));
-        },
-        error: () => {
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant('general.errorLoadingData'),
-          });
         },
       }),
     );
@@ -527,15 +500,8 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
               AppConfigService.config.routes.discounts,
             ]);
           },
-          error: (err: { message?: string }) => {
+          error: () => {
             this.isSubmitting = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail:
-                err?.message ??
-                this._translate.instant('general.errorUpdatingDiscount'),
-            });
           },
         }),
       );
@@ -556,15 +522,8 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
             AppConfigService.config.routes.discounts,
           ]);
         },
-        error: (err: { message?: string }) => {
+        error: () => {
           this.isSubmitting = false;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail:
-              err?.message ??
-              this._translate.instant('general.errorCreatingDiscount'),
-          });
         },
       }),
     );

@@ -55,11 +55,14 @@
             {{ option.labelKey | translate }}
           </ng-template>
         </p-select>
-        @if ( discountForm.get('scope')?.invalid && discountForm.get('scope')?.touched ) {
-        <small class="text-red-500 text-sm" role="alert"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('scope')?.invalid &&
+          discountForm.get('scope')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
 
       @if (showCatalogField) {
@@ -80,12 +83,14 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if ( discountForm.get('idCatalog')?.invalid &&
-        discountForm.get('idCatalog')?.touched ) {
-        <small class="text-red-500 text-sm"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('idCatalog')?.invalid &&
+          discountForm.get('idCatalog')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
       } @if (showProductField) {
       <div class="w-full flex flex-col gap-2">
@@ -105,12 +110,14 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if ( discountForm.get('idProduct')?.invalid &&
-        discountForm.get('idProduct')?.touched ) {
-        <small class="text-red-500 text-sm"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('idProduct')?.invalid &&
+          discountForm.get('idProduct')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
       }
 
@@ -138,12 +145,14 @@
             {{ option.labelKey | translate }}
           </ng-template>
         </p-select>
-        @if ( discountForm.get('discountType')?.invalid &&
-        discountForm.get('discountType')?.touched ) {
-        <small class="text-red-500 text-sm" role="alert"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('discountType')?.invalid &&
+          discountForm.get('discountType')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
 
       @if (showCurrencyField) {
@@ -190,12 +199,14 @@
             </div>
           </ng-template>
         </p-select>
-        @if ( discountForm.get('idCurrency')?.invalid &&
-        discountForm.get('idCurrency')?.touched ) {
-        <small class="text-red-500 text-sm"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('idCurrency')?.invalid &&
+          discountForm.get('idCurrency')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
       }
 
@@ -226,12 +237,14 @@
           class="w-full"
           styleClass="w-full"
         />
-        @if ( discountForm.get('value')?.invalid &&
-        discountForm.get('value')?.touched ) {
-        <small class="text-red-500 text-sm"
-          >{{ 'validation.fieldRequired' | translate }}</small
-        >
-        }
+        <div class="min-h-6">
+          @if ( discountForm.get('value')?.invalid &&
+          discountForm.get('value')?.touched ) {
+          <small class="text-red-500 text-sm" role="alert"
+            >{{ 'validation.fieldRequired' | translate }}</small
+          >
+          }
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -247,12 +260,14 @@
             formControlName="startDate"
             class="w-full h-11"
           />
-          @if ( discountForm.get('startDate')?.invalid &&
-          discountForm.get('startDate')?.touched ) {
-          <small class="text-red-500 text-sm" role="alert"
-            >{{ 'validation.fieldRequired' | translate }}</small
-          >
-          }
+          <div class="min-h-6">
+            @if ( discountForm.get('startDate')?.invalid &&
+            discountForm.get('startDate')?.touched ) {
+            <small class="text-red-500 text-sm" role="alert"
+              >{{ 'validation.fieldRequired' | translate }}</small
+            >
+            }
+          </div>
         </div>
         <div class="w-full flex flex-col gap-2">
           <label class="font-medium text-lg" for="discount-end"
@@ -266,19 +281,23 @@
             formControlName="endDate"
             class="w-full h-11"
           />
-          @if ( discountForm.get('endDate')?.invalid &&
-          discountForm.get('endDate')?.touched ) {
-          <small class="text-red-500 text-sm" role="alert"
-            >{{ 'validation.fieldRequired' | translate }}</small
-          >
-          }
+          <div class="min-h-6">
+            @if ( discountForm.get('endDate')?.invalid &&
+            discountForm.get('endDate')?.touched ) {
+            <small class="text-red-500 text-sm" role="alert"
+              >{{ 'validation.fieldRequired' | translate }}</small
+            >
+            }
+          </div>
         </div>
       </div>
-      @if (discountForm.errors?.['dateOrder'] && discountForm.touched) {
-      <small class="text-red-500 text-sm"
-        >{{ 'general.discountInvalidDateRange' | translate }}</small
-      >
-      }
+      <div class="min-h-6">
+        @if (discountForm.errors?.['dateOrder'] && discountForm.touched) {
+        <small class="text-red-500 text-sm" role="alert"
+          >{{ 'general.discountInvalidDateRange' | translate }}</small
+        >
+        }
+      </div>
 
       <div class="w-full flex flex-row items-center justify-center gap-4 pt-4">
         <lib-button
