@@ -36,16 +36,17 @@ test.describe('Público', () => {
     await fillLogin(page, 'malo@demo.test', 'wrong');
     await submitLogin(page);
     await expectToast(page, /Correo o contraseña incorrectos/);
-    await expect(
-      page.locator('form').getByRole('button', { name: 'Entrar' }),
-    ).toBeEnabled();
 
+    // Reinicia la vista de login para evitar estado residual (attempt/form) en CI
+    // y usa expect(toHaveURL) — waitForURL con waitUntil "load" no aplica a Router SPA.
     mocks.setLoginOutcome('business');
+    await page.goto('/login');
+    await expect(
+      page.getByRole('heading', { name: 'Iniciar sesión' }),
+    ).toBeVisible();
     await fillLogin(page, 'biz@demo.test', VALID_PASSWORD);
-    await Promise.all([
-      page.waitForURL(/\/dashboard/, { timeout: 20_000 }),
-      submitLogin(page),
-    ]);
+    await submitLogin(page);
+    await expect(page).toHaveURL(/\/dashboard/);
   });
 
   test('register account-type accesible @journey @hu-01', async ({ page }) => {

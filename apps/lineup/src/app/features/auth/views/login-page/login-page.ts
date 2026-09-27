@@ -176,9 +176,12 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
         .subscribe({
           next: (user) => {
             if (user) {
+              this.attempt = false;
               this._authService.handleSuccessLogin(user);
+              return;
             }
-            this.attempt = false;
+            // Respuesta sin usuario (p. ej. data parcial): intentar como negocio.
+            this.loginBusiness();
           },
           error: () => {
             this.loginBusiness();
@@ -197,7 +200,12 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
             this.attempt = false;
             if (business) {
               this._authService.handleSuccessLogin(null, business);
+              return;
             }
+            this._notifyLoginFailure(
+              new Error('Business login returned empty payload'),
+              'auth.invalidCredentials',
+            );
           },
           error: (error: unknown) => {
             this.attempt = false;

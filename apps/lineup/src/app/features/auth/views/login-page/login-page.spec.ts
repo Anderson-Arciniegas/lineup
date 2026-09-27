@@ -196,6 +196,18 @@ describe('LoginPage (HU-03)', () => {
       expect(handleSuccessLogin).toHaveBeenCalledWith(null, { id: 2 });
     });
 
+    it('debe intentar login de negocio si el de usuario responde sin payload', () => {
+      userLogin.mockReturnValue(of(null));
+      businessLogin.mockReturnValue(of({ id: 7 }));
+      component.loginForm.patchValue({
+        email: 'b@t.com',
+        password: VALID_PASSWORD,
+      });
+      component.onSubmit();
+      expect(businessLogin).toHaveBeenCalledWith('b@t.com', VALID_PASSWORD);
+      expect(handleSuccessLogin).toHaveBeenCalledWith(null, { id: 7 });
+    });
+
     it('debe poner attempt en false y avisar credenciales inválidas si ambos logins fallan', () => {
       userLogin.mockReturnValue(throwError(() => new Error('u')));
       businessLogin.mockReturnValue(throwError(() => new Error('b')));
