@@ -9,7 +9,7 @@ import {
 import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { UserPublicService } from '@lineup/core';
+import { UserPublicService, ToastService } from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
@@ -36,6 +36,7 @@ describe('RegisterUserPage', () => {
   let dialogOpen: jest.Mock;
   let onClose$: Subject<boolean>;
   let messageAdd: jest.Mock;
+  let toastError: jest.Mock;
   let credential$: Subject<string>;
   let renderButton: jest.Mock;
 
@@ -46,6 +47,7 @@ describe('RegisterUserPage', () => {
     onClose$ = new Subject<boolean>();
     dialogOpen = jest.fn(() => ({ onClose: onClose$.asObservable() }));
     messageAdd = jest.fn();
+    toastError = jest.fn();
     credential$ = new Subject<string>();
     renderButton = jest.fn();
     const { mock: apolloMock } = createApolloMock();
@@ -65,6 +67,7 @@ describe('RegisterUserPage', () => {
         TranslateStore,
         { provide: DialogService, useValue: { open: dialogOpen } },
         { provide: MessageService, useValue: { add: messageAdd } },
+        { provide: ToastService, useValue: { error: toastError } },
         {
           provide: UserPublicService,
           useValue: { createUser, registerWithGoogle },
@@ -188,7 +191,7 @@ describe('RegisterUserPage', () => {
       expect(component.attempt).toBe(false);
     });
 
-    it('debe mostrar mensaje de error si createUser falla', () => {
+    it('debe liberar el intento si createUser falla (toast delegado al manejo global)', () => {
       createUser.mockReturnValue(
         throwError(() => ({ message: 'email taken' })),
       );
@@ -202,7 +205,8 @@ describe('RegisterUserPage', () => {
       });
       component.onSubmit();
       onClose$.next(true);
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.attempt).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });
@@ -221,9 +225,20 @@ describe('RegisterUserPage', () => {
       tick(150);
       credential$.next('jwt-google');
       tick();
+      expect(component.acceptTermsControl?.value).toBe(true);
       expect(registerWithGoogle).toHaveBeenCalled();
       expect(handleSuccessLogin).toHaveBeenCalled();
       expect(component.attemptGoogle).toBe(false);
+    }));
+
+    it('debe marcar términos automáticamente al registrar con Google', fakeAsync(() => {
+      tick(150);
+      expect(component.acceptTermsControl?.value).toBe(false);
+      credential$.next('jwt-google');
+      tick();
+      expect(component.acceptTermsControl?.value).toBe(true);
+      expect(registerWithGoogle).toHaveBeenCalled();
+      expect(toastError).not.toHaveBeenCalled();
     }));
   });
 

@@ -33,6 +33,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
@@ -55,6 +56,7 @@ import {
     InputTextModule,
     FloatLabelModule,
     PasswordModule,
+    ProgressSpinner,
     TranslateModule,
     ReactiveFormsModule,
   ],
@@ -130,8 +132,9 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  /** Registro OAuth de negocio; al éxito delega en `handleSuccessLogin` con flag de registro. */
+  /** Registro OAuth de negocio; acepta términos automáticamente al usar Google. */
   private _handleGoogleToken(token: string): void {
+    this.acceptTermsControl?.setValue(true);
     this.attemptGoogle = true;
     this._subscription.add(
       this._business.registerWithGoogle({ token }).subscribe({
@@ -200,20 +203,8 @@ export class RegisterBusinessPage implements OnInit, OnDestroy, AfterViewInit {
                 this._authService.handleSuccessLogin(null, business, true);
               }
             },
-            error: (err) => {
+            error: () => {
               this.attempt = false;
-              console.error(err);
-              this._messageService.add({
-                severity: 'error',
-                summary: this._translate.instant('general.error'),
-                detail:
-                  err?.graphQLErrors?.[0]?.message ??
-                  err?.message ??
-                  this._translate.instant(
-                    'verificationCodeModal.verificationFailed',
-                  ),
-                life: 5000,
-              });
             },
           }),
         );

@@ -33,6 +33,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
@@ -55,6 +56,7 @@ import {
     InputTextModule,
     FloatLabelModule,
     PasswordModule,
+    ProgressSpinner,
     TranslateModule,
     ReactiveFormsModule,
   ],
@@ -134,8 +136,9 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  /** Registro OAuth solo para rol `USER`; completa sesión si el backend devuelve perfil. */
+  /** Registro OAuth solo para rol `USER`; acepta términos automáticamente al usar Google. */
   private _handleGoogleToken(token: string): void {
+    this.acceptTermsControl?.setValue(true);
     this.attemptGoogle = true;
     this._subscription.add(
       this._users
@@ -144,7 +147,7 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
           next: (response) => {
             this.attemptGoogle = false;
             if (response.user) {
-              this._authService.handleSuccessLogin(response.user);
+              this._authService.handleSuccessLogin(response.user, null, true);
             }
           },
           error: (err) => {
@@ -205,23 +208,11 @@ export class RegisterUserPage implements OnInit, OnDestroy, AfterViewInit {
             next: (user) => {
               this.attempt = false;
               if (user) {
-                this._authService.handleSuccessLogin(user);
+                this._authService.handleSuccessLogin(user, null, true);
               }
             },
-            error: (err) => {
+            error: () => {
               this.attempt = false;
-              console.error(err);
-              this._messageService.add({
-                severity: 'error',
-                summary: this._translate.instant('general.error'),
-                detail:
-                  err?.graphQLErrors?.[0]?.message ??
-                  err?.message ??
-                  this._translate.instant(
-                    'verificationCodeModal.verificationFailed',
-                  ),
-                life: 5000,
-              });
             },
           }),
         );

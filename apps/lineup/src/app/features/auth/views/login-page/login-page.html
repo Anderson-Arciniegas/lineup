@@ -14,56 +14,93 @@
   <form
     [formGroup]="loginForm"
     (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
+    class="flex flex-col gap-5 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
   >
     <h4 class="text-center text-2xl lg:text-3xl font-medium">
       {{'general.login' | translate}}
     </h4>
 
-    <div class="w-8/10 flex flex-col items-center justify-center">
-      <div #googleBtn class="google-signin-btn"></div>
+    <div
+      class="w-8/10 flex flex-col items-center justify-center mb-3 relative min-h-10"
+      [attr.aria-busy]="attemptGoogle"
+    >
+      <div
+        #googleBtn
+        class="google-signin-btn"
+        [class.pointer-events-none]="attempt || attemptGoogle"
+        [class.opacity-50]="attempt || attemptGoogle"
+      ></div>
+      @if (attemptGoogle) {
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-primary-50/80"
+      >
+        <p-progress-spinner
+          strokeWidth="4"
+          ariaLabel="loading"
+          [style]="{ width: '40px', height: '40px' }"
+        />
+      </div>
+      }
     </div>
 
-    <p-floatlabel class="w-10/10 max-w-xs mt-2">
-      <input
-        pInputText
-        class="w-10/10 font-medium"
-        formControlName="email"
-        id="email"
-        type="email"
-        [pSize]="'small'"
-        autocomplete="username"
-      />
-      <label for="email" class="font-medium"
-        >{{'general.usernameOrEmail' | translate}}</label
+    <div class="w-10/10 max-w-xs flex flex-col items-start mt-2">
+      <p-floatlabel class="w-10/10">
+        <input
+          pInputText
+          class="w-10/10 font-medium"
+          formControlName="email"
+          id="email"
+          type="email"
+          [pSize]="'small'"
+          autocomplete="username"
+        />
+        <label for="email" class="font-medium"
+          >{{'general.email' | translate}}</label
+        >
+      </p-floatlabel>
+      <small
+        class="text-red-500 text-xs block w-full h-8 leading-tight"
+        role="alert"
       >
-    </p-floatlabel>
+        @if (emailError(emailControl); as err) { {{ err.key | translate:
+        err.params }} }
+      </small>
+    </div>
 
-    <p-floatlabel class="w-10/10 max-w-xs mt-2">
-      <p-password
-        [feedback]="false"
-        class="w-10/10 font-medium"
-        formControlName="password"
-        [fluid]="true"
-        [size]="'small'"
-        [toggleMask]="true"
-        inputId="password"
-        autocomplete="current-password"
-      />
-      <label for="password" class="font-medium"
-        >{{'general.password' | translate}}</label
+    <div class="w-10/10 max-w-xs flex flex-col items-start">
+      <p-floatlabel class="w-10/10">
+        <p-password
+          [feedback]="false"
+          class="w-10/10 font-medium"
+          formControlName="password"
+          [fluid]="true"
+          [size]="'small'"
+          [toggleMask]="true"
+          inputId="password"
+          autocomplete="current-password"
+        />
+        <label for="password" class="font-medium"
+          >{{'general.password' | translate}}</label
+        >
+      </p-floatlabel>
+      <small
+        class="text-red-500 text-xs block w-full h-11 leading-tight"
+        role="alert"
       >
-    </p-floatlabel>
+        @if (passwordError(passwordControl); as err) { {{ err.key | translate:
+        err.params }} }
+      </small>
+    </div>
 
-    <div class="w-8/10 flex flex-col items-center justify-center mt-3 gap-5">
+    <div class="w-8/10 flex flex-col items-center justify-center gap-5">
       <lib-button
         label="{{'general.enter' | translate}}"
         [type]="'rounded'"
         [size]="'small'"
         [width]="'w-60'"
         [buttonType]="'submit'"
-        [disabled]="attempt"
-        [loading]="attempt"
+        [disabled]="attempt || attemptGoogle"
+        [loading]="attempt || attemptGoogle"
       ></lib-button>
 
       <lib-button

@@ -9,7 +9,7 @@ import {
 import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BusinessPrivateService } from '@lineup/core';
+import { BusinessPrivateService, ToastService } from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
@@ -35,6 +35,7 @@ describe('RegisterBusinessPage', () => {
   let dialogOpen: jest.Mock;
   let onClose$: Subject<boolean>;
   let messageAdd: jest.Mock;
+  let toastError: jest.Mock;
   let credential$: Subject<string>;
   let renderButton: jest.Mock;
 
@@ -45,6 +46,7 @@ describe('RegisterBusinessPage', () => {
     onClose$ = new Subject<boolean>();
     dialogOpen = jest.fn(() => ({ onClose: onClose$.asObservable() }));
     messageAdd = jest.fn();
+    toastError = jest.fn();
     credential$ = new Subject<string>();
     renderButton = jest.fn();
     const { mock: apolloMock } = createApolloMock();
@@ -64,6 +66,7 @@ describe('RegisterBusinessPage', () => {
         TranslateStore,
         { provide: DialogService, useValue: { open: dialogOpen } },
         { provide: MessageService, useValue: { add: messageAdd } },
+        { provide: ToastService, useValue: { error: toastError } },
         {
           provide: BusinessPrivateService,
           useValue: { createBusiness, registerWithGoogle },
@@ -153,7 +156,7 @@ describe('RegisterBusinessPage', () => {
       );
     });
 
-    it('debe notificar error si createBusiness falla', () => {
+    it('debe liberar el intento si createBusiness falla (toast delegado al manejo global)', () => {
       createBusiness.mockReturnValue(throwError(() => ({ message: 'err' })));
       component.registerBusinessForm.patchValue({
         name: 'Tienda',
@@ -164,7 +167,8 @@ describe('RegisterBusinessPage', () => {
       });
       component.onSubmit();
       onClose$.next(true);
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.attempt).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });
@@ -180,8 +184,19 @@ describe('RegisterBusinessPage', () => {
       tick(150);
       credential$.next('jwt');
       tick();
+      expect(component.acceptTermsControl?.value).toBe(true);
       expect(registerWithGoogle).toHaveBeenCalled();
       expect(handleSuccessLogin).toHaveBeenCalled();
+    }));
+
+    it('debe marcar términos automáticamente al registrar con Google', fakeAsync(() => {
+      tick(150);
+      expect(component.acceptTermsControl?.value).toBe(false);
+      credential$.next('jwt');
+      tick();
+      expect(component.acceptTermsControl?.value).toBe(true);
+      expect(registerWithGoogle).toHaveBeenCalled();
+      expect(toastError).not.toHaveBeenCalled();
     }));
   });
 });
