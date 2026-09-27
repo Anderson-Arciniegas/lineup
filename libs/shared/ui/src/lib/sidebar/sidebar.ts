@@ -6,8 +6,8 @@ import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 
 /**
- * Menú lateral basado en `PanelMenu` de PrimeNG: ítems con `RouterLink`,
- * modo solo iconos o overlay con etiquetas completas.
+ * Menú lateral con ítems en `RouterLink`.
+ * El layout interno permanece expandido; el dock recorta el panel al animar el ancho.
  */
 @Component({
   selector: 'lib-sidebar',
