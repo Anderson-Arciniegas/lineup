@@ -19,6 +19,7 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT } from '../../constants';
 import {
   CreateBusinessHoursInput,
   CreateBusinessInput,
@@ -41,6 +42,7 @@ import { BusinessHourSchema, BusinessSchema } from '../../schemas';
 export class BusinessPrivateService {
   private apollo = inject(Apollo);
 
+  /** El error se gestiona en la vista (flujo dual usuario/negocio): sin toast global. */
   login(email: string, password: string): Observable<any> {
     return this.apollo
       .use('businessAPI')
@@ -49,6 +51,7 @@ export class BusinessPrivateService {
         variables: { login: { email, password } },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.login.business));
@@ -66,6 +69,7 @@ export class BusinessPrivateService {
       .pipe(map((result) => result.data!.logout.status));
   }
 
+  /** Falla con 401 cuando no hay sesión (hidratación/guards): sin toast global. */
   myBusiness(): Observable<any> {
     return this.apollo
       .use('businessAPI')
@@ -74,6 +78,7 @@ export class BusinessPrivateService {
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data.myBusiness));
@@ -125,6 +130,7 @@ export class BusinessPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.updateBusinessEmail));
@@ -152,11 +158,13 @@ export class BusinessPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.changeBusinessPassword));
   }
 
+  /** El error se gestiona en la vista (flujo dual usuario/negocio): sin toast global. */
   loginWithGoogle(data: LoginGoogleInput): Observable<LoginResponse> {
     return this.apollo
       .use('businessAPI')
@@ -165,6 +173,7 @@ export class BusinessPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.loginWithGoogle));

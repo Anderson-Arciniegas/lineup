@@ -44,6 +44,15 @@ describe('ProductPublicService', () => {
     expect(querySpy).toHaveBeenCalled();
   });
 
+  it('findOneProduct omite el toast global cuando se solicita', async () => {
+    await firstValueFrom(service.findOneProduct(1, true));
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        context: expect.objectContaining({ skipGlobalErrorToast: true }),
+      }),
+    );
+  });
+
   it('getAllByCatalog calls Apollo and returns data', async () => {
     const result = await firstValueFrom(service.getAllByCatalog(1));
     expect(result).toBeDefined();
@@ -63,6 +72,15 @@ describe('ProductPublicService', () => {
     const result = await firstValueFrom(service.getAllByCatalogPaginated(1, { limit: 10, page: 0 }));
     expect(result).toBeDefined();
     expect(querySpy).toHaveBeenCalled();
+  });
+
+  it('getAllByCatalogPaginated omite el toast global cuando se solicita', async () => {
+    await firstValueFrom(service.getAllByCatalogPaginated(1, { limit: 10, page: 0 }, true));
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        context: expect.objectContaining({ skipGlobalErrorToast: true }),
+      }),
+    );
   });
 
   it('getAllByTag calls Apollo and returns data', async () => {
@@ -99,6 +117,7 @@ describe('ProductPublicService', () => {
       service.getAllByTags({ limit: 10, page: 0 }, ['tag'], {
         idBusiness: 4,
         idProducts: [5],
+        skipGlobalErrorToast: true,
       }),
     );
     expect(querySpy).toHaveBeenCalledWith(
@@ -107,6 +126,7 @@ describe('ProductPublicService', () => {
           idBusiness: 4,
           idProducts: [5],
         }),
+        context: expect.objectContaining({ skipGlobalErrorToast: true }),
       }),
     );
   });
@@ -115,6 +135,17 @@ describe('ProductPublicService', () => {
     const result = await firstValueFrom(service.getAllPrimaryProductsByBusiness({ idBusiness: 1 } as never));
     expect(result).toBeDefined();
     expect(querySpy).toHaveBeenCalled();
+  });
+
+  it('getAllPrimaryProductsByBusiness omite el toast global cuando se solicita', async () => {
+    await firstValueFrom(
+      service.getAllPrimaryProductsByBusiness({ idBusiness: 1 } as never, true),
+    );
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        context: expect.objectContaining({ skipGlobalErrorToast: true }),
+      }),
+    );
   });
 
   it('getAllByBusiness calls Apollo and returns data', async () => {

@@ -8,6 +8,7 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT } from '../../constants';
 import type {
   InfinityScrollInput,
   PaginatedProductRatings,
@@ -76,6 +77,7 @@ export class RatingPublicService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.rateProduct));

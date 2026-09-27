@@ -42,4 +42,13 @@ describe('CatalogPublicService', () => {
     expect(result).toBeDefined();
     expect(querySpy).toHaveBeenCalled();
   });
+
+  it('findOneCatalogByPath omite el toast global cuando se solicita', async () => {
+    await firstValueFrom(service.findOneCatalogByPath('path', true));
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        context: expect.objectContaining({ skipGlobalErrorToast: true }),
+      }),
+    );
+  });
 });
