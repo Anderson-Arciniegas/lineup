@@ -77,17 +77,30 @@ export async function prepareAuthenticatedPage(
   return mocks;
 }
 
+/**
+ * Rellena email/password del login asegurando que Angular/PrimeNG reciban el valor
+ * (un `fill` seco sobre `p-password` a veces no actualiza el FormControl en CI).
+ */
 export async function fillLogin(
   page: Page,
   email: string,
   password: string,
 ): Promise<void> {
-  await page.getByLabel('Correo electrónico').fill(email);
-  await page.locator('#password input, input#password').first().fill(password);
+  const emailInput = page.locator('#email');
+  await emailInput.fill(email);
+  await expect(emailInput).toHaveValue(email);
+
+  const passwordInput = page.locator('#password input, input#password').first();
+  await passwordInput.click();
+  await passwordInput.fill('');
+  await passwordInput.pressSequentially(password, { delay: 10 });
+  await expect(passwordInput).toHaveValue(password);
 }
 
 export async function submitLogin(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Entrar' }).click();
+  const enter = page.locator('form').getByRole('button', { name: 'Entrar' });
+  await expect(enter).toBeEnabled();
+  await enter.click();
 }
 
 export async function fillRegisterBusiness(

@@ -35,14 +35,26 @@ test.describe('Público', () => {
 
     await fillLogin(page, 'malo@demo.test', 'wrong');
     await submitLogin(page);
-    await expectToast(
-      page,
-      /Correo o contraseña incorrectos/,
-    );
+    await expectToast(page, /Correo o contraseña incorrectos/);
+    await expect(
+      page.locator('form').getByRole('button', { name: 'Entrar' }),
+    ).toBeEnabled();
 
     mocks.setLoginOutcome('business');
     await fillLogin(page, 'biz@demo.test', VALID_PASSWORD);
+
+    const businessLogin = page.waitForResponse((response) => {
+      if (
+        response.request().method() !== 'POST' ||
+        !response.url().includes('businesses.api')
+      ) {
+        return false;
+      }
+      const postData = response.request().postData() ?? '';
+      return postData.includes('Login') && response.ok();
+    });
     await submitLogin(page);
+    await businessLogin;
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
