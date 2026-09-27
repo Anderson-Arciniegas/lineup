@@ -78,6 +78,30 @@ export async function prepareAuthenticatedPage(
 }
 
 /**
+ * Escribe en un input de Angular/PrimeNG de forma fiable (evita layouts de teclado
+ * y actualiza el ControlValueAccessor con eventos `input`/`change`).
+ */
+async function fillAngularTextInput(
+  locator: Locator,
+  value: string,
+): Promise<void> {
+  await locator.waitFor({ state: 'visible' });
+  await locator.click();
+  await locator.evaluate((el, nextValue) => {
+    const input = el as HTMLInputElement;
+    const nativeSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      'value',
+    )?.set;
+    nativeSetter?.call(input, nextValue);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+  }, value);
+  await expect(locator).toHaveValue(value);
+}
+
+/**
  * Rellena email/password del login asegurando que Angular/PrimeNG reciban el valor
  * (un `fill` seco sobre `p-password` a veces no actualiza el FormControl en CI).
  */
@@ -86,15 +110,11 @@ export async function fillLogin(
   email: string,
   password: string,
 ): Promise<void> {
-  const emailInput = page.locator('#email');
-  await emailInput.fill(email);
-  await expect(emailInput).toHaveValue(email);
-
-  const passwordInput = page.locator('#password input, input#password').first();
-  await passwordInput.click();
-  await passwordInput.fill('');
-  await passwordInput.pressSequentially(password, { delay: 10 });
-  await expect(passwordInput).toHaveValue(password);
+  await fillAngularTextInput(page.locator('#email'), email);
+  await fillAngularTextInput(
+    page.locator('#password input, input#password').first(),
+    password,
+  );
 }
 
 export async function submitLogin(page: Page): Promise<void> {
@@ -111,12 +131,15 @@ export async function fillRegisterBusiness(
   const email = data?.email ?? 'negocio@demo.test';
   const password = data?.password ?? VALID_PASSWORD;
   await page.getByLabel('Nombre del negocio').fill(name);
-  await page.getByLabel('Correo electrónico').fill(email);
-  await page.locator('#password input, input#password').first().fill(password);
-  await page
-    .locator('#confirmPassword input, input#confirmPassword')
-    .first()
-    .fill(password);
+  await fillAngularTextInput(page.getByLabel('Correo electrónico'), email);
+  await fillAngularTextInput(
+    page.locator('#password input, input#password').first(),
+    password,
+  );
+  await fillAngularTextInput(
+    page.locator('#confirmPassword input, input#confirmPassword').first(),
+    password,
+  );
   await page.locator('#acceptTermsBusiness').check();
 }
 
@@ -154,19 +177,12 @@ export async function fillProductDescription(
   page: Page,
   text = 'Descripcion de producto de prueba',
 ): Promise<void> {
+  // create-product usa `@defer (on idle)`: el placeholder es un textarea que se
+  // destruye al montar p-editor. Hay que esperar el editor real, no el placeholder.
   const quill = page.locator('p-editor .ql-editor');
-  if (await quill.isVisible().catch(() => false)) {
-    await quill.fill(text);
-    return;
-  }
-  const textarea = page.locator('textarea[formcontrolname="description"]');
-  if (await textarea.isVisible().catch(() => false)) {
-    await textarea.fill(text);
-    return;
-  }
-  await expect(quill.or(textarea).first()).toBeVisible({ timeout: 15_000 });
-  const editor = (await quill.isVisible().catch(() => false)) ? quill : textarea;
-  await editor.fill(text);
+  await expect(quill).toBeVisible({ timeout: 20_000 });
+  await quill.click();
+  await quill.fill(text);
 }
 
 async function clickCropperFileArea(page: Page): Promise<Locator> {

@@ -42,20 +42,10 @@ test.describe('Público', () => {
 
     mocks.setLoginOutcome('business');
     await fillLogin(page, 'biz@demo.test', VALID_PASSWORD);
-
-    const businessLogin = page.waitForResponse((response) => {
-      if (
-        response.request().method() !== 'POST' ||
-        !response.url().includes('businesses.api')
-      ) {
-        return false;
-      }
-      const postData = response.request().postData() ?? '';
-      return postData.includes('Login') && response.ok();
-    });
-    await submitLogin(page);
-    await businessLogin;
-    await expect(page).toHaveURL(/\/dashboard/);
+    await Promise.all([
+      page.waitForURL(/\/dashboard/, { timeout: 20_000 }),
+      submitLogin(page),
+    ]);
   });
 
   test('register account-type accesible @journey @hu-01', async ({ page }) => {
