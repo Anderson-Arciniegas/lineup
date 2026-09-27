@@ -4,19 +4,19 @@ import { translateModuleForTests } from '../../../../../testing';
 import { UsersAdminService } from '../../../../core/services/users-admin.service';
 import { UsersAdminPage } from './users-admin-page';
 
-describe('UsersAdminPage', () => {
+describe('UsersAdminPage (HU-26)', () => {
   let component: UsersAdminPage;
   let fixture: ComponentFixture<UsersAdminPage>;
+  let findAllUsers: jest.Mock;
 
   beforeEach(async () => {
+    findAllUsers = jest.fn(() => of({ items: [{ id: 1 }], total: 1 }));
     await TestBed.configureTestingModule({
       imports: [UsersAdminPage, translateModuleForTests()],
       providers: [
         {
           provide: UsersAdminService,
-          useValue: {
-            findAllUsers: () => of({ items: [{ id: 1 }], total: 1 }),
-          },
+          useValue: { findAllUsers },
         },
       ],
     }).compileComponents();
@@ -30,11 +30,32 @@ describe('UsersAdminPage', () => {
     expect(component).toBeTruthy();
     expect(component.items().length).toBe(1);
     expect(component.loadingInitial()).toBe(false);
+    expect(findAllUsers).toHaveBeenCalledTimes(1);
   });
 
-  it('onScroll triggers loadMore when more data exists', () => {
+  it('marca el listado como completo cuando ya no hay más páginas', () => {
+    expect(component.noMore()).toBe(true);
     component.onScroll();
-    expect(component.page()).toBeGreaterThan(1);
+    expect(findAllUsers).toHaveBeenCalledTimes(1);
+  });
+
+  it('onScroll triggers loadMore when more data exists', async () => {
+    TestBed.resetTestingModule();
+    findAllUsers = jest.fn(() => of({ items: [{ id: 1 }], total: 40 }));
+    await TestBed.configureTestingModule({
+      imports: [UsersAdminPage, translateModuleForTests()],
+      providers: [
+        {
+          provide: UsersAdminService,
+          useValue: { findAllUsers },
+        },
+      ],
+    }).compileComponents();
+    const moreFixture = TestBed.createComponent(UsersAdminPage);
+    moreFixture.detectChanges();
+    moreFixture.componentInstance.onScroll();
+    expect(findAllUsers).toHaveBeenCalledTimes(2);
+    expect(moreFixture.componentInstance.page()).toBeGreaterThan(2);
   });
 
   it('sets error when initial load fails', async () => {

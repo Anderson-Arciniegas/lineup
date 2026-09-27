@@ -5,7 +5,7 @@ import { translateModuleForTests } from '../../../../../testing';
 import { BusinessAdminService } from '../../../../core/services/business-admin.service';
 import { BusinessesAdminPage } from './businesses-admin-page';
 
-describe('BusinessesAdminPage', () => {
+describe('BusinessesAdminPage (HU-26)', () => {
   let component: BusinessesAdminPage;
   let fixture: ComponentFixture<BusinessesAdminPage>;
 
