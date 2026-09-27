@@ -46,6 +46,17 @@ describe('SearchBar', () => {
     expect(component.searchSubmit.emit).toHaveBeenCalledWith('');
   });
 
+  it('debe hidratar searchQuery desde el input query', () => {
+    component.query = 'zapatos rojos';
+    expect(component.searchQuery).toBe('zapatos rojos');
+  });
+
+  it('debe tratar query nulo como cadena vacía', () => {
+    component.query = 'algo';
+    component.query = null;
+    expect(component.searchQuery).toBe('');
+  });
+
   it('debe registrar listener de scroll cuando shrink está activo', () => {
     const addSpy = jest.spyOn(window, 'addEventListener');
     component.shrink = true;

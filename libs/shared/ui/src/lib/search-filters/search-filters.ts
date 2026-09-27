@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   OnInit,
   Output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   ProductSearchFiltersInput,
@@ -15,16 +17,16 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TreeModule } from 'primeng/tree';
+import { debounceTime, Subject } from 'rxjs';
 import { Button } from '../button/button';
-
-/** Valores del filtro "tipo": solo uno puede estar seleccionado a la vez. */
 
 /**
  * Árbol de filtros para búsqueda (tipo de entidad, ubicación, entrega, rango de precio).
  * En modal cierra con `DynamicDialogRef` y devuelve `SearchFiltersApplyPayload`.
+ * En sidebar aplica al instante. «Limpiar filtros» aparece si hay filtros activos (modal o sidebar).
  */
 @Component({
   selector: 'lib-search-filters',
@@ -44,21 +46,43 @@ export class SearchFilters implements OnInit {
   filtersLocation!: TreeNode[];
   filtersDelivery!: TreeNode[];
   selectedFilterType!: TreeNode;
-  selectedFilterLocation!: TreeNode;
+  selectedFilterLocation: TreeNode | undefined;
   selectedFilterDelivery!: TreeNode;
   /** Vacío = sin filtro de precio mínimo. */
   minPrice: number | null = null;
   /** Vacío = sin filtro de precio máximo. */
   maxPrice: number | null = null;
   modalMode = signal<boolean>(false);
-  private readonly ref = inject(DynamicDialogRef);
+  private readonly ref = inject(DynamicDialogRef, { optional: true });
+  private readonly config = inject(DynamicDialogConfig, { optional: true });
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly priceChange$ = new Subject<void>();
 
   @Output() setFilters = new EventEmitter<SearchFiltersApplyPayload>();
 
   private readonly _translate = inject(TranslateService);
 
+  /** True si hay algún filtro distinto del estado por defecto. */
+  get hasActiveFilters(): boolean {
+    const typeActive =
+      this.selectedFilterType?.data != null &&
+      this.selectedFilterType.data !== SearchTargetEnum.ALL;
+    const loc = this.selectedFilterLocation?.data;
+    const locationActive = typeof loc === 'string' && loc.length > 0;
+    const priceActive = this.minPrice != null || this.maxPrice != null;
+    return typeActive || locationActive || priceActive;
+  }
+
   ngOnInit() {
     this.modalMode.set(!!this.ref);
+    this.priceChange$
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (!this.modalMode()) {
+          this.saveFilters();
+        }
+      });
+
     this.filtersType = [
       {
         label: this._translate.instant('general.type'),
@@ -184,9 +208,13 @@ export class SearchFilters implements OnInit {
         ],
       },
     ];
+
+    this.applyInitialFilters(
+      this.config?.data as SearchFiltersApplyPayload | undefined,
+    );
   }
 
-  onNodeExpand(event: any) {
+  onNodeExpand(event: { node: TreeNode }) {
     if (this.filtersType[0].data === event.node.data) {
       this.filtersLocation[0].expanded = false;
       this.filtersDelivery[0].expanded = false;
@@ -199,17 +227,77 @@ export class SearchFilters implements OnInit {
     }
   }
 
+  /** En sidebar aplica al instante; en modal no hace nada hasta `saveFilters`. */
+  onSelectionChange(): void {
+    if (!this.modalMode()) {
+      this.saveFilters();
+    }
+  }
+
+  /** Debounce de precio en sidebar para no disparar una búsqueda por dígito. */
+  onPriceChange(): void {
+    if (!this.modalMode()) {
+      this.priceChange$.next();
+    }
+  }
+
   saveFilters() {
     const productFilters = this.buildProductFilters();
     const payload: SearchFiltersApplyPayload = {
-      target: this.selectedFilterType.data as SearchTargetEnum,
+      target:
+        (this.selectedFilterType?.data as SearchTargetEnum) ??
+        SearchTargetEnum.ALL,
       productFilters,
     };
     if (this.modalMode()) {
-      this.ref.close(payload);
+      this.ref?.close(payload);
     } else {
       this.setFilters.emit(payload);
     }
+  }
+
+  /** Restaura estado por defecto y aplica payload vacío (emite o cierra el modal). */
+  clearFilters(): void {
+    this.selectedFilterType = this.filtersType[0].children?.find(
+      (child) => child.data === SearchTargetEnum.ALL,
+    ) as TreeNode;
+    this.selectedFilterLocation = undefined;
+    this.minPrice = null;
+    this.maxPrice = null;
+    const payload: SearchFiltersApplyPayload = {
+      target: SearchTargetEnum.ALL,
+      productFilters: {},
+    };
+    if (this.modalMode()) {
+      this.ref?.close(payload);
+    } else {
+      this.setFilters.emit(payload);
+    }
+  }
+
+  private applyInitialFilters(
+    initial: SearchFiltersApplyPayload | undefined,
+  ): void {
+    if (!initial) {
+      return;
+    }
+    const typeNode = this.filtersType[0].children?.find(
+      (child) => child.data === initial.target,
+    );
+    if (typeNode) {
+      this.selectedFilterType = typeNode;
+    }
+    const location = initial.productFilters?.location;
+    if (typeof location === 'string' && location.length > 0) {
+      this.selectedFilterLocation = this.filtersLocation[0].children?.find(
+        (child) => child.data === location,
+      );
+      if (this.selectedFilterLocation) {
+        this.filtersLocation[0].expanded = true;
+      }
+    }
+    this.minPrice = initial.productFilters?.minPrice ?? null;
+    this.maxPrice = initial.productFilters?.maxPrice ?? null;
   }
 
   private buildProductFilters(): ProductSearchFiltersInput {

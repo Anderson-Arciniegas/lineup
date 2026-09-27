@@ -128,10 +128,11 @@
   .p-carousel-item {
     min-width: 0;
     box-sizing: border-box;
+    // Misma separación horizontal que `.products-grid` (gap: 1.5rem).
+    padding-inline: 0.75rem;
   }
 
-  // Menos ítems que `numVisible`: fila a la izquierda y ancho natural del slide (pantallas grandes).
-  // Desde `lg` (1024px); por debajo de `lg` se mantiene el carrusel como hasta ahora.
+  // Menos ítems que `numVisible` en desktop: ancho natural, alineados a la izquierda.
   .home-carousel.home-carousel--few {
     @media screen and (min-width: 1024px) {
       .p-carousel-item-list {
@@ -142,6 +143,11 @@
         flex: 0 0 auto !important;
       }
     }
+  }
+
+  .home-carousel__slide {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .max-width {

@@ -82,8 +82,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private readonly document = inject(DOCUMENT);
 
   /**
-   * PrimeNG muta `responsiveOptions` con `.sort()` al inyectar estilos; varios `p-carousel` con la misma
-   * referencia se pisan entre sí. Aquí solo usamos copias para calcular `numVisible`.
+   * Breakpoints canónicos. No se pasan a PrimeNG (muta con `.sort()`);
+   * solo sirven para calcular `numVisible` y la clase `home-carousel--few`.
    */
   private readonly carouselBreakpointsStandard: CarouselBreakpointConfig[] = [
     { breakpoint: '1920px', numVisible: 5, numScroll: 1 },
@@ -91,7 +91,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     { breakpoint: '1280px', numVisible: 3, numScroll: 1 },
     { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
     { breakpoint: '768px', numVisible: 2, numScroll: 1 },
-    { breakpoint: '640px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '640px', numVisible: 1, numScroll: 1 },
     { breakpoint: '500px', numVisible: 1, numScroll: 1 },
   ];
 
@@ -102,11 +102,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       { breakpoint: '1280px', numVisible: 3, numScroll: 1 },
       { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
       { breakpoint: '768px', numVisible: 2, numScroll: 1 },
-      { breakpoint: '640px', numVisible: 2, numScroll: 1 },
+      { breakpoint: '640px', numVisible: 1, numScroll: 1 },
       { breakpoint: '550px', numVisible: 1, numScroll: 1 },
     ];
 
-  private readonly windowInnerWidth = signal(0);
+  private readonly windowInnerWidth = signal(1920);
 
   readonly carouselNumVisibleStandard = computed(() =>
     this.resolveNumVisibleForWidth(
@@ -182,9 +182,12 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       this.featuredAttempt.set(true);
       this.collectionsAttempt.set(true);
       this.tagsAttempt.set(true);
+      this.windowInnerWidth.set(window.innerWidth);
     }
     afterNextRender(() => {
       if (!isPlatformBrowser(this.platformId)) return;
+      // Remount si el numVisible efectivo cambió respecto al default (evita 1 card/página).
+      this.onWindowResizeForCarousels();
       fromEvent(window, 'resize')
         .pipe(debounceTime(120), takeUntilDestroyed(this.destroyRef))
         .subscribe(() => this.onWindowResizeForCarousels());
@@ -194,16 +197,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   /** Dispara las peticiones de contenido destacado y etiquetas principales. */
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      const w = window.innerWidth;
-      this.windowInnerWidth.set(w);
-      this.prevNumVisibleStandard = this.resolveNumVisibleForWidth(
-        this.carouselBreakpointsStandard,
-        w,
-      );
-      this.prevNumVisibleCollections = this.resolveNumVisibleForWidth(
-        this.carouselBreakpointsCollections,
-        w,
-      );
+      this.windowInnerWidth.set(window.innerWidth);
       this.loadInitialBrowserData();
     }
   }
@@ -309,15 +303,13 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Igual que PrimeNG `calculatePosition`: último `numVisible` cuyo breakpoint >= ancho (opciones ordenadas como en PrimeNG).
+   * Último `numVisible` cuyo breakpoint >= ancho (como PrimeNG).
+   * Default de escritorio = 5 (nunca 1): si el ancho es desconocido o >1920px.
    */
   private resolveNumVisibleForWidth(
     options: CarouselBreakpointConfig[],
     windowWidth: number,
   ): number {
-    if (!isPlatformBrowser(this.platformId) || windowWidth <= 0) {
-      return 1;
-    }
     const sorted = [...options].sort((data1, data2) => {
       const value1 = data1.breakpoint;
       const value2 = data2.breakpoint;
@@ -330,7 +322,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       else result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
       return -1 * result;
     });
-    let numVisible = 1;
+    const desktopNumVisible = sorted[0]?.numVisible ?? 5;
+    if (!isPlatformBrowser(this.platformId) || windowWidth <= 0) {
+      return desktopNumVisible;
+    }
+    let numVisible = desktopNumVisible;
     for (const res of sorted) {
       if (parseInt(res.breakpoint, 10) >= windowWidth) {
         numVisible = res.numVisible;

@@ -28,6 +28,14 @@ export class SearchBar implements OnInit {
   @Input() small = false;
   searchQuery = '';
 
+  /**
+   * Sincroniza el campo con un término externo (p. ej. `?search=` o el path de búsqueda).
+   */
+  @Input()
+  set query(value: string | null | undefined) {
+    this.searchQuery = value ?? '';
+  }
+
   /** Si `shrink` está activo, registra listener de scroll para togglear clase CSS en `.search`. */
   ngOnInit(): void {
     if (this.shrink) {
