@@ -24,11 +24,13 @@
       </button>
       }
     </div>
-    @if (isStarsInvalid) {
-    <small class="text-red-500 text-xs">
-      {{ 'validation.starsRequired' | translate }}
-    </small>
-    }
+    <div class="min-h-6">
+      @if (isStarsInvalid) {
+      <small class="text-red-500 text-xs">
+        {{ 'validation.starsRequired' | translate }}
+      </small>
+      }
+    </div>
   </div>
 
   <div class="flex flex-col gap-2">

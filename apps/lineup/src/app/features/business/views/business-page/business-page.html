@@ -29,6 +29,7 @@
         <lib-search-bar
           class="w-full max-w-90 xl:max-w-120"
           [small]="true"
+          [query]="searchQuery"
           (searchSubmit)="onSearchSubmit($event)"
         ></lib-search-bar>
       </div>

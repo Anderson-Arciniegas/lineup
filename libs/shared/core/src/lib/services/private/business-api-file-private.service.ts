@@ -2,6 +2,7 @@ import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@lineup/envs';
 import { Observable } from 'rxjs';
+import { skipGlobalErrorToastContext } from '../../constants';
 import { ApiResponse } from '../../models/api-response.model';
 import { FileResponse } from '../../models/file.model';
 
@@ -11,6 +12,7 @@ import { FileResponse } from '../../models/file.model';
 export class BusinessApiFilePrivateService {
   private _http = inject(HttpClient);
 
+  /** Las vistas tratan el error de subida de forma específica: sin toast global. */
   post(
     path: string,
     body: FormData | { url: string },
@@ -22,6 +24,7 @@ export class BusinessApiFilePrivateService {
         reportProgress: true,
         observe: 'events',
         withCredentials: true,
+        context: skipGlobalErrorToastContext(),
       },
     );
   }
@@ -37,6 +40,7 @@ export class BusinessApiFilePrivateService {
         reportProgress: true,
         observe: 'events',
         withCredentials: true,
+        context: skipGlobalErrorToastContext(),
       },
     );
   }

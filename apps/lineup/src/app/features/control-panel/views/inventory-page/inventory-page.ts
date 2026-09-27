@@ -312,10 +312,8 @@ export class InventoryPage implements OnInit, OnDestroy {
               this.loadProductsByCatalog(this.selectedCatalogId);
             }
           },
-          error: (error: unknown) => {
-            console.error(error);
+          error: () => {
             this.loadingCatalogs = false;
-            this.showLoadError();
           },
         }),
     );
@@ -337,10 +335,8 @@ export class InventoryPage implements OnInit, OnDestroy {
           this.loadingProducts = false;
           this.loadStockForProducts(response);
         },
-        error: (error: unknown) => {
-          console.error(error);
+        error: () => {
           this.loadingProducts = false;
-          this.showLoadError();
         },
       }),
     );
@@ -374,15 +370,6 @@ export class InventoryPage implements OnInit, OnDestroy {
         }),
       );
     }
-  }
-
-  private showLoadError(): void {
-    this._messageService.add({
-      severity: 'error',
-      summary: this._translate.instant('general.error'),
-      detail: this._translate.instant('general.errorLoadingData'),
-      life: 4000,
-    });
   }
 
   private buildCatalogInventoryCsv(

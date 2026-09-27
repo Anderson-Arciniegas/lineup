@@ -15,7 +15,7 @@ import {
 import { Subject, of } from 'rxjs';
 import { Notifications } from './notifications';
 
-describe('Notifications', () => {
+describe('Notifications (HU-28)', () => {
   let component: Notifications;
   let fixture: ComponentFixture<Notifications>;
   let publicService: {

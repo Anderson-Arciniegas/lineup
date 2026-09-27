@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import type { StateSchema, UpdateUserInput, UserSchema } from '@lineup/core';
 import {
   DirectoriesEnum,
+  isAdultContentUploadError,
   StatesPublicService,
   UserApiFilePublicService,
   UserPublicService,
@@ -119,13 +120,6 @@ export class ProfilePage implements OnInit {
           this.imageUrl = me.profileImage?.url ?? '';
           this.imgCode = me.profileImage?.name ?? '';
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'general.error',
-            detail: 'general.error',
-          });
-        },
       });
   }
 
@@ -176,13 +170,6 @@ export class ProfilePage implements OnInit {
             detail: this.translateService.instant(
               'toast.userUpdatedSuccessfully',
             ),
-          });
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translateService.instant('general.error'),
-            detail: this.translateService.instant('general.error'),
           });
         },
       });
@@ -257,7 +244,7 @@ export class ProfilePage implements OnInit {
         error: (error) => {
           this.uploadFailed = true;
           this.loadingFile = false;
-          this.adultContent = error.error?.code === 22011;
+          this.adultContent = isAdultContentUploadError(error);
         },
       });
   }

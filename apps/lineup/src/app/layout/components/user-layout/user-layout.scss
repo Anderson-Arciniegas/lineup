@@ -1,4 +1,4 @@
-$rail-width: 4.5rem;
+$rail-width: 60px;
 
 .layout-main__content {
   min-height: 0;
@@ -29,12 +29,12 @@ $rail-width: 4.5rem;
   width: $rail-width;
   height: calc(100vh - 72px);
   background: var(--p-primary-50);
-  border-right: 1px solid var(--p-primary-200);
+  box-sizing: border-box;
   overflow: hidden;
   transition:
     width 0.3s ease-in-out,
     box-shadow 0.3s ease-in-out;
-  box-shadow: none;
+  box-shadow: inset -1px 0 0 var(--p-primary-200);
 
   @media screen and (min-width: 640px) {
     top: 80px;
@@ -43,7 +43,9 @@ $rail-width: 4.5rem;
 
   &--open {
     width: min(20rem, calc(100vw - 0.5rem));
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+    box-shadow:
+      inset -1px 0 0 var(--p-primary-200),
+      4px 0 24px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -51,7 +53,9 @@ $rail-width: 4.5rem;
   display: block;
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   height: 100%;
   width: 100%;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }

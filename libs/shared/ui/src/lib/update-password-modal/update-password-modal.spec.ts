@@ -1,15 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BusinessPrivateService, UserPublicService } from '@lineup/core';
+import {
+  BusinessPrivateService,
+  ToastService,
+  UserPublicService,
+} from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { UpdatePasswordModal } from './update-password-modal';
+
+const toastMock = (): { apiError: jest.Mock } => ({ apiError: jest.fn() });
 
 describe('UpdatePasswordModal', () => {
   let component: UpdatePasswordModal;
@@ -27,7 +32,7 @@ describe('UpdatePasswordModal', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
           provide: DynamicDialogConfig,
@@ -122,9 +127,11 @@ describe('UpdatePasswordModal (negocio)', () => {
   let component: UpdatePasswordModal;
   let fixture: ComponentFixture<UpdatePasswordModal>;
   let businessService: { changeBusinessPassword: jest.Mock };
+  let toast: { apiError: jest.Mock };
 
   beforeEach(async () => {
     businessService = { changeBusinessPassword: jest.fn(() => of(true)) };
+    toast = toastMock();
 
     await TestBed.configureTestingModule({
       imports: [UpdatePasswordModal, TranslateModule.forRoot()],
@@ -132,7 +139,7 @@ describe('UpdatePasswordModal (negocio)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'business' } } },
         { provide: UserPublicService, useValue: { changePassword: jest.fn() } },
@@ -157,13 +164,10 @@ describe('UpdatePasswordModal (negocio)', () => {
     expect(businessService.changeBusinessPassword).toHaveBeenCalled();
   });
 
-  it('debe mostrar error si falla cambio de negocio', () => {
-    const messageService = TestBed.inject(MessageService) as MessageService & {
-      add: jest.Mock;
-    };
-    jest.spyOn(messageService, 'add');
+  it('debe delegar el error del cambio de negocio al toast estándar', () => {
+    const error = new Error('Business password fail');
     businessService.changeBusinessPassword.mockReturnValue(
-      throwError(() => ({ message: 'Business password fail' })),
+      throwError(() => error),
     );
     component.form.patchValue({
       currentPassword: 'old',
@@ -171,19 +175,18 @@ describe('UpdatePasswordModal (negocio)', () => {
       confirmNewPassword: 'new123',
     });
     component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(error);
   });
 });
 
 describe('UpdatePasswordModal errores', () => {
   let component: UpdatePasswordModal;
   let fixture: ComponentFixture<UpdatePasswordModal>;
-  let messageService: { add: jest.Mock };
+  let toast: { apiError: jest.Mock };
+  const changePasswordError = new Error('Error de contraseña');
 
   beforeEach(async () => {
-    messageService = { add: jest.fn() };
+    toast = toastMock();
 
     await TestBed.configureTestingModule({
       imports: [UpdatePasswordModal, TranslateModule.forRoot()],
@@ -191,15 +194,13 @@ describe('UpdatePasswordModal errores', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: messageService },
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'user' } } },
         {
           provide: UserPublicService,
           useValue: {
-            changePassword: jest.fn(() =>
-              throwError(() => ({ message: 'Error de contraseña' })),
-            ),
+            changePassword: jest.fn(() => throwError(() => changePasswordError)),
           },
         },
         {
@@ -216,62 +217,20 @@ describe('UpdatePasswordModal errores', () => {
     fixture.detectChanges();
   });
 
-  it('debe mostrar error si falla el cambio', () => {
+  it('debe delegar el error del cambio al toast estándar', () => {
     component.form.patchValue({
       currentPassword: 'old',
       newPassword: 'new123',
       confirmNewPassword: 'new123',
     });
     component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(changePasswordError);
     expect(component.attempt).toBe(false);
   });
 
   it('no debe enviar si attempt está activo', () => {
     component.attempt = true;
     component.submit();
-    expect(messageService.add).not.toHaveBeenCalled();
-  });
-});
-
-describe('UpdatePasswordModal error GraphQL', () => {
-  it('debe mostrar mensaje GraphQL al fallar cambio', async () => {
-    const messageService = { add: jest.fn() };
-    await TestBed.configureTestingModule({
-      imports: [UpdatePasswordModal, TranslateModule.forRoot()],
-      providers: [
-        provideRouter([]),
-        TranslateService,
-        TranslateStore,
-        { provide: MessageService, useValue: messageService },
-        { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
-        { provide: DynamicDialogConfig, useValue: { data: { type: 'user' } } },
-        {
-          provide: UserPublicService,
-          useValue: {
-            changePassword: jest.fn(() =>
-              throwError(() => ({ graphQLErrors: [{ message: 'Bad password' }] })),
-            ),
-          },
-        },
-        { provide: BusinessPrivateService, useValue: { changeBusinessPassword: jest.fn() } },
-      ],
-    })
-      .overrideComponent(UpdatePasswordModal, { set: { template: '' } })
-      .compileComponents();
-    const fixture = TestBed.createComponent(UpdatePasswordModal);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();
-    component.form.patchValue({
-      currentPassword: 'old',
-      newPassword: 'new123',
-      confirmNewPassword: 'new123',
-    });
-    component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: 'Bad password' }),
-    );
+    expect(toast.apiError).not.toHaveBeenCalled();
   });
 });

@@ -12,6 +12,7 @@ import {
   TimePeriodGranularityEnum,
   TimePeriodInput,
 } from '@lineup/core';
+import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { forkJoin } from 'rxjs';
@@ -27,6 +28,7 @@ import { forkJoin } from 'rxjs';
     TranslateModule,
     ProgressSpinner,
     StockMovementTypeTranslatePipe,
+    Button,
   ],
   templateUrl: './control-panel-page.html',
   styleUrl: './control-panel-page.scss',
@@ -39,6 +41,7 @@ export class ControlPanelPage implements OnInit {
 
   attempt = false;
   path = '';
+  loadErrorKey: string | null = null;
 
   private readonly _businessService = inject(BusinessPrivateService);
   private readonly _statsService = inject(StatsPrivateService);
@@ -75,6 +78,7 @@ export class ControlPanelPage implements OnInit {
   getBusiness(): void {
     if (this.attempt) return;
     this.attempt = true;
+    this.loadErrorKey = null;
     forkJoin({
       business: this._businessService.getBusinessByPath(this.path),
       engagement: this._statsService.businessEngagementStats(
@@ -89,12 +93,17 @@ export class ControlPanelPage implements OnInit {
         this.inventory = business.inventory;
         this.product = business.product;
       },
-      error: (error) => {
-        console.error(error);
+      error: () => {
+        this.attempt = false;
+        this.loadErrorKey = 'errors.loadFailed';
       },
       complete: () => {
         this.attempt = false;
       },
     });
+  }
+
+  retryLoad(): void {
+    this.getBusiness();
   }
 }

@@ -1,3 +1,4 @@
+export * from './api-error.model';
 export * from './business.model';
 export * from './catalog.model';
 export * from './discount.model';

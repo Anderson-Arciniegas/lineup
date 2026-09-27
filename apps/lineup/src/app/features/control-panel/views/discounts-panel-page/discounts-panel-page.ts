@@ -88,14 +88,7 @@ export class DiscountsPanelPage implements OnInit, OnDestroy {
             return aTime - bTime;
           });
         },
-        error: (error) => {
-          console.error(error);
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant('general.errorLoadingData'),
-            life: 4000,
-          });
+        error: () => {
           this.loading = false;
         },
         complete: () => {
@@ -159,15 +152,6 @@ export class DiscountsPanelPage implements OnInit, OnDestroy {
                   summary: this._translate.instant('general.success'),
                   detail: 'Descuento eliminado correctamente.',
                   life: 3000,
-                });
-              },
-              error: (error) => {
-                console.error(error);
-                this._messageService.add({
-                  severity: 'error',
-                  summary: this._translate.instant('general.error'),
-                  detail: 'No se pudo eliminar el descuento.',
-                  life: 4000,
                 });
               },
             }),

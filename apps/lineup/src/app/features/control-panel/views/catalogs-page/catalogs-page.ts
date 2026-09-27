@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
     CatalogCard,
     CreateCatalogCard,
     ProgressSpinner,
+    Button,
   ],
   templateUrl: './catalogs-page.html',
   styleUrl: './catalogs-page.scss',
@@ -31,6 +32,7 @@ export class CatalogsPage implements OnInit {
   attempt = false;
   page = 1;
   noMoreResults = false;
+  loadErrorKey: string | null = null;
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
   private readonly _catalogService = inject(CatalogPrivateService);
@@ -48,6 +50,7 @@ export class CatalogsPage implements OnInit {
   getCatalogs(): void {
     if (this.attempt || this.noMoreResults) return;
     this.attempt = true;
+    this.loadErrorKey = null;
     this._subscriptions.add(
       this._catalogService
         .findAllMyCatalogs({ page: this.page, limit: 20 })
@@ -61,11 +64,15 @@ export class CatalogsPage implements OnInit {
             }
             this.attempt = false;
           },
-          error: (error) => {
-            console.error(error);
+          error: () => {
             this.attempt = false;
+            this.loadErrorKey = 'errors.loadFailed';
           },
         }),
     );
+  }
+
+  retryLoad(): void {
+    this.getCatalogs();
   }
 }

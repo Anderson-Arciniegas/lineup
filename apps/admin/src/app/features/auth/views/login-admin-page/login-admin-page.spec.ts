@@ -5,7 +5,7 @@ import { translateModuleForTests, adminTestProviders } from '../../../../../test
 import { AuthAdminService } from '../../../../core/services/auth-admin.service';
 import { LoginAdminPage } from './login-admin-page';
 
-describe('LoginAdminPage', () => {
+describe('LoginAdminPage (HU-26)', () => {
   let component: LoginAdminPage;
   let fixture: ComponentFixture<LoginAdminPage>;
   let login: jest.Mock;

@@ -10,6 +10,7 @@ import {
   EncryptionService,
   NotificationsSocketService,
   StorageService,
+  ToastService,
   UserSchema,
   UserPublicService,
   UtilsService,
@@ -31,6 +32,7 @@ export class AuthService {
   private _user = inject(UserPublicService);
   private _business = inject(BusinessPrivateService);
   private _notificationsSocket = inject(NotificationsSocketService);
+  private _toast = inject(ToastService);
 
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this._platformId)) {
@@ -68,9 +70,9 @@ export class AuthService {
   }
 
   async handleSuccessLogin(
-    loggedUser?: UserSchema,
-    loggedBusiness?: BusinessSchema,
-    newUser?: boolean,
+    loggedUser?: UserSchema | null,
+    loggedBusiness?: BusinessSchema | null,
+    isNewAccount?: boolean,
   ): Promise<void> {
     this._storageService.set('loggedUser', true);
     const sessionType = loggedBusiness ? 'business' : 'user';
@@ -78,7 +80,11 @@ export class AuthService {
 
     if (loggedBusiness) {
       this.setBusiness(loggedBusiness);
-      if (newUser) {
+      this._notifyAuthSuccess(
+        this._displayName(loggedBusiness.name),
+        isNewAccount ? 'auth.businessCreated' : null,
+      );
+      if (isNewAccount) {
         this._storageService.set(
           AuthService.BUSINESS_ONBOARDING_PENDING_KEY,
           true,
@@ -94,9 +100,33 @@ export class AuthService {
       }
     } else if (loggedUser) {
       this.setUser(loggedUser);
+      this._notifyAuthSuccess(
+        this._displayName(loggedUser.firstName, loggedUser.lastName),
+        isNewAccount ? 'auth.userCreated' : null,
+      );
       this._storageService.remove(AuthService.BUSINESS_ONBOARDING_PENDING_KEY);
       this._utilsService.navigate([AppConfigService.config.routes.profile]);
     }
+  }
+
+  /** Toast de bienvenida; si hay alta nueva, también el de creación exitosa. */
+  private _notifyAuthSuccess(
+    name: string,
+    createdKey: 'auth.userCreated' | 'auth.businessCreated' | null,
+  ): void {
+    if (createdKey) {
+      this._toast.success(createdKey);
+    }
+    if (name) {
+      this._toast.success('auth.welcomeNamed', { name });
+    }
+  }
+
+  private _displayName(...parts: Array<string | null | undefined>): string {
+    return parts
+      .map((part) => part?.trim())
+      .filter((part): part is string => !!part)
+      .join(' ');
   }
 
   async encryptTokens(tokens: any): Promise<string> {

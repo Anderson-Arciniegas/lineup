@@ -79,6 +79,7 @@ export const en = {
     dashboard: 'Dashboard',
     businessName: 'Business name',
     editBusiness: 'Edit business',
+    completeBusinessProfile: 'Complete your business profile',
     businessIsOnline: 'Online business',
     businessPath: 'Business path',
     businessPathFormatHint:
@@ -104,7 +105,7 @@ export const en = {
     creationDate: 'Creation date',
     modificationDate: 'Modification date',
     tagsPlaceholder: 'Enter the catalog tags',
-    addTag: 'Add tag',
+    addTag: 'Add',
     catalogTitle: 'Catalog title',
     catalogColor: 'Catalog color',
     catalogs: 'Catalogs',
@@ -113,7 +114,9 @@ export const en = {
     subtitle: 'Subtitle',
     maxLength: 'Maximum length',
     variationNamePlaceholder: 'Name of the variation',
-    variationValuePlaceholder: 'Value of the variation',
+    variationValuePlaceholder: 'Variation options',
+    variationName: 'Name of the variation',
+    variationOptions: 'Variation options',
     value: 'Value',
     name: 'Name',
     productName: 'Product name',
@@ -130,6 +133,7 @@ export const en = {
     success: 'Success',
     error: 'Error',
     warning: 'Warning',
+    info: 'Information',
     catalogCreated: 'Catalog created successfully',
     catalogRequired: 'A catalog must be selected',
     productCreated: 'Product created successfully',
@@ -166,6 +170,7 @@ export const en = {
     maximum: 'Maximum',
     noResults: 'No results found, please try again with a different search.',
     filter: 'Filter',
+    clearFilters: 'Clear filters',
     physicalStore: 'Physical store',
     agreed: 'Agreed',
     delivery: 'Delivery',
@@ -174,6 +179,9 @@ export const en = {
     type: 'Type',
     catalog: 'Catalog',
     product: 'Product',
+    grid: 'Grid',
+    list: 'List',
+    retry: 'Retry',
     all: 'All',
     wishlist: 'Wishlist',
     myFavoriteBusinesses: 'My favorite businesses',
@@ -293,6 +301,7 @@ export const en = {
     },
     total: 'Total',
     noCatalogProducts: 'No products registered in this catalog.',
+    noPublicCatalogProducts: 'This catalog has no products yet.',
     ourCatalogs: 'Our catalogs',
     noBusinessCatalogs: 'This business has no catalogs created yet.',
     ourMainProducts: 'Our main products',
@@ -306,6 +315,9 @@ export const en = {
     generatingPdf: 'Generating PDF…',
     pdfDownloaded: 'PDF downloaded! You can close this tab.',
     errorGeneratingPdf: 'Error generating the PDF. Please try again.',
+    pdfGenerationHelp:
+      'Do not close this tab while the file is being generated. The download will start when it finishes.',
+    backToCatalog: 'Back to catalog',
     resultsFor: 'Results for',
   },
   importProductsPage: {
@@ -315,15 +327,17 @@ export const en = {
     uploadTitle: 'Upload document',
     allowedFormats:
       'Allowed formats: CSV, XLSX, XLS, PDF, XML, TXT, and JSON. Maximum size: 100 MB.',
+    expectedContent:
+      'The document should include each product name, price, and description. You may also include stock and variations (color or size). A fixed column template is not required.',
     selectFile: 'Products document',
+    chooseFile: 'Select file',
     removeFile: 'Remove selected file',
     uploadAction: 'Import document',
     uploading: 'Uploading document…',
     fileRequired: 'Select a document to continue.',
     invalidExtension: 'This file format is not allowed.',
     fileTooLarge: 'The file exceeds the 100 MB maximum size.',
-    importQueued:
-      'Import in progress. Products will appear as pending.',
+    importQueued: 'Import in progress. Products will appear as pending.',
     uploadFailed:
       'The document could not be uploaded. Check its format and try again.',
     pendingTitle: 'Pending products',
@@ -526,6 +540,8 @@ export const en = {
     urlRequired: 'The URL is required (eg: https://instagram.com/username)',
     invalidUrl: 'The URL is not valid (eg: https://instagram.com/username)',
     fieldRequired: 'This field is required.',
+    minLength: 'Must be at least {{min}} characters.',
+    minValue: 'The value cannot be less than {{min}}.',
     passwordMismatch: 'Passwords do not match.',
     passwordMinLength: 'Password must be at least {{min}} characters.',
     passwordMaxLength: 'Password cannot exceed {{max}} characters.',
@@ -566,6 +582,8 @@ export const en = {
       'Are you sure you want to delete this catalog?',
     areYouSureYouWantToDeleteThisProduct:
       'Are you sure you want to delete this product?',
+    discardUnsavedChanges:
+      'You have unsaved changes. If you leave now they will be lost. Do you want to continue?',
     doYouWantToDeleteThisLocation:
       'Are you sure you want to delete this location?',
   },
@@ -679,6 +697,60 @@ export const en = {
     acceptTermsAnd: 'and the',
     privacyLink: 'privacy policy',
     googleRequiresTerms: 'Check the acceptance box to sign up with Google.',
+    invalidCredentials:
+      'Incorrect email or password. Check your details and try again.',
+    googleLoginFailed: 'Could not sign in with Google. Please try again.',
+    accountNotFound:
+      'We could not find an account associated with these details.',
+    emailNotVerified: 'You must verify your email address before signing in.',
+    welcomeNamed: 'Welcome, {{name}}',
+    userCreated: 'User created successfully.',
+    businessCreated: 'Business created successfully.',
+  },
+  errors: {
+    generic: 'An unexpected error occurred. Please try again.',
+    network:
+      'Could not connect to the server. Check your internet connection and try again.',
+    timeout: 'The server took too long to respond. Please try again.',
+    badRequest:
+      'The submitted data is not valid. Review the information and try again.',
+    unauthorized: 'You must sign in to perform this action.',
+    sessionExpired: 'Your session has expired. Please sign in again.',
+    forbidden: 'You do not have permission to perform this action.',
+    notFound:
+      'We could not find what you are looking for. It may have been removed.',
+    conflict: 'A record with this data already exists.',
+    tooManyRequests: 'Too many requests. Wait a moment and try again.',
+    server:
+      'We are having a problem on our server. Please try again in a few minutes.',
+    loadFailed: 'Could not load the information. Please try again.',
+    saveFailed: 'Could not save the changes. Please try again.',
+    deleteFailed: 'Could not delete. Please try again.',
+    email: {
+      alreadyRegistered: 'This email address is already registered.',
+    },
+    password: {
+      notFitStandard:
+        'The new password does not meet the security requirements.',
+      equalToPrevious:
+        'The new password cannot be the same as the previous one.',
+      previousInvalid: 'The current password is incorrect.',
+    },
+    verificationCode: {
+      sendFailed: 'Could not send the verification code. Please try again.',
+      notFound: 'The verification code is not valid.',
+      expired: 'The verification code has expired. Request a new one.',
+      alreadyUsed: 'This verification code has already been used.',
+      invalid: 'The verification code is not valid.',
+    },
+    file: {
+      adultContent:
+        'The image contains disallowed content and cannot be uploaded.',
+      uploadFailed: 'The image could not be uploaded. Please try again.',
+      invalidExtension: 'The file format is not allowed.',
+      poorQuality:
+        'The image quality is too low. Use a higher-resolution image.',
+    },
   },
   footer: {
     tagline:

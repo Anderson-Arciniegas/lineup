@@ -1,14 +1,18 @@
-// .mw-740p {
-//   max-width: 740px;
-// }
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
 
 .img-box {
   position: relative;
+  flex-shrink: 0;
   border-radius: 25px;
   height: 160px;
+  width: 160px !important;
   img {
     height: 100%;
-    width: 160px;
+    width: 100%;
     border: 10px solid var(--p-primary-50);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border-radius: 25px;
@@ -17,9 +21,10 @@
 
   @media screen and (max-width: 767px) {
     height: 90px;
+    width: 90px !important;
     img {
       height: 100%;
-      width: 90px;
+      width: 100%;
       border: 5px solid var(--p-primary-50);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       border-radius: 25px;
@@ -53,7 +58,11 @@
 }
 
 .business-description {
+  min-width: 0;
+  max-width: 100%;
   white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .business-data--brand-light-text {

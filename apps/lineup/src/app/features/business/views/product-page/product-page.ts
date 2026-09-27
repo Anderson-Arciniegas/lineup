@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
+  ApiErrorService,
   AppConfigService,
   AuthStore,
   BusinessPublicService,
@@ -78,6 +79,7 @@ export class ProductPage implements OnInit, OnDestroy {
   private static readonly _GRADIENT_BOTTOM_LIGHTEN = 0.6;
   private static readonly _LUMINANCE_THRESHOLD = 0.45;
   attempt = false;
+  productLoadError: string | null = null;
   /**
    * Slides visibles (Tailwind por defecto): xl/2xl (≥1280px) → 3; lg (1024–1279) → 2; debajo de lg → 1.
    * Sin `responsiveOptions` para que PrimeNG regenere CSS vía `@Input` al redimensionar.
@@ -108,6 +110,7 @@ export class ProductPage implements OnInit, OnDestroy {
   private readonly _pendingTasks = inject(PendingTasks);
   private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
+  private readonly _apiError = inject(ApiErrorService);
 
   private readonly _subscription = new Subscription();
 
@@ -140,14 +143,20 @@ export class ProductPage implements OnInit, OnDestroy {
     this.getProduct();
   }
 
+  retryProduct(): void {
+    this.productLoadError = null;
+    this.getProduct();
+  }
+
   /** Obtiene el detalle del producto, aplica SEO, visitas y dispara relaciones por tags. */
   private getProduct(): void {
     if (this.attempt) return;
     this.attempt = true;
+    this.productLoadError = null;
     const taskDone = this._pendingTasks.add();
     this._subscription.add(
       this._productPublicService
-        .findOneProduct(this.id)
+        .findOneProduct(this.id, true)
         .pipe(finalize(() => taskDone()))
         .subscribe({
           next: (product) => {
@@ -167,8 +176,8 @@ export class ProductPage implements OnInit, OnDestroy {
             this.attempt = false;
           },
           error: (error) => {
-            console.error(error);
             this.attempt = false;
+            this.productLoadError = this.resourceLoadErrorKey(error);
           },
           complete: () => {
             this.attempt = false;
@@ -187,8 +196,8 @@ export class ProductPage implements OnInit, OnDestroy {
             Number(this._authStore.business()?.id) === Number(this.business.id);
           this.applyBrandSurfaceColor();
         },
-        error: (error) => {
-          console.error(error);
+        error: () => {
+          /* El breadcrumb degrada si el negocio no carga; la ficha sigue siendo el recurso principal. */
         },
       }),
     );
@@ -347,6 +356,12 @@ export class ProductPage implements OnInit, OnDestroy {
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
   }
 
+  private resourceLoadErrorKey(error: unknown): string {
+    return this._apiError.normalize(error).httpStatus === 404
+      ? 'errors.notFound'
+      : 'errors.loadFailed';
+  }
+
   /** Lista única de slugs o nombres de etiqueta asociados al producto. */
   private extractProductTagIdentifiers(product: ProductSchema): string[] {
     const ids =
@@ -397,6 +412,7 @@ export class ProductPage implements OnInit, OnDestroy {
             .getAllByTags(pagination, tagNamesOrSlugs, {
               idBusiness,
               idProducts: [product.id],
+              skipGlobalErrorToast: true,
             })
             .pipe(catchError(() => of(emptyPage)))
         : of(emptyPage);
@@ -404,6 +420,7 @@ export class ProductPage implements OnInit, OnDestroy {
     const related$ = this._productPublicService
       .getAllByTags(pagination, tagNamesOrSlugs, {
         idProducts: [product.id],
+        skipGlobalErrorToast: true,
       })
       .pipe(catchError(() => of(emptyPage)));
 

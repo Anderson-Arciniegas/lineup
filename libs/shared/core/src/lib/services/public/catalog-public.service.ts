@@ -7,6 +7,7 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT } from '../../constants';
 import type { InfinityScrollInput, PaginatedCatalogs } from '../../models';
 import { CatalogSchema } from '../../schemas';
 
@@ -47,7 +48,10 @@ export class CatalogPublicService {
       .pipe(map((result) => result.data.findOneCatalog));
   }
 
-  findOneCatalogByPath(path: string): Observable<CatalogSchema> {
+  findOneCatalogByPath(
+    path: string,
+    skipGlobalErrorToast = false,
+  ): Observable<CatalogSchema> {
     return this.apollo
       .use('userAPI')
       .query<{ findOneCatalogByPath: CatalogSchema }>({
@@ -56,6 +60,7 @@ export class CatalogPublicService {
         fetchPolicy: 'network-only',
         context: {
           withCredentials: true,
+          ...(skipGlobalErrorToast ? SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT : {}),
         },
       })
       .pipe(map((result) => result.data.findOneCatalogByPath));

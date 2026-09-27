@@ -1,3 +1,4 @@
+export * from './api-error.service';
 export * from './api.service';
 export * from './apollo.service';
 export * from './notifications-socket.service';
@@ -6,6 +7,7 @@ export * from './graphql.service';
 export * from './gemini';
 export * from './seo.service';
 export * from './storage.service';
+export * from './toast.service';
 export * from './utils.service';
 export * from './public';
 export * from './private';

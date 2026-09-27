@@ -1,19 +1,36 @@
 <section class="page flex flex-col gap-2 py-5">
   <h2 class="text-2xl font-semibold ps-4">
-    {{'general.editBusiness' | translate}}
+    {{ (isOnboardingFlow ? 'general.completeBusinessProfile' :
+    'general.editBusiness') | translate }}
   </h2>
 
   <div
     class="flex flex-col-reverse lg:flex-row justify-start lg:justify-center items-center lg:items-start gap-8 p-3"
   >
-    @if (business) {
+    @if (loadErrorKey) {
+    <div
+      class="flex flex-col items-center justify-center gap-4 p-10 text-center w-full"
+      role="alert"
+    >
+      <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+      <p class="text-base md:text-lg">{{ loadErrorKey | translate }}</p>
+      <lib-button
+        type="rounded"
+        variant="outlined"
+        [label]="'general.retry' | translate"
+        (action)="retryLoad()"
+      ></lib-button>
+    </div>
+    } @else if (business) {
     <form
       class="flex flex-col justify-center items-center gap-8 w-3/3 md:w-2/3"
       [formGroup]="businessForm"
     >
       <div class="flex flex-col justify-center items-center gap-3">
         <h3 class="text-lg font-medium">
-          {{'general.profilePicture' | translate}}<span class="text-red-500">*</span>
+          {{'general.profilePicture' | translate}}<span class="text-red-500"
+            >*</span
+          >
         </h3>
         <div
           id="business-profile-image"
@@ -49,39 +66,54 @@
           <i class="pi pi-camera" style="font-size: 4rem"></i>
           }
         </div>
-        @if (saveAttempted && (!imgCode || !imageUrl)) {
-        <small
-          id="business-image-required-error"
-          class="text-red-500 text-xs mt-1 block"
-          role="alert"
-        >
-          {{ 'validation.fieldRequired' | translate }}
-        </small>
-        }
+        <div class="min-h-6">
+          @if (adultContent) {
+          <small class="text-red-500 text-xs mt-1 block" role="alert">
+            {{ 'errors.file.adultContent' | translate }}
+          </small>
+          } @else if (uploadFailed) {
+          <small class="text-red-500 text-xs mt-1 block" role="alert">
+            {{ 'errors.file.uploadFailed' | translate }}
+          </small>
+          } @else if (saveAttempted && (!imgCode || !imageUrl)) {
+          <small
+            id="business-image-required-error"
+            class="text-red-500 text-xs mt-1 block"
+            role="alert"
+          >
+            {{ 'validation.fieldRequired' | translate }}
+          </small>
+          }
+        </div>
       </div>
       <div class="flex flex-col gap-8 w-10/10 xl:w-7/10 max-w-4xl mt-3">
         <div
           class="flex flex-col sm:flex-row gap-8 justify-between items-start"
         >
           <div class="w-full md:w-5/10">
-          <p-floatlabel class="w-full">
-            <input
-              pInputText
-              [maxlength]="maxNameLength"
-              class="w-10/10 font-medium"
-              formControlName="name"
-              id="name"
-              autocomplete="off"
-            />
-            <label for="name" class="font-medium"
-              >{{'general.businessName' | translate}}<span class="text-red-500">*</span></label
-            >
-          </p-floatlabel>
-          @if (nameControl?.invalid && nameControl?.touched) {
-          <small class="text-red-500 text-xs mt-1 block" role="alert">
-            {{ 'validation.fieldRequired' | translate }}
-          </small>
-          }
+            <p-floatlabel class="w-full">
+              <input
+                pInputText
+                [maxlength]="maxNameLength"
+                class="w-10/10 font-medium"
+                formControlName="name"
+                id="name"
+                autocomplete="off"
+              />
+              <label for="name" class="font-medium"
+                >{{'general.businessName' | translate}}<span
+                  class="text-red-500"
+                  >*</span
+                ></label
+              >
+            </p-floatlabel>
+            <div class="min-h-6">
+              @if (nameControl?.invalid && nameControl?.touched) {
+              <small class="text-red-500 text-xs mt-1 block" role="alert">
+                {{ 'validation.fieldRequired' | translate }}
+              </small>
+              }
+            </div>
           </div>
           <div class="flex flex-col w-full sm:w-5/10">
             <p-floatlabel class="w-full flex flex-col items-start">
@@ -94,25 +126,30 @@
                 autocomplete="off"
               />
               <label for="businessPath" class="font-medium"
-                >{{'general.businessPath' | translate}}<span class="text-red-500">*</span></label
+                >{{'general.businessPath' | translate}}<span
+                  class="text-red-500"
+                  >*</span
+                ></label
               >
             </p-floatlabel>
 
             <small class="text-color-secondary text-xs mt-1 block">
               {{ 'general.businessPathFormatHint' | translate }}
             </small>
-            @if (businessPathControl?.invalid && businessPathControl?.touched &&
-            businessPathControl?.errors?.['required']) {
-            <small class="text-red-500 text-xs mt-1 block" role="alert">
-              {{ 'validation.fieldRequired' | translate }}
-            </small>
-            }
-            @if (businessPathControl?.invalid && businessPathControl?.touched &&
-            businessPathControl?.errors?.['pattern']) {
-            <small class="text-red-500 text-xs mt-1 block" role="alert">
-              {{ 'general.businessPathInvalidFormat' | translate }}
-            </small>
-            }
+            <div class="min-h-6">
+              @if (businessPathControl?.invalid && businessPathControl?.touched
+              && businessPathControl?.errors?.['required']) {
+              <small class="text-red-500 text-xs mt-1 block" role="alert">
+                {{ 'validation.fieldRequired' | translate }}
+              </small>
+              } @if (businessPathControl?.invalid &&
+              businessPathControl?.touched &&
+              businessPathControl?.errors?.['pattern']) {
+              <small class="text-red-500 text-xs mt-1 block" role="alert">
+                {{ 'general.businessPathInvalidFormat' | translate }}
+              </small>
+              }
+            </div>
           </div>
         </div>
 
@@ -174,9 +211,16 @@
                 autocomplete="off"
                 [disabled]="tags.length >= maxTags"
               />
-              <label for="tags" class="font-medium"
-                >{{'general.tags' | translate}}</label
+              <label
+                for="tags"
+                class="font-medium"
+                class="flex flex-row items-center justify-between w-full gap-2"
               >
+                <span>{{'general.tags' | translate}}</span>
+                <small class="text-color-secondary text-xs mt-1 block">
+                  {{ tags.length }} / {{ maxTags }}
+                </small>
+              </label>
             </p-floatlabel>
             <lib-button
               icon="pi pi-plus"
@@ -197,9 +241,6 @@
             />
             }
           </div>
-          <small class="text-color-secondary text-xs mt-1 block">
-            {{ tags.length }} / {{ maxTags }}
-          </small>
         </div>
 
         <div class="flex flex-row items-center gap-3 w-full">
@@ -258,7 +299,18 @@
           </p-floatlabel>
         </div>
       </div> -->
-      <div class="flex flex-row justify-center items-center">
+      <div class="flex flex-row justify-center items-center gap-4">
+        @if (!isOnboardingFlow) {
+        <lib-button
+          [label]="'general.cancel' | translate"
+          [width]="'w-40'"
+          [type]="'rounded'"
+          color="secondary"
+          buttonType="button"
+          [disabled]="attempt"
+          (action)="cancel()"
+        ></lib-button>
+        }
         <lib-button
           (action)="updateBusiness()"
           [loading]="attempt"

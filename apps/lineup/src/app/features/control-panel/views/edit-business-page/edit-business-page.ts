@@ -14,13 +14,14 @@ import {
   AppConfigService,
   AuthStore,
   BusinessApiFilePrivateService,
-  BusinessSchema,
   BusinessPrivateService,
+  BusinessSchema,
   DirectoriesEnum,
+  isAdultContentUploadError,
   UpdateBusinessInput,
   UtilsService,
 } from '@lineup/core';
-import { Button, ImageCropper } from '@lineup/ui';
+import { Button, ConfirmationModal, ImageCropper } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
 import { MessageService } from 'primeng/api';
@@ -69,6 +70,7 @@ export class EditBusinessPage implements OnInit {
   adultContent = false;
   saveAttempted = false;
   attempt = false;
+  loadErrorKey: string | null = null;
   business: BusinessSchema;
   tags: string[] = [];
   ref: DynamicDialogRef | undefined;
@@ -88,7 +90,9 @@ export class EditBusinessPage implements OnInit {
   private _subscription: Subscription = new Subscription();
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly maxDescriptionLength = 100;
+  readonly maxDescriptionLength = 200;
+  /** `true` en el alta inicial del negocio (ruta `setup` con `onboardingFlow`). */
+  readonly isOnboardingFlow = this._isOnboardingFlow();
 
   /** Solo letras, números, guiones, puntos y guiones bajos. Ej: mi-negocio, abc_123, nombre.com */
   static readonly BUSINESS_PATH_PATTERN = /^[a-zA-Z0-9._-]+$/;
@@ -168,7 +172,7 @@ export class EditBusinessPage implements OnInit {
       });
   }
 
-  /** POST multipart al API de archivos del negocio; detecta contenido adulto bloqueado (código 22011). */
+  /** POST multipart al API de archivos del negocio; detecta contenido adulto bloqueado (`FILE_UPLOAD_ERROR_CODES.ADULT_CONTENT`). */
   uploadFile(fileBase64: string) {
     this.loadingFile = true;
 
@@ -215,7 +219,7 @@ export class EditBusinessPage implements OnInit {
           error: (error) => {
             this.uploadFailed = true;
             this.loadingFile = false;
-            this.adultContent = error.error.code === 22011;
+            this.adultContent = isAdultContentUploadError(error);
           },
         }),
     );
@@ -232,7 +236,11 @@ export class EditBusinessPage implements OnInit {
   /** Valida formulario e imagen obligatoria, arma `UpdateBusinessInput` y sincroniza sesión. */
   updateBusiness(): void {
     this.saveAttempted = true;
-    if (this.businessForm.invalid || this.attempt || !this._hasBusinessImage()) {
+    if (
+      this.businessForm.invalid ||
+      this.attempt ||
+      !this._hasBusinessImage()
+    ) {
       this.businessForm.markAllAsTouched();
       this._messageService.add({
         severity: 'warn',
@@ -274,7 +282,7 @@ export class EditBusinessPage implements OnInit {
               'toast.businessUpdatedSuccessfully',
             ),
           });
-          if (this._isOnboardingFlow()) {
+          if (this.isOnboardingFlow) {
             this._utils.navigate([
               AppConfigService.config.routes.dashboard,
               AppConfigService.config.routes.setup,
@@ -299,7 +307,8 @@ export class EditBusinessPage implements OnInit {
   }
 
   /** Obtiene el negocio actual del backend para modo edición. */
-  private getBusiness(): void {
+  getBusiness(): void {
+    this.loadErrorKey = null;
     this._subscription.add(
       this._businessService.myBusiness().subscribe({
         next: (business) => {
@@ -318,18 +327,52 @@ export class EditBusinessPage implements OnInit {
             this.imageUrl = business.image.url;
             this.imgCode = business.image.name;
           }
+          this.businessForm.markAsPristine();
         },
-        error: (error) => {
-          console.error(error);
+        error: () => {
+          this.loadErrorKey = 'errors.loadFailed';
         },
       }),
     );
   }
 
+  retryLoad(): void {
+    this.getBusiness();
+  }
+
+  cancel(): void {
+    if (!this.businessForm.dirty) {
+      this._navigateAfterCancel();
+      return;
+    }
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant('confirmation.discardUnsavedChanges'),
+        color: 'warn',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._navigateAfterCancel();
+        }
+      });
+  }
+
+  private _navigateAfterCancel(): void {
+    this._utils.navigate([AppConfigService.config.routes.dashboard]);
+  }
+
   private _isOnboardingFlow(): boolean {
     let current: ActivatedRoute | null = this._route;
     while (current) {
-      if (current.snapshot.data?.['onboardingFlow'] === true) {
+      if (current.snapshot?.data?.['onboardingFlow'] === true) {
         return true;
       }
       current = current.parent;

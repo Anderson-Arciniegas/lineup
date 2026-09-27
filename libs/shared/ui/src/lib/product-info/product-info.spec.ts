@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ActivatedRoute } from '@angular/router';
+import { ToastService } from '@lineup/core';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -28,6 +29,7 @@ describe('ProductInfo', () => {
           },
         },
         DialogService,
+        { provide: ToastService, useValue: { warn: jest.fn() } },
       ],
     }).compileComponents();
 

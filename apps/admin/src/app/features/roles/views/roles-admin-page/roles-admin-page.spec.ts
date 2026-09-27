@@ -4,7 +4,7 @@ import { translateModuleForTests } from '../../../../../testing';
 import { RolesAdminService } from '../../../../core/services/roles-admin.service';
 import { RolesAdminPage } from './roles-admin-page';
 
-describe('RolesAdminPage', () => {
+describe('RolesAdminPage (HU-27)', () => {
   let fixture: ComponentFixture<RolesAdminPage>;
 
   beforeEach(async () => {
@@ -13,7 +13,10 @@ describe('RolesAdminPage', () => {
       providers: [
         {
           provide: RolesAdminService,
-          useValue: { getAllRoles: () => of([{ id: 1, name: 'Admin' }]) },
+          useValue: {
+            getAllRoles: () =>
+              of([{ id: 1, name: 'Admin', code: 'ADMIN', description: 'Administrador' }]),
+          },
         },
       ],
     }).compileComponents();
@@ -27,6 +30,12 @@ describe('RolesAdminPage', () => {
     expect(component).toBeTruthy();
     expect(component.roles().length).toBe(1);
     expect(component.loading()).toBe(false);
+  });
+
+  it('renderiza código y descripción de cada rol', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.textContent).toContain('Administrador');
+    expect(el.textContent).toContain('ADMIN');
   });
 
   it('sets error when loading roles fails', async () => {

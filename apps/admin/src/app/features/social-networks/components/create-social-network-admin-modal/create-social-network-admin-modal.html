@@ -69,12 +69,14 @@
           >{{ 'admin.socialNetworkModal.code' | translate }}</label
         >
       </p-floatlabel>
-      @if (form.controls.code.enabled && form.controls.code.touched &&
-      form.controls.code.invalid) {
-      <p class="text-xs text-red-600 m-0">
-        {{ 'admin.socialNetworkModal.codeHint' | translate }}
-      </p>
-      }
+      <div class="min-h-6">
+        @if (form.controls.code.enabled && form.controls.code.touched &&
+        form.controls.code.invalid) {
+        <p class="text-xs text-red-600 m-0">
+          {{ 'admin.socialNetworkModal.codeHint' | translate }}
+        </p>
+        }
+      </div>
 
       <div class="flex flex-wrap justify-end gap-2 pt-2">
         <lib-button

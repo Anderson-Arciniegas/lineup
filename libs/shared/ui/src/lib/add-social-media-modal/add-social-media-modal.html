@@ -29,7 +29,7 @@
       />
     </div> -->
     @if (!whatsappMode) {
-    <div class="flex flex-col items-start justify-start gap-1 w-full h-24">
+    <div class="flex flex-col items-start justify-start gap-1 w-full">
       <label for="url" class="font-semibold"
         >{{'general.url' | translate}}:</label
       >
@@ -41,13 +41,15 @@
         class="input w-full h-11 rounded"
         placeholder="https://example.com"
       />
-      @if (isUrlInvalid) {
-      <small class="text-red-500 text-sm">
-        @if (urlControl?.errors?.['required']) { {{'validation.urlRequired' |
-        translate}} } @else if (urlControl?.errors?.['invalidUrl']) {
-        {{'validation.invalidUrl' | translate}} }
-      </small>
-      }
+      <div class="min-h-6">
+        @if (isUrlInvalid) {
+        <small class="text-red-500 text-sm">
+          @if (urlControl?.errors?.['required']) { {{'validation.urlRequired' |
+          translate}} } @else if (urlControl?.errors?.['invalidUrl']) {
+          {{'validation.invalidUrl' | translate}} }
+        </small>
+        }
+      </div>
     </div>
     } @else {
     <div

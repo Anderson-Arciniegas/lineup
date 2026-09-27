@@ -21,9 +21,26 @@
     </h4>
 
     <div
-      class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 h-10"
+      class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 relative min-h-10"
+      [attr.aria-busy]="attemptGoogle"
     >
-      <div #googleBtn class="google-signin-btn"></div>
+      <div
+        #googleBtn
+        class="google-signin-btn"
+        [class.pointer-events-none]="attempt || attemptGoogle"
+        [class.opacity-50]="attempt || attemptGoogle"
+      ></div>
+      @if (attemptGoogle) {
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-white/80"
+      >
+        <p-progress-spinner
+          strokeWidth="4"
+          ariaLabel="loading"
+          [style]="{ width: '40px', height: '40px' }"
+        />
+      </div>
+      }
     </div>
     <div class="flex flex-col gap-4 items-center justify-start w-full">
       <div class="w-10/10 flex flex-col items-start">
@@ -44,9 +61,8 @@
           class="text-red-500 text-xs block w-full h-8 leading-tight"
           role="alert"
         >
-          @if (requiredError(nameControl); as err) {
-            {{ err.key | translate: err.params }}
-          }
+          @if (requiredError(nameControl); as err) { {{ err.key | translate:
+          err.params }} }
         </small>
       </div>
 
@@ -69,9 +85,8 @@
           class="text-red-500 text-xs block w-full h-8 leading-tight"
           role="alert"
         >
-          @if (emailError(emailControl); as err) {
-            {{ err.key | translate: err.params }}
-          }
+          @if (emailError(emailControl); as err) { {{ err.key | translate:
+          err.params }} }
         </small>
       </div>
 
@@ -98,9 +113,8 @@
             class="text-red-500 text-xs block w-full h-11 leading-tight"
             role="alert"
           >
-            @if (passwordError(passwordControl); as err) {
-              {{ err.key | translate: err.params }}
-            }
+            @if (passwordError(passwordControl); as err) { {{ err.key |
+            translate: err.params }} }
           </small>
         </div>
         <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
@@ -123,23 +137,25 @@
             class="text-red-500 text-xs block w-full h-11 leading-tight"
             role="alert"
           >
-            @if (passwordError(confirmPasswordControl); as err) {
-              {{ err.key | translate: err.params }}
-            }
+            @if (passwordError(confirmPasswordControl); as err) { {{ err.key |
+            translate: err.params }} }
           </small>
         </div>
       </div>
 
       <div class="w-full flex flex-col items-center justify-center mt-3 gap-5">
         <div class="w-10/10 flex flex-col items-start text-xs text-primary-800">
-          <div class="flex flex-row items-start gap-3">
+          <div class="flex flex-row items-center gap-3">
             <input
               type="checkbox"
               id="acceptTermsBusiness"
               formControlName="acceptTerms"
-              class="mt-1 shrink-0 accent-primary-600"
+              class="shrink-0 accent-primary-600"
             />
-            <label for="acceptTermsBusiness" class="leading-snug cursor-pointer">
+            <label
+              for="acceptTermsBusiness"
+              class="leading-snug cursor-pointer"
+            >
               <span>{{ 'auth.acceptTermsIntro' | translate }}</span>
               <a
                 [routerLink]="termsPath"
@@ -164,9 +180,8 @@
             class="text-red-500 text-xs block w-full h-4 leading-tight"
             role="alert"
           >
-            @if (requiredError(acceptTermsControl); as err) {
-              {{ err.key | translate: err.params }}
-            }
+            @if (requiredError(acceptTermsControl); as err) { {{ err.key |
+            translate: err.params }} }
           </small>
         </div>
         <lib-button

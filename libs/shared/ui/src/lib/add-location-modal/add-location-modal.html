@@ -23,15 +23,18 @@
       "
       [class.ng-dirty]="nameTouched()"
     />
-    @if (nameTouched() && !locationNameTrimmed()) {
-    <small class="text-red-600">
-      {{ 'locationModal.nameRequired' | translate }}
-    </small>
-    } @if (nameTouched() && locationNameTrimmed() && locationNameExceedsMax()) {
-    <small class="text-red-600">
-      {{ 'locationModal.nameMaxLength' | translate }}
-    </small>
-    }
+    <div class="min-h-6">
+      @if (nameTouched() && !locationNameTrimmed()) {
+      <small class="text-red-600">
+        {{ 'locationModal.nameRequired' | translate }}
+      </small>
+      } @if (nameTouched() && locationNameTrimmed() && locationNameExceedsMax())
+      {
+      <small class="text-red-600">
+        {{ 'locationModal.nameMaxLength' | translate }}
+      </small>
+      }
+    </div>
   </div>
 
   <div class="search-wrapper relative w-full flex flex-col gap-2">

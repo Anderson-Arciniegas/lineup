@@ -18,14 +18,16 @@ import {
 } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { ProductPanelPage } from './product-panel-page';
 
-describe('ProductPanelPage', () => {
+describe('ProductPanelPage (HU-09, HU-15)', () => {
   let component: ProductPanelPage;
   let fixture: ComponentFixture<ProductPanelPage>;
   let navigate: jest.Mock;
   let findOneProduct: jest.Mock;
+  let removeProduct: jest.Mock;
+  let dialogOpen: jest.Mock;
 
   const mockProduct = {
     id: 1,
@@ -43,6 +45,8 @@ describe('ProductPanelPage', () => {
   beforeEach(async () => {
     navigate = jest.fn();
     findOneProduct = jest.fn(() => of(mockProduct));
+    removeProduct = jest.fn(() => of(undefined));
+    dialogOpen = jest.fn(() => ({ onClose: of(false) }));
 
     await TestBed.configureTestingModule({
       imports: [ProductPanelPage, TranslateModule.forRoot()],
@@ -51,7 +55,7 @@ describe('ProductPanelPage', () => {
         TranslateService,
         TranslateStore,
         MessageService,
-        DialogService,
+        { provide: DialogService, useValue: { open: dialogOpen } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -62,7 +66,7 @@ describe('ProductPanelPage', () => {
           provide: ProductPrivateService,
           useValue: {
             findOneProduct,
-            removeProduct: jest.fn(() => of(undefined)),
+            removeProduct,
             toggleProductIsPrimary: jest.fn(() =>
               of({ ...mockProduct, isPrimary: true }),
             ),
@@ -140,6 +144,31 @@ describe('ProductPanelPage', () => {
       expect(navigateSpy).toHaveBeenCalledWith(['..'], {
         relativeTo: TestBed.inject(ActivatedRoute),
       });
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('no debe borrar si se cancela la confirmación', () => {
+      component.deleteProduct();
+      expect(removeProduct).not.toHaveBeenCalled();
+      expect(component.attemptDelete).toBe(false);
+    });
+
+    it('debe marcar attemptDelete mientras se elimina', () => {
+      const remove$ = new Subject<void>();
+      removeProduct.mockReturnValue(remove$.asObservable());
+      dialogOpen.mockReturnValue({ onClose: of(true) });
+
+      component.deleteProduct();
+
+      expect(component.attemptDelete).toBe(true);
+      expect(removeProduct).toHaveBeenCalledWith(1);
+
+      remove$.next();
+      remove$.complete();
+
+      expect(component.attemptDelete).toBe(false);
+      expect(navigate).toHaveBeenCalled();
     });
   });
 

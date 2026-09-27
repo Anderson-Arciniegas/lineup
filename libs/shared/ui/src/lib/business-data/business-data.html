@@ -1,13 +1,15 @@
 @if (business) {
 <div
-  class="flex flex-col items-start justify-start gap-2 w-full max-w-3xl px-4 pb-5"
+  class="flex flex-col items-center justify-center gap-2 w-full px-4 pb-5"
   [class.business-data--brand-light-text]="useLightText === true"
   [class.business-data--brand-dark-text]="useLightText === false"
 >
   <div
-    class="flex flex-row items-start justify-start sm:justify-center gap-2 md:gap-6 w-full"
+    class="flex flex-row items-start justify-start gap-2 md:gap-6 w-full max-w-3xl"
   >
-    <div class="flex flex-col items-center justify-center img-box min-w-25">
+    <div
+      class="flex flex-none flex-col items-center justify-center img-box w-[90px] sm:w-40"
+    >
       @if (business?.image) {
       <img
         class="block sm:hidden"
@@ -22,12 +24,18 @@
       }
     </div>
 
-    <div class="flex flex-col items-center md:items-start justify-center gap-2">
+    <div
+      class="flex min-w-0 flex-1 w-full flex-col items-center md:items-start justify-center gap-2"
+    >
       <div
         class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-4 w-full"
       >
-        <div class="flex flex-row items-center justify-start w-full sm:w-auto">
-          <h3 class="text-base sm:text-lg md:text-2xl font-semibold">
+        <div
+          class="flex min-w-0 flex-row items-center justify-start w-full sm:w-auto"
+        >
+          <h3
+            class="min-w-0 break-words text-base sm:text-lg md:text-2xl font-semibold"
+          >
             {{business?.name}}
           </h3>
         </div>
@@ -132,10 +140,10 @@
       </div>
 
       <div
-        class="hidden sm:flex flex-col items-center md:items-start justify-center gap-2"
+        class="hidden sm:flex min-w-0 w-full flex-col items-center md:items-start justify-center gap-2"
       >
         @if (business?.description) {
-        <div class="flex flex-row w-full">
+        <div class="flex min-w-0 w-full flex-row">
           <p class="business-description text-gray-600 font-medium text-sm">
             {{ business.description }}
           </p>
@@ -230,7 +238,7 @@
     class="flex sm:hidden flex-col items-center md:items-start justify-center gap-2 w-full"
   >
     @if (business?.description) {
-    <div class="flex flex-row w-full">
+    <div class="flex min-w-0 w-full flex-row">
       <p class="business-description text-gray-600 text-sm">
         {{ business.description }}
       </p>

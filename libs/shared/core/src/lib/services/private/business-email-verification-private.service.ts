@@ -8,6 +8,7 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT } from '../../constants';
 import {
   BaseResponse,
   CreateVerificationCodeDto,
@@ -32,6 +33,7 @@ export class BusinessEmailVerificationPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.sendBusinessVerificationCode));
@@ -47,6 +49,7 @@ export class BusinessEmailVerificationPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.sendVerificationCode));
@@ -62,6 +65,7 @@ export class BusinessEmailVerificationPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.verifyBusinessVerificationCode));
@@ -75,6 +79,7 @@ export class BusinessEmailVerificationPrivateService {
         variables: { data },
         context: {
           withCredentials: true,
+          ...SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT,
         },
       })
       .pipe(map((result) => result.data!.verifyCode));

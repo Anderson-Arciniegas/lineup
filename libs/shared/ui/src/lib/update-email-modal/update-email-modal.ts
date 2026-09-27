@@ -12,11 +12,11 @@ import {
   AuthStore,
   BusinessPrivateService,
   BusinessSchema,
+  ToastService,
   UserPublicService,
   UserSchema,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import {
   DialogService,
@@ -67,7 +67,7 @@ export class UpdateEmailModal implements OnInit {
   private readonly _dialogService = inject(DialogService);
   private readonly _userService = inject(UserPublicService);
   private readonly _businessService = inject(BusinessPrivateService);
-  private readonly _messageService = inject(MessageService);
+  private readonly _toast = inject(ToastService);
   private readonly _translate = inject(TranslateService);
   private readonly _authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -99,12 +99,7 @@ export class UpdateEmailModal implements OnInit {
       this._normalizeEmail(newEmail) ===
       this._normalizeEmail(this.initialEmail)
     ) {
-      this._messageService.add({
-        severity: 'warn',
-        summary: this._translate.instant('general.warning'),
-        detail: this._translate.instant('validation.emailUnchanged'),
-        life: 4000,
-      });
+      this._toast.warn('validation.emailUnchanged');
       return;
     }
 
@@ -140,16 +135,7 @@ export class UpdateEmailModal implements OnInit {
     this.attempt = true;
     const onError = (err: unknown): void => {
       this.attempt = false;
-      this._messageService.add({
-        severity: 'error',
-        summary: this._translate.instant('general.error'),
-        detail:
-          (err as { graphQLErrors?: Array<{ message?: string }> })
-            ?.graphQLErrors?.[0]?.message ??
-          (err as { message?: string })?.message ??
-          this._translate.instant('validation.emailUpdateFailed'),
-        life: 5000,
-      });
+      this._toast.apiError(err);
     };
 
     if (this.modalType === 'business') {

@@ -3,12 +3,13 @@ import {
   ImageLoaderConfig,
   registerLocaleData,
 } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
 import {
   ApplicationConfig,
   importProvidersFrom,
   inject,
+  Injector,
   isDevMode,
   LOCALE_ID,
   provideBrowserGlobalErrorListeners,
@@ -19,9 +20,9 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
-import { InMemoryCache } from '@apollo/client/core';
-import { SEO_SITE_ORIGIN } from '@lineup/core';
+import { provideRouter, Router } from '@angular/router';
+import { ApolloLink, InMemoryCache } from '@apollo/client/core';
+import { ApiErrorService, SEO_SITE_ORIGIN, ToastService } from '@lineup/core';
 import { environment } from '@lineup/envs';
 import { I18nModule } from '@lineup/i18n';
 import { definePreset } from '@primeuix/themes';
@@ -36,6 +37,7 @@ import {
   DynamicDialogRef,
 } from 'primeng/dynamicdialog';
 import { appRoutes } from './app.routes';
+import { createGlobalErrorLink, globalErrorInterceptor } from './core';
 
 registerLocaleData(localeEs, 'es');
 registerLocaleData(localeEs, 'es-ES');
@@ -125,9 +127,17 @@ export const appConfig: ApplicationConfig = {
     },
     // Usamos XHR (por defecto) en lugar de fetch para que las cookies con
     // withCredentials se conserven correctamente tras el login y al recargar.
-    provideHttpClient(),
+    // El interceptor muestra el toast estándar de error en peticiones REST
+    // (los endpoints GraphQL los gestiona el ErrorLink de Apollo).
+    provideHttpClient(withInterceptors([globalErrorInterceptor])),
     provideNamedApollo(() => {
       const httpLink = inject(HttpLink);
+      const errorLink = createGlobalErrorLink({
+        toast: inject(ToastService),
+        apiError: inject(ApiErrorService),
+        router: inject(Router),
+        injector: inject(Injector),
+      });
       const connectToDevTools = isDevMode();
 
       const defaultOptions = {
@@ -141,19 +151,25 @@ export const appConfig: ApplicationConfig = {
 
       return {
         userAPI: {
-          link: httpLink.create({
-            uri: environment.userApi,
-            withCredentials: true,
-          }),
+          link: ApolloLink.from([
+            errorLink,
+            httpLink.create({
+              uri: environment.userApi,
+              withCredentials: true,
+            }),
+          ]),
           connectToDevTools,
           cache: new InMemoryCache(),
           defaultOptions,
         },
         businessAPI: {
-          link: httpLink.create({
-            uri: environment.businessApi,
-            withCredentials: true,
-          }),
+          link: ApolloLink.from([
+            errorLink,
+            httpLink.create({
+              uri: environment.businessApi,
+              withCredentials: true,
+            }),
+          ]),
           connectToDevTools,
           cache: new InMemoryCache(),
           defaultOptions,

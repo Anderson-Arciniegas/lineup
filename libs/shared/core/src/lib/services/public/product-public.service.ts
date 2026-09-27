@@ -18,6 +18,7 @@ import {
 import { Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT } from '../../constants';
 import type {
   GetAllPrimaryProductsByBusinessInput,
   InfinityScrollInput,
@@ -35,6 +36,13 @@ import {
 })
 export class ProductPublicService {
   private apollo = inject(Apollo);
+
+  private queryContext(skipGlobalErrorToast = false): Record<string, unknown> {
+    return {
+      withCredentials: true,
+      ...(skipGlobalErrorToast ? SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT : {}),
+    };
+  }
 
   findAllProducts(
     pagination: InfinityScrollInput,
@@ -68,16 +76,17 @@ export class ProductPublicService {
       .pipe(map((result) => result.data.findLikedProducts));
   }
 
-  findOneProduct(id: number): Observable<ProductSchema> {
+  findOneProduct(
+    id: number,
+    skipGlobalErrorToast = false,
+  ): Observable<ProductSchema> {
     return this.apollo
       .use('userAPI')
       .query<{ findOneProduct: ProductSchema }>({
         query: FIND_ONE_PRODUCT_QUERY,
         variables: { id },
         fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
+        context: this.queryContext(skipGlobalErrorToast),
       })
       .pipe(map((result) => result.data.findOneProduct));
   }
@@ -105,6 +114,7 @@ export class ProductPublicService {
   getAllByCatalogPaginated(
     idCatalog: number,
     pagination: InfinityScrollInput,
+    skipGlobalErrorToast = false,
   ): Observable<PaginatedProducts> {
     return this.apollo
       .use('userAPI')
@@ -112,9 +122,7 @@ export class ProductPublicService {
         query: GET_ALL_BY_CATALOG_PAGINATED_QUERY,
         variables: { idCatalog, pagination },
         fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
+        context: this.queryContext(skipGlobalErrorToast),
       })
       .pipe(map((result) => result.data.getAllByCatalogPaginated));
   }
@@ -151,6 +159,7 @@ export class ProductPublicService {
     options?: {
       idBusiness?: number | null;
       idProducts?: number[] | null;
+      skipGlobalErrorToast?: boolean;
     },
   ): Observable<PaginatedProducts> {
     return this.apollo
@@ -164,15 +173,14 @@ export class ProductPublicService {
           ...(options?.idProducts != null ? { idProducts: options.idProducts } : {}),
         },
         fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
+        context: this.queryContext(options?.skipGlobalErrorToast),
       })
       .pipe(map((result) => result.data.getAllByTags));
   }
 
   getAllPrimaryProductsByBusiness(
     data: GetAllPrimaryProductsByBusinessInput,
+    skipGlobalErrorToast = false,
   ): Observable<ProductSchema[]> {
     const payload: GetAllPrimaryProductsByBusinessInput = {
       idBusiness: Math.trunc(data.idBusiness),
@@ -186,9 +194,7 @@ export class ProductPublicService {
         query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
         variables: { data: payload },
         fetchPolicy: 'network-only',
-        context: {
-          withCredentials: true,
-        },
+        context: this.queryContext(skipGlobalErrorToast),
       })
       .pipe(map((result) => result.data.getAllPrimaryProductsByBusiness));
   }

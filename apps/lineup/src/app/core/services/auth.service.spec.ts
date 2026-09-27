@@ -9,6 +9,7 @@ import {
   EncryptionService,
   NotificationsSocketService,
   StorageService,
+  ToastService,
   UserPublicService,
   UserSchema,
   UtilsService,
@@ -21,6 +22,7 @@ describe('AuthService', () => {
   let storageGet: jest.Mock;
   let storageSet: jest.Mock;
   let storageRemove: jest.Mock;
+  let toastSuccess: jest.Mock;
   let authStore: {
     user: jest.Mock;
     business: jest.Mock;
@@ -42,6 +44,7 @@ describe('AuthService', () => {
     storageGet = jest.fn();
     storageSet = jest.fn();
     storageRemove = jest.fn();
+    toastSuccess = jest.fn();
     navigate = jest.fn();
     encrypt = jest.fn().mockResolvedValue('encrypted-token');
     decrypt = jest.fn().mockResolvedValue('{"accessToken":"abc"}');
@@ -86,6 +89,7 @@ describe('AuthService', () => {
           provide: NotificationsSocketService,
           useValue: { disconnect },
         },
+        { provide: ToastService, useValue: { success: toastSuccess } },
       ],
     });
 
@@ -121,6 +125,7 @@ describe('AuthService', () => {
           { provide: UserPublicService, useValue: { logOut: logOutUser } },
           { provide: BusinessPrivateService, useValue: { logOut: logOutBusiness } },
           { provide: NotificationsSocketService, useValue: { disconnect } },
+          { provide: ToastService, useValue: { success: toastSuccess } },
         ],
       });
       const ssrService = TestBed.inject(AuthService);
@@ -146,37 +151,62 @@ describe('AuthService', () => {
   });
 
   describe('handleSuccessLogin', () => {
-    const user = { id: 1, email: 'u@test.com' } as UserSchema;
-    const business = { id: 2, path: 'shop' } as BusinessSchema;
+    const user = {
+      id: 1,
+      email: 'u@test.com',
+      firstName: 'Ana',
+      lastName: 'López',
+    } as UserSchema;
+    const business = { id: 2, path: 'shop', name: 'Mi Tienda' } as BusinessSchema;
 
-    it('debe configurar sesión de usuario y navegar al perfil', async () => {
+    it('debe configurar sesión de usuario, dar la bienvenida y navegar al perfil', async () => {
       await service.handleSuccessLogin(user);
       expect(storageSet).toHaveBeenCalledWith('loggedUser', true);
       expect(storageSet).toHaveBeenCalledWith('sessionType', 'user');
       expect(authStore.setUser).toHaveBeenCalledWith(user);
+      expect(toastSuccess).toHaveBeenCalledWith('auth.welcomeNamed', {
+        name: 'Ana López',
+      });
+      expect(toastSuccess).not.toHaveBeenCalledWith('auth.userCreated');
       expect(navigate).toHaveBeenCalledWith([
         AppConfigService.config.routes.profile,
       ]);
     });
 
-    it('debe configurar sesión de negocio existente y navegar al dashboard', async () => {
+    it('debe configurar sesión de negocio existente, dar la bienvenida y navegar al dashboard', async () => {
       await service.handleSuccessLogin(undefined, business, false);
       expect(storageSet).toHaveBeenCalledWith('sessionType', 'business');
       expect(authStore.setBusiness).toHaveBeenCalledWith(business);
       expect(storageRemove).toHaveBeenCalledWith('businessOnboardingPending');
+      expect(toastSuccess).toHaveBeenCalledWith('auth.welcomeNamed', {
+        name: 'Mi Tienda',
+      });
+      expect(toastSuccess).not.toHaveBeenCalledWith('auth.businessCreated');
       expect(navigate).toHaveBeenCalledWith([
         AppConfigService.config.routes.dashboard,
       ]);
     });
 
-    it('debe marcar onboarding pendiente para negocio nuevo', async () => {
+    it('debe marcar onboarding pendiente y avisar creación de negocio nuevo', async () => {
       await service.handleSuccessLogin(undefined, business, true);
       expect(storageSet).toHaveBeenCalledWith('businessOnboardingPending', true);
+      expect(toastSuccess).toHaveBeenCalledWith('auth.businessCreated');
+      expect(toastSuccess).toHaveBeenCalledWith('auth.welcomeNamed', {
+        name: 'Mi Tienda',
+      });
       expect(navigate).toHaveBeenCalledWith([
         AppConfigService.config.routes.dashboard,
         AppConfigService.config.routes.setup,
         AppConfigService.config.routes.edit,
       ]);
+    });
+
+    it('debe avisar creación de usuario nuevo', async () => {
+      await service.handleSuccessLogin(user, null, true);
+      expect(toastSuccess).toHaveBeenCalledWith('auth.userCreated');
+      expect(toastSuccess).toHaveBeenCalledWith('auth.welcomeNamed', {
+        name: 'Ana López',
+      });
     });
   });
 

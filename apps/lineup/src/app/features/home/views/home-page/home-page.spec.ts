@@ -115,6 +115,28 @@ describe('HomePage', () => {
     });
   });
 
+  describe('carouselNumVisible', () => {
+    it('debe usar 5 ítems en pantallas anchas (>1920)', () => {
+      (
+        component as unknown as {
+          windowInnerWidth: { set: (w: number) => void };
+        }
+      ).windowInnerWidth.set(2560);
+      expect(component.carouselNumVisibleStandard()).toBe(5);
+      expect(component.carouselNumVisibleCollections()).toBe(5);
+    });
+
+    it('debe usar 1 ítem en pantallas ≤640px', () => {
+      (
+        component as unknown as {
+          windowInnerWidth: { set: (w: number) => void };
+        }
+      ).windowInnerWidth.set(390);
+      expect(component.carouselNumVisibleStandard()).toBe(1);
+      expect(component.carouselNumVisibleCollections()).toBe(1);
+    });
+  });
+
   describe('isLeadFeaturedProduct', () => {
     it('debe identificar el primer producto destacado', () => {
       component.products.set([{ id: 10 }, { id: 11 }] as never[]);

@@ -101,7 +101,8 @@ describe('BusinessSettingsPage', () => {
       );
       component.onIsProductPriceInBsToggle(true);
       expect(component.business.isBsEquivalentPriceEnabled).toBe(false);
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.savingBsPricePreference).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });

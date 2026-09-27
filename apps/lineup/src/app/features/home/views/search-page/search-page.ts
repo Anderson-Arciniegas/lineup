@@ -233,6 +233,10 @@ export class SearchPage implements OnInit, OnDestroy {
       },
       modal: true,
       closable: true,
+      data: {
+        target: this.searchTypeFilter,
+        productFilters: { ...this.productFilters },
+      } satisfies SearchFiltersApplyPayload,
     });
 
     this.ref.onClose

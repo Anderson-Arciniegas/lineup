@@ -12,11 +12,11 @@ import {
   BusinessEmailVerificationPrivateService,
   CreateVerificationCodeDto,
   SendVerificationCodeInput,
+  ToastService,
   UserEmailVerificationPublicService,
   VerificationCodeChannelEnum,
 } from '@lineup/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputOtpModule } from 'primeng/inputotp';
@@ -66,8 +66,7 @@ export class VerificationCodeModal implements OnInit {
   private readonly _businessEmailVerificationService = inject(
     BusinessEmailVerificationPrivateService,
   );
-  private readonly _messageService = inject(MessageService);
-  private readonly _translate = inject(TranslateService);
+  private readonly _toast = inject(ToastService);
 
   ngOnInit(): void {
     const data = this._config.data as VerificationCodeModalData | undefined;
@@ -104,22 +103,9 @@ export class VerificationCodeModal implements OnInit {
       : this._userEmailVerificationService.sendUserVerificationCode(dto);
   }
 
-  private _showSendCodeError(err: unknown): void {
-    this._messageService.add({
-      severity: 'error',
-      summary: this._translate.instant('general.error'),
-      detail:
-        (err as { graphQLErrors?: Array<{ message?: string }> })
-          ?.graphQLErrors?.[0]?.message ??
-        (err as { message?: string })?.message ??
-        this._translate.instant('verificationCodeModal.verificationFailed'),
-      life: 5000,
-    });
-  }
-
   private _sendVerificationCode(): void {
     this._getSendCodeRequest().subscribe({
-      error: (err) => this._showSendCodeError(err),
+      error: (err: unknown) => this._toast.apiError(err),
     });
   }
 
@@ -130,9 +116,9 @@ export class VerificationCodeModal implements OnInit {
       next: () => {
         this.resending = false;
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.resending = false;
-        this._showSendCodeError(err);
+        this._toast.apiError(err);
       },
     });
   }
@@ -191,17 +177,9 @@ export class VerificationCodeModal implements OnInit {
         this.attempt = false;
         this._ref.close(true);
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.attempt = false;
-        this._messageService.add({
-          severity: 'error',
-          summary: this._translate.instant('general.error'),
-          detail:
-            err?.graphQLErrors?.[0]?.message ??
-            err?.message ??
-            this._translate.instant('verificationCodeModal.verificationFailed'),
-          life: 5000,
-        });
+        this._toast.apiError(err);
       },
     });
   }

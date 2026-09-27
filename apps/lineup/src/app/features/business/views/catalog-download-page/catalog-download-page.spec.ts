@@ -1,12 +1,13 @@
 import { PLATFORM_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BusinessPublicService,
   CatalogPublicService,
   ProductPublicService,
 } from '@lineup/core';
-import { of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { of, throwError } from 'rxjs';
 import { CatalogDownloadPage } from './catalog-download-page';
 
 describe('CatalogDownloadPage', () => {
@@ -15,9 +16,10 @@ describe('CatalogDownloadPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CatalogDownloadPage],
+      imports: [CatalogDownloadPage, TranslateModule.forRoot()],
       providers: [
         { provide: PLATFORM_ID, useValue: 'server' },
+        { provide: Router, useValue: { navigate: jest.fn() } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -94,9 +96,10 @@ describe('CatalogDownloadPage', () => {
 describe('CatalogDownloadPage query layout', () => {
   it('debe activar layout List desde queryParams', async () => {
     await TestBed.configureTestingModule({
-      imports: [CatalogDownloadPage],
+      imports: [CatalogDownloadPage, TranslateModule.forRoot()],
       providers: [
         { provide: PLATFORM_ID, useValue: 'server' },
+        { provide: Router, useValue: { navigate: jest.fn() } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -139,11 +142,17 @@ describe('CatalogDownloadPage browser', () => {
   async function setupBrowser(
     catalog: Record<string, unknown> = { id: 1, title: 'Cat' },
     business: Record<string, unknown> = { id: 1, name: 'Biz' },
+    extras: {
+      businessError?: boolean;
+      navigate?: jest.Mock;
+    } = {},
   ) {
+    const navigate = extras.navigate ?? jest.fn();
     await TestBed.configureTestingModule({
-      imports: [CatalogDownloadPage],
+      imports: [CatalogDownloadPage, TranslateModule.forRoot()],
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        { provide: Router, useValue: { navigate } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -155,7 +164,11 @@ describe('CatalogDownloadPage browser', () => {
         },
         {
           provide: BusinessPublicService,
-          useValue: { findBusinessByPath: () => of(business) },
+          useValue: {
+            findBusinessByPath: extras.businessError
+              ? () => throwError(() => new Error('fail'))
+              : () => of(business),
+          },
         },
         {
           provide: CatalogPublicService,
@@ -171,23 +184,23 @@ describe('CatalogDownloadPage browser', () => {
       ],
     }).compileComponents();
     const fix = TestBed.createComponent(CatalogDownloadPage);
-    return fix;
+    return { fix, navigate };
   }
 
   it('pdfCardHeight debe ser constante', async () => {
-    const fix = await setupBrowser();
+    const { fix } = await setupBrowser();
     expect(fix.componentInstance.pdfCardHeight).toBe('h-100');
   });
 
   it('pdfPageMinHeight calcula altura según viewport', async () => {
-    const fix = await setupBrowser();
+    const { fix } = await setupBrowser();
     const h = fix.componentInstance.pdfPageMinHeight;
     expect(h.endsWith('px')).toBe(true);
     expect(parseInt(h, 10)).toBeGreaterThan(0);
   });
 
   it('layout List cambia chunks por página', async () => {
-    const fix = await setupBrowser();
+    const { fix } = await setupBrowser();
     const cmp = fix.componentInstance;
     cmp.layoutMode = 'List';
     cmp.products = Array.from({ length: 5 }, (_, i) => ({ id: i + 1 })) as any[];
@@ -199,10 +212,30 @@ describe('CatalogDownloadPage browser', () => {
   });
 
   it('brandToneLight depende del fondo oscuro', async () => {
-    const fix = await setupBrowser();
+    const { fix } = await setupBrowser();
     const cmp = fix.componentInstance;
     cmp.pageBackgroundGradient = 'linear-gradient(black, black)';
     cmp.isDarkBackground = true;
     expect(cmp.brandToneLight).toBe(true);
+  });
+
+  it('debe marcar hasError si falla la carga del negocio', async () => {
+    const { fix } = await setupBrowser({ id: 1, title: 'Cat' }, { id: 1 }, {
+      businessError: true,
+    });
+    fix.detectChanges();
+    await fix.whenStable();
+    expect(fix.componentInstance.hasError).toBe(true);
+    expect(fix.componentInstance.isGenerating).toBe(false);
+  });
+
+  it('goBackToCatalog navega a la ruta pública del catálogo', async () => {
+    const navigate = jest.fn();
+    const { fix } = await setupBrowser({ id: 1, title: 'Cat' }, { id: 1 }, {
+      navigate,
+    });
+    fix.detectChanges();
+    fix.componentInstance.goBackToCatalog();
+    expect(navigate).toHaveBeenCalledWith(['/', 'b', 'c']);
   });
 });

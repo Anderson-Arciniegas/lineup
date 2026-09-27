@@ -1,5 +1,5 @@
 <section
-  class="catalog-page w-full py-2 sm:py-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border"
+  class="catalog-page w-full pt-2 sm:pt-5 px-2 sm:px-5 md:px-10 gap-5 flex flex-col min-h-screen box-border pb-20"
   [style.background]="pageBackgroundGradient || null"
 >
   <lib-product-breadcrumb
@@ -10,13 +10,27 @@
     [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
   ></lib-product-breadcrumb>
 
-  @if (catalog) {
+  @if (catalogLoadError) {
+  <div
+    class="w-full flex flex-col items-center justify-center gap-4 p-10 text-center"
+    role="alert"
+  >
+    <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+    <p class="text-base md:text-lg">{{ catalogLoadError | translate }}</p>
+    <lib-button
+      type="rounded"
+      variant="outlined"
+      [label]="'general.retry' | translate"
+      (action)="retryCatalog()"
+    ></lib-button>
+  </div>
+  } @else if (catalog) {
   <div
     class="w-full flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
     [class.catalog-page__brand-text--light]="brandToneLight"
   >
     <h3 class="text-2xl md:text-4xl text-center font-medium">
-      {{ catalog.title || 'Catalogo' }}
+      {{ catalog.title || ('general.catalog' | translate) }}
     </h3>
 
     @if (discount) {
@@ -125,6 +139,7 @@
       [color]="'primary'"
       [type]="'rounded'"
       [width]="'w-11'"
+      [ariaLabel]="'general.download' | translate"
       (action)="downloadCatalog()"
     ></lib-button>
     <lib-button
@@ -133,6 +148,7 @@
       [width]="'w-11'"
       type="rounded"
       color="secondary"
+      [ariaLabel]="'general.share' | translate"
       (click)="share()"
     ></lib-button>
     @if (myBusiness) {
@@ -148,30 +164,28 @@
 
   @if (layoutMode === 'Grid') {
   <div class="w-full flex flex-col items-center gap-6 md:gap-20">
-    @if (products.length > 0) {
-    <div class="w-full flex flex-col items-center gap-6 md:gap-6">
-      @if (primaryProducts.length > 0 && !searchQuery) {
-      <div class="flex flex-row items-center justify-center w-10/10">
-        <lib-catalog-carousel
-          [products]="primaryProducts"
-          [predefinedColor]="business.hexColor || catalog.hexColor ? true : false"
-          class="w-10/10"
-          [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
-          (setColor)="setColor($event)"
-        >
-        </lib-catalog-carousel>
-      </div>
-      }
-      <div
-        class="flex flex-row items-center justify-center w-full w-full mb-6 md:mb-0"
+    @if (primaryProducts.length > 0 && !searchQuery) {
+    <div class="flex flex-row items-center justify-center w-10/10">
+      <lib-catalog-carousel
+        [products]="primaryProducts"
+        [predefinedColor]="business.hexColor || catalog.hexColor ? true : false"
+        class="w-10/10"
+        [useLightText]="pageBackgroundGradient ? isDarkBackground : undefined"
+        (setColor)="setColor($event)"
       >
-        <lib-search-bar
-          class="w-full max-w-200"
-          (searchSubmit)="onSearchSubmit($event)"
-        ></lib-search-bar>
-      </div>
+      </lib-catalog-carousel>
     </div>
-    } @if (searchQuery && searchQuery !== '') {
+    }
+    <div
+      class="flex flex-row items-center justify-center w-full w-full mb-6 md:mb-0"
+    >
+      <lib-search-bar
+        class="w-full max-w-200"
+        [query]="searchQuery"
+        (searchSubmit)="onSearchSubmit($event)"
+      ></lib-search-bar>
+    </div>
+    @if (searchQuery && searchQuery !== '') {
     <div
       [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
       class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
@@ -188,6 +202,7 @@
         color="secondary"
         size="large"
         width="w-13"
+        [ariaLabel]="'general.close' | translate"
       ></lib-button>
     </div>
     }
@@ -200,8 +215,7 @@
       [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
       (scrolled)="onScroll()"
     >
-      @if (myBusiness && ((!productsAttempt && !attempt) || (products.length > 0
-      || noMoreResults)) && catalogPath) {
+      @if (myBusiness && !attempt && catalogPath) {
       <div class="w-full flex flex-col items-center justify-center">
         <lib-create-product-card
           [catalogPath]="catalogPath"
@@ -209,7 +223,7 @@
           [height]="'h-100'"
         ></lib-create-product-card>
       </div>
-      } @for (product of products; track $index) {
+      } @for (product of products; track product.id) {
       <div class="w-full flex flex-col items-center justify-center">
         <lib-product-card
           class="my-1 sm:my-3"
@@ -225,14 +239,14 @@
   </div>
   }@else {
   <div class="w-full flex flex-col items-center gap-10 md:gap-20 pt-5">
-    @if (products.length > 0) {
     <div class="flex flex-row items-center justify-center w-full w-full">
       <lib-search-bar
         class="w-full max-w-200"
+        [query]="searchQuery"
         (searchSubmit)="onSearchSubmit($event)"
       ></lib-search-bar>
     </div>
-    } @if (searchQuery && searchQuery !== '') {
+    @if (searchQuery && searchQuery !== '') {
     <div
       [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
       class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
@@ -249,6 +263,7 @@
         color="secondary"
         size="large"
         width="w-13"
+        [ariaLabel]="'general.close' | translate"
       ></lib-button>
     </div>
     }
@@ -261,7 +276,7 @@
       [infiniteScrollDisabled]="attempt || productsAttempt || noMoreResults"
       (scrolled)="onScroll()"
     >
-      @for (product of products; track $index) {
+      @for (product of products; track product.id) {
       <div class="w-full flex flex-row items-center justify-center">
         <lib-product-expanded-item
           class="w-full"
@@ -273,8 +288,34 @@
       }
     </div>
   </div>
+  } @if (productsLoadError && products.length === 0) {
+  <div
+    class="w-full flex flex-col items-center justify-center gap-4 p-10 text-center"
+    [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+    role="alert"
+  >
+    <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+    <p class="text-base md:text-lg">{{ productsLoadError | translate }}</p>
+    <lib-button
+      type="rounded"
+      variant="outlined"
+      [label]="'general.retry' | translate"
+      (action)="retryProducts()"
+    ></lib-button>
+  </div>
+  } @else if (!productsAttempt && products.length === 0) {
+  <p
+    class="w-full text-center text-base md:text-lg px-6 sm:px-10 md:px-26 text-color-secondary"
+    [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
+    [class.opacity-90]="pageBackgroundGradient ? isDarkBackground : undefined"
+  >
+    {{ catalogEmptyMessageKey | translate }}
+  </p>
   } } @if((attempt || productsAttempt || primaryProductsAttempt)) {
-  <div class="flex flex-col justify-center items-center w-full">
+  <div
+    class="flex flex-col justify-center items-center w-full"
+    aria-busy="true"
+  >
     <div class="card flex justify-center p-10">
       <p-progress-spinner
         strokeWidth="4"

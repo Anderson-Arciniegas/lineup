@@ -161,4 +161,101 @@ describe('EditBusinessPage', () => {
       );
     });
   });
+
+  it('no debe marcar onboarding fuera de la ruta setup', () => {
+    expect(component.isOnboardingFlow).toBe(false);
+  });
+
+  describe('onboarding', () => {
+    let navigate: jest.Mock;
+
+    beforeEach(async () => {
+      TestBed.resetTestingModule();
+      updateBusiness = jest.fn(() => of({ ...loadedBusiness, name: 'Updated' }));
+      setBusiness = jest.fn();
+      messageAdd = jest.fn();
+      navigate = jest.fn();
+
+      await TestBed.configureTestingModule({
+        imports: [EditBusinessPage, TranslateModule.forRoot()],
+        providers: [
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              snapshot: { data: {} },
+              parent: {
+                snapshot: { data: { onboardingFlow: true } },
+                parent: null,
+              },
+            },
+          },
+          TranslateService,
+          TranslateStore,
+          provideNoopAnimations(),
+          { provide: Apollo, useValue: createApolloMock().mock },
+          { provide: MessageService, useValue: { add: messageAdd } },
+          DialogService,
+          {
+            provide: BusinessPrivateService,
+            useValue: {
+              myBusiness: () => of(loadedBusiness as any),
+              updateBusiness,
+            },
+          },
+          {
+            provide: UtilsService,
+            useValue: {
+              normalizeSpaces: (s: string) => String(s ?? '').trim(),
+              blobToFile: (blob: Blob, fileName: string) =>
+                new File([blob], fileName, {
+                  type: (blob as Blob & { type?: string })?.type ?? 'image/png',
+                }),
+              getExtensionFile: () => 'png',
+              compressImage: (base64: string) => of(base64),
+              navigate,
+            },
+          },
+          {
+            provide: BusinessApiFilePrivateService,
+            useValue: {
+              post: () => of({ type: 0 } as any),
+            },
+          },
+          {
+            provide: AuthStore,
+            useValue: { setBusiness },
+          },
+        ],
+      })
+        .overrideComponent(EditBusinessPage, {
+          set: { template: '' },
+        })
+        .compileComponents();
+
+      fixture = TestBed.createComponent(EditBusinessPage);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('debe marcar el flujo de onboarding', () => {
+      expect(component.isOnboardingFlow).toBe(true);
+    });
+
+    it('tras guardar debe navegar a crear catálogo', () => {
+      component.imgCode = 'img-code';
+      component.businessForm.patchValue({
+        name: 'Nombre',
+        businessPath: 'valid-path',
+        phone: '123',
+        description: 'x',
+        isOnline: true,
+      });
+      component.updateBusiness();
+      expect(navigate).toHaveBeenCalledWith([
+        'dashboard',
+        'setup',
+        'create-catalog',
+      ]);
+    });
+  });
 });

@@ -19,12 +19,21 @@
       }
     </div>
 
-    <form class="w-full flex flex-col gap-10" [formGroup]="createCatalogForm">
+    <form class="w-full flex flex-col gap-4" [formGroup]="createCatalogForm">
       <div class="flex flex-col items-start justify-center gap-2 w-full">
-        <div class="flex flex-row items-end justify-start gap-2">
+        <div class="w-full flex flex-row items-end justify-between gap-2">
           <label for="title" class="font-medium text-lg"
-            >{{'general.catalogName' | translate}}<span class="text-red-500">*</span>:</label
+            >{{'general.catalogName' | translate}}<span class="text-red-500"
+              >*</span
+            >:</label
           >
+          <small
+            id="catalogName-help"
+            class="text-color-secondary text-xs mt-1 block"
+          >
+            {{ createCatalogForm.get('catalogName')?.value.length }} / {{
+            maxLengthCatalogName }}
+          </small>
         </div>
         <input
           pInputText
@@ -35,18 +44,13 @@
           class="input w-full h-11"
           placeholder="{{'general.catalogNamePlaceholder' | translate}}"
         />
-        @if (catalogNameControl?.invalid && catalogNameControl?.touched) {
-        <small class="text-red-500 text-sm" role="alert">
-          {{ 'validation.fieldRequired' | translate }}
-        </small>
-        }
-        <small
-          id="catalogName-help"
-          class="text-color-secondary text-xs mt-1 block"
-        >
-          {{ createCatalogForm.get('catalogName')?.value.length }} / {{
-          maxLengthCatalogName }}
-        </small>
+        <div class="min-h-6">
+          @if (catalogNameControl?.invalid && catalogNameControl?.touched) {
+          <small class="text-red-500 text-sm" role="alert">
+            {{ 'validation.fieldRequired' | translate }}
+          </small>
+          }
+        </div>
       </div>
       <div class="flex flex-col items-start justify-center gap-2 w-full">
         <label for="catalogHexColor" class="font-medium text-lg"
@@ -73,16 +77,25 @@
       </div>
       <div class="flex flex-col items-start justify-start gap-2 w-full">
         <label for="image" class="font-medium w-full text-lg"
-          >{{'general.imageUpload' | translate}}<span class="text-red-500">*</span>:</label
+          >{{'general.imageUpload' | translate}}<span class="text-red-500"
+            >*</span
+          >:</label
         >
         <div
           class="file-upload w-48 border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 h-48 flex items-center justify-center"
           tabindex="0"
           (keyup.enter)="openImageCropper()"
           (click)="openImageCropper()"
-          [ngClass]="{ 'border-blue-500 bg-blue-50': isDragging }"
+          [class.border-blue-500]="isDragging"
+          [class.bg-blue-50]="isDragging"
         >
-          @if (!imageUrl) {
+          @if (loadingFile) {
+          <p-progress-spinner
+            strokeWidth="8"
+            ariaLabel="loading"
+            [style]="{ width: '50px', height: '50px' }"
+          />
+          } @else if (!imageUrl) {
           <div class="flex flex-col items-center text-gray-600">
             <i class="pi pi-image text-5xl mb-2" style="color: black"></i>
             <p class="text-sm">
@@ -99,19 +112,32 @@
           </div>
           }
         </div>
-        @if (submitAttempted && !imgCode) {
-        <small class="text-red-500 text-sm" role="alert">
-          {{ 'validation.fieldRequired' | translate }}
-        </small>
-        }
+        <div class="min-h-6">
+          @if (adultContent) {
+          <small class="text-red-500 text-sm" role="alert">
+            {{ 'errors.file.adultContent' | translate }}
+          </small>
+          } @else if (uploadFailed) {
+          <small class="text-red-500 text-sm" role="alert">
+            {{ 'errors.file.uploadFailed' | translate }}
+          </small>
+          } @else if (submitAttempted && !imgCode) {
+          <small class="text-red-500 text-sm" role="alert">
+            {{ 'validation.fieldRequired' | translate }}
+          </small>
+          }
+        </div>
       </div>
       <div class="flex flex-col items-start justify-center gap-2 w-full">
-        <div class="flex flex-row items-end justify-start gap-2">
+        <div class="w-full flex flex-row items-end justify-between gap-2">
           <label for="title" class="font-medium text-lg"
             >{{'general.tags' | translate}}:</label
           >
+          <small class="text-color-secondary text-xs mt-1 block">
+            {{ tags.length }} / {{ maxTags }}
+          </small>
         </div>
-        <div class="flex flex-row items-start justify-between w-full gap-2">
+        <div class="flex flex-row items-center justify-between w-full gap-2">
           <input
             pInputText
             type="text"
@@ -120,19 +146,22 @@
             (keyup.enter)="addTag()"
             class="input w-full h-11"
             placeholder="{{'general.tagsPlaceholder' | translate}}"
-            [disabled]="tags.length >= maxTags"
+            [class.opacity-50]="isMaxTagsReached"
+            [class.cursor-not-allowed]="isMaxTagsReached"
           />
+
           <lib-button
-            icon="pi pi-plus"
-            label="{{ 'general.addTag' | translate }}"
-            [width]="'w-60'"
+            class="shrink-0"
+            [width]="'w-9'"
+            size="small"
+            icon="pi pi-arrow-right"
             type="rounded"
-            [disabled]="tags.length >= maxTags"
             (click)="addTag()"
-          ></lib-button>
+          >
+          </lib-button>
         </div>
 
-        <div class="card flex items-center gap-2 flex-wrap mt-4">
+        <div class="card flex items-center gap-2 flex-wrap mt-2 min-h-9">
           @for (tag of tags; track $index) {
           <p-chip
             [label]="tag"
@@ -141,19 +170,32 @@
           />
           }
         </div>
-        <small class="text-color-secondary text-xs mt-1 block">
-          {{ tags.length }} / {{ maxTags }}
-        </small>
       </div>
 
-      <div class="w-full flex flex-row item-center justify-center">
+      <div
+        class="w-full flex flex-col sm:flex-row items-center justify-between gap-5 mt-3"
+      >
         <lib-button
-          icon="pi pi-plus"
-          label="{{ 'general.save' | translate }}"
-          [width]="'w-50'"
+          [label]="'general.cancel' | translate"
+          [width]="'w-40'"
           type="rounded"
-          (action)="createCatalog()"
+          color="secondary"
+          buttonType="button"
+          [disabled]="attempt"
+          (action)="cancel()"
+        ></lib-button>
+        <lib-button
+          [label]="
+            catalogPath
+              ? ('general.save' | translate)
+              : ('general.create' | translate)
+          "
+          [width]="'w-40'"
+          type="rounded"
+          buttonType="button"
           [loading]="attempt"
+          [disabled]="attempt"
+          (action)="createCatalog()"
         ></lib-button>
       </div>
     </form>

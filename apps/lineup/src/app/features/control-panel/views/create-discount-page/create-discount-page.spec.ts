@@ -200,7 +200,7 @@ describe('CreateDiscountPage', () => {
       );
     });
 
-    it('createDiscount error muestra toast', () => {
+    it('createDiscount error libera el envío y delega el toast al manejo global', () => {
       createDiscount.mockReturnValue(throwError(() => ({ message: 'err' })));
       component.discountForm.patchValue({
         scope: DiscountScopeEnum.BUSINESS,
@@ -210,7 +210,8 @@ describe('CreateDiscountPage', () => {
         endDate: '2025-12-31',
       });
       component.submit();
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.isSubmitting).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });
@@ -284,12 +285,13 @@ describe('CreateDiscountPage', () => {
       fixture = TestBed.createComponent(CreateDiscountPage);
       component = fixture.componentInstance;
       fixture.detectChanges();
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.loadingCatalogs).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });
 
-    it('loadProducts error muestra toast', () => {
+    it('loadProducts error vacía la lista sin toast local', () => {
       const getAllByCatalogPaginated = jest.fn(() =>
         throwError(() => new Error('products fail')),
       );
@@ -299,9 +301,10 @@ describe('CreateDiscountPage', () => {
         scope: DiscountScopeEnum.PRODUCT,
         idCatalog: 5,
       });
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
+      expect(component.loadingProducts).toBe(false);
       expect(component.products).toEqual([]);
     });
   });
@@ -377,7 +380,7 @@ describe('CreateDiscountPage', () => {
       expect(navigate).toHaveBeenCalled();
     });
 
-    it('updateDiscount error muestra toast', () => {
+    it('updateDiscount error libera el envío y delega el toast al manejo global', () => {
       updateDiscount.mockReturnValue(throwError(() => ({ message: 'update fail' })));
       component.discountForm.patchValue({
         discountType: DiscountTypeEnum.PERCENTAGE,
@@ -386,8 +389,9 @@ describe('CreateDiscountPage', () => {
         endDate: '2025-12-31',
       });
       component.submit();
-      expect(messageAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ severity: 'error', detail: 'update fail' }),
+      expect(component.isSubmitting).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
+        expect.objectContaining({ severity: 'error' }),
       );
     });
   });

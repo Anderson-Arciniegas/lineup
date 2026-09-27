@@ -1,6 +1,8 @@
 import { FormControl, Validators } from '@angular/forms';
 import {
   getEmailFieldError,
+  getMinLengthFieldError,
+  getMinValueFieldError,
   getPasswordFieldError,
   getRequiredFieldError,
 } from './form-field-error';
@@ -99,5 +101,43 @@ describe('form-field-error', () => {
       errors: null,
     } as unknown as FormControl;
     expect(getPasswordFieldError(control)).toBeNull();
+  });
+
+  it('getMinLengthFieldError distingue required y minLength', () => {
+    const required = new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]);
+    required.markAsTouched();
+    expect(getMinLengthFieldError(required)).toEqual({
+      key: 'validation.fieldRequired',
+    });
+
+    const short = new FormControl('ab', Validators.minLength(3));
+    short.markAsTouched();
+    expect(getMinLengthFieldError(short)).toEqual({
+      key: 'validation.minLength',
+      params: { min: 3 },
+    });
+  });
+
+  it('getMinValueFieldError muestra el mínimo', () => {
+    const control = new FormControl(-1, Validators.min(0));
+    control.markAsTouched();
+    expect(getMinValueFieldError(control)).toEqual({
+      key: 'validation.minValue',
+      params: { min: 0 },
+    });
+  });
+
+  it('getMinValueFieldError prioriza required sobre min', () => {
+    const control = new FormControl(null, [
+      Validators.required,
+      Validators.min(0),
+    ]);
+    control.markAsTouched();
+    expect(getMinValueFieldError(control)).toEqual({
+      key: 'validation.fieldRequired',
+    });
   });
 });

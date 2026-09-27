@@ -6,6 +6,7 @@
     [highlightOnSelect]="true"
     (onNodeExpand)="onNodeExpand($event)"
     [(selection)]="selectedFilterType"
+    (selectionChange)="onSelectionChange()"
   />
 
   <p-tree
@@ -15,6 +16,7 @@
     [highlightOnSelect]="true"
     (onNodeExpand)="onNodeExpand($event)"
     [(selection)]="selectedFilterLocation"
+    (selectionChange)="onSelectionChange()"
   />
 
   <!-- <p-tree
@@ -49,6 +51,7 @@
           [min]="0"
           [showClear]="true"
           [(ngModel)]="minPrice"
+          (ngModelChange)="onPriceChange()"
         />
       </div>
 
@@ -66,12 +69,16 @@
           [min]="0"
           [showClear]="true"
           [(ngModel)]="maxPrice"
+          (ngModelChange)="onPriceChange()"
         />
       </div>
     </div>
   </div>
 
-  <div class="w-full flex flex-row justify-center align-center mt-6">
+  <div
+    class="w-full flex flex-row flex-wrap justify-center align-center gap-3 mt-10"
+  >
+    @if (modalMode()) {
     <lib-button
       [label]="'general.filter' | translate"
       type="rounded"
@@ -80,5 +87,16 @@
       (action)="saveFilters()"
     >
     </lib-button>
+    } @if (hasActiveFilters) {
+    <lib-button
+      [label]="'general.clearFilters' | translate"
+      type="rounded"
+      [color]="'secondary'"
+      [size]="'small'"
+      [width]="'w-40'"
+      (action)="clearFilters()"
+    >
+    </lib-button>
+    }
   </div>
 </section>

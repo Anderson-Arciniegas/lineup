@@ -9,9 +9,12 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { BusinessPrivateService, UserPublicService } from '@lineup/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import {
+  BusinessPrivateService,
+  ToastService,
+  UserPublicService,
+} from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -65,8 +68,7 @@ export class UpdatePasswordModal implements OnInit {
   private readonly _config = inject(DynamicDialogConfig);
   private readonly _userService = inject(UserPublicService);
   private readonly _businessService = inject(BusinessPrivateService);
-  private readonly _messageService = inject(MessageService);
-  private readonly _translate = inject(TranslateService);
+  private readonly _toast = inject(ToastService);
 
   ngOnInit(): void {
     const data = this._config.data as UpdatePasswordModalData | undefined;
@@ -124,17 +126,9 @@ export class UpdatePasswordModal implements OnInit {
         this.attempt = false;
         this._ref.close(true);
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.attempt = false;
-        this._messageService.add({
-          severity: 'error',
-          summary: this._translate.instant('general.error'),
-          detail:
-            err?.graphQLErrors?.[0]?.message ??
-            err?.message ??
-            this._translate.instant('validation.passwordUpdateFailed'),
-          life: 5000,
-        });
+        this._toast.apiError(err);
       },
     });
   }

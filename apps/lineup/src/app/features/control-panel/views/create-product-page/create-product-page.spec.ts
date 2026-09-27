@@ -8,6 +8,7 @@ import {
   BusinessSchema,
   CatalogPrivateService,
   CatalogSchema,
+  FILE_UPLOAD_ERROR_CODES,
   ProductPrivateService,
   ProductSchema,
   UtilsService,
@@ -152,6 +153,15 @@ describe('CreateProductPage', () => {
       expect(createProduct).not.toHaveBeenCalled();
     });
 
+    it('no debe enviar si la descripción solo tiene HTML vacío del editor', () => {
+      component.createProductForm.patchValue({ description: '<p><br></p>' });
+      component.createProduct();
+      expect(component.createProductForm.get('description')?.invalid).toBe(
+        true,
+      );
+      expect(createProduct).not.toHaveBeenCalled();
+    });
+
     it('debe avisar si no hay imágenes', () => {
       component.imgCodes = [];
       component.createProduct();
@@ -195,14 +205,37 @@ describe('CreateProductPage', () => {
       );
     });
 
-    it('createProduct error muestra toast de error', () => {
+    it('createProduct error libera el envío y delega el toast al manejo global', () => {
       createProduct.mockReturnValue(
         throwError(() => ({ message: 'create fail' })),
       );
       component.createProduct();
-      expect(messageAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ severity: 'error', detail: 'create fail' }),
+      expect(component.isSubmitting).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
+        expect.objectContaining({ severity: 'error' }),
       );
+    });
+  });
+
+  /**
+   * `cancel` vuelve al catálogo o al listado si no hay ruta de catálogo.
+   */
+  describe('cancel', () => {
+    it('debe navegar al panel del catálogo', () => {
+      component.catalog = { id: 99, path: 'my-cat' } as CatalogSchema;
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith([
+        'dashboard',
+        'catalogs',
+        'my-cat',
+      ]);
+    });
+
+    it('debe navegar al listado de catálogos si no hay catálogo', () => {
+      component.catalog = null;
+      component.catalogPath = undefined;
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith(['dashboard', 'catalogs']);
     });
   });
 
@@ -329,7 +362,11 @@ describe('CreateProductPage', () => {
     });
 
     it('uploadFile debe registrar error adultContent', () => {
-      postMock.mockReturnValue(throwError(() => ({ error: { code: 22011 } })));
+      postMock.mockReturnValue(
+        throwError(() => ({
+          error: { code: FILE_UPLOAD_ERROR_CODES.ADULT_CONTENT },
+        })),
+      );
       component.uploadFile('data:image/png;base64,abc');
       expect(component.uploadFailed).toBe(true);
       expect(component.adultContent).toBe(true);
@@ -531,7 +568,17 @@ describe('CreateProductPage', () => {
       expect(updateProduct).not.toHaveBeenCalled();
     });
 
-    it('createProduct error muestra toast de error', () => {
+    it('cancel en edición navega al panel del producto', () => {
+      component.cancel();
+      expect(navigate).toHaveBeenCalledWith([
+        'dashboard',
+        'catalogs',
+        'my-cat',
+        '500',
+      ]);
+    });
+
+    it('updateProduct error libera el envío y delega el toast al manejo global', () => {
       updateProduct.mockReturnValue(throwError(() => ({ message: 'fail' })));
       component.createProductForm.patchValue({
         title: 'Actualizado',
@@ -539,7 +586,8 @@ describe('CreateProductPage', () => {
       });
       component.imgCodes = ['code-a'];
       component.createProduct();
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(component.isSubmitting).toBe(false);
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
     });

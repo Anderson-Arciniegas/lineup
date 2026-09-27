@@ -17,15 +17,25 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { BusinessPrivateService, UserPublicService } from '@lineup/core';
+import {
+  ApiErrorService,
+  BusinessPrivateService,
+  ToastService,
+  UserPublicService,
+} from '@lineup/core';
 import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
+import {
+  getEmailFieldError,
+  getPasswordFieldError,
+} from '../../utils/form-field-error';
 
 /**
  * Inicio de sesión unificado: intenta primero como usuario consumidor y, si falla, como negocio.
@@ -39,6 +49,7 @@ import { GoogleAuthService } from '../../../../core/services/google-auth.service
     InputTextModule,
     FloatLabelModule,
     PasswordModule,
+    ProgressSpinner,
     TranslateModule,
     ReactiveFormsModule,
     RouterModule,
@@ -56,9 +67,22 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
   private readonly _users = inject(UserPublicService);
   private readonly _business = inject(BusinessPrivateService);
   private readonly _googleAuth = inject(GoogleAuthService);
+  private readonly _toast = inject(ToastService);
+  private readonly _apiError = inject(ApiErrorService);
   @Inject(PLATFORM_ID) private _platform: any;
 
   private _subscription: Subscription = new Subscription();
+
+  emailError = getEmailFieldError;
+  passwordError = getPasswordFieldError;
+
+  get emailControl() {
+    return this.loginForm.get('email');
+  }
+
+  get passwordControl() {
+    return this.loginForm.get('password');
+  }
 
   /** Construye el formulario reactivo de email/contraseña. */
   ngOnInit(): void {
@@ -117,9 +141,9 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
                   this._authService.handleSuccessLogin(response.user);
                 }
               },
-              error: (err) => {
-                console.error(err);
+              error: (error: unknown) => {
                 this.attemptGoogle = false;
+                this._notifyLoginFailure(error, 'auth.googleLoginFailed');
               },
             }),
           );
@@ -128,9 +152,21 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /**
+   * Muestra el toast de error del login: red y códigos de negocio usan la clave
+   * normalizada; el resto conserva el mensaje de dominio de la tarea (credenciales / Google).
+   */
+  private _notifyLoginFailure(error: unknown, fallbackKey: string): void {
+    const normalized = this._apiError.normalize(error);
+    const useMappedKey =
+      normalized.httpStatus === 0 || normalized.code != null;
+    this._toast.error(useMappedKey ? normalized.i18nKey : fallbackKey);
+  }
+
   /** Envío del formulario clásico: login usuario y fallback a negocio en error. */
   onSubmit(): void {
     if (this.loginForm.invalid || this.attempt) {
+      this.loginForm.markAllAsTouched();
       return;
     }
     this.attempt = true;
@@ -140,12 +176,14 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
         .subscribe({
           next: (user) => {
             if (user) {
+              this.attempt = false;
               this._authService.handleSuccessLogin(user);
+              return;
             }
-            this.attempt = false;
+            // Respuesta sin usuario (p. ej. data parcial): intentar como negocio.
+            this.loginBusiness();
           },
-          error: (error) => {
-            console.error(error);
+          error: () => {
             this.loginBusiness();
           },
         }),
@@ -162,20 +200,25 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
             this.attempt = false;
             if (business) {
               this._authService.handleSuccessLogin(null, business);
+              return;
             }
+            this._notifyLoginFailure(
+              new Error('Business login returned empty payload'),
+              'auth.invalidCredentials',
+            );
           },
-          error: (error) => {
-            console.error(error);
+          error: (error: unknown) => {
             this.attempt = false;
+            this._notifyLoginFailure(error, 'auth.invalidCredentials');
           },
         }),
     );
   }
 
-  /** Crea el `FormGroup` con validadores mínimos en email y password. */
+  /** Crea el `FormGroup`: el login solo exige contraseña presente, no el patrón de registro. */
   private _createForm(): FormGroup {
     return this._fb.group({
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }

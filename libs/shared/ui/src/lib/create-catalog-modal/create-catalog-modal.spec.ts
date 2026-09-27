@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectorRef } from '@angular/core';
 import {
   BusinessApiFilePrivateService,
+  FILE_UPLOAD_ERROR_CODES,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -108,9 +109,11 @@ describe('CreateCatalogModal', () => {
     expect(component.loadingFile).toBe(false);
   });
 
-  it('debe marcar adultContent en error 22011', () => {
+  it('debe marcar adultContent en error de contenido adulto', () => {
     apiFileService.post.mockReturnValue(
-      throwError(() => ({ error: { code: 22011 } })),
+      throwError(() => ({
+        error: { code: FILE_UPLOAD_ERROR_CODES.ADULT_CONTENT },
+      })),
     );
     component.uploadFile('data:image/png;base64,abc');
     expect(component.adultContent).toBe(true);

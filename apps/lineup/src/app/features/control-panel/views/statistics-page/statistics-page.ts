@@ -175,14 +175,8 @@ export class StatisticsPage implements OnInit, OnDestroy {
             this.loading = false;
             this._cdr.markForCheck();
           },
-          error: (error: unknown) => {
-            console.error(error);
+          error: () => {
             this.loading = false;
-            this._messageService.add({
-              severity: 'error',
-              summary: this._translate.instant('general.error'),
-              detail: this._translate.instant('general.errorLoadingData'),
-            });
             this._cdr.markForCheck();
           },
         }),

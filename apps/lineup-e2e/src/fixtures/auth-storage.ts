@@ -3,8 +3,10 @@ import { businessSession, userSession } from './graphql-mock';
 
 export type SessionKind = 'user' | 'business';
 
+const ONBOARDING_PENDING_KEY = 'businessOnboardingPending';
+
 /**
- * Simula sesión en localStorage; los guards completan vía mock GraphQL (getMe / myBusiness).
+ * Simula sesión en localStorage; los guards completan vía mock GraphQL (`Me` / `MyBusiness`).
  */
 export async function seedSession(
   page: Page,
@@ -16,12 +18,18 @@ export async function seedSession(
   }, kind);
 }
 
-export async function clearSession(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    localStorage.removeItem('loggedUser');
-    localStorage.removeItem('sessionType');
-    localStorage.removeItem('businessOnboardingPending');
-  });
+export async function seedOnboardingPending(page: Page): Promise<void> {
+  await page.addInitScript((key: string) => {
+    localStorage.setItem(key, JSON.stringify(true));
+  }, ONBOARDING_PENDING_KEY);
 }
 
-export { userSession, businessSession };
+export async function clearSession(page: Page): Promise<void> {
+  await page.addInitScript((key: string) => {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('sessionType');
+    localStorage.removeItem(key);
+  }, ONBOARDING_PENDING_KEY);
+}
+
+export { userSession, businessSession, ONBOARDING_PENDING_KEY };

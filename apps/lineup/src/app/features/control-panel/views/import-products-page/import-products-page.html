@@ -18,6 +18,9 @@
       <p class="text-sm text-gray-600">
         {{ 'importProductsPage.allowedFormats' | translate }}
       </p>
+      <p class="text-sm text-gray-600">
+        {{ 'importProductsPage.expectedContent' | translate }}
+      </p>
     </div>
 
     <div class="flex flex-col gap-3">
@@ -28,11 +31,21 @@
         #documentFileInput
         id="import-products-document"
         type="file"
-        class="file-input w-full"
+        class="sr-only"
+        tabindex="-1"
         accept=".csv,.json,.pdf,.txt,.xls,.xlsx,.xml"
         [disabled]="isUploading()"
         (change)="onFileSelected($event)"
       />
+      <lib-button
+        icon="pi pi-paperclip"
+        type="rounded"
+        variant="outlined"
+        buttonType="button"
+        [label]="'importProductsPage.chooseFile' | translate"
+        [disabled]="isUploading()"
+        (action)="openFilePicker()"
+      ></lib-button>
 
       @if (selectedFile(); as file) {
       <div
@@ -52,11 +65,15 @@
           (action)="clearSelectedFile()"
         ></lib-button>
       </div>
-      } @if (fileValidationKey(); as validationKey) {
-      <p class="text-sm text-red-600" role="alert">
-        {{ validationKey | translate }}
-      </p>
-      } @if (isUploading()) {
+      }
+      <div class="min-h-6">
+        @if (fileValidationKey(); as validationKey) {
+        <p class="text-sm text-red-600" role="alert">
+          {{ validationKey | translate }}
+        </p>
+        }
+      </div>
+      @if (isUploading()) {
       <div class="flex flex-col gap-2" aria-live="polite">
         <p-progressbar
           [value]="uploadProgress()"
@@ -115,22 +132,24 @@
           [placeholder]="'importProductsPage.searchPlaceholder' | translate"
           (keyup.enter)="refreshDraftProducts()"
         />
-        <lib-button
-          icon="pi pi-search"
-          type="rounded"
-          width="w-11"
-          [ariaLabel]="'general.search' | translate"
-          (action)="refreshDraftProducts()"
-        ></lib-button>
-        <lib-button
-          icon="pi pi-refresh"
-          type="rounded"
-          variant="outlined"
-          width="w-11"
-          [ariaLabel]="'importProductsPage.refresh' | translate"
-          [disabled]="isLoadingDrafts()"
-          (action)="refreshDraftProducts()"
-        ></lib-button>
+        <div class="flex gap-2 flex-row items-center justify-end">
+          <lib-button
+            icon="pi pi-search"
+            type="rounded"
+            width="w-11"
+            [ariaLabel]="'general.search' | translate"
+            (action)="refreshDraftProducts()"
+          ></lib-button>
+          <lib-button
+            icon="pi pi-refresh"
+            type="rounded"
+            variant="outlined"
+            width="w-11"
+            [ariaLabel]="'importProductsPage.refresh' | translate"
+            [disabled]="isLoadingDrafts()"
+            (action)="refreshDraftProducts()"
+          ></lib-button>
+        </div>
       </div>
     </div>
 

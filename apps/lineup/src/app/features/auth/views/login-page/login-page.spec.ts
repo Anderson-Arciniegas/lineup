@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   ComponentFixture,
@@ -8,7 +9,11 @@ import {
 } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BusinessPrivateService, UserPublicService } from '@lineup/core';
+import {
+  BusinessPrivateService,
+  ToastService,
+  UserPublicService,
+} from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
@@ -21,7 +26,9 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { GoogleAuthService } from '../../../../core/services/google-auth.service';
 import { LoginPage } from './login-page';
 
-describe('LoginPage', () => {
+const VALID_PASSWORD = 'Password1!';
+
+describe('LoginPage (HU-03)', () => {
   let fixture: ComponentFixture<LoginPage>;
   let component: LoginPage;
   let userLogin: jest.Mock;
@@ -31,6 +38,7 @@ describe('LoginPage', () => {
   let handleSuccessLogin: jest.Mock;
   let credential$: Subject<string>;
   let renderButton: jest.Mock;
+  let toastError: jest.Mock;
 
   beforeEach(waitForAsync(async () => {
     userLogin = jest.fn(() => of({ id: 1 }));
@@ -40,6 +48,7 @@ describe('LoginPage', () => {
     handleSuccessLogin = jest.fn().mockResolvedValue(undefined);
     credential$ = new Subject<string>();
     renderButton = jest.fn();
+    toastError = jest.fn();
 
     const { mock: apolloMock } = createApolloMock();
 
@@ -66,6 +75,7 @@ describe('LoginPage', () => {
           },
         },
         { provide: AuthService, useValue: { handleSuccessLogin } },
+        { provide: ToastService, useValue: { error: toastError } },
         {
           provide: GoogleAuthService,
           useValue: {
@@ -94,19 +104,43 @@ describe('LoginPage', () => {
   });
 
   /**
-   * El formulario exige email y contraseña antes de enviar credenciales al API.
+   * El formulario exige email válido y contraseña presente (sin patrón de registro).
    */
   describe('validación del formulario', () => {
     it('debe marcar el formulario inválido si faltan campos', () => {
       expect(component.loginForm.valid).toBe(false);
     });
 
-    it('debe ser válido con email y contraseña rellenados', () => {
+    it('debe ser inválido con email mal formado', () => {
+      component.loginForm.patchValue({
+        email: 'not-an-email',
+        password: VALID_PASSWORD,
+      });
+      expect(component.loginForm.valid).toBe(false);
+      expect(component.emailControl?.errors?.['email']).toBeTruthy();
+    });
+
+    it('debe ser válido con una contraseña antigua que no cumple el patrón de registro', () => {
       component.loginForm.patchValue({
         email: 'a@b.com',
-        password: 'secret',
+        password: 'oldpass',
       });
       expect(component.loginForm.valid).toBe(true);
+    });
+
+    it('debe ser válido con email y contraseña correctos', () => {
+      component.loginForm.patchValue({
+        email: 'a@b.com',
+        password: VALID_PASSWORD,
+      });
+      expect(component.loginForm.valid).toBe(true);
+    });
+
+    it('debe marcar campos como touched al enviar inválido', () => {
+      component.onSubmit();
+      expect(component.emailControl?.touched).toBe(true);
+      expect(component.passwordControl?.touched).toBe(true);
+      expect(userLogin).not.toHaveBeenCalled();
     });
   });
 
@@ -122,7 +156,7 @@ describe('LoginPage', () => {
     it('no debe enviar si ya hay un intento en curso', () => {
       component.loginForm.patchValue({
         email: 'a@b.com',
-        password: 'x',
+        password: VALID_PASSWORD,
       });
       component.attempt = true;
       component.onSubmit();
@@ -132,10 +166,10 @@ describe('LoginPage', () => {
     it('debe llamar a UserPublicService.login con email y contraseña', () => {
       component.loginForm.patchValue({
         email: 'user@test.com',
-        password: 'pass123',
+        password: VALID_PASSWORD,
       });
       component.onSubmit();
-      expect(userLogin).toHaveBeenCalledWith('user@test.com', 'pass123');
+      expect(userLogin).toHaveBeenCalledWith('user@test.com', VALID_PASSWORD);
     });
 
     it('debe delegar en AuthService cuando el usuario existe', () => {
@@ -143,7 +177,7 @@ describe('LoginPage', () => {
       userLogin.mockReturnValue(of(user));
       component.loginForm.patchValue({
         email: 'u@t.com',
-        password: 'p',
+        password: VALID_PASSWORD,
       });
       component.onSubmit();
       expect(handleSuccessLogin).toHaveBeenCalledWith(user);
@@ -155,22 +189,78 @@ describe('LoginPage', () => {
       businessLogin.mockReturnValue(of({ id: 2 }));
       component.loginForm.patchValue({
         email: 'b@t.com',
-        password: 'p',
+        password: VALID_PASSWORD,
       });
       component.onSubmit();
-      expect(businessLogin).toHaveBeenCalledWith('b@t.com', 'p');
+      expect(businessLogin).toHaveBeenCalledWith('b@t.com', VALID_PASSWORD);
       expect(handleSuccessLogin).toHaveBeenCalledWith(null, { id: 2 });
     });
 
-    it('debe poner attempt en false si ambos logins fallan', () => {
+    it('debe intentar login de negocio si el de usuario responde sin payload', () => {
+      userLogin.mockReturnValue(of(null));
+      businessLogin.mockReturnValue(of({ id: 7 }));
+      component.loginForm.patchValue({
+        email: 'b@t.com',
+        password: VALID_PASSWORD,
+      });
+      component.onSubmit();
+      expect(businessLogin).toHaveBeenCalledWith('b@t.com', VALID_PASSWORD);
+      expect(handleSuccessLogin).toHaveBeenCalledWith(null, { id: 7 });
+    });
+
+    it('debe poner attempt en false y avisar credenciales inválidas si ambos logins fallan', () => {
       userLogin.mockReturnValue(throwError(() => new Error('u')));
       businessLogin.mockReturnValue(throwError(() => new Error('b')));
       component.loginForm.patchValue({
         email: 'x@y.com',
-        password: 'p',
+        password: VALID_PASSWORD,
       });
       component.onSubmit();
       expect(component.attempt).toBe(false);
+      expect(toastError).toHaveBeenCalledTimes(1);
+      expect(toastError).toHaveBeenCalledWith('auth.invalidCredentials');
+    });
+
+    it('no debe mostrar toast si el usuario falla pero el negocio entra', () => {
+      userLogin.mockReturnValue(throwError(() => new Error('fail')));
+      businessLogin.mockReturnValue(of({ id: 2 }));
+      component.loginForm.patchValue({
+        email: 'b@t.com',
+        password: VALID_PASSWORD,
+      });
+      component.onSubmit();
+      expect(toastError).not.toHaveBeenCalled();
+    });
+
+    it('debe avisar error de red si el servidor no responde', () => {
+      const offline = new HttpErrorResponse({ status: 0, statusText: 'Unknown' });
+      userLogin.mockReturnValue(throwError(() => offline));
+      businessLogin.mockReturnValue(throwError(() => offline));
+      component.loginForm.patchValue({
+        email: 'x@y.com',
+        password: VALID_PASSWORD,
+      });
+      component.onSubmit();
+      expect(toastError).toHaveBeenCalledWith('errors.network');
+    });
+
+    it('debe mostrar el código de negocio mapeado (correo no verificado)', () => {
+      userLogin.mockReturnValue(throwError(() => new Error('u')));
+      businessLogin.mockReturnValue(
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 401,
+              error: { code: 100004, message: 'Email not verified' },
+            }),
+        ),
+      );
+      component.loginForm.patchValue({
+        email: 'x@y.com',
+        password: VALID_PASSWORD,
+      });
+      component.onSubmit();
+      expect(toastError).toHaveBeenCalledWith('auth.emailNotVerified');
     });
   });
 
@@ -199,6 +289,18 @@ describe('LoginPage', () => {
       tick();
       expect(businessLoginWithGoogle).toHaveBeenCalledWith({ token: 'token-b' });
       expect(handleSuccessLogin).toHaveBeenCalledWith(undefined, { id: 3 });
+      expect(toastError).not.toHaveBeenCalled();
+    }));
+
+    it('debe avisar fallo de Google si usuario y negocio fallan', fakeAsync(() => {
+      userLoginWithGoogle.mockReturnValue(throwError(() => new Error('no')));
+      businessLoginWithGoogle.mockReturnValue(
+        throwError(() => new Error('no')),
+      );
+      credential$.next('token-c');
+      tick();
+      expect(component.attemptGoogle).toBe(false);
+      expect(toastError).toHaveBeenCalledWith('auth.googleLoginFailed');
     }));
   });
 

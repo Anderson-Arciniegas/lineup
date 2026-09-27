@@ -354,17 +354,15 @@ describe('RegisterSalePage', () => {
     expect(component.cart[0].lines.length).toBe(1);
   });
 
-  it('registerSale error muestra mensaje de error', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+  it('registerSale error libera el envío y delega el toast al manejo global', async () => {
     registerSale.mockReturnValue(throwError(() => new Error('fail')));
     await debounceWait();
     component.addToCart(component.products[0]);
     component.registerSale();
-    expect(messageAdd).toHaveBeenCalledWith(
+    expect(component.submittingSale).toBe(false);
+    expect(messageAdd).not.toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 
   it('registerSale avisa cantidad inválida', async () => {
@@ -513,8 +511,7 @@ describe('RegisterSalePage', () => {
     expect(registerSale).not.toHaveBeenCalled();
   });
 
-  it('loadCatalogs error muestra toast de error', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+  it('loadCatalogs error detiene loading sin toast local', async () => {
     TestBed.resetTestingModule();
     messageAdd = jest.fn();
     formatPriceWithDiscount = jest.fn(() => 15);
@@ -549,11 +546,10 @@ describe('RegisterSalePage', () => {
     fixture = TestBed.createComponent(RegisterSalePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    expect(messageAdd).toHaveBeenCalledWith(
+    expect(component.loadingCatalogs).toBe(false);
+    expect(messageAdd).not.toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 
   it('getRates error deja rates undefined sin bloquear ventas', async () => {

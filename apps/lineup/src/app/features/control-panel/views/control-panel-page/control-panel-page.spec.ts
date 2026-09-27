@@ -11,7 +11,7 @@ import {
   TranslateStore,
 } from '@ngx-translate/core';
 import { Apollo } from 'apollo-angular';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { createApolloMock } from '../../../../../testing';
 import { ControlPanelPage } from './control-panel-page';
 
@@ -105,6 +105,17 @@ describe('ControlPanelPage', () => {
       getBusinessByPath.mockClear();
       component.getBusiness();
       expect(getBusinessByPath).not.toHaveBeenCalled();
+    });
+
+    it('debe mostrar error de carga y permitir reintento', () => {
+      getBusinessByPath.mockReturnValue(throwError(() => new Error('fail')));
+      component.attempt = false;
+      component.getBusiness();
+      expect(component.loadErrorKey).toBe('errors.loadFailed');
+      expect(component.attempt).toBe(false);
+      getBusinessByPath.mockReturnValue(of(mockBusiness));
+      component.retryLoad();
+      expect(component.loadErrorKey).toBeNull();
     });
   });
 });

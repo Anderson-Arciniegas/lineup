@@ -20,9 +20,11 @@
       }
     </div>
 
-    @if (daysError(); as err) {
-    <span class="text-xs font-medium text-red-600">{{ err | translate }}</span>
-    }
+    <div class="min-h-6">
+      @if (daysError(); as err) {
+      <span class="text-xs font-medium text-red-600">{{ err | translate }}</span>
+      }
+    </div>
   </div>
 
   <div class="flex flex-col gap-2">
@@ -60,11 +62,13 @@
       </div>
     </div>
 
-    @if (timeError(); as timeErr) {
-    <span class="text-xs font-medium text-red-600"
-      >{{ timeErr | translate }}</span
-    >
-    }
+    <div class="min-h-6">
+      @if (timeError(); as timeErr) {
+      <span class="text-xs font-medium text-red-600"
+        >{{ timeErr | translate }}</span
+      >
+      }
+    </div>
   </div>
 
   <div

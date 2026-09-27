@@ -22,14 +22,16 @@
           {{ 'general.email' | translate }}
         </label>
       </p-floatlabel>
-      @if (emailControl?.invalid && (emailControl?.dirty ||
-      emailControl?.touched)) {
-      <small class="text-red-500 text-sm">
-        @if (emailControl?.errors?.['required']) { {{ 'validation.fieldRequired'
-        | translate }} } @else if (emailControl?.errors?.['email']) { {{
-        'validation.invalidEmail' | translate }} }
-      </small>
-      }
+      <div class="min-h-6">
+        @if (emailControl?.invalid && (emailControl?.dirty ||
+        emailControl?.touched)) {
+        <small class="text-red-500 text-sm">
+          @if (emailControl?.errors?.['required']) { {{ 'validation.fieldRequired'
+          | translate }} } @else if (emailControl?.errors?.['email']) { {{
+          'validation.invalidEmail' | translate }} }
+        </small>
+        }
+      </div>
     </div>
 
     <div
