@@ -76,3 +76,50 @@ export function getPasswordFieldError(
   }
   return null;
 }
+
+/** Primer error visible de texto con required / minLength. */
+export function getMinLengthFieldError(
+  control: AbstractControl | null,
+): FieldErrorMessage | null {
+  if (!isControlShownInvalid(control)) {
+    return null;
+  }
+  const errors = control?.errors;
+  if (!errors) {
+    return null;
+  }
+  if (errors['required']) {
+    return { key: 'validation.fieldRequired' };
+  }
+  if (errors['minlength']) {
+    return {
+      key: 'validation.minLength',
+      params: { min: errors['minlength'].requiredLength },
+    };
+  }
+  return null;
+}
+
+/** Primer error visible de valor requerido o mínimo (`Validators.min`). */
+export function getMinValueFieldError(
+  control: AbstractControl | null,
+): FieldErrorMessage | null {
+  if (!isControlShownInvalid(control)) {
+    return null;
+  }
+  const errors = control?.errors;
+  if (!errors) {
+    return null;
+  }
+  if (errors['required']) {
+    return { key: 'validation.fieldRequired' };
+  }
+  const minError = errors['min'];
+  if (!minError) {
+    return null;
+  }
+  return {
+    key: 'validation.minValue',
+    params: { min: minError.min },
+  };
+}

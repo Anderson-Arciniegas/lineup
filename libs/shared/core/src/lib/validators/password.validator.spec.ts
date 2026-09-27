@@ -36,4 +36,17 @@ describe('PasswordValidation', () => {
       MatchPassword: true,
     });
   });
+
+  it('clears MatchPassword when passwords become equal', () => {
+    const form = new FormGroup({
+      password: new FormControl('secret'),
+      confirmPassword: new FormControl('other'),
+    });
+    PasswordValidation.MatchPassword(form);
+    expect(form.get('confirmPassword')?.errors).toEqual({ MatchPassword: true });
+
+    form.get('confirmPassword')?.setValue('secret');
+    expect(PasswordValidation.MatchPassword(form)).toBeNull();
+    expect(form.get('confirmPassword')?.errors).toBeNull();
+  });
 });

@@ -2,15 +2,22 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export class PasswordValidation {
   static MatchPassword(AC: AbstractControl): ValidationErrors | null {
+    const confirmControl = AC.get('confirmPassword');
     const password = AC.get('password')?.value;
-    const confirmPassword = AC.get('confirmPassword')?.value;
+    const confirmPassword = confirmControl?.value;
     if (password !== confirmPassword) {
-      AC.get('confirmPassword')?.setErrors({
+      confirmControl?.setErrors({
+        ...(confirmControl.errors ?? {}),
         MatchPassword: true,
       });
       return { MatchPassword: true };
-    } else {
-      return null;
     }
+
+    if (confirmControl?.errors?.['MatchPassword']) {
+      const rest = { ...confirmControl.errors };
+      delete rest['MatchPassword'];
+      confirmControl.setErrors(Object.keys(rest).length ? rest : null);
+    }
+    return null;
   }
 }
