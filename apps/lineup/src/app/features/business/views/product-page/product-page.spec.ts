@@ -1,11 +1,10 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PendingTasks } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { Apollo } from 'apollo-angular';
-import { DialogService } from 'primeng/dynamicdialog';
 import {
   AuthStore,
   BusinessPublicService,
@@ -18,9 +17,15 @@ import {
   UserPublicService,
   UtilsService,
 } from '@lineup/core';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslateService,
+  TranslateStore,
+} from '@ngx-translate/core';
+import { Apollo } from 'apollo-angular';
 import { MessageService } from 'primeng/api';
-import { of } from 'rxjs';
+import { DialogService } from 'primeng/dynamicdialog';
+import { of, throwError } from 'rxjs';
 import { createApolloMock } from '../../../../../testing';
 import { ProductPage } from './product-page';
 
@@ -39,7 +44,11 @@ describe('ProductPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductPage, TranslateModule.forRoot(), HttpClientTestingModule],
+      imports: [
+        ProductPage,
+        TranslateModule.forRoot(),
+        HttpClientTestingModule,
+      ],
       providers: [
         { provide: Apollo, useValue: createApolloMock().mock },
         DialogService,
@@ -160,5 +169,145 @@ describe('ProductPage', () => {
         'https://cdn.test/valid.jpg',
       );
     });
+  });
+
+  it('no debe mostrar el título dummy si el producto no tiene título', () => {
+    component.product = { ...product, title: '' } as typeof component.product;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain(
+      'Baltimore Ravens Jerseys',
+    );
+  });
+});
+
+describe('ProductPage estados de error', () => {
+  const product = {
+    id: 100,
+    title: 'Producto',
+    catalog: { id: 1, path: 'c', hexColor: '#ffffff' },
+    productFiles: [],
+    productTags: [],
+    business: { id: 50 },
+  };
+
+  async function setup(findOneProduct: jest.Mock): Promise<{
+    fixture: ComponentFixture<ProductPage>;
+    component: ProductPage;
+  }> {
+    await TestBed.configureTestingModule({
+      imports: [
+        ProductPage,
+        TranslateModule.forRoot(),
+        HttpClientTestingModule,
+      ],
+      providers: [
+        { provide: Apollo, useValue: createApolloMock().mock },
+        DialogService,
+        { provide: MessageService, useValue: { add: jest.fn() } },
+        {
+          provide: SocialNetworkPrivateService,
+          useValue: { findByBusiness: () => of([]) },
+        },
+        {
+          provide: RatesPrivateService,
+          useValue: { findBcvOfficialRates: () => of(null) },
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { params: { business: 'biz', idProduct: '100' } },
+          },
+        },
+        provideNoopAnimations(),
+        TranslateService,
+        TranslateStore,
+        {
+          provide: BreakpointObserver,
+          useValue: {
+            observe: () => of({ matches: false, breakpoints: {} } as never),
+            isMatched: jest.fn().mockReturnValue(false),
+          },
+        },
+        {
+          provide: PendingTasks,
+          useValue: { add: () => () => void 0 },
+        },
+        {
+          provide: AuthStore,
+          useValue: {
+            business: () => null,
+            isUserLoggedIn: () => false,
+            isBusinessLoggedIn: () => false,
+            isAuthenticated: () => false,
+          },
+        },
+        {
+          provide: BusinessPublicService,
+          useValue: {
+            findBusinessByPath: () =>
+              of({ id: 50, path: 'biz', hexColor: '#ccc' } as never),
+          },
+        },
+        {
+          provide: ProductPublicService,
+          useValue: {
+            findOneProduct,
+            hasLikedProduct: () => of(false),
+            likeProduct: jest.fn(() => of({})),
+            unlikeProduct: jest.fn(() => of({})),
+            getAllByTags: () => of({ items: [], page: 1, limit: 4, total: 0 }),
+          },
+        },
+        { provide: ProductPrivateService, useValue: {} },
+        { provide: CatalogPrivateService, useValue: {} },
+        { provide: SeoService, useValue: { setProductPage: jest.fn() } },
+        {
+          provide: UserPublicService,
+          useValue: { recordVisit: () => of({}) },
+        },
+        {
+          provide: UtilsService,
+          useValue: {
+            navigate: jest.fn(),
+            formatPriceWithDiscount: jest.fn(() => 10),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(ProductPage);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+    return { fixture, component };
+  }
+
+  it('debe marcar productLoadError cuando el producto no existe', async () => {
+    const findOneProduct = jest.fn(() =>
+      throwError(
+        () => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }),
+      ),
+    );
+    const { component, fixture } = await setup(findOneProduct);
+    expect(component.productLoadError).toBe('errors.notFound');
+    expect(component.product).toBeUndefined();
+    expect(fixture.nativeElement.textContent).toContain('errors.notFound');
+  });
+
+  it('debe reintentar la carga del producto', async () => {
+    const findOneProduct = jest
+      .fn()
+      .mockReturnValueOnce(
+        throwError(
+          () => new HttpErrorResponse({ status: 500, statusText: 'Error' }),
+        ),
+      )
+      .mockReturnValueOnce(of(product as never));
+    const { component } = await setup(findOneProduct);
+    expect(component.productLoadError).toBe('errors.loadFailed');
+
+    component.retryProduct();
+    expect(findOneProduct).toHaveBeenCalledTimes(2);
+    expect(component.productLoadError).toBeNull();
+    expect(component.product?.id).toBe(100);
   });
 });

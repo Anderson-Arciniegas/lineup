@@ -2,6 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   inject,
+  OnDestroy,
   OnInit,
   PendingTasks,
   PLATFORM_ID,
@@ -9,6 +10,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
+  ApiErrorService,
   AppConfigService,
   AuthStore,
   BusinessPublicService,
@@ -24,6 +26,7 @@ import {
   ProductSchema,
   SeoService,
   StatusEnum,
+  ToastService,
   UserPublicService,
   UtilsService,
   VisitTypeEnum,
@@ -78,7 +81,7 @@ import { finalize } from 'rxjs/operators';
   templateUrl: 'catalog-page.html',
   styleUrls: ['./catalog-page.scss'],
 })
-export class CatalogPage implements OnInit {
+export class CatalogPage implements OnInit, OnDestroy {
   business: BusinessSchema;
   catalog: CatalogSchema;
   /** Degradado vertical (misma lógica que business-page). */
@@ -97,6 +100,8 @@ export class CatalogPage implements OnInit {
   attempt = false;
   productsAttempt = false;
   primaryProductsAttempt = false;
+  catalogLoadError: string | null = null;
+  productsLoadError: string | null = null;
   page = 1;
   noMoreResults = false;
   myBusiness = false;
@@ -127,6 +132,8 @@ export class CatalogPage implements OnInit {
   private readonly _dialogService = inject(DialogService);
   private readonly _translate = inject(TranslateService);
   private readonly _messageService = inject(MessageService);
+  private readonly _apiError = inject(ApiErrorService);
+  private readonly _toast = inject(ToastService);
   private _subscription: Subscription = new Subscription();
 
   /** Detecta el breakpoint Tailwind activo según el ancho del viewport. */
@@ -146,8 +153,48 @@ export class CatalogPage implements OnInit {
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
     this.searchQuery =
       this._activatedRoute.snapshot.queryParams?.['search'] ?? '';
+    this.layoutOptions = [
+      {
+        index: 0,
+        icon: 'pi pi-th-large',
+        label: this._translate.instant('general.grid'),
+        value: 'Grid',
+      },
+      {
+        index: 1,
+        icon: 'pi pi-list',
+        label: this._translate.instant('general.list'),
+        value: 'List',
+      },
+    ];
     this.getBusiness();
     this.getCatalog();
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
+  /** Clave i18n de vacío: búsqueda sin hits o catálogo sin productos (dueño vs visitante). */
+  get catalogEmptyMessageKey(): string {
+    if (this.searchQuery) {
+      return 'general.noResults';
+    }
+    return this.myBusiness
+      ? 'general.noCatalogProducts'
+      : 'general.noPublicCatalogProducts';
+  }
+
+  retryCatalog(): void {
+    this.catalogLoadError = null;
+    this.getCatalog();
+  }
+
+  retryProducts(): void {
+    this.productsLoadError = null;
+    this.page = 1;
+    this.noMoreResults = false;
+    this.getProducts();
   }
 
   /** Carga el negocio por path y sincroniza colores, SEO y flags de propiedad. */
@@ -211,6 +258,7 @@ export class CatalogPage implements OnInit {
     this.products = [];
     this.page = 1;
     this.noMoreResults = false;
+    this.productsLoadError = null;
     this.getProducts();
   }
 
@@ -220,6 +268,7 @@ export class CatalogPage implements OnInit {
     this.products = [];
     this.page = 1;
     this.noMoreResults = false;
+    this.productsLoadError = null;
     this.getProducts();
   }
 
@@ -227,10 +276,11 @@ export class CatalogPage implements OnInit {
   private getCatalog(): void {
     if (this.attempt) return;
     this.attempt = true;
+    this.catalogLoadError = null;
     const taskDone = this._pendingTasks.add();
     this._subscription.add(
       this._catalogPublicService
-        .findOneCatalogByPath(this.catalogPath)
+        .findOneCatalogByPath(this.catalogPath, true)
         .pipe(finalize(() => taskDone()))
         .subscribe({
           next: (catalog) => {
@@ -253,15 +303,15 @@ export class CatalogPage implements OnInit {
             }
             this.applyCatalogSeoIfReady();
 
-            this.discount = this.catalog.discounts.find(
+            this.discount = this.catalog.discounts?.find(
               (discount) =>
                 discount.scope === DiscountScopeEnum.CATALOG &&
                 discount.status === StatusEnum.ACTIVE,
             );
           },
           error: (error) => {
-            console.error(error);
             this.attempt = false;
+            this.catalogLoadError = this.resourceLoadErrorKey(error);
           },
           complete: () => {
             this.attempt = false;
@@ -292,14 +342,22 @@ export class CatalogPage implements OnInit {
   getProducts(): void {
     if (!isPlatformBrowser(this._platformId)) return;
     if (this.productsAttempt || this.noMoreResults) return;
+    const skipGlobalErrorToast = this.page === 1;
+    if (this.page === 1) {
+      this.productsLoadError = null;
+    }
     this.productsAttempt = true;
     this._subscription.add(
       this._productPublicService
-        .getAllByCatalogPaginated(this.catalog.id, {
-          page: this.page,
-          limit: 20,
-          search: this.searchQuery,
-        })
+        .getAllByCatalogPaginated(
+          this.catalog.id,
+          {
+            page: this.page,
+            limit: 20,
+            search: this.searchQuery,
+          },
+          skipGlobalErrorToast,
+        )
         .subscribe({
           next: (products) => {
             this.productsAttempt = false;
@@ -310,8 +368,10 @@ export class CatalogPage implements OnInit {
             }
           },
           error: (error) => {
-            console.error(error);
             this.productsAttempt = false;
+            if (this.page === 1) {
+              this.productsLoadError = this.resourceLoadErrorKey(error);
+            }
           },
           complete: () => {
             this.productsAttempt = false;
@@ -326,17 +386,19 @@ export class CatalogPage implements OnInit {
     this.primaryProductsAttempt = true;
     this._subscription.add(
       this._productPublicService
-        .getAllPrimaryProductsByBusiness({
-          idBusiness: this.business.id,
-          idCatalog: this.catalog.id,
-        })
+        .getAllPrimaryProductsByBusiness(
+          {
+            idBusiness: this.business.id,
+            idCatalog: this.catalog.id,
+          },
+          true,
+        )
         .subscribe({
           next: (products) => {
             this.primaryProductsAttempt = false;
             this.primaryProducts = products;
           },
-          error: (error) => {
-            console.error(error);
+          error: () => {
             this.primaryProductsAttempt = false;
           },
         }),
@@ -429,6 +491,12 @@ export class CatalogPage implements OnInit {
     return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
   }
 
+  private resourceLoadErrorKey(error: unknown): string {
+    return this._apiError.normalize(error).httpStatus === 404
+      ? 'errors.notFound'
+      : 'errors.loadFailed';
+  }
+
   /** Infinite scroll: solicita la siguiente página de productos. */
   onScroll(): void {
     this.getProducts();
@@ -461,6 +529,10 @@ export class CatalogPage implements OnInit {
 
   /** Persiste el color hex del catálogo vía API privada y notifica con toast. */
   saveColor(): void {
+    if (!CatalogPage.parseColorToRgb(this.color)) {
+      this._toast.warn('errors.badRequest');
+      return;
+    }
     this.attemptColor = true;
     this._subscription.add(
       this._catalogService
@@ -478,8 +550,7 @@ export class CatalogPage implements OnInit {
               detail: this._translate.instant('toast.catalogUpdated'),
             });
           },
-          error: (error) => {
-            console.error(error);
+          error: () => {
             this.attemptColor = false;
           },
           complete: () => {

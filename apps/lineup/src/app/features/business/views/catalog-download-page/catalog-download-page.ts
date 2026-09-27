@@ -9,7 +9,7 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BusinessPublicService,
   BusinessSchema,
@@ -20,7 +20,7 @@ import {
   ProductSchema,
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
-import { ProductCard, ProductExpandedItem } from '@lineup/ui';
+import { Button, ProductCard, ProductExpandedItem } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -43,6 +43,7 @@ import { firstValueFrom } from 'rxjs';
     QRCodeComponent,
     FileThumbnailUrlPipe,
     TranslateModule,
+    Button,
   ],
   templateUrl: './catalog-download-page.html',
   styleUrl: './catalog-download-page.scss',
@@ -70,6 +71,7 @@ export class CatalogDownloadPage implements OnInit {
 
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _activatedRoute = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
   private readonly _businessPublicService = inject(BusinessPublicService);
   private readonly _catalogPublicService = inject(CatalogPublicService);
   private readonly _productPublicService = inject(ProductPublicService);
@@ -155,6 +157,20 @@ export class CatalogDownloadPage implements OnInit {
     this.loadAndDownload();
   }
 
+  retryGeneration(): void {
+    void this.loadAndDownload();
+  }
+
+  goBackToCatalog(): void {
+    void this._router.navigate(['/', this._businessPath, this._catalogPath]);
+  }
+
+  closeTab(): void {
+    if (isPlatformBrowser(this._platformId)) {
+      window.close();
+    }
+  }
+
   private setColor(raw: string): void {
     const rgb = CatalogDownloadPage.parseColorToRgb(raw);
     if (!rgb) return;
@@ -198,6 +214,8 @@ export class CatalogDownloadPage implements OnInit {
   private async loadAndDownload(): Promise<void> {
     if (!isPlatformBrowser(this._platformId)) return;
     this.isGenerating = true;
+    this.isDone = false;
+    this.hasError = false;
     this._cdr.detectChanges();
 
     try {
@@ -236,7 +254,10 @@ export class CatalogDownloadPage implements OnInit {
       document.body.scrollTop = 0;
 
       const host = this._catalogPdfRoot()?.nativeElement;
-      if (!host) return;
+      if (!host) {
+        this.hasError = true;
+        return;
+      }
 
       host.scrollIntoView({
         block: 'start',
@@ -254,7 +275,10 @@ export class CatalogDownloadPage implements OnInit {
       await CatalogDownloadPage.waitNextPaint();
 
       const pdfPageEls = this._pdfPages();
-      if (pdfPageEls.length === 0) return;
+      if (pdfPageEls.length === 0) {
+        this.hasError = true;
+        return;
+      }
 
       await CatalogDownloadPage.waitForImages(host);
       await CatalogDownloadPage.waitNextPaint();
