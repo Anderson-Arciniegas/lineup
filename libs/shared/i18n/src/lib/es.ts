@@ -81,6 +81,7 @@ export const es = {
     dashboard: 'Panel de control',
     businessName: 'Nombre del negocio',
     editBusiness: 'Editar negocio',
+    completeBusinessProfile: 'Complete su perfil de negocio',
     businessIsOnline: 'Negocio en línea',
     businessPath: 'Ruta del negocio',
     businessPathFormatHint:
@@ -106,7 +107,7 @@ export const es = {
     creationDate: 'Fecha de creación',
     modificationDate: 'Fecha de modificación',
     tagsPlaceholder: 'Ingrese las etiquetas del catálogo',
-    addTag: 'Agregar etiqueta',
+    addTag: 'Agregar',
     catalogTitle: 'Título del catálogo',
     catalogColor: 'Color del catálogo',
     catalogs: 'Catálogos',
@@ -115,7 +116,9 @@ export const es = {
     subtitle: 'Subtítulo',
     maxLength: 'Longitud máxima',
     variationNamePlaceholder: 'Nombre de la variación',
-    variationValuePlaceholder: 'Valor de la variación',
+    variationValuePlaceholder: 'Opciones de la variación',
+    variationName: 'Nombre de la variación',
+    variationOptions: 'Opciones de la variación',
     value: 'Valor',
     name: 'Nombre',
     productName: 'Nombre del producto',
@@ -132,6 +135,7 @@ export const es = {
     success: 'Éxito',
     error: 'Error',
     warning: 'Advertencia',
+    info: 'Información',
     catalogCreated: 'Catálogo creado correctamente',
     catalogRequired: 'Debe seleccionar un catálogo',
     productCreated: 'Producto creado correctamente',
@@ -169,6 +173,7 @@ export const es = {
     noResults:
       'No se encontraron resultados, por favor intenta con otra búsqueda.',
     filter: 'Filtrar',
+    clearFilters: 'Limpiar filtros',
     physicalStore: 'Tienda física',
     agreed: 'Acordado',
     delivery: 'Delivery',
@@ -177,6 +182,9 @@ export const es = {
     type: 'Tipo',
     catalog: 'Catálogo',
     product: 'Producto',
+    grid: 'Cuadrícula',
+    list: 'Lista',
+    retry: 'Reintentar',
     all: 'Todos',
     wishlist: 'Lista de deseos',
     myFavoriteBusinesses: 'Mis negocios favoritos',
@@ -299,6 +307,7 @@ export const es = {
     },
     total: 'Total',
     noCatalogProducts: 'Aun no has registrado productos en este catálogo.',
+    noPublicCatalogProducts: 'Este catálogo aún no tiene productos.',
     ourCatalogs: 'Nuestros catálogos',
     noBusinessCatalogs: 'Este negocio aún no tiene ningún catálogo creado.',
     ourMainProducts: 'Nuestros productos principales',
@@ -312,6 +321,9 @@ export const es = {
     generatingPdf: 'Generando PDF…',
     pdfDownloaded: 'PDF descargado! Puedes cerrar esta pestaña.',
     errorGeneratingPdf: 'Error al generar el PDF. Inténtalo de nuevo.',
+    pdfGenerationHelp:
+      'No cierres esta pestaña mientras se genera el archivo. La descarga empezará al terminar.',
+    backToCatalog: 'Volver al catálogo',
     resultsFor: 'Resultados para',
   },
   importProductsPage: {
@@ -321,7 +333,10 @@ export const es = {
     uploadTitle: 'Cargar documento',
     allowedFormats:
       'Formatos permitidos: CSV, XLSX, XLS, PDF, XML, TXT y JSON. Tamaño máximo: 100 MB.',
+    expectedContent:
+      'El documento debe incluir nombre, precio y descripción de cada producto. También puedes indicar stock y variaciones (color o talla). No se exige una plantilla de columnas fija.',
     selectFile: 'Documento de productos',
+    chooseFile: 'Seleccionar archivo',
     removeFile: 'Quitar archivo seleccionado',
     uploadAction: 'Importar documento',
     uploading: 'Cargando documento…',
@@ -535,11 +550,11 @@ export const es = {
     urlRequired: 'La URL es requerida (ej: https://instagram.com/username)',
     invalidUrl: 'La URL no es válida (ej: https://instagram.com/username)',
     fieldRequired: 'Este campo es obligatorio.',
+    minLength: 'Debe tener al menos {{min}} caracteres.',
+    minValue: 'El valor no puede ser menor que {{min}}.',
     passwordMismatch: 'Las contraseñas no coinciden.',
-    passwordMinLength:
-      'La contraseña debe tener al menos {{min}} caracteres.',
-    passwordMaxLength:
-      'La contraseña no puede superar {{max}} caracteres.',
+    passwordMinLength: 'La contraseña debe tener al menos {{min}} caracteres.',
+    passwordMaxLength: 'La contraseña no puede superar {{max}} caracteres.',
     passwordInvalidFormat:
       'La contraseña debe incluir mayúscula, minúscula, número y un carácter especial.',
     passwordUpdateFailed:
@@ -578,6 +593,8 @@ export const es = {
       '¿Estás seguro de querer eliminar este catálogo?',
     areYouSureYouWantToDeleteThisProduct:
       '¿Estás seguro de querer eliminar este producto?',
+    discardUnsavedChanges:
+      'Hay cambios sin guardar. Si sales ahora se perderán. ¿Deseas continuar?',
     doYouWantToDeleteThisLocation:
       '¿Estás seguro de querer eliminar esta ubicación?',
   },
@@ -694,6 +711,61 @@ export const es = {
     privacyLink: 'política de privacidad',
     googleRequiresTerms:
       'Marca la casilla de aceptación para usar el registro con Google.',
+    invalidCredentials:
+      'Correo o contraseña incorrectos. Verifica tus datos e inténtalo de nuevo.',
+    googleLoginFailed:
+      'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
+    accountNotFound: 'No encontramos una cuenta asociada a estos datos.',
+    emailNotVerified:
+      'Debes verificar tu correo electrónico antes de iniciar sesión.',
+    welcomeNamed: 'Bienvenido, {{name}}',
+    userCreated: 'Usuario creado exitosamente.',
+    businessCreated: 'Negocio creado exitosamente.',
+  },
+  errors: {
+    generic: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+    network:
+      'No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.',
+    timeout: 'El servidor tardó demasiado en responder. Inténtalo de nuevo.',
+    badRequest:
+      'Los datos enviados no son válidos. Revisa la información e inténtalo de nuevo.',
+    unauthorized: 'Debes iniciar sesión para realizar esta acción.',
+    sessionExpired: 'Tu sesión ha expirado. Inicia sesión nuevamente.',
+    forbidden: 'No tienes permisos para realizar esta acción.',
+    notFound: 'No encontramos lo que buscas. Puede que haya sido eliminado.',
+    conflict: 'Ya existe un registro con estos datos.',
+    tooManyRequests:
+      'Has realizado demasiadas solicitudes. Espera un momento e inténtalo de nuevo.',
+    server:
+      'Tenemos un problema en el servidor. Inténtalo de nuevo en unos minutos.',
+    loadFailed: 'No se pudo cargar la información. Inténtalo de nuevo.',
+    saveFailed: 'No se pudieron guardar los cambios. Inténtalo de nuevo.',
+    deleteFailed: 'No se pudo eliminar. Inténtalo de nuevo.',
+    email: {
+      alreadyRegistered: 'Este correo electrónico ya está registrado.',
+    },
+    password: {
+      notFitStandard:
+        'La nueva contraseña no cumple los requisitos de seguridad.',
+      equalToPrevious: 'La nueva contraseña no puede ser igual a la anterior.',
+      previousInvalid: 'La contraseña actual no es correcta.',
+    },
+    verificationCode: {
+      sendFailed:
+        'No se pudo enviar el código de verificación. Inténtalo de nuevo.',
+      notFound: 'El código de verificación no es válido.',
+      expired: 'El código de verificación ha expirado. Solicita uno nuevo.',
+      alreadyUsed: 'Este código de verificación ya fue utilizado.',
+      invalid: 'El código de verificación no es válido.',
+    },
+    file: {
+      adultContent:
+        'La imagen contiene contenido no permitido y no puede subirse.',
+      uploadFailed: 'No se pudo subir la imagen. Inténtalo de nuevo.',
+      invalidExtension: 'El formato del archivo no está permitido.',
+      poorQuality:
+        'La imagen no tiene la calidad suficiente. Usa una de mayor resolución.',
+    },
   },
   footer: {
     tagline:
