@@ -167,6 +167,10 @@ body {
   line-height: 1.2 !important;
 }
 
+.p-password-toggle-mask-icon {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 639px) {
   .h-100vh-calc {
     height: calc(100vh - 72px);

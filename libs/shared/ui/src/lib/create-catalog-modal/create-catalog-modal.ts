@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import {
   BusinessApiFilePrivateService,
   DirectoriesEnum,
+  isAdultContentUploadError,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -128,7 +129,7 @@ export class CreateCatalogModal {
           error: (error) => {
             this.uploadFailed = true;
             this.loadingFile = false;
-            this.adultContent = error.error.code === 22011;
+            this.adultContent = isAdultContentUploadError(error);
           },
         }),
     );
