@@ -6,9 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RatingPublicService } from '@lineup/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { RatingPublicService, ToastService } from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TextareaModule } from 'primeng/textarea';
 import { Button } from '../button/button';
@@ -43,8 +42,7 @@ export class RateModal implements OnInit {
   private readonly _ref = inject(DynamicDialogRef);
   private readonly _config = inject(DynamicDialogConfig);
   private readonly _ratingService = inject(RatingPublicService);
-  private readonly _messageService = inject(MessageService);
-  private readonly _translate = inject(TranslateService);
+  private readonly _toast = inject(ToastService);
 
   ngOnInit(): void {
     this.form = this._fb.group({
@@ -93,25 +91,12 @@ export class RateModal implements OnInit {
       .subscribe({
         next: () => {
           this.attempt.set(false);
-          this._messageService.add({
-            severity: 'success',
-            summary: this._translate.instant('general.success'),
-            detail: this._translate.instant('general.ratingSubmitted'),
-            life: 4000,
-          });
+          this._toast.success('general.ratingSubmitted');
           this._ref.close(true);
         },
-        error: (err) => {
+        error: (err: unknown) => {
           this.attempt.set(false);
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail:
-              err?.graphQLErrors?.[0]?.message ??
-              err?.message ??
-              this._translate.instant('general.errorRatingProduct'),
-            life: 5000,
-          });
+          this._toast.apiError(err);
         },
       });
   }

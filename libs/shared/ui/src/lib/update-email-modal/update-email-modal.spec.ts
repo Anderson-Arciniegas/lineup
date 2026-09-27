@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import {
   AuthStore,
   BusinessPrivateService,
+  ToastService,
   UserPublicService,
 } from '@lineup/core';
 import {
@@ -10,7 +11,6 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   DialogService,
   DynamicDialogConfig,
@@ -19,18 +19,21 @@ import {
 import { of, throwError } from 'rxjs';
 import { UpdateEmailModal } from './update-email-modal';
 
+type ToastMock = { apiError: jest.Mock; warn: jest.Mock };
+const toastMock = (): ToastMock => ({ apiError: jest.fn(), warn: jest.fn() });
+
 describe('UpdateEmailModal', () => {
   let component: UpdateEmailModal;
   let fixture: ComponentFixture<UpdateEmailModal>;
   let dialogRef: { close: jest.Mock };
-  let messageService: { add: jest.Mock };
+  let toast: ToastMock;
   let dialogService: { open: jest.Mock };
   let userService: { updateUserEmail: jest.Mock };
   let authStore: { setUser: jest.Mock; setBusiness: jest.Mock };
 
   beforeEach(async () => {
     dialogRef = { close: jest.fn() };
-    messageService = { add: jest.fn() };
+    toast = toastMock();
     dialogService = {
       open: jest.fn(() => ({ onClose: of(false) })),
     };
@@ -43,7 +46,7 @@ describe('UpdateEmailModal', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: messageService },
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
           provide: DynamicDialogConfig,
@@ -99,9 +102,7 @@ describe('UpdateEmailModal', () => {
   it('debe advertir si el email no cambió', () => {
     component.form.patchValue({ email: 'actual@lineup.com' });
     component.proceedToVerification();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'warn' }),
-    );
+    expect(toast.warn).toHaveBeenCalledWith('validation.emailUnchanged');
     expect(dialogService.open).not.toHaveBeenCalled();
   });
 
@@ -136,29 +137,14 @@ describe('UpdateEmailModal', () => {
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
-  it('debe mostrar error GraphQL al fallar actualización', () => {
-    userService.updateUserEmail.mockReturnValue(
-      throwError(() => ({ graphQLErrors: [{ message: 'Email en uso' }] })),
-    );
+  it('debe delegar el error de actualización al toast estándar', () => {
+    const error = new Error('Email en uso');
+    userService.updateUserEmail.mockReturnValue(throwError(() => error));
     dialogService.open.mockReturnValue({ onClose: of(true) });
     component.form.patchValue({ email: 'nuevo@lineup.com' });
     component.proceedToVerification();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error', detail: 'Email en uso' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(error);
     expect(component.attempt).toBe(false);
-  });
-
-  it('debe mostrar mensaje genérico si el error no tiene detalle', () => {
-    userService.updateUserEmail.mockReturnValue(
-      throwError(() => ({ message: 'Network error' })),
-    );
-    dialogService.open.mockReturnValue({ onClose: of(true) });
-    component.form.patchValue({ email: 'nuevo@lineup.com' });
-    component.proceedToVerification();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error', detail: 'Network error' }),
-    );
   });
 
   it('no debe proceder si attempt está activo', () => {
@@ -174,12 +160,12 @@ describe('UpdateEmailModal (negocio)', () => {
   let fixture: ComponentFixture<UpdateEmailModal>;
   let businessService: { updateBusinessEmail: jest.Mock };
   let authStore: { setBusiness: jest.Mock; setUser: jest.Mock };
-  let messageService: { add: jest.Mock };
+  let toast: ToastMock;
 
   beforeEach(async () => {
     businessService = { updateBusinessEmail: jest.fn(() => of({ id: 1 })) };
     authStore = { setBusiness: jest.fn(), setUser: jest.fn() };
-    messageService = { add: jest.fn() };
+    toast = toastMock();
 
     await TestBed.configureTestingModule({
       imports: [UpdateEmailModal, TranslateModule.forRoot()],
@@ -187,7 +173,7 @@ describe('UpdateEmailModal (negocio)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: messageService },
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         {
           provide: DynamicDialogConfig,
@@ -219,15 +205,14 @@ describe('UpdateEmailModal (negocio)', () => {
     expect(authStore.setBusiness).toHaveBeenCalled();
   });
 
-  it('debe mostrar error al fallar actualización de negocio', () => {
+  it('debe delegar el error de actualización de negocio al toast estándar', () => {
+    const error = new Error('fail');
     businessService.updateBusinessEmail.mockReturnValue(
-      throwError(() => new Error('fail')),
+      throwError(() => error),
     );
     component.form.patchValue({ email: 'nuevo-biz@lineup.com' });
     component.proceedToVerification();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(error);
     expect(component.attempt).toBe(false);
   });
 });
@@ -240,7 +225,7 @@ describe('UpdateEmailModal sin data', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: { add: jest.fn() } },
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: undefined } },
         {

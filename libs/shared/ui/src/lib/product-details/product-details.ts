@@ -22,6 +22,7 @@ import {
   RatesPrivateService,
   SocialNetworkPrivateService,
   StatusEnum,
+  ToastService,
   UtilsService,
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -80,6 +81,7 @@ export class ProductDetails implements OnChanges {
   private readonly _authStore = inject(AuthStore);
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _ratesService = inject(RatesPrivateService);
+  private readonly _toast = inject(ToastService);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
@@ -545,7 +547,11 @@ export class ProductDetails implements OnChanges {
   }
 
   likeProduct(): void {
-    if (this.hasLiked || !this._authStore.isUserLoggedIn()) return;
+    if (!this._authStore.isUserLoggedIn()) {
+      this._toast.warn('errors.unauthorized');
+      return;
+    }
+    if (this.hasLiked) return;
     this.hasLiked = true;
     this._subscription.add(
       this._productPublicService.likeProduct(this.product.id).subscribe({

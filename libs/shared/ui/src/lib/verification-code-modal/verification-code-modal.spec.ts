@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import {
   BusinessEmailVerificationPrivateService,
+  ToastService,
   UserEmailVerificationPublicService,
 } from '@lineup/core';
 import {
@@ -9,10 +10,11 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { VerificationCodeModal } from './verification-code-modal';
+
+const toastMock = (): { apiError: jest.Mock } => ({ apiError: jest.fn() });
 
 describe('VerificationCodeModal (usuario con email)', () => {
   let component: VerificationCodeModal;
@@ -24,11 +26,11 @@ describe('VerificationCodeModal (usuario con email)', () => {
     sendUserVerificationCode: jest.Mock;
     verifyUserVerificationCode: jest.Mock;
   };
-  let messageService: { add: jest.Mock };
+  let toast: { apiError: jest.Mock };
 
   beforeEach(async () => {
     dialogRef = { close: jest.fn() };
-    messageService = { add: jest.fn() };
+    toast = toastMock();
     userVerificationService = {
       sendVerificationCode: jest.fn(() => of({ success: true })),
       verifyCode: jest.fn(() => of({ success: true })),
@@ -42,7 +44,7 @@ describe('VerificationCodeModal (usuario con email)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: messageService },
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
           provide: DynamicDialogConfig,
@@ -114,25 +116,23 @@ describe('VerificationCodeModal (usuario con email)', () => {
     expect(userVerificationService.sendVerificationCode).toHaveBeenCalledTimes(1);
   });
 
-  it('debe mostrar error al fallar verificación', () => {
-    userVerificationService.verifyCode.mockReturnValue(
-      throwError(() => ({ message: 'Código inválido' })),
-    );
+  it('debe delegar el error de verificación al toast estándar', () => {
+    const error = new Error('Código inválido');
+    userVerificationService.verifyCode.mockReturnValue(throwError(() => error));
     component.form.patchValue({ code: '000000' });
     component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(error);
     expect(component.attempt).toBe(false);
   });
 
-  it('debe mostrar error al fallar envío inicial', () => {
+  it('debe delegar el error del envío inicial al toast estándar', () => {
+    const error = new Error('No se pudo enviar');
     userVerificationService.sendVerificationCode.mockReturnValue(
-      throwError(() => ({ message: 'No se pudo enviar' })),
+      throwError(() => error),
     );
     const fix = TestBed.createComponent(VerificationCodeModal);
     fix.detectChanges();
-    expect(messageService.add).toHaveBeenCalled();
+    expect(toast.apiError).toHaveBeenCalledWith(error);
   });
 });
 
@@ -156,7 +156,7 @@ describe('VerificationCodeModal (usuario sin email)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'user' } } },
         {
@@ -203,6 +203,7 @@ describe('VerificationCodeModal (usuario sin email)', () => {
 describe('VerificationCodeModal (negocio)', () => {
   let component: VerificationCodeModal;
   let fixture: ComponentFixture<VerificationCodeModal>;
+  let toast: { apiError: jest.Mock };
   let businessService: {
     sendVerificationCode: jest.Mock;
     verifyCode: jest.Mock;
@@ -211,6 +212,7 @@ describe('VerificationCodeModal (negocio)', () => {
   };
 
   beforeEach(async () => {
+    toast = toastMock();
     businessService = {
       sendVerificationCode: jest.fn(() => of({ success: true })),
       verifyCode: jest.fn(() => of({ success: true })),
@@ -224,7 +226,7 @@ describe('VerificationCodeModal (negocio)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         {
           provide: DynamicDialogConfig,
@@ -264,12 +266,14 @@ describe('VerificationCodeModal (negocio)', () => {
     expect(businessService.verifyCode).toHaveBeenCalled();
   });
 
-  it('debe reenviar y manejar error', () => {
+  it('debe reenviar y delegar el error al toast estándar', () => {
+    const error = new Error('Error GraphQL');
     businessService.sendVerificationCode.mockReturnValue(
-      throwError(() => ({ graphQLErrors: [{ message: 'Error GraphQL' }] })),
+      throwError(() => error),
     );
     component.resendCode();
     expect(component.resending).toBe(false);
+    expect(toast.apiError).toHaveBeenCalledWith(error);
   });
 });
 
@@ -291,7 +295,7 @@ describe('VerificationCodeModal (negocio sin email)', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'business' } } },
         {
@@ -330,7 +334,7 @@ describe('VerificationCodeModal enmascaramiento', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        MessageService,
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         {
           provide: DynamicDialogConfig,

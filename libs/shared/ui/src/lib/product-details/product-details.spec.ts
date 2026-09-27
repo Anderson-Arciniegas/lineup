@@ -8,6 +8,7 @@ import {
   RatesPrivateService,
   SocialNetworkPrivateService,
   StatusEnum,
+  ToastService,
   UtilsService,
 } from '@lineup/core';
 import {
@@ -19,7 +20,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { ProductDetails } from './product-details';
 
-describe('ProductDetails', () => {
+describe('ProductDetails (HU-22, HU-29)', () => {
   let component: ProductDetails;
   let fixture: ComponentFixture<ProductDetails>;
   let authStore: { isUserLoggedIn: jest.Mock };
@@ -30,8 +31,12 @@ describe('ProductDetails', () => {
   };
   let socialMediaService: { findByBusiness: jest.Mock };
   let ratesService: { findBcvOfficialRates: jest.Mock };
-  let utilsService: { formatPriceWithDiscount: jest.Mock; formatWhatsappPhone: jest.Mock };
+  let utilsService: {
+    formatPriceWithDiscount: jest.Mock;
+    formatWhatsappPhone: jest.Mock;
+  };
   let dialogService: { open: jest.Mock };
+  let toast: { warn: jest.Mock };
   let router: Router;
   let queryParamMap: Map<string, string>;
   let queryParams: Record<string, string>;
@@ -101,9 +106,12 @@ describe('ProductDetails', () => {
     };
     utilsService = {
       formatPriceWithDiscount: jest.fn((_sku, _discount, _rates) => 40),
-      formatWhatsappPhone: jest.fn((phone, msg) => `https://wa.me/${phone}?text=${msg}`),
+      formatWhatsappPhone: jest.fn(
+        (phone, msg) => `https://wa.me/${phone}?text=${msg}`,
+      ),
     };
     dialogService = { open: jest.fn(() => ({ onClose: of(null) })) };
+    toast = { warn: jest.fn() };
 
     await TestBed.configureTestingModule({
       imports: [ProductDetails, TranslateModule.forRoot()],
@@ -117,6 +125,7 @@ describe('ProductDetails', () => {
         { provide: RatesPrivateService, useValue: ratesService },
         { provide: UtilsService, useValue: utilsService },
         { provide: DialogService, useValue: dialogService },
+        { provide: ToastService, useValue: toast },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -203,7 +212,9 @@ describe('ProductDetails', () => {
       queryParamMap.set('sku', '100');
       initWithProduct(
         buildProduct({
-          variations: [{ title: 'variations.color', options: ['black', 'white'] }],
+          variations: [
+            { title: 'variations.color', options: ['black', 'white'] },
+          ],
           skus: [
             {
               id: 100,
@@ -239,7 +250,10 @@ describe('ProductDetails', () => {
       initWithProduct(
         buildProduct({
           discountProduct: {
-            discount: { status: StatusEnum.INACTIVE, discountType: DiscountTypeEnum.PERCENTAGE },
+            discount: {
+              status: StatusEnum.INACTIVE,
+              discountType: DiscountTypeEnum.PERCENTAGE,
+            },
           },
         }),
       );
@@ -371,7 +385,12 @@ describe('ProductDetails', () => {
     });
 
     it('debe devolver null si no hay variaciones', () => {
-      initWithProduct(buildProduct({ variations: [], skus: [{ id: 1, price: 10, quantity: 1 }] }));
+      initWithProduct(
+        buildProduct({
+          variations: [],
+          skus: [{ id: 1, price: 10, quantity: 1 }],
+        }),
+      );
       expect(component.skuAvailabilityMessage).toBeNull();
     });
   });
@@ -379,7 +398,9 @@ describe('ProductDetails', () => {
   describe('redes sociales y WhatsApp', () => {
     it('debe resolver URL de red social por id', () => {
       initWithProduct();
-      expect(component.getSocialNetworkUrl(1)).toBe('https://instagram.com/test');
+      expect(component.getSocialNetworkUrl(1)).toBe(
+        'https://instagram.com/test',
+      );
       expect(component.getSocialNetworkUrl(999)).toBe('');
     });
 
@@ -600,7 +621,10 @@ describe('ProductDetails', () => {
     it('no debe reinicializar si el id de producto no cambia', () => {
       const product = initWithProduct();
       socialMediaService.findByBusiness.mockClear();
-      fixture.componentRef.setInput('product', { ...product, title: 'Otro título' });
+      fixture.componentRef.setInput('product', {
+        ...product,
+        title: 'Otro título',
+      });
       fixture.detectChanges();
       expect(socialMediaService.findByBusiness).toHaveBeenCalledTimes(1);
     });
@@ -691,6 +715,7 @@ describe('ProductDetails', () => {
       initWithProduct();
       component.likeProduct();
       expect(productPublicService.likeProduct).not.toHaveBeenCalled();
+      expect(toast.warn).toHaveBeenCalledWith('errors.unauthorized');
     });
   });
 });

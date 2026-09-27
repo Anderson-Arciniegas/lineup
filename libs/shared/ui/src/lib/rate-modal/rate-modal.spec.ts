@@ -1,27 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { RatingPublicService } from '@lineup/core';
+import { RatingPublicService, ToastService } from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { RateModal } from './rate-modal';
+
+type ToastMock = { apiError: jest.Mock; success: jest.Mock };
+const toastMock = (): ToastMock => ({ apiError: jest.fn(), success: jest.fn() });
 
 describe('RateModal', () => {
   let component: RateModal;
   let fixture: ComponentFixture<RateModal>;
   let dialogRef: { close: jest.Mock };
   let ratingService: { rateProduct: jest.Mock };
-  let messageService: { add: jest.Mock };
+  let toast: ToastMock;
 
   beforeEach(async () => {
     dialogRef = { close: jest.fn() };
     ratingService = { rateProduct: jest.fn(() => of({})) };
-    messageService = { add: jest.fn() };
+    toast = toastMock();
 
     await TestBed.configureTestingModule({
       imports: [RateModal, TranslateModule.forRoot()],
@@ -29,7 +31,7 @@ describe('RateModal', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: messageService },
+        { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
           provide: DynamicDialogConfig,
@@ -81,7 +83,7 @@ describe('RateModal', () => {
       stars: 5,
       comment: 'Excelente',
     });
-    expect(messageService.add).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalledWith('general.ratingSubmitted');
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
@@ -90,27 +92,14 @@ describe('RateModal', () => {
     expect(ratingService.rateProduct).not.toHaveBeenCalled();
   });
 
-  it('debe mostrar error si falla el envío', () => {
-    ratingService.rateProduct.mockReturnValue(
-      throwError(() => ({ message: 'Error de red' })),
-    );
+  it('debe delegar el error del envío al toast estándar', () => {
+    const error = new Error('Error de red');
+    ratingService.rateProduct.mockReturnValue(throwError(() => error));
     component.setStars(3);
     component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(toast.apiError).toHaveBeenCalledWith(error);
+    expect(toast.success).not.toHaveBeenCalled();
     expect(component.attempt()).toBe(false);
-  });
-
-  it('debe mostrar error GraphQL al fallar envío', () => {
-    ratingService.rateProduct.mockReturnValue(
-      throwError(() => ({ graphQLErrors: [{ message: 'Rating blocked' }] })),
-    );
-    component.setStars(4);
-    component.submit();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: 'Rating blocked' }),
-    );
   });
 
   it('no debe enviar si attempt está activo', () => {
@@ -135,7 +124,7 @@ describe('RateModal sin idProduct', () => {
         provideRouter([]),
         TranslateService,
         TranslateStore,
-        { provide: MessageService, useValue: { add: jest.fn() } },
+        { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         { provide: DynamicDialogConfig, useValue: { data: {} } },
         { provide: RatingPublicService, useValue: ratingService },

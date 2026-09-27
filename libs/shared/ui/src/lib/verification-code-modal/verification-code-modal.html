@@ -23,12 +23,14 @@
         id="code"
         formControlName="code"
       />
-      @if (codeControl?.invalid && (codeControl?.dirty || codeControl?.touched))
-      {
-      <small class="text-red-500 text-sm">
-        {{ 'validation.fieldRequired' | translate }}
-      </small>
-      }
+      <div class="min-h-6">
+        @if (codeControl?.invalid && (codeControl?.dirty || codeControl?.touched))
+        {
+        <small class="text-red-500 text-sm">
+          {{ 'validation.fieldRequired' | translate }}
+        </small>
+        }
+      </div>
       <lib-button
         [label]="'verificationCodeModal.resendCode' | translate"
         [variant]="'text'"
