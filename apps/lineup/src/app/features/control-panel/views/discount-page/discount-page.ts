@@ -144,17 +144,6 @@ export class DiscountPage implements OnInit, OnDestroy {
                   AppConfigService.config.routes.discounts,
                 ]);
               },
-              error: (error: unknown) => {
-                console.error(error);
-                this._messageService.add({
-                  severity: 'error',
-                  summary: this._translate.instant('general.error'),
-                  detail: this._translate.instant(
-                    'general.errorDeletingDiscount',
-                  ),
-                  life: 4000,
-                });
-              },
             }),
           );
         }),
@@ -179,18 +168,11 @@ export class DiscountPage implements OnInit, OnDestroy {
           this.discount = d;
           this.loading = false;
         },
-        error: (error: unknown) => {
-          console.error(error);
+        error: () => {
           this.loading = false;
           this.errorMessage = this._translate.instant(
             'general.errorLoadingData',
           );
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant('general.errorLoadingData'),
-            life: 4000,
-          });
         },
       }),
     );

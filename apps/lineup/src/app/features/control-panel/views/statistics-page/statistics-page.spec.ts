@@ -360,8 +360,7 @@ describe('StatisticsPage', () => {
       expect(unsubSpy).toHaveBeenCalled();
     });
 
-    it('error al recargar estadísticas muestra toast y detiene loading', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    it('error al recargar estadísticas detiene loading sin toast local', async () => {
       TestBed.resetTestingModule();
       messageAdd = jest.fn();
       locationBack = jest.fn();
@@ -403,12 +402,10 @@ describe('StatisticsPage', () => {
       fixture = TestBed.createComponent(StatisticsPage);
       component = fixture.componentInstance;
       fixture.detectChanges();
-      expect(messageAdd).toHaveBeenCalledWith(
+      expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
       expect(component.loading).toBe(false);
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
     });
 
     it('error al cargar monedas registra en consola', async () => {

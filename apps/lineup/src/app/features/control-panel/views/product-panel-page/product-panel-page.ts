@@ -66,6 +66,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
   ref: DynamicDialogRef | undefined;
   attemptDelete = false;
   togglingPrimary = false;
+  loadErrorKey: string | null = null;
   /** Copia editable; `product` de Apollo es inmutable en `isPrimary`. */
   isPrimaryToggle = false;
   private _programmaticPrimaryUpdate = false;
@@ -197,6 +198,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
 
   private loadProduct(): void {
     this.loading = true;
+    this.loadErrorKey = null;
     this._subscription.add(
       this._productService.findOneProduct(Number(this.idProduct)).subscribe({
         next: (product) => {
@@ -206,18 +208,17 @@ export class ProductPanelPage implements OnInit, OnDestroy {
           this.productUrl = `/${this.product.business?.path}/${this.product.catalog?.path}/${this.product.id}`;
           this._cdr.markForCheck();
         },
-        error: (error) => {
-          console.error(error);
+        error: () => {
           this.loading = false;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant('general.errorLoadingData'),
-          });
+          this.loadErrorKey = 'errors.loadFailed';
           this._cdr.markForCheck();
         },
       }),
     );
+  }
+
+  retryLoad(): void {
+    this.loadProduct();
   }
 
   private loadRatings(): void {
@@ -270,10 +271,12 @@ export class ProductPanelPage implements OnInit, OnDestroy {
           const id = this.product.id;
           if (this.attemptDelete) return;
           this.attemptDelete = true;
+          this._cdr.markForCheck();
           this._subscription.add(
             this._productService.removeProduct(id).subscribe({
               next: () => {
                 this.attemptDelete = false;
+                this._cdr.markForCheck();
                 this._messageService.add({
                   severity: 'success',
                   summary: this._translate.instant('general.success'),
@@ -291,6 +294,7 @@ export class ProductPanelPage implements OnInit, OnDestroy {
               error: (error) => {
                 console.error(error);
                 this.attemptDelete = false;
+                this._cdr.markForCheck();
               },
             }),
           );
@@ -336,17 +340,9 @@ export class ProductPanelPage implements OnInit, OnDestroy {
           });
           this._cdr.markForCheck();
         },
-        error: (error) => {
-          console.error(error);
+        error: () => {
           this.setProductIsPrimary(previousValue);
           this.togglingPrimary = false;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant(
-              'general.errorTogglingPrimaryProduct',
-            ),
-          });
           this._cdr.markForCheck();
         },
       }),

@@ -288,7 +288,7 @@ describe('InventoryPage', () => {
 });
 
 describe('InventoryPage errores de carga', () => {
-  it('debe mostrar error si falla findAllMyCatalogs', async () => {
+  it('debe detener la carga sin toast local si falla findAllMyCatalogs', async () => {
     const messageAdd = jest.fn();
     await TestBed.configureTestingModule({
       imports: [InventoryPage, TranslateModule.forRoot()],
@@ -316,7 +316,8 @@ describe('InventoryPage errores de carga', () => {
     }).compileComponents();
     const fix = TestBed.createComponent(InventoryPage);
     fix.detectChanges();
-    expect(messageAdd).toHaveBeenCalledWith(
+    expect(fix.componentInstance.loadingCatalogs).toBe(false);
+    expect(messageAdd).not.toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
   });

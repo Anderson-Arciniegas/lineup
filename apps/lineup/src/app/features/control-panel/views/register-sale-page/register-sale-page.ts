@@ -139,10 +139,8 @@ export class RegisterSalePage implements OnInit, OnDestroy {
             this.products = items;
             this.loadingProducts = false;
           },
-          error: (error: unknown) => {
-            console.error(error);
+          error: () => {
             this.loadingProducts = false;
-            this.showLoadError();
           },
         }),
     );
@@ -314,17 +312,8 @@ export class RegisterSalePage implements OnInit, OnDestroy {
           this.cart = [];
           // this.triggerProductLoad();
         },
-        error: (error: unknown) => {
-          console.error(error);
+        error: () => {
           this.submittingSale = false;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            detail: this._translate.instant(
-              'registerSalePage.saleRegisterError',
-            ),
-            life: 5000,
-          });
         },
       }),
     );
@@ -609,22 +598,11 @@ export class RegisterSalePage implements OnInit, OnDestroy {
               this.triggerProductLoad();
             }
           },
-          error: (error: unknown) => {
-            console.error(error);
+          error: () => {
             this.loadingCatalogs = false;
-            this.showLoadError();
           },
         }),
     );
-  }
-
-  private showLoadError(): void {
-    this._messageService.add({
-      severity: 'error',
-      summary: this._translate.instant('general.error'),
-      detail: this._translate.instant('general.errorLoadingData'),
-      life: 4000,
-    });
   }
 
   private getRates(): void {

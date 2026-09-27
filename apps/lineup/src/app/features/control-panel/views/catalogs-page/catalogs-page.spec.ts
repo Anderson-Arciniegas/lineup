@@ -82,14 +82,14 @@ describe('CatalogsPage', () => {
       expect(findAllMyCatalogs).not.toHaveBeenCalled();
     });
 
-    it('debe resetear attempt tras error', () => {
-      findAllMyCatalogs.mockReturnValueOnce(
-        throwError(() => new Error('fail')),
-      );
+    it('debe resetear attempt tras error y guardar clave de carga', () => {
+      findAllMyCatalogs.mockReset();
+      findAllMyCatalogs.mockReturnValue(throwError(() => new Error('fail')));
       component.noMoreResults = false;
       component.attempt = false;
       component.getCatalogs();
       expect(component.attempt).toBe(false);
+      expect(component.loadErrorKey).toBe('errors.loadFailed');
     });
   });
 });

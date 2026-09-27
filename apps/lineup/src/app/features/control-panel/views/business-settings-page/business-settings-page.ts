@@ -93,18 +93,12 @@ export class BusinessSettingsPage implements OnInit {
             life: 3000,
           });
         },
-        error: (err) => {
-          console.error(err);
+        error: () => {
           this.business = {
             ...this.business,
             isBsEquivalentPriceEnabled: previous,
           };
           this.savingBsPricePreference = false;
-          this._messageService.add({
-            severity: 'error',
-            summary: this._translate.instant('general.error'),
-            life: 3000,
-          });
         },
       });
   }
