@@ -4,7 +4,7 @@ import { Router, UrlTree } from '@angular/router';
 import { AppConfigService, StorageService } from '@lineup/core';
 import { BusinessOnboardingGuard } from './business-onboarding.guard';
 
-describe('BusinessOnboardingGuard', () => {
+describe('BusinessOnboardingGuard (HU-05)', () => {
   let createUrlTree: jest.Mock;
   let storageGet: jest.Mock;
 

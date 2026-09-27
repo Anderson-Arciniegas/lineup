@@ -11,7 +11,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { GenerateProductDescriptionModal } from './generate-product-description-modal';
 
-describe('GenerateProductDescriptionModal', () => {
+describe('GenerateProductDescriptionModal (HU-17)', () => {
   let component: GenerateProductDescriptionModal;
   let fixture: ComponentFixture<GenerateProductDescriptionModal>;
   let dialogRef: { close: jest.Mock };

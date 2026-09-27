@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { I18nModule } from './i18n.module';
 
-describe('I18nModule', () => {
+describe('I18nModule (HU-30)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [I18nModule],
