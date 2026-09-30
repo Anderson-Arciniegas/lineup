@@ -327,36 +327,55 @@
 </div>
 
 } @else {
-<div
-  class="flex flex-col md:flex-row items-center justify-center gap-6 px-3 pb-5 w-full max-w-3xl"
->
-  <p-skeleton width="160px" height="160px" class="img-box" />
+<!-- Misma estructura/centrado que el bloque cargado para evitar salto a la izquierda. -->
+<div class="flex flex-col items-center justify-center gap-2 w-full px-4 pb-5">
+  <div
+    class="flex flex-row items-start justify-start gap-2 md:gap-6 w-full max-w-3xl"
+  >
+    <div
+      class="flex flex-none flex-col items-center justify-center img-box w-[90px] sm:w-40"
+    >
+      <p-skeleton styleClass="business-data-skeleton__avatar" />
+    </div>
+
+    <div
+      class="flex min-w-0 flex-1 w-full flex-col items-center md:items-start justify-center gap-2"
+    >
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-4 w-full"
+      >
+        <p-skeleton
+          width="12rem"
+          height="1.75rem"
+          borderRadius="8px"
+          styleClass="business-data-skeleton__title"
+        />
+        <p-skeleton width="4.5rem" height="1.25rem" borderRadius="8px" />
+      </div>
+
+      <div
+        class="hidden sm:flex min-w-0 w-full flex-col items-center md:items-start justify-center gap-2"
+      >
+        <p-skeleton width="100%" height="2.75rem" borderRadius="8px" />
+        <p-skeleton width="10rem" height="2rem" borderRadius="999px" />
+        <div class="flex flex-row items-center justify-start gap-3 w-full">
+          <p-skeleton width="35px" height="35px" borderRadius="8px" />
+          <p-skeleton width="35px" height="35px" borderRadius="8px" />
+          <p-skeleton width="2.75rem" height="2.75rem" borderRadius="999px" />
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div
-    class="flex flex-col items-center md:items-start justify-center gap-5 sm:gap-2 w-full md:w-125"
+    class="flex sm:hidden flex-col items-center md:items-start justify-center gap-2 w-full"
   >
-    <p-skeleton width="100%" height="46px" borderRadius="30px" />
-    <p-skeleton width="100%" height="28px" borderRadius="16px" />
-    <p-skeleton width="100%" height="28px" borderRadius="16px" />
-    <div class="flex flex-row items-center content-center justify-center gap-5">
-      <p-skeleton
-        width="40px"
-        height="40px"
-        class="img-social-media"
-        borderRadius="16px"
-      />
-      <p-skeleton
-        width="40px"
-        height="40px"
-        class="img-social-media"
-        borderRadius="16px"
-      />
-      <p-skeleton
-        width="40px"
-        height="40px"
-        class="img-social-media"
-        borderRadius="16px"
-      />
+    <p-skeleton width="100%" height="2.75rem" borderRadius="8px" />
+    <p-skeleton width="10rem" height="2rem" borderRadius="999px" />
+    <div class="flex flex-row items-center justify-start gap-3 w-full">
+      <p-skeleton width="35px" height="35px" borderRadius="8px" />
+      <p-skeleton width="35px" height="35px" borderRadius="8px" />
+      <p-skeleton width="2.75rem" height="2.75rem" borderRadius="999px" />
     </div>
   </div>
 </div>

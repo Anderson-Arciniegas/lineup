@@ -44,7 +44,7 @@ describe('UpdateProductSkuPage', () => {
     navigate = jest.fn();
     storageGet = jest.fn(() => null);
     storageRemove = jest.fn();
-    dialogOpen = jest.fn(() => ({ onClose: of(false) }));
+    dialogOpen = jest.fn(() => ({ onClose: of(true) }));
 
     await TestBed.configureTestingModule({
       imports: [UpdateProductSkuPage, TranslateModule.forRoot(), HttpClientTestingModule],
@@ -248,6 +248,7 @@ describe('UpdateProductSkuPage', () => {
     });
 
     it('debe confirmar si el formulario está dirty', () => {
+      dialogOpen.mockReturnValue({ onClose: of(false) });
       component.skuProductForm.markAsDirty();
       component.cancel();
       expect(dialogOpen).toHaveBeenCalled();

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UtilsService } from '@lineup/core';
+import { ToastService, UtilsService } from '@lineup/core';
 import {
   TranslateModule,
   TranslateService,
@@ -14,18 +14,40 @@ describe('ImageCropper', () => {
   let fixture: ComponentFixture<ImageCropper>;
   let dialogRef: { close: jest.Mock };
   let utilsService: { compressImage: jest.Mock };
+  let toast: { error: jest.Mock };
+  let probeWidth: number;
+  let probeHeight: number;
+  let OriginalImage: typeof Image;
 
   beforeEach(async () => {
     dialogRef = { close: jest.fn() };
     utilsService = {
       compressImage: jest.fn(() => of('data:image/png;base64,abc')),
     };
+    toast = { error: jest.fn() };
+    probeWidth = 800;
+    probeHeight = 600;
+    OriginalImage = global.Image;
+    global.URL.createObjectURL = jest.fn(() => 'blob:mock');
+    global.URL.revokeObjectURL = jest.fn();
+    global.Image = class MockImage {
+      onload: ((ev: Event) => unknown) | null = null;
+      onerror: ((ev: Event) => unknown) | null = null;
+      naturalWidth = 0;
+      naturalHeight = 0;
+      set src(_value: string) {
+        this.naturalWidth = probeWidth;
+        this.naturalHeight = probeHeight;
+        this.onload?.(new Event('load'));
+      }
+    } as unknown as typeof Image;
 
     await TestBed.configureTestingModule({
       imports: [ImageCropper, TranslateModule.forRoot()],
       providers: [
         { provide: DynamicDialogRef, useValue: dialogRef },
         { provide: UtilsService, useValue: utilsService },
+        { provide: ToastService, useValue: toast },
         TranslateService,
         TranslateStore,
       ],
@@ -38,6 +60,10 @@ describe('ImageCropper', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    global.Image = OriginalImage;
+  });
+
   it('debe crear el componente', () => {
     expect(component).toBeTruthy();
   });
@@ -46,25 +72,94 @@ describe('ImageCropper', () => {
     it('debe ignorar input sin archivos', () => {
       const event = { target: { files: [] } } as unknown as Event;
       component.fileChangeEvent(event);
-      expect(component.imageChangedEvent).toBeNull();
+      expect(component.selectedFile).toBeNull();
     });
 
-    it('debe propagar evento con archivo válido', () => {
+    it('debe asignar archivo válido seleccionado', () => {
       const file = new File([''], 'test.png', { type: 'image/png' });
-      const input = { files: [file] };
+      const input = { files: [file], value: 'test.png' };
       const event = { target: input } as unknown as Event;
       component.fileChangeEvent(event);
-      expect(component.imageChangedEvent).toBe(event);
+      expect(component.selectedFile).toBe(file);
+      expect(component.imageOrientation).toBe('landscape');
+      expect(input.value).toBe('');
     });
 
     it('debe manejar target null', () => {
       component.fileChangeEvent({ target: null } as unknown as Event);
-      expect(component.imageChangedEvent).toBeNull();
+      expect(component.selectedFile).toBeNull();
+    });
+
+    it('debe mostrar toast y cerrar el modal con tipo inválido', () => {
+      const file = new File([''], 'doc.pdf', { type: 'application/pdf' });
+      const input = { files: [file], value: 'doc.pdf' };
+      const event = { target: input } as unknown as Event;
+      component.fileChangeEvent(event);
+      expect(component.selectedFile).toBeNull();
+      expect(toast.error).toHaveBeenCalledWith('errors.file.invalidImageType');
+      expect(dialogRef.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('drag and drop', () => {
+    it('debe marcar isDragging en dragenter y limpiarlo en dragleave', () => {
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+      } as unknown as DragEvent;
+
+      component.onDragEnter(event);
+      expect(component.isDragging).toBe(true);
+
+      component.onDragLeave(event);
+      expect(component.isDragging).toBe(false);
+    });
+
+    it('onDragOver debe prevenir el default', () => {
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+        dataTransfer: { dropEffect: '' },
+      } as unknown as DragEvent;
+
+      component.onDragOver(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(event.dataTransfer?.dropEffect).toBe('copy');
+    });
+
+    it('onDrop debe cargar la imagen arrastrada', () => {
+      const file = new File(['img'], 'photo.jpg', { type: 'image/jpeg' });
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+        dataTransfer: { files: [file] },
+      } as unknown as DragEvent;
+
+      component.isDragging = true;
+      component.onDrop(event);
+      expect(component.isDragging).toBe(false);
+      expect(component.selectedFile).toBe(file);
+    });
+
+    it('onDrop con tipo inválido debe cerrar con toast', () => {
+      const file = new File(['x'], 'file.txt', { type: 'text/plain' });
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+        dataTransfer: { files: [file] },
+      } as unknown as DragEvent;
+
+      component.onDrop(event);
+      expect(toast.error).toHaveBeenCalledWith('errors.file.invalidImageType');
+      expect(dialogRef.close).toHaveBeenCalled();
+      expect(component.selectedFile).toBeNull();
     });
   });
 
   it('debe guardar imagen recortada en imageCropped', () => {
-    component.imageCropped({ objectUrl: 'blob:test' } as import('ngx-image-cropper').ImageCroppedEvent);
+    component.imageCropped({
+      objectUrl: 'blob:test',
+    } as import('ngx-image-cropper').ImageCroppedEvent);
     expect(component.croppedImage).toBe('blob:test');
   });
 
@@ -127,8 +222,71 @@ describe('ImageCropper', () => {
   });
 
   it('debe invocar callbacks de carga sin error', () => {
-    expect(() => component.imageLoaded({} as import('ngx-image-cropper').LoadedImage)).not.toThrow();
+    expect(() =>
+      component.imageLoaded({} as import('ngx-image-cropper').LoadedImage),
+    ).not.toThrow();
     expect(() => component.cropperReady()).not.toThrow();
-    expect(() => component.loadImageFailed()).not.toThrow();
+  });
+
+  it('applySelectedFile debe marcar portrait si la imagen es más alta', () => {
+    probeWidth = 400;
+    probeHeight = 800;
+    const file = new File([''], 'tall.png', { type: 'image/png' });
+    component.applySelectedFile(file);
+    expect(component.imageOrientation).toBe('portrait');
+    expect(component.selectedFile).toBe(file);
+  });
+
+  it('applySelectedFile debe marcar landscape si la imagen es más ancha', () => {
+    probeWidth = 1200;
+    probeHeight = 600;
+    const file = new File([''], 'wide.png', { type: 'image/png' });
+    component.applySelectedFile(file);
+    expect(component.imageOrientation).toBe('landscape');
+    expect(component.selectedFile).toBe(file);
+    // Alto fijo 250 → ancho preview = 250 * (1200/600) = 500
+    expect(component.landscapeDisplayWidth).toBe(500);
+  });
+
+  it('landscape muy ancha debe ampliar el preview hasta el tope del viewport', () => {
+    probeWidth = 4000;
+    probeHeight = 500;
+    component.applySelectedFile(
+      new File([''], 'panorama.png', { type: 'image/png' }),
+    );
+    expect(component.imageOrientation).toBe('landscape');
+    expect(component.landscapeDisplayWidth).toBeGreaterThan(500);
+    expect(component.landscapeDisplayWidth).toBeLessThanOrEqual(
+      Math.floor(window.innerWidth * 0.92) - 64,
+    );
+  });
+
+  it('portrait no debe fijar landscapeDisplayWidth', () => {
+    probeWidth = 400;
+    probeHeight = 800;
+    component.applySelectedFile(
+      new File([''], 'tall.png', { type: 'image/png' }),
+    );
+    expect(component.imageOrientation).toBe('portrait');
+    expect(component.landscapeDisplayWidth).toBeNull();
+  });
+
+  it('al rotar 90° debe intercambiar portrait y landscape', () => {
+    probeWidth = 1200;
+    probeHeight = 600;
+    component.applySelectedFile(
+      new File([''], 'wide.png', { type: 'image/png' }),
+    );
+    expect(component.imageOrientation).toBe('landscape');
+    component.rotateRight();
+    expect(component.imageOrientation).toBe('portrait');
+  });
+
+  it('loadImageFailed debe mostrar toast y cerrar el modal', () => {
+    component.selectedFile = new File([''], 'x.png', { type: 'image/png' });
+    component.loadImageFailed();
+    expect(toast.error).toHaveBeenCalledWith('errors.file.invalidImageType');
+    expect(dialogRef.close).toHaveBeenCalled();
+    expect(component.selectedFile).toBeNull();
   });
 });

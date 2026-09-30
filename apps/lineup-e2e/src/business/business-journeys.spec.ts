@@ -30,6 +30,7 @@ test.describe('Business / control-panel', () => {
     ).toBeVisible();
     await page.locator('#name').fill('Negocio Onboarding');
     await page.getByRole('button', { name: 'Guardar' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expectToast(page, /Negocio actualizado correctamente/);
     await expect(page).toHaveURL(/\/dashboard\/setup\/create-catalog/);
   });
@@ -46,6 +47,7 @@ test.describe('Business / control-panel', () => {
     await openImageCropperFromPlaceholder(page, 'Agrega tu imagen aquí');
     await completeImageCropper(page);
     await page.getByRole('button', { name: 'Crear' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expect(page).toHaveURL(
       /\/dashboard\/setup\/catalog\/demo-catalog\/create-product/,
     );
@@ -62,6 +64,7 @@ test.describe('Business / control-panel', () => {
     await openImageCropperFromPlaceholder(page, 'Agrega tus imágenes aquí');
     await completeImageCropper(page);
     await page.getByRole('button', { name: 'Crear' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expect(page).toHaveURL(/\/inventory/);
   });
 
@@ -79,6 +82,7 @@ test.describe('Business / control-panel', () => {
     ).toBeVisible();
     await page.locator('#name').fill('Negocio Editado');
     await page.getByRole('button', { name: 'Guardar' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expectToast(page, /Negocio actualizado correctamente/);
   });
 
@@ -141,6 +145,7 @@ test.describe('Business / control-panel', () => {
     await openImageCropperFromPlaceholder(page, 'Agrega tus imágenes aquí');
     await completeImageCropper(page);
     await page.getByRole('button', { name: 'Crear' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expect(page).toHaveURL(/\/inventory/);
   });
 
@@ -173,6 +178,7 @@ test.describe('Business / control-panel', () => {
     const price = page.locator('#price-0 input, input#price-0').first();
     await price.fill('12');
     await page.getByRole('button', { name: 'Guardar' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expectToast(page, /Inventario de producto actualizado/);
   });
 
@@ -223,6 +229,7 @@ test.describe('Business / control-panel', () => {
     });
     await expect(page.getByText('productos.csv')).toBeVisible();
     await page.getByRole('button', { name: 'Importar documento' }).click();
+    await confirmDialog(page, 'Confirmar');
     await expectToast(page, /Importación en proceso/);
   });
 });

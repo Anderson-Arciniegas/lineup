@@ -46,6 +46,22 @@ describe('ProductDescription', () => {
     expect(component.description).toBeTruthy();
   });
 
+  it('debe quitar fondos blancos inline de la descripción', () => {
+    component.product = {
+      id: 1,
+      description:
+        '<p style="background-color: rgb(255, 255, 255)">Hola</p><span style="background-color: yellow">x</span>',
+    } as import('@lineup/core').ProductSchema;
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const content: HTMLElement = fixture.nativeElement.querySelector(
+      '.product-description__content',
+    );
+    expect(content.innerHTML).not.toMatch(/background(?:-color)?\s*:\s*rgb\(\s*255/i);
+    expect(content.innerHTML).toContain('background-color: yellow');
+  });
+
   it('debe abrir modal de valoración', () => {
     component.openRateModal();
     expect(dialogService.open).toHaveBeenCalled();

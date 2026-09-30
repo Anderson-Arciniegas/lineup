@@ -33,6 +33,17 @@
   }
 }
 
+::ng-deep .business-data-skeleton__avatar {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 25px !important;
+}
+
+::ng-deep .business-data-skeleton__title {
+  max-width: 100%;
+}
+
 .img-social-media {
   width: 35px;
   height: 35px;

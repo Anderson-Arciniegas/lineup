@@ -85,6 +85,7 @@ describe('BusinessSettingsPage', () => {
   describe('onIsProductPriceInBsToggle', () => {
     it('debe persistir preferencia y actualizar store', () => {
       component.onIsProductPriceInBsToggle(true);
+      onClose$.next(true);
       expect(updateBusiness).toHaveBeenCalledWith({
         id: 1,
         isBsEquivalentPriceEnabled: true,
@@ -100,11 +101,20 @@ describe('BusinessSettingsPage', () => {
         throwError(() => new Error('fail')),
       );
       component.onIsProductPriceInBsToggle(true);
+      onClose$.next(true);
       expect(component.business.isBsEquivalentPriceEnabled).toBe(false);
       expect(component.savingBsPricePreference).toBe(false);
       expect(messageAdd).not.toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
       );
+    });
+
+    it('debe revertir si se cancela la confirmación', () => {
+      component.onIsProductPriceInBsToggle(true);
+      expect(component.business.isBsEquivalentPriceEnabled).toBe(true);
+      onClose$.next(false);
+      expect(component.business.isBsEquivalentPriceEnabled).toBe(false);
+      expect(updateBusiness).not.toHaveBeenCalled();
     });
 
     it('no debe hacer nada sin id de negocio', () => {

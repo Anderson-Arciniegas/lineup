@@ -20,9 +20,10 @@ import {
   StatusEnum,
   UtilsService,
 } from '@lineup/core';
-import { Button } from '@lineup/ui';
+import { Button, ConfirmationModal } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -39,6 +40,7 @@ import {
   map,
   of,
   switchMap,
+  take,
 } from 'rxjs';
 
 /** Línea de venta por SKU dentro de un producto del carrito */
@@ -98,6 +100,7 @@ export class RegisterSalePage implements OnInit, OnDestroy {
   private readonly _translate = inject(TranslateService);
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _utils = inject(UtilsService);
+  private readonly _dialogService = inject(DialogService);
   private readonly _subscriptions = new Subscription();
   /** Incluye catalogId para que distinctUntilChanged no bloquee la recarga al cambiar de catálogo con el mismo término. */
   private readonly _productLoad$ = new Subject<{
@@ -297,6 +300,31 @@ export class RegisterSalePage implements OnInit, OnDestroy {
   registerSale(): void {
     const payload = this.buildRegisterPayload();
     if (!payload) return;
+
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToRegisterThisSale',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose.pipe(take(1)).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this._submitRegisterSale(payload);
+      }
+    });
+  }
+
+  private _submitRegisterSale(payload: SalesInput): void {
+    if (this.submittingSale) {
+      return;
+    }
 
     this.submittingSale = true;
     this._subscriptions.add(

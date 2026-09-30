@@ -52,7 +52,10 @@ describe('EditBusinessPage', () => {
         provideNoopAnimations(),
         { provide: Apollo, useValue: createApolloMock().mock },
         { provide: MessageService, useValue: { add: messageAdd } },
-        DialogService,
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: BusinessPrivateService,
           useValue: {
@@ -85,7 +88,15 @@ describe('EditBusinessPage', () => {
       ],
     })
       .overrideComponent(EditBusinessPage, {
-        set: { template: '' },
+        set: {
+          template: '',
+          providers: [
+            {
+              provide: DialogService,
+              useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+            },
+          ],
+        },
       })
       .compileComponents();
 
@@ -194,7 +205,10 @@ describe('EditBusinessPage', () => {
           provideNoopAnimations(),
           { provide: Apollo, useValue: createApolloMock().mock },
           { provide: MessageService, useValue: { add: messageAdd } },
-          DialogService,
+          {
+            provide: DialogService,
+            useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+          },
           {
             provide: BusinessPrivateService,
             useValue: {
@@ -228,7 +242,15 @@ describe('EditBusinessPage', () => {
         ],
       })
         .overrideComponent(EditBusinessPage, {
-          set: { template: '' },
+          set: {
+            template: '',
+            providers: [
+              {
+                provide: DialogService,
+                useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+              },
+            ],
+          },
         })
         .compileComponents();
 

@@ -1,10 +1,17 @@
-import { CommonModule, Location } from '@angular/common';
 import {
-  ChangeDetectorRef,
+  CommonModule,
+  isPlatformBrowser,
+  isPlatformServer,
+  Location,
+} from '@angular/common';
+import {
   Component,
   inject,
+  makeStateKey,
   OnInit,
   PendingTasks,
+  PLATFORM_ID,
+  TransferState,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -30,15 +37,28 @@ import {
   ProductCard,
   SearchBar,
 } from '@lineup/ui';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+
+/** Snapshot SSR → cliente para no volver a pedir negocio, productos y catálogos. */
+interface BusinessPageSnapshot {
+  business: BusinessSchema;
+  products: ProductSchema[];
+  catalogs: CatalogSchema[];
+  page: number;
+  productPage: number;
+  noMoreResults: boolean;
+  noMoreProductsResults: boolean;
+}
+
+const businessPageStateKey = (path: string, search: string) =>
+  makeStateKey<BusinessPageSnapshot>(`business-page-${path}::${search}`);
 
 /**
  * Vista pública de un negocio: datos de marca, catálogos y productos con scroll infinito,
@@ -54,7 +74,6 @@ import { finalize } from 'rxjs/operators';
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    SkeletonModule,
     CatalogCard,
     ProductBreadcrumb,
     CreateCatalogCard,
@@ -91,6 +110,11 @@ export class BusinessPage implements OnInit {
   noMoreProductsResults = false;
   productsAttempt = false;
   attempt = false;
+  /**
+   * Tras la primera carga de listados; evita que el infinite scroll dispare
+   * otra petición (y el spinner) en el mismo ciclo en que aparece el contenido.
+   */
+  initialContentReady = false;
   /** Degradado vertical (arriba más intenso, abajo más suave; siempre más claro que el original). */
   pageBackgroundGradient = '';
   /** Según la zona superior del degradado: si es oscura, el texto de marca debe ser claro. */
@@ -106,9 +130,9 @@ export class BusinessPage implements OnInit {
   private static readonly _LUMINANCE_THRESHOLD = 0.45;
 
   private readonly _businessPublicService = inject(BusinessPublicService);
-  private readonly _cdr = inject(ChangeDetectorRef);
   private readonly _pendingTasks = inject(PendingTasks);
-  private readonly _translate = inject(TranslateService);
+  private readonly _transferState = inject(TransferState);
+  private readonly _platformId = inject(PLATFORM_ID);
   private readonly _authStore = inject(AuthStore);
   private readonly _utils = inject(UtilsService);
   private readonly _activatedRoute = inject(ActivatedRoute);
@@ -125,10 +149,14 @@ export class BusinessPage implements OnInit {
    * Dispara la carga del negocio y, según haya búsqueda o no, el flujo inicial o filtrado.
    */
   ngOnInit(): void {
-    this.path = this._activatedRoute.snapshot.params['business'];
+    this.path = this.resolveBusinessPath();
     const st = this._location.getState() as { lineupPublicBack?: string };
     const back = st?.lineupPublicBack?.trim();
-    this.breadcrumbBackPath = back ? (back.startsWith('/') ? back : `/${back}`) : null;
+    this.breadcrumbBackPath = back
+      ? back.startsWith('/')
+        ? back
+        : `/${back}`
+      : null;
 
     this.searchQuery =
       this._activatedRoute.snapshot.queryParams?.['search'] ?? '';
@@ -136,41 +164,79 @@ export class BusinessPage implements OnInit {
     this.getBusiness();
   }
 
+  /** Path del negocio desde la ruta actual o padres (`:business`). */
+  private resolveBusinessPath(): string {
+    let route: ActivatedRoute | null = this._activatedRoute;
+    while (route) {
+      const value = route.snapshot.params['business'];
+      if (value) {
+        return value;
+      }
+      route = route.parent;
+    }
+    return this._activatedRoute.snapshot.params['business'];
+  }
+
   /**
-   * Obtiene el negocio por path, determina si el visitante es el dueño,
-   * aplica SEO, color de fondo y carga de catálogos/productos o visita anónima.
+   * Obtiene el negocio por path y sus listados iniciales.
+   * TransferState evita refetch de negocio + productos + catálogos al hidratar.
    */
   private getBusiness(): void {
+    const stateKey = businessPageStateKey(this.path, this.searchQuery);
+    const transferred = this._transferState.get(stateKey, null);
+    if (transferred) {
+      this._transferState.remove(stateKey);
+      this.restoreSnapshot(transferred);
+      return;
+    }
+
     const taskDone = this._pendingTasks.add();
     this._subscription.add(
-      this._businessPublicService
-        .findBusinessByPath(this.path)
-        .pipe(finalize(() => taskDone()))
-        .subscribe({
-          next: (business) => {
-            this.business = business;
-            this.myBusiness =
-              Number(this._authStore.business()?.id) ===
-              Number(this.business.id);
-            if (this.searchQuery && this.searchQuery !== '') {
-              this.getProducts();
-              this.getCatalogs();
-            } else {
-              this.loadInitialCatalogsAndProducts();
-            }
-            if (!this.myBusiness) {
-              this.visitBusiness();
-            }
-            if (this.business.hexColor) {
-              this.setColor(this.business.hexColor);
-            }
-            this._seoService.setBusinessPage(this.business);
-          },
-          error: (error) => {
-            console.error(error);
-          },
-        }),
+      this._businessPublicService.findBusinessByPath(this.path).subscribe({
+        next: (business) => {
+          this.bindBusiness(business);
+          this.loadInitialLists(stateKey, taskDone);
+        },
+        error: (error) => {
+          console.error(error);
+          taskDone();
+        },
+      }),
     );
+  }
+
+  /** Restaura snapshot SSR sin volver a pedir listados. */
+  private restoreSnapshot(snapshot: BusinessPageSnapshot): void {
+    this.bindBusiness(snapshot.business);
+    this.products = snapshot.products ?? [];
+    this.catalogs = snapshot.catalogs ?? [];
+    this.page = snapshot.page ?? 1;
+    this.productPage = snapshot.productPage ?? 1;
+    this.noMoreResults = snapshot.noMoreResults ?? false;
+    this.noMoreProductsResults = snapshot.noMoreProductsResults ?? false;
+    this.attempt = false;
+    this.productsAttempt = false;
+    this.initialContentReady = true;
+    this.recordVisitIfNeeded();
+  }
+
+  /** Asigna negocio, dueño, color y SEO (sin disparar listados). */
+  private bindBusiness(business: BusinessSchema): void {
+    this.business = business;
+    this.myBusiness =
+      Number(this._authStore.business()?.id) === Number(this.business.id);
+    if (this.business.hexColor) {
+      this.setColor(this.business.hexColor);
+    }
+    this._seoService.setBusinessPage(this.business);
+  }
+
+  /** Visita solo en navegador para no duplicar entre SSR y cliente. */
+  private recordVisitIfNeeded(): void {
+    if (!isPlatformBrowser(this._platformId) || this.myBusiness) {
+      return;
+    }
+    this.visitBusiness();
   }
 
   /** Registra visita al perfil del negocio (usuarios no dueños). */
@@ -185,8 +251,101 @@ export class BusinessPage implements OnInit {
     );
   }
 
+  /**
+   * Primera carga de productos + catálogos; en SSR espera PendingTasks y
+   * persiste snapshot para el cliente.
+   */
+  private loadInitialLists(
+    stateKey: ReturnType<typeof businessPageStateKey>,
+    taskDone: () => void,
+  ): void {
+    if (this.attempt) {
+      taskDone();
+      return;
+    }
+
+    this.attempt = true;
+    this.productsAttempt = true;
+    this.initialContentReady = false;
+    this.products = [];
+    this.catalogs = [];
+    this.page = 1;
+    this.productPage = 1;
+    this.noMoreResults = false;
+    this.noMoreProductsResults = false;
+
+    const hasSearch = !!(this.searchQuery && this.searchQuery !== '');
+    const catalogs$ = this._catalogService.findCatalogsByBusinessId(
+      this.business.id,
+      {
+        page: this.page,
+        limit: 20,
+        ...(hasSearch ? { search: this.searchQuery } : {}),
+      },
+    );
+
+    const products$ = hasSearch
+      ? this._productService.getAllByBusiness(this.business.id, {
+          page: this.productPage,
+          limit: 20,
+          search: this.searchQuery,
+        })
+      : this._productService.getAllPrimaryProductsByBusiness({
+          idBusiness: this.business.id,
+        });
+
+    this._subscription.add(
+      forkJoin({ products: products$, catalogsPage: catalogs$ })
+        .pipe(
+          finalize(() => {
+            this.attempt = false;
+            this.productsAttempt = false;
+            this.initialContentReady = true;
+            taskDone();
+          }),
+        )
+        .subscribe({
+          next: ({ products, catalogsPage }) => {
+            if (Array.isArray(products)) {
+              this.products = products;
+            } else {
+              this.products = products.items;
+              this.productPage++;
+              if (products.items.length === 0) {
+                this.noMoreProductsResults = true;
+              }
+            }
+            this.applyCatalogPage(catalogsPage);
+            this.persistSnapshotIfServer(stateKey);
+            this.recordVisitIfNeeded();
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        }),
+    );
+  }
+
+  private persistSnapshotIfServer(
+    stateKey: ReturnType<typeof businessPageStateKey>,
+  ): void {
+    if (!isPlatformServer(this._platformId)) {
+      return;
+    }
+    this._transferState.set(stateKey, {
+      business: this.business,
+      products: this.products,
+      catalogs: this.catalogs,
+      page: this.page,
+      productPage: this.productPage,
+      noMoreResults: this.noMoreResults,
+      noMoreProductsResults: this.noMoreProductsResults,
+    });
+  }
+
   /** Infinite scroll: si hay búsqueda activa pagina productos y catálogos; si no, solo catálogos. */
   onScroll(): void {
+    if (!this.initialContentReady) return;
     if (this.searchQuery && this.searchQuery !== '') {
       this.getProducts();
       this.getCatalogs();
@@ -210,57 +369,23 @@ export class BusinessPage implements OnInit {
     this._utils.navigate([this.business.path], {
       queryParams: { search: this.searchQuery },
     });
-    this.products = [];
-    this.catalogs = [];
-    this.noMoreResults = false;
-    this.noMoreProductsResults = false;
-    this.page = 1;
-    this.productPage = 1;
-    this.getProducts();
-    this.getCatalogs();
+    this.reloadListsAfterFilterChange();
   }
 
   /** Quita filtros de búsqueda y vuelve a la carga inicial paralela de productos y catálogos. */
   onClearSearch(): void {
     this.searchQuery = '';
     this._utils.navigate([this.business.path]);
-    this.products = [];
-    this.catalogs = [];
-    this.noMoreResults = false;
-    this.page = 1;
-    this.productPage = 1;
-
-    this.loadInitialCatalogsAndProducts();
+    this.reloadListsAfterFilterChange();
   }
 
-  /** Carga productos y primera página de catálogos en paralelo. */
-  private loadInitialCatalogsAndProducts(): void {
-    if (this.attempt) return;
-    this.attempt = true;
-    this._subscription.add(
-      forkJoin({
-        products: this._productService.getAllPrimaryProductsByBusiness({
-          idBusiness: this.business.id,
-        }),
-        catalogsPage: this._catalogService.findCatalogsByBusinessId(
-          this.business.id,
-          { page: this.page, limit: 20 },
-        ),
-      })
-        .pipe(
-          finalize(() => {
-            this.attempt = false;
-          }),
-        )
-        .subscribe({
-          next: ({ products, catalogsPage }) => {
-            this.products = products;
-            this.applyCatalogPage(catalogsPage);
-          },
-          error: (error) => {
-            console.error(error);
-          },
-        }),
+  /** Recarga listados tras cambiar búsqueda (sin refetch del negocio). */
+  private reloadListsAfterFilterChange(): void {
+    this.attempt = false;
+    this.productsAttempt = false;
+    this.loadInitialLists(
+      businessPageStateKey(this.path, this.searchQuery),
+      () => undefined,
     );
   }
 
@@ -407,7 +532,6 @@ export class BusinessPage implements OnInit {
     };
   }
 
-  /** Luminancia relativa sRGB (WCAG), entre 0 y 1. */
   /** Luminancia relativa sRGB usada para decidir contraste del texto sobre el degradado. */
   private static relativeLuminance(r: number, g: number, b: number): number {
     const linear = [r, g, b].map((v) => {

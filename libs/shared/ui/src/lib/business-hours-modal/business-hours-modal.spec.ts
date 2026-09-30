@@ -10,7 +10,7 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { BusinessHoursModal } from './business-hours-modal';
 
@@ -29,6 +29,10 @@ describe('BusinessHoursModal', () => {
         TranslateService,
         TranslateStore,
         { provide: DynamicDialogRef, useValue: dialogRef },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         { provide: DynamicDialogConfig, useValue: { data: {} } },
         {
           provide: BusinessPrivateService,
@@ -139,6 +143,10 @@ describe('BusinessHoursModal (modo edición)', () => {
         TranslateStore,
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
+        {
           provide: DynamicDialogConfig,
           useValue: { data: { businessHour } },
         },
@@ -223,6 +231,10 @@ describe('BusinessHoursModal envío y pickers', () => {
         TranslateService,
         TranslateStore,
         { provide: DynamicDialogRef, useValue: dialogRef },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         { provide: DynamicDialogConfig, useValue: { data: { businessHours: [] } } },
         { provide: BusinessPrivateService, useValue: businessService },
       ],

@@ -172,6 +172,31 @@ describe('ProductPanelPage (HU-09, HU-15)', () => {
     });
   });
 
+  describe('onIsPrimaryToggle', () => {
+    it('no debe llamar al servicio si se cancela', () => {
+      const productService = TestBed.inject(ProductPrivateService);
+      const toggleSpy = productService.toggleProductIsPrimary as jest.Mock;
+      dialogOpen.mockReturnValue({ onClose: of(false) });
+
+      component.onIsPrimaryToggle(true);
+
+      expect(dialogOpen).toHaveBeenCalled();
+      expect(toggleSpy).not.toHaveBeenCalled();
+      expect(component.isPrimaryToggle).toBe(false);
+    });
+
+    it('debe llamar al servicio si se confirma', () => {
+      const productService = TestBed.inject(ProductPrivateService);
+      const toggleSpy = productService.toggleProductIsPrimary as jest.Mock;
+      dialogOpen.mockReturnValue({ onClose: of(true) });
+
+      component.onIsPrimaryToggle(true);
+
+      expect(toggleSpy).toHaveBeenCalledWith(1);
+      expect(component.isPrimaryToggle).toBe(true);
+    });
+  });
+
   describe('helpers de descuento', () => {
     it('debe devolver clave i18n según tipo de descuento', () => {
       expect(component.discountTypeLabelKey(DiscountTypeEnum.PERCENTAGE)).toBe(

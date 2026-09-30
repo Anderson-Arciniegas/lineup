@@ -26,7 +26,7 @@ export class CatalogPublicService {
       .query<{ findCatalogsByBusinessId: PaginatedCatalogs }>({
         query: FIND_CATALOGS_BY_BUSINESS_ID_QUERY,
         variables: { idBusiness, pagination },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         context: {
           withCredentials: true,
         },
@@ -57,7 +57,7 @@ export class CatalogPublicService {
       .query<{ findOneCatalogByPath: CatalogSchema }>({
         query: FIND_ONE_CATALOG_BY_PATH_QUERY,
         variables: { path },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         context: {
           withCredentials: true,
           ...(skipGlobalErrorToast ? SKIP_GLOBAL_ERROR_TOAST_APOLLO_CONTEXT : {}),

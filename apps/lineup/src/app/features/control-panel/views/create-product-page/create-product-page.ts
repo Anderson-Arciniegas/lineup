@@ -483,12 +483,12 @@ export class CreateProductPage implements OnInit {
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
-      width: '600px',
-      style: { maxHeight: '80vh' },
+      width: '640px',
+      style: { maxHeight: '90vh' },
       breakpoints: {
-        '640px': '450px',
-        '500px': '80vw',
-        '400px': '90vw',
+        '640px': '92vw',
+        '500px': '94vw',
+        '400px': '96vw',
       },
       modal: true,
       draggable: false,
@@ -682,6 +682,47 @@ export class CreateProductPage implements OnInit {
       });
       return;
     }
+    if (this.isSubmitting) {
+      return;
+    }
+
+    const messageKey = this.product
+      ? 'confirmation.areYouSureYouWantToUpdateThisProduct'
+      : 'confirmation.areYouSureYouWantToCreateThisProduct';
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(messageKey),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitProduct(raw, idCatalog);
+        }
+      });
+  }
+
+  private _submitProduct(
+    raw: {
+      title?: string;
+      subtitle?: string;
+      description?: string;
+      variations?: Array<{
+        id?: number;
+        title: string;
+        options: string[];
+        newOption?: string;
+      }>;
+    },
+    idCatalog: number,
+  ): void {
     if (this.isSubmitting) {
       return;
     }

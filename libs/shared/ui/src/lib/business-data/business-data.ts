@@ -137,18 +137,38 @@ export class BusinessData implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    void changes;
-    if (this.business) {
-      this.followers = this.business.followers;
-      this.isFollowingBusiness();
-      this.getMySocialNetworkBusinesses();
-      this.color = this.business.hexColor ?? '#ffffff';
-      this.discount = this.business.discounts.find(
+    const businessChange = changes['business'];
+    if (!businessChange?.currentValue) {
+      return;
+    }
+
+    const previous = businessChange.previousValue as BusinessSchema | undefined;
+    const current = businessChange.currentValue as BusinessSchema;
+    // Evita refetch al cambiar solo inputs de presentación (p. ej. useLightText).
+    if (
+      !businessChange.firstChange &&
+      previous?.id != null &&
+      Number(previous.id) === Number(current.id)
+    ) {
+      this.followers = current.followers;
+      this.color = current.hexColor ?? '#ffffff';
+      this.discount = current.discounts?.find(
         (discount) =>
           discount.scope === DiscountScopeEnum.BUSINESS &&
           discount.status === StatusEnum.ACTIVE,
       );
+      return;
     }
+
+    this.followers = current.followers;
+    this.isFollowingBusiness();
+    this.getMySocialNetworkBusinesses();
+    this.color = current.hexColor ?? '#ffffff';
+    this.discount = current.discounts?.find(
+      (discount) =>
+        discount.scope === DiscountScopeEnum.BUSINESS &&
+        discount.status === StatusEnum.ACTIVE,
+    );
   }
 
   getDescription() {

@@ -28,10 +28,11 @@ import {
   ProductSchema,
   UtilsService,
 } from '@lineup/core';
-import { Button } from '@lineup/ui';
+import { Button, ConfirmationModal } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { ProgressBar } from 'primeng/progressbar';
 import { ProgressSpinner } from 'primeng/progressspinner';
 
@@ -72,6 +73,7 @@ export class ImportProductsPage implements OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly utils = inject(UtilsService);
   private readonly apiError = inject(ApiErrorService);
+  private readonly dialogService = inject(DialogService);
   private pollingSubscription?: Subscription;
 
   readonly fileInput =
@@ -124,6 +126,33 @@ export class ImportProductsPage implements OnDestroy {
       return;
     }
     if (!this.isValidFile(file)) {
+      return;
+    }
+
+    const ref = this.dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this.translate.instant(
+          'confirmation.areYouSureYouWantToImportTheseProducts',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitUploadDocument(file);
+        }
+      });
+  }
+
+  private _submitUploadDocument(file: File): void {
+    if (this.isUploading()) {
       return;
     }
 

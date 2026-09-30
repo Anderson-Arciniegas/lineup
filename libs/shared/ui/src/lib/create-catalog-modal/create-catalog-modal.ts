@@ -59,12 +59,12 @@ export class CreateCatalogModal {
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
-      width: '600px',
-      style: { maxHeight: '80vh' },
+      width: '640px',
+      style: { maxHeight: '90vh' },
       breakpoints: {
-        '640px': '450px',
-        '500px': '80vw',
-        '400px': '90vw',
+        '640px': '92vw',
+        '500px': '94vw',
+        '400px': '96vw',
       },
       dismissableMask: true,
       modal: true,

@@ -10,6 +10,7 @@ import {
 } from '@lineup/core';
 import {
   Button,
+  ConfirmationModal,
   UpdateEmailModal,
   UpdatePasswordModal,
   VerificationCodeModal,
@@ -73,6 +74,38 @@ export class BusinessSettingsPage implements OnInit {
     }
     const previous = this.business.isBsEquivalentPriceEnabled ?? false;
     this.business = { ...this.business, isBsEquivalentPriceEnabled: value };
+
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToChangeBsPricePreference',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) {
+          this.business = {
+            ...this.business,
+            isBsEquivalentPriceEnabled: previous,
+          };
+          return;
+        }
+        this._submitBsPricePreference(value, previous);
+      });
+  }
+
+  private _submitBsPricePreference(value: boolean, previous: boolean): void {
+    if (!this.business?.id || this.savingBsPricePreference) {
+      return;
+    }
     this.savingBsPricePreference = true;
 
     this._businessPrivateService

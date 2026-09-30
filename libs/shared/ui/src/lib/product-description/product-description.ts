@@ -37,7 +37,9 @@ export class ProductDescription implements OnInit {
         .filter((n): n is string => n != null) ?? [];
 
     const raw = this.product.description ?? '';
-    const withNonBreakingHyphens = this._replaceHyphensInTextContent(raw);
+    const withoutWhiteBackgrounds = this._stripWhiteBackgrounds(raw);
+    const withNonBreakingHyphens =
+      this._replaceHyphensInTextContent(withoutWhiteBackgrounds);
     this.description = this._sanitizer.bypassSecurityTrustHtml(
       withNonBreakingHyphens,
     );
@@ -74,5 +76,16 @@ export class ProductDescription implements OnInit {
     return html.replace(/(^|>)([^<]*)(?=<|$)/g, (_, prefix, text) => {
       return prefix + text.replace(/-/g, '\u2011');
     });
+  }
+
+  /**
+   * Elimina fondos blancos inline del HTML del editor (Quill / IA) para que la
+   * descripción no tape el fondo de marca en el detalle de producto.
+   */
+  private _stripWhiteBackgrounds(html: string): string {
+    return html.replace(
+      /background(?:-color)?\s*:\s*(?:#fff(?:fff)?|white|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\)|rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*[\d.]+\s*\))\s*;?/gi,
+      '',
+    );
   }
 }

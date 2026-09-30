@@ -11,6 +11,7 @@ import {
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { RegisterSalePage } from './register-sale-page';
 
@@ -143,6 +144,10 @@ describe('RegisterSalePage', () => {
         {
           provide: UtilsService,
           useValue: { formatPriceWithDiscount },
+        },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
         },
       ],
     }).compileComponents();
@@ -541,6 +546,10 @@ describe('RegisterSalePage', () => {
           useValue: { findBcvOfficialRates: () => of({ dollar: 1, euro: 1, sourceDate: '2024-01-01' }) },
         },
         { provide: UtilsService, useValue: { formatPriceWithDiscount } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(RegisterSalePage);
@@ -586,6 +595,10 @@ describe('RegisterSalePage', () => {
           },
         },
         { provide: UtilsService, useValue: { formatPriceWithDiscount } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(RegisterSalePage);

@@ -7,7 +7,7 @@ import {
   TranslateStore,
 } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { AddSocialMediaModal } from './add-social-media-modal';
 
@@ -35,6 +35,10 @@ describe('AddSocialMediaModal (URL)', () => {
         TranslateStore,
         MessageService,
         { provide: DynamicDialogRef, useValue: dialogRef },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: DynamicDialogConfig,
           useValue: {
@@ -104,6 +108,10 @@ describe('AddSocialMediaModal (URL)', () => {
         MessageService,
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
         {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
+        {
           provide: DynamicDialogConfig,
           useValue: {
             data: {
@@ -172,6 +180,10 @@ describe('AddSocialMediaModal (WhatsApp)', () => {
         TranslateStore,
         MessageService,
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: DynamicDialogConfig,
           useValue: {

@@ -27,15 +27,16 @@ import {
   UpdateDiscountInput,
   UtilsService,
 } from '@lineup/core';
-import { Button, ProductBreadcrumb } from '@lineup/ui';
+import { Button, ConfirmationModal, ProductBreadcrumb } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 /**
  * Creación y edición de descuentos con alcance negocio/catálogo/producto,
@@ -110,6 +111,7 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
   private readonly _utils = inject(UtilsService);
   private readonly _messageService = inject(MessageService);
   private readonly _translate = inject(TranslateService);
+  private readonly _dialogService = inject(DialogService);
   private readonly _subscriptions = new Subscription();
 
   constructor() {
@@ -442,6 +444,31 @@ export class CreateDiscountPage implements OnInit, OnDestroy {
       this.discountForm.markAllAsTouched();
       return;
     }
+    if (this.isSubmitting) return;
+
+    const messageKey =
+      this.editingDiscountId != null
+        ? 'confirmation.areYouSureYouWantToUpdateThisDiscount'
+        : 'confirmation.areYouSureYouWantToCreateThisDiscount';
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(messageKey),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose.pipe(take(1)).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this._submitDiscount();
+      }
+    });
+  }
+
+  private _submitDiscount(): void {
     if (this.isSubmitting) return;
 
     const raw = this.discountForm.getRawValue() as {

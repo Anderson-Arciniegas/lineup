@@ -320,8 +320,38 @@ export class ProductPanelPage implements OnInit, OnDestroy {
     ) {
       return;
     }
-    const id = this.product.id;
     const previousValue = !newValue;
+    this.setProductIsPrimary(newValue);
+
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToChangePrimaryProduct',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) {
+          this.setProductIsPrimary(previousValue);
+          return;
+        }
+        this._submitPrimaryToggle(previousValue);
+      });
+  }
+
+  private _submitPrimaryToggle(previousValue: boolean): void {
+    if (!this.product || this.togglingPrimary) {
+      return;
+    }
+    const id = this.product.id;
     this.togglingPrimary = true;
     this._subscription.add(
       this._productService.toggleProductIsPrimary(id).subscribe({

@@ -14,12 +14,18 @@ import {
   ToastService,
   UserPublicService,
 } from '@lineup/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
+import { take } from 'rxjs';
 import { Button } from '../button/button';
+import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 
 export type UpdatePasswordModalType = 'user' | 'business';
 
@@ -69,6 +75,8 @@ export class UpdatePasswordModal implements OnInit {
   private readonly _userService = inject(UserPublicService);
   private readonly _businessService = inject(BusinessPrivateService);
   private readonly _toast = inject(ToastService);
+  private readonly _dialogService = inject(DialogService);
+  private readonly _translate = inject(TranslateService);
 
   ngOnInit(): void {
     const data = this._config.data as UpdatePasswordModalData | undefined;
@@ -110,6 +118,31 @@ export class UpdatePasswordModal implements OnInit {
   submit(): void {
     if (this.form.invalid || this.attempt) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    const confirmRef = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToUpdateThisPassword',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    confirmRef.onClose.pipe(take(1)).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this._submitPassword();
+      }
+    });
+  }
+
+  private _submitPassword(): void {
+    if (this.attempt) {
       return;
     }
     this.attempt = true;

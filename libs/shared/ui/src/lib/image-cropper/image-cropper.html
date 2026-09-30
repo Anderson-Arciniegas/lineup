@@ -1,138 +1,185 @@
-<div class="image-cropper flex flex-col items-center justify-center gap-5">
-  @if (step === 1) {
+<div class="image-cropper">
+  <div class="image-cropper__body">
+    @if (step === 1) {
+      @if (!selectedFile) {
+      <div
+        class="file-upload border-2 border-dashed rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 max-w-100 h-70 md:h-80 flex w-full items-center justify-center"
+        [class.file-upload--idle]="!isDragging"
+        [class.file-upload--dragging]="isDragging"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'general.imageUploadDragHint' | translate"
+        (click)="fileInput.click()"
+        (keyup.enter)="fileInput.click()"
+        (dragenter)="onDragEnter($event)"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <div class="flex flex-col items-center text-gray-600 gap-1 px-4">
+          <i
+            class="pi text-5xl mb-2"
+            [class.pi-image]="!isDragging"
+            [class.pi-download]="isDragging"
+            style="color: black"
+          ></i>
+          <p class="text-sm font-medium">
+            {{
+              (isDragging
+                ? 'general.imageUploadDropHere'
+                : 'general.imageUploadPlaceholder'
+              ) | translate
+            }}
+          </p>
+          @if (!isDragging) {
+          <p class="text-xs text-gray-500">
+            {{ 'general.imageUploadDragHint' | translate }}
+          </p>
+          }
+        </div>
+        <input
+          type="file"
+          #fileInput
+          accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/bmp,image/heic,image/tiff,image/svg+xml"
+          (change)="fileChangeEvent($event)"
+          hidden
+        />
+      </div>
+      } @else if (imageOrientation) {
+      <div class="cropper-modal w-full flex justify-center">
+        <div
+          class="cropper-area"
+          [class.cropper-area--portrait]="imageOrientation === 'portrait'"
+          [class.cropper-area--landscape]="imageOrientation === 'landscape'"
+          [style.width.px]="
+            imageOrientation === 'landscape' ? landscapeDisplayWidth : null
+          "
+        >
+          @for (key of [cropperKey]; track key) {
+          <image-cropper
+            [imageFile]="selectedFile"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="1 / 1"
+            format="webp"
+            [resizeToWidth]="1000"
+            [resizeToHeight]="1000"
+            [cropperMinWidth]="40"
+            [onlyScaleDown]="true"
+            [roundCropper]="false"
+            [alignImage]="'center'"
+            [canvasRotation]="canvasRotation"
+            [transform]="transform"
+            [containWithinAspectRatio]="containWithinAspectRatio"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()"
+          ></image-cropper>
+          }
+        </div>
+      </div>
+      }
+    }
 
-  <!-- file input puede estar fuera del modal o dentro; se deja visible para disparar el modal -->
-  @if (!imageChangedEvent) {
-  <div
-    class="file-upload border-2 border-dashed border-gray-400 rounded-lg p-2 text-center cursor-pointer transition-colors duration-300 max-w-100 h-70 md:h-80 flex w-full items-center justify-center"
-    tabindex="0"
-    (click)="fileInput.click()"
-    (keyup.enter)="fileInput.click()"
-  >
-    <div class="flex flex-col items-center text-gray-600">
-      <i class="pi pi-image text-5xl mb-2" style="color: black"></i>
-      <p class="text-sm">{{ 'general.imageUploadPlaceholder' | translate }}</p>
+    @if (croppedImage && step === 2) {
+    <div class="preview flex flex-col gap-5 items-center">
+      <img [src]="croppedImage" alt="Cropped image preview" />
     </div>
-    <input
-      type="file"
-      #fileInput
-      accept="image/*"
-      (change)="fileChangeEvent($event)"
-      hidden
-    />
+    }
   </div>
-  } @else if (imageChangedEvent) {
-  <div class="cropper-modal">
-    <div class="cropper-area">
-      <image-cropper
-        [imageChangedEvent]="imageChangedEvent"
-        [maintainAspectRatio]="true"
-        [aspectRatio]="1 / 1"
-        format="webp"
-        [resizeToWidth]="1000"
-        [resizeToHeight]="1000"
-        [cropperMinWidth]="300"
-        [onlyScaleDown]="true"
-        [roundCropper]="false"
-        [canvasRotation]="canvasRotation"
-        [transform]="transform"
-        [containWithinAspectRatio]="containWithinAspectRatio"
-        (imageCropped)="imageCropped($event)"
-        (imageLoaded)="imageLoaded($event)"
-        (cropperReady)="cropperReady()"
-        (loadImageFailed)="loadImageFailed()"
-      ></image-cropper>
+
+  @if (selectedFile && step === 1) {
+  <div class="image-cropper__footer">
+    <div class="image-cropper__tools flex flex-row justify-center items-center gap-4 flex-wrap">
+      <lib-button
+        [icon]="'pi pi-plus'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-9'"
+        (action)="zoomIn()"
+      ></lib-button>
+
+      <lib-button
+        [icon]="'pi pi-minus'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-9'"
+        (action)="zoomOut()"
+      ></lib-button>
+
+      <lib-button
+        [icon]="'pi pi-sync'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-9'"
+        (action)="rotateRight()"
+      ></lib-button>
+      <lib-button
+        [icon]="'pi pi-arrows-h'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-9'"
+        (action)="flipHorizontal()"
+      ></lib-button>
+      <lib-button
+        [icon]="'pi pi-arrows-v'"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-9'"
+        (action)="flipVertical()"
+      ></lib-button>
+    </div>
+
+    <div
+      class="actions flex flex-col sm:flex-row justify-center items-center gap-5"
+    >
+      <lib-button
+        label="{{'general.cancel' | translate}}"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-40'"
+        (action)="onCancel()"
+      ></lib-button>
+
+      <lib-button
+        label="{{'general.next' | translate}}"
+        [type]="'rounded'"
+        [size]="'small'"
+        [width]="'w-40'"
+        (action)="nextStep()"
+      ></lib-button>
     </div>
   </div>
-  <div class="flex flex-row justify-center items-center gap-4">
-    <lib-button
-      [icon]="'pi pi-plus'"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-10'"
-      (action)="zoomIn()"
-    ></lib-button>
+  }
 
-    <lib-button
-      [icon]="'pi pi-minus'"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-10'"
-      (action)="zoomOut()"
-    ></lib-button>
+  @if (croppedImage && step === 2) {
+  <div class="image-cropper__footer">
+    <div
+      class="actions flex flex-col sm:flex-row justify-center items-center gap-5"
+    >
+      <lib-button
+        label="{{'general.back' | translate}}"
+        [type]="'rounded'"
+        [color]="'secondary'"
+        [size]="'small'"
+        [width]="'w-40'"
+        (action)="previousStep()"
+      ></lib-button>
 
-    <lib-button
-      [icon]="'pi pi-sync'"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-10'"
-      (action)="rotateRight()"
-    ></lib-button>
-    <lib-button
-      [icon]="'pi pi-arrows-h'"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-10'"
-      (action)="flipHorizontal()"
-    ></lib-button>
-    <lib-button
-      [icon]="'pi pi-arrows-v'"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-10'"
-      (action)="flipVertical()"
-    ></lib-button>
-  </div>
-
-  <div
-    class="actions flex flex-col sm:flex-row justify-center items-center gap-5 mt-4"
-  >
-    <lib-button
-      label="{{'general.cancel' | translate}}"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-40'"
-      (action)="onCancel()"
-    ></lib-button>
-
-    <lib-button
-      label="{{'general.next' | translate}}"
-      [type]="'rounded'"
-      [size]="'small'"
-      [width]="'w-40'"
-      (action)="nextStep()"
-    ></lib-button>
-  </div>
-  } } @if (croppedImage && step === 2) {
-  <div class="preview flex flex-col gap-5">
-    <img [src]="croppedImage" alt="Cropped image preview" />
-  </div>
-
-  <div
-    class="actions flex flex-col sm:flex-row justify-center items-center gap-5 mt-4"
-  >
-    <lib-button
-      label="{{'general.back' | translate}}"
-      [type]="'rounded'"
-      [color]="'secondary'"
-      [size]="'small'"
-      [width]="'w-40'"
-      (action)="previousStep()"
-    ></lib-button>
-
-    <lib-button
-      label="{{'general.save' | translate}}"
-      [type]="'rounded'"
-      [size]="'small'"
-      [width]="'w-40'"
-      (action)="saveCrop()"
-    ></lib-button>
+      <lib-button
+        label="{{'general.save' | translate}}"
+        [type]="'rounded'"
+        [size]="'small'"
+        [width]="'w-40'"
+        (action)="saveCrop()"
+      ></lib-button>
+    </div>
   </div>
   }
 </div>

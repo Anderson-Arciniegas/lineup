@@ -49,7 +49,7 @@ describe('CreateProductPage', () => {
     createProduct = jest.fn(() => of({ id: 500 }));
     messageAdd = jest.fn();
     navigate = jest.fn();
-    dialogOpen = jest.fn(() => ({ onClose: of(undefined) }));
+    dialogOpen = jest.fn(() => ({ onClose: of(true) }));
     const { mock: apolloMock } = createApolloMock();
 
     await TestBed.configureTestingModule({
@@ -655,7 +655,7 @@ describe('CreateProductPage', () => {
           },
           TranslateService,
           TranslateStore,
-          { provide: DialogService, useValue: { open: jest.fn() } },
+          { provide: DialogService, useValue: { open: jest.fn(() => ({ onClose: of(true) })) } },
           { provide: MessageService, useValue: { add: jest.fn() } },
           { provide: Apollo, useValue: apolloMock },
           {
@@ -794,7 +794,7 @@ describe('CreateProductPage', () => {
           },
           TranslateService,
           TranslateStore,
-          { provide: DialogService, useValue: { open: jest.fn() } },
+          { provide: DialogService, useValue: { open: jest.fn(() => ({ onClose: of(true) })) } },
           { provide: MessageService, useValue: { add: jest.fn() } },
           { provide: Apollo, useValue: apolloMock },
           {

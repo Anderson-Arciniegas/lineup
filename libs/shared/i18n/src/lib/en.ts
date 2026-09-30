@@ -25,6 +25,8 @@ export const en = {
     catalogNamePlaceholder: 'Enter the catalog name',
     imageUpload: 'Image Upload',
     imageUploadPlaceholder: 'Add your image here',
+    imageUploadDragHint: 'Or drag an image from your folder',
+    imageUploadDropHere: 'Drop the image here',
     imagesUploadPlaceholder: 'Add your images here',
 
     createProduct: 'Create Product',
@@ -586,6 +588,42 @@ export const en = {
       'You have unsaved changes. If you leave now they will be lost. Do you want to continue?',
     doYouWantToDeleteThisLocation:
       'Are you sure you want to delete this location?',
+    areYouSureYouWantToCreateThisProduct:
+      'Are you sure you want to create this product?',
+    areYouSureYouWantToUpdateThisProduct:
+      'Are you sure you want to update this product?',
+    areYouSureYouWantToCreateThisCatalog:
+      'Are you sure you want to create this catalog?',
+    areYouSureYouWantToUpdateThisCatalog:
+      'Are you sure you want to update this catalog?',
+    areYouSureYouWantToUpdateThisInventory:
+      'Are you sure you want to update the inventory?',
+    areYouSureYouWantToUpdateThisBusiness:
+      'Are you sure you want to update this business?',
+    areYouSureYouWantToCreateThisDiscount:
+      'Are you sure you want to create this discount?',
+    areYouSureYouWantToUpdateThisDiscount:
+      'Are you sure you want to update this discount?',
+    areYouSureYouWantToRegisterThisSale:
+      'Are you sure you want to register this sale?',
+    areYouSureYouWantToImportTheseProducts:
+      'Are you sure you want to import these products?',
+    areYouSureYouWantToSaveThisLocation:
+      'Are you sure you want to save this location?',
+    areYouSureYouWantToUpdateThisLocation:
+      'Are you sure you want to update this location?',
+    areYouSureYouWantToSaveThisSocialNetwork:
+      'Are you sure you want to save this social network?',
+    areYouSureYouWantToUpdateThisSocialNetwork:
+      'Are you sure you want to update this social network?',
+    areYouSureYouWantToSaveTheseBusinessHours:
+      'Are you sure you want to save these business hours?',
+    areYouSureYouWantToUpdateThisPassword:
+      'Are you sure you want to update the password?',
+    areYouSureYouWantToChangeBsPricePreference:
+      'Are you sure you want to change the BS price preference?',
+    areYouSureYouWantToChangePrimaryProduct:
+      'Are you sure you want to change the primary product?',
   },
   locationModal: {
     instruction:
@@ -748,6 +786,8 @@ export const en = {
         'The image contains disallowed content and cannot be uploaded.',
       uploadFailed: 'The image could not be uploaded. Please try again.',
       invalidExtension: 'The file format is not allowed.',
+      invalidImageType:
+        'Invalid image type. Use PNG, JPG, JPEG, WEBP, GIF, or another supported format.',
       poorQuality:
         'The image quality is too low. Use a higher-resolution image.',
     },

@@ -193,7 +193,7 @@ export class ProductPublicService {
       .query<{ getAllPrimaryProductsByBusiness: ProductSchema[] }>({
         query: GET_ALL_PRIMARY_PRODUCTS_BY_BUSINESS_QUERY,
         variables: { data: payload },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         context: this.queryContext(skipGlobalErrorToast),
       })
       .pipe(map((result) => result.data.getAllPrimaryProductsByBusiness));
@@ -208,7 +208,7 @@ export class ProductPublicService {
       .query<{ getAllByBusiness: PaginatedProducts }>({
         query: GET_ALL_BY_BUSINESS_QUERY,
         variables: { idBusiness: Math.trunc(idBusiness), pagination },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         context: {
           withCredentials: true,
         },

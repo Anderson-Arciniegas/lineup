@@ -1,4 +1,18 @@
+:host {
+  display: block;
+  max-height: min(78vh, 640px);
+  min-height: 0;
+}
+
 .image-cropper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  height: 100%;
+  max-height: inherit;
+  min-height: 0;
+
   .file-label {
     display: inline-flex;
     align-items: center;
@@ -10,16 +24,87 @@
     display: none;
   }
 
-  .cropper-area {
+  &__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     width: 100%;
-    max-width: 400px;
+    padding-bottom: 0.25rem;
+  }
+
+  &__footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.75rem 0 0.25rem;
+    background: var(--p-surface-0, #fff);
+    border-top: 1px solid var(--p-surface-200, #e5e5e5);
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+  }
+
+  .file-upload {
+    border-color: rgb(156 163 175); // gray-400
+    flex-shrink: 0;
+
+    &--idle:hover {
+      border-color: var(--p-primary-500, #6d6d6d);
+      background: var(--p-surface-50, #fafafa);
+    }
+
+    &--dragging {
+      border-color: var(--p-primary-600, #4f4f4f);
+      background: var(--p-primary-50, #ffffff);
+      box-shadow: inset 0 0 0 1px var(--p-primary-200, #f0f0f0);
+    }
+  }
+
+  .cropper-area {
+    margin-inline: auto;
+    flex-shrink: 0;
+
+    // Solo se dimensiona el contenedor: no forzar width/height en la img
+    // (ngx-image-cropper lee getComputedStyle en px para el overlay).
+    // Vertical / cuadrada: ancho fijo 250px, altura libre.
+    &--portrait {
+      width: 250px;
+      max-width: 250px;
+
+      ::ng-deep image-cropper {
+        width: 250px;
+        max-width: 250px;
+        max-height: none;
+      }
+    }
+
+    // Horizontal: alto fijo 250px; el ancho lo fija el binding
+    // (proporción de la imagen) y el modal puede crecer hasta ~92vw.
+    &--landscape {
+      height: 250px;
+      max-height: 250px;
+      max-width: 100%;
+
+      ::ng-deep image-cropper {
+        width: 100%;
+        height: 250px;
+        max-height: 250px;
+      }
+    }
   }
 
   .preview img {
-    max-width: 350px;
-    width: 100%;
+    width: 250px;
+    height: auto;
+    object-fit: contain;
     border-radius: var(--border-radius);
-    object-fit: cover;
     filter: brightness(1) contrast(1.1) saturate(1.2);
   }
 }
