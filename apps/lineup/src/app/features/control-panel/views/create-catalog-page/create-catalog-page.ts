@@ -30,7 +30,12 @@ import {
   UpdateCatalogInput,
   UtilsService,
 } from '@lineup/core';
-import { Button, ConfirmationModal, ImageCropper, ProductBreadcrumb } from '@lineup/ui';
+import {
+  Button,
+  ConfirmationModal,
+  ImageCropper,
+  ProductBreadcrumb,
+} from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { base64ToFile } from 'ngx-image-cropper';
 import { MessageService } from 'primeng/api';
@@ -42,10 +47,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
 import { PanelModule } from 'primeng/panel';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TextareaModule } from 'primeng/textarea';
-import { ProgressSpinner } from 'primeng/progressspinner';
 import { map, Subscription, take } from 'rxjs';
 
 /**
@@ -220,6 +225,34 @@ export class CreateCatalogPage implements OnInit {
         summary: this._translate.instant('general.warning'),
         detail: this._translate.instant('validation.fieldRequired'),
       });
+      return;
+    }
+
+    const messageKey = this.catalogPath
+      ? 'confirmation.areYouSureYouWantToUpdateThisCatalog'
+      : 'confirmation.areYouSureYouWantToCreateThisCatalog';
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(messageKey),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitCatalog();
+        }
+      });
+  }
+
+  private _submitCatalog(): void {
+    if (this.attempt) {
       return;
     }
 
@@ -405,12 +438,12 @@ export class CreateCatalogPage implements OnInit {
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
-      width: '600px',
-      style: { maxHeight: '80vh' },
+      width: '640px',
+      style: { maxHeight: '90vh' },
       breakpoints: {
-        '640px': '450px',
-        '500px': '80vw',
-        '400px': '90vw',
+        '640px': '92vw',
+        '500px': '94vw',
+        '400px': '96vw',
       },
       dismissableMask: true,
       modal: true,

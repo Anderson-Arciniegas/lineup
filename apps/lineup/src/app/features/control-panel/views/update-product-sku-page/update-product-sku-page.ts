@@ -381,6 +381,33 @@ export class UpdateProductSkuPage implements OnInit, OnDestroy {
       return;
     }
 
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToUpdateThisInventory',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitProductSkus(skus);
+        }
+      });
+  }
+
+  private _submitProductSkus(skus: UpdateProductSkuItemInput[]): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.isSubmitting = true;
     this._subscription.add(
       this._productService.updateProductSkus({ skus }).subscribe({

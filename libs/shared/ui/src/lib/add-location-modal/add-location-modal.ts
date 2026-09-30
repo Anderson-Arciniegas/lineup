@@ -12,15 +12,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { LocationSchema, LocationsPrivateService } from '@lineup/core';
 import { environment } from '@lineup/envs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { fromEvent, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Button } from '../button/button';
+import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 
 /** Tipos locales para la API de Google Maps (evitan depender del global `google`). */
 interface LatLngLike {
@@ -126,6 +131,8 @@ export class AddLocationModal implements OnInit {
   private readonly config = inject(DynamicDialogConfig);
   private readonly destroyRef = inject(DestroyRef);
   private readonly locationsService = inject(LocationsPrivateService);
+  private readonly dialogService = inject(DialogService);
+  private readonly translate = inject(TranslateService);
 
   mapContainer = viewChild<ElementRef<HTMLElement>>('mapContainer');
   selectedLocation = signal<SelectedLocation | null>(null);
@@ -559,9 +566,40 @@ export class AddLocationModal implements OnInit {
       nameTrimmed.length > AddLocationModal.MAX_LOCATION_NAME_LENGTH
     )
       return;
+
+    const messageKey = this.isEditMode
+      ? 'confirmation.areYouSureYouWantToUpdateThisLocation'
+      : 'confirmation.areYouSureYouWantToSaveThisLocation';
+    const confirmRef = this.dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this.translate.instant(messageKey),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    confirmRef.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitLocation(nameTrimmed);
+        }
+      });
+  }
+
+  private _submitLocation(nameTrimmed: string): void {
+    if (this.attempt) {
+      return;
+    }
     this.attempt = true;
     const selected = this.selectedLocation();
-    if (!selected) return;
+    if (!selected) {
+      this.attempt = false;
+      return;
+    }
 
     const payload = {
       address: selected.address,

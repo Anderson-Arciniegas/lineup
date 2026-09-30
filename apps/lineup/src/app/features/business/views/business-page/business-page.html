@@ -97,7 +97,7 @@
     </div>
     }
     <div class="w-full flex flex-col items-center justify-center gap-10">
-      @if (business && (catalogs.length > 0 || !attempt)) {
+      @if (business) {
       <div
         [class.text-white]="pageBackgroundGradient ? isDarkBackground : undefined"
         class="w-full flex flex-row justify-start items-center gap-3 md:gap-5 px-6 sm:px-10 md:px-26 lg:px:22 xl:px-46"
@@ -114,7 +114,7 @@
         [infiniteScrollDistance]="2"
         [infiniteScrollThrottle]="50"
         [scrollWindow]="true"
-        [infiniteScrollDisabled]="!business"
+        [infiniteScrollDisabled]="!business || !initialContentReady || attempt"
         (scrolled)="onScroll()"
       >
         @if (business && myBusiness && !searchQuery && (catalogs.length > 0 ||
@@ -148,7 +148,7 @@
         @if (searchQuery && searchQuery !== '') { {{ 'general.noResults' |
         translate }} } @else { {{ 'general.noBusinessCatalogs' | translate }} }
       </p>
-      } @if(attempt) {
+      } @if (attempt) {
       <div class="flex flex-col justify-center items-center w-full">
         <div class="card flex justify-center p-10">
           <p-progress-spinner

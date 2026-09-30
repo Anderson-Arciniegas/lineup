@@ -10,7 +10,7 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { UpdatePasswordModal } from './update-password-modal';
 
@@ -34,6 +34,10 @@ describe('UpdatePasswordModal', () => {
         TranslateStore,
         { provide: ToastService, useValue: toastMock() },
         { provide: DynamicDialogRef, useValue: dialogRef },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: DynamicDialogConfig,
           useValue: { data: { type: 'user' } },
@@ -141,6 +145,10 @@ describe('UpdatePasswordModal (negocio)', () => {
         TranslateStore,
         { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'business' } } },
         { provide: UserPublicService, useValue: { changePassword: jest.fn() } },
         { provide: BusinessPrivateService, useValue: businessService },
@@ -196,6 +204,10 @@ describe('UpdatePasswordModal errores', () => {
         TranslateStore,
         { provide: ToastService, useValue: toast },
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         { provide: DynamicDialogConfig, useValue: { data: { type: 'user' } } },
         {
           provide: UserPublicService,

@@ -100,6 +100,8 @@ export class CatalogPage implements OnInit, OnDestroy {
   attempt = false;
   productsAttempt = false;
   primaryProductsAttempt = false;
+  /** Evita un segundo fetch cuando negocio y catálogo resuelven en carrera. */
+  private primaryProductsLoaded = false;
   catalogLoadError: string | null = null;
   productsLoadError: string | null = null;
   page = 1;
@@ -216,7 +218,7 @@ export class CatalogPage implements OnInit, OnDestroy {
               } else if (this.business.hexColor) {
                 this.setColor(this.business.hexColor);
               }
-              this.getPrimaryProducts();
+              this.tryLoadPrimaryProducts();
               if (this.myBusiness) {
                 this.configUrl = `/${AppConfigService.config.routes.dashboard}/${AppConfigService.config.routes.catalogs}/${this.catalogPath}`;
               }
@@ -287,9 +289,7 @@ export class CatalogPage implements OnInit, OnDestroy {
             this.catalog = catalog;
             this.attempt = false;
             this.getProducts();
-            if (this.business) {
-              this.getPrimaryProducts();
-            }
+            this.tryLoadPrimaryProducts();
             if (!this.myBusiness) {
               this.visitCatalog();
             } else {
@@ -381,8 +381,13 @@ export class CatalogPage implements OnInit, OnDestroy {
   }
 
   /** Productos marcados como primarios dentro de este catálogo para el carrusel superior. */
+  private tryLoadPrimaryProducts(): void {
+    if (!this.business || !this.catalog) return;
+    this.getPrimaryProducts();
+  }
+
   private getPrimaryProducts(): void {
-    if (this.primaryProductsAttempt || this.noMoreResults) return;
+    if (this.primaryProductsAttempt || this.primaryProductsLoaded) return;
     this.primaryProductsAttempt = true;
     this._subscription.add(
       this._productPublicService
@@ -396,6 +401,7 @@ export class CatalogPage implements OnInit, OnDestroy {
         .subscribe({
           next: (products) => {
             this.primaryProductsAttempt = false;
+            this.primaryProductsLoaded = true;
             this.primaryProducts = products;
           },
           error: () => {

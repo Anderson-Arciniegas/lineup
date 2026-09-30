@@ -148,12 +148,12 @@ export class EditBusinessPage implements OnInit {
   openImageCropper() {
     this.ref = this._dialogService.open(ImageCropper, {
       header: this._translate.instant('general.addImage'),
-      width: '600px',
-      style: { maxHeight: '80vh' },
+      width: '640px',
+      style: { maxHeight: '90vh' },
       breakpoints: {
-        '640px': '450px',
-        '500px': '80vw',
-        '400px': '90vw',
+        '640px': '92vw',
+        '500px': '94vw',
+        '400px': '96vw',
       },
       dismissableMask: true,
       modal: true,
@@ -249,6 +249,34 @@ export class EditBusinessPage implements OnInit {
       });
       return;
     }
+
+    const ref = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(
+          'confirmation.areYouSureYouWantToUpdateThisBusiness',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    ref.onClose
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this._submitBusiness();
+        }
+      });
+  }
+
+  private _submitBusiness(): void {
+    if (this.attempt) {
+      return;
+    }
+
     this.attempt = true;
     const data: UpdateBusinessInput = {
       id: this.business.id,

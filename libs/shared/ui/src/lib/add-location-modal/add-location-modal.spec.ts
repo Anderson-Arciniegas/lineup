@@ -7,7 +7,7 @@ import {
   TranslateService,
   TranslateStore,
 } from '@ngx-translate/core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { AddLocationModal } from './add-location-modal';
 
@@ -96,6 +96,10 @@ describe('AddLocationModal', () => {
         TranslateService,
         TranslateStore,
         { provide: DynamicDialogRef, useValue: dialogRef },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         { provide: DynamicDialogConfig, useValue: { data: {} } },
         { provide: LocationsPrivateService, useValue: locationsService },
       ],
@@ -394,6 +398,10 @@ describe('AddLocationModal modo edición', () => {
         TranslateStore,
         { provide: DynamicDialogRef, useValue: dialogRef },
         {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
+        {
           provide: DynamicDialogConfig,
           useValue: {
             data: {
@@ -479,6 +487,10 @@ describe('AddLocationModal con initialLocation', () => {
         TranslateService,
         TranslateStore,
         { provide: DynamicDialogRef, useValue: { close: jest.fn() } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: DynamicDialogConfig,
           useValue: {

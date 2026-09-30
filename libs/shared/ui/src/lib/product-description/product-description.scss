@@ -1,9 +1,14 @@
 // Estilos para el contenido inyectado por [innerHTML].
 // :host ::ng-deep permite que estos estilos apliquen al HTML dinámico.
+:host {
+  background: transparent;
+}
+
 :host ::ng-deep .product-description__content {
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
+  background: transparent;
 
   img {
     border-radius: 10px;

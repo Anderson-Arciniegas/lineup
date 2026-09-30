@@ -42,7 +42,8 @@ export class BusinessPublicService {
       .query<{ findBusinessByPath: BusinessSchema }>({
         query: GET_BUSINESS_BY_PATH,
         variables: { path },
-        fetchPolicy: 'network-only',
+        // cache-first: evita refetch al hidratar/reentrar la vista pública.
+        fetchPolicy: 'cache-first',
         context: {
           withCredentials: true,
         },

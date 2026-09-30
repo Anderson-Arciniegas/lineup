@@ -11,6 +11,7 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { CreateDiscountPage } from './create-discount-page';
@@ -73,6 +74,10 @@ describe('CreateDiscountPage', () => {
         },
         { provide: UtilsService, useValue: { navigate } },
         { provide: MessageService, useValue: { add: messageAdd } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
       ],
     }).compileComponents();
 
@@ -280,6 +285,10 @@ describe('CreateDiscountPage', () => {
           },
           { provide: UtilsService, useValue: { navigate } },
           { provide: MessageService, useValue: { add: messageAdd } },
+          {
+            provide: DialogService,
+            useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+          },
         ],
       }).compileComponents();
       fixture = TestBed.createComponent(CreateDiscountPage);
@@ -356,6 +365,10 @@ describe('CreateDiscountPage', () => {
           },
           { provide: UtilsService, useValue: { navigate } },
           { provide: MessageService, useValue: { add: messageAdd } },
+          {
+            provide: DialogService,
+            useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+          },
         ],
       }).compileComponents();
       fixture = TestBed.createComponent(CreateDiscountPage);
@@ -450,6 +463,10 @@ describe('CreateDiscountPage', () => {
           },
           { provide: UtilsService, useValue: { navigate } },
           { provide: MessageService, useValue: { add: messageAdd } },
+          {
+            provide: DialogService,
+            useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+          },
         ],
       }).compileComponents();
       fixture = TestBed.createComponent(CreateDiscountPage);

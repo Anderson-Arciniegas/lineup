@@ -15,13 +15,19 @@ import {
   SocialNetworkPrivateService,
   SocialNetworkSchema,
 } from '@lineup/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputMaskModule } from 'primeng/inputmask';
+import { take } from 'rxjs';
 import { Button } from '../button/button';
+import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 
 /**
  * Formulario para asociar URL o teléfono (WhatsApp/Telegram) a una red social del catálogo maestro.
@@ -52,6 +58,8 @@ export class AddSocialMediaModal implements OnInit {
   private readonly _socialNetworkService = inject(SocialNetworkPrivateService);
   private readonly ref = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
+  private readonly _dialogService = inject(DialogService);
+  private readonly _translate = inject(TranslateService);
 
   /** Validador de URL http(s) para redes que requieren enlace web. */
   private urlValidator(): ValidatorFn {
@@ -113,48 +121,75 @@ export class AddSocialMediaModal implements OnInit {
   }
 
   saveSocialMedia() {
-    if (this.socialMediaForm.valid) {
-      this.attempt = true;
+    if (!this.socialMediaForm.valid || this.attempt) {
+      return;
+    }
 
-      if (this.businessSocialNetwork) {
-        this._socialNetworkService
-          .updateSocialNetworkBusiness({
-            contact: {
-              url: this.socialMediaForm.value?.url,
-              phone: this.socialMediaForm.value?.phone,
-            },
-            id: this.businessSocialNetwork.id,
-          })
-          .subscribe({
-            next: (response) => {
-              this.ref.close(response);
-              this.attempt = false;
-            },
-            error: (error) => {
-              console.error(error);
-              this.attempt = false;
-            },
-          });
-      } else {
-        this._socialNetworkService
-          .createSocialNetworkBusiness({
-            contact: {
-              url: this.socialMediaForm.value?.url,
-              phone: this.socialMediaForm.value?.phone,
-            },
-            idSocialNetwork: this.socialMedia.id,
-          })
-          .subscribe({
-            next: (response) => {
-              this.ref.close(response);
-              this.attempt = false;
-            },
-            error: (error) => {
-              console.error(error);
-              this.attempt = false;
-            },
-          });
+    const messageKey = this.businessSocialNetwork
+      ? 'confirmation.areYouSureYouWantToUpdateThisSocialNetwork'
+      : 'confirmation.areYouSureYouWantToSaveThisSocialNetwork';
+    const confirmRef = this._dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this._translate.instant(messageKey),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    confirmRef.onClose.pipe(take(1)).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this._submitSocialMedia();
       }
+    });
+  }
+
+  private _submitSocialMedia(): void {
+    if (this.attempt) {
+      return;
+    }
+    this.attempt = true;
+
+    if (this.businessSocialNetwork) {
+      this._socialNetworkService
+        .updateSocialNetworkBusiness({
+          contact: {
+            url: this.socialMediaForm.value?.url,
+            phone: this.socialMediaForm.value?.phone,
+          },
+          id: this.businessSocialNetwork.id,
+        })
+        .subscribe({
+          next: (response) => {
+            this.ref.close(response);
+            this.attempt = false;
+          },
+          error: (error) => {
+            console.error(error);
+            this.attempt = false;
+          },
+        });
+    } else {
+      this._socialNetworkService
+        .createSocialNetworkBusiness({
+          contact: {
+            url: this.socialMediaForm.value?.url,
+            phone: this.socialMediaForm.value?.phone,
+          },
+          idSocialNetwork: this.socialMedia.id,
+        })
+        .subscribe({
+          next: (response) => {
+            this.ref.close(response);
+            this.attempt = false;
+          },
+          error: (error) => {
+            console.error(error);
+            this.attempt = false;
+          },
+        });
     }
   }
 }

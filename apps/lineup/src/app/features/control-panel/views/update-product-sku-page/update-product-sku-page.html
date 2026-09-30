@@ -222,7 +222,9 @@
       }
     </div>
 
-    <div class="w-full flex flex-row item-center justify-center gap-4 pt-4">
+    <div
+      class="w-full max-w-5xl flex sm:flex-row flex-col item-center justify-between sm:gap-10 gap-4 pt-4"
+    >
       <lib-button
         [label]="'general.cancel' | translate"
         [width]="'w-40'"
@@ -234,7 +236,7 @@
       ></lib-button>
       <lib-button
         [label]="('general.save' | translate)"
-        [width]="'w-60'"
+        [width]="'w-40'"
         type="rounded"
         [loading]="isSubmitting"
         [disabled]="isSubmitting || skuProductForm.invalid"

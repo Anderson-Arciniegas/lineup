@@ -11,6 +11,7 @@ import {
 } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { of, throwError } from 'rxjs';
 import { ImportProductsPage } from './import-products-page';
 
@@ -70,6 +71,10 @@ describe('ImportProductsPage (HU-18)', () => {
         },
         { provide: UtilsService, useValue: { navigate } },
         { provide: MessageService, useValue: { add: messageAdd } },
+        {
+          provide: DialogService,
+          useValue: { open: jest.fn(() => ({ onClose: of(true) })) },
+        },
         {
           provide: ApiErrorService,
           useValue: { normalize: () => ({ i18nKey: 'errors.generic' }) },

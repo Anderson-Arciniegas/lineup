@@ -10,8 +10,14 @@ import {
 } from '@lineup/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DatePickerModule } from 'primeng/datepicker';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { take } from 'rxjs';
 import { Button } from '../button/button';
+import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 
 type BusinessHoursModalCloseValue = BusinessHourSchema | BusinessHourSchema[] | null;
 
@@ -37,6 +43,7 @@ export class BusinessHoursModal {
   private readonly config = inject(DynamicDialogConfig);
   private readonly translate = inject(TranslateService);
   private readonly businessService = inject(BusinessPrivateService);
+  private readonly dialogService = inject(DialogService);
 
   readonly data = (this.config.data ?? {}) as BusinessHoursModalData;
   readonly businessHourToEdit = this.data.businessHour;
@@ -192,6 +199,29 @@ export class BusinessHoursModal {
 
   submit(): void {
     if (!this.canSubmit()) return;
+
+    const confirmRef = this.dialogService.open(ConfirmationModal, {
+      width: '500px',
+      style: { maxHeight: '80vh' },
+      data: {
+        message: this.translate.instant(
+          'confirmation.areYouSureYouWantToSaveTheseBusinessHours',
+        ),
+        color: 'primary',
+      },
+      modal: true,
+      draggable: false,
+      resizable: false,
+    });
+    confirmRef.onClose.pipe(take(1)).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this._submitBusinessHours();
+      }
+    });
+  }
+
+  private _submitBusinessHours(): void {
+    if (this.attempt()) return;
     this.attempt.set(true);
 
     const opensAtMinute = this.opensAtMinutes();

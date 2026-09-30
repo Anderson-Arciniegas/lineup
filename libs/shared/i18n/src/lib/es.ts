@@ -29,6 +29,8 @@ export const es = {
     catalogNamePlaceholder: 'Ingrese el nombre del catálogo',
     imageUpload: 'Cargar Imagen',
     imageUploadPlaceholder: 'Agrega tu imagen aquí',
+    imageUploadDragHint: 'O arrastra una imagen desde tu carpeta',
+    imageUploadDropHere: 'Suelta la imagen aquí',
     imagesUploadPlaceholder: 'Agrega tus imágenes aquí',
     createProduct: 'Crear Producto',
     selectedImage: 'Imagen seleccionada',
@@ -597,6 +599,42 @@ export const es = {
       'Hay cambios sin guardar. Si sales ahora se perderán. ¿Deseas continuar?',
     doYouWantToDeleteThisLocation:
       '¿Estás seguro de querer eliminar esta ubicación?',
+    areYouSureYouWantToCreateThisProduct:
+      '¿Estás seguro de querer crear este producto?',
+    areYouSureYouWantToUpdateThisProduct:
+      '¿Estás seguro de querer actualizar este producto?',
+    areYouSureYouWantToCreateThisCatalog:
+      '¿Estás seguro de querer crear este catálogo?',
+    areYouSureYouWantToUpdateThisCatalog:
+      '¿Estás seguro de querer actualizar este catálogo?',
+    areYouSureYouWantToUpdateThisInventory:
+      '¿Estás seguro de querer actualizar el inventario?',
+    areYouSureYouWantToUpdateThisBusiness:
+      '¿Estás seguro de querer actualizar este negocio?',
+    areYouSureYouWantToCreateThisDiscount:
+      '¿Estás seguro de querer crear este descuento?',
+    areYouSureYouWantToUpdateThisDiscount:
+      '¿Estás seguro de querer actualizar este descuento?',
+    areYouSureYouWantToRegisterThisSale:
+      '¿Estás seguro de querer registrar esta venta?',
+    areYouSureYouWantToImportTheseProducts:
+      '¿Estás seguro de querer importar estos productos?',
+    areYouSureYouWantToSaveThisLocation:
+      '¿Estás seguro de querer guardar esta ubicación?',
+    areYouSureYouWantToUpdateThisLocation:
+      '¿Estás seguro de querer actualizar esta ubicación?',
+    areYouSureYouWantToSaveThisSocialNetwork:
+      '¿Estás seguro de querer guardar esta red social?',
+    areYouSureYouWantToUpdateThisSocialNetwork:
+      '¿Estás seguro de querer actualizar esta red social?',
+    areYouSureYouWantToSaveTheseBusinessHours:
+      '¿Estás seguro de querer guardar estos horarios?',
+    areYouSureYouWantToUpdateThisPassword:
+      '¿Estás seguro de querer actualizar la contraseña?',
+    areYouSureYouWantToChangeBsPricePreference:
+      '¿Estás seguro de querer cambiar la preferencia de precio en BS?',
+    areYouSureYouWantToChangePrimaryProduct:
+      '¿Estás seguro de querer cambiar el producto primario?',
   },
   locationModal: {
     instruction:
@@ -763,6 +801,8 @@ export const es = {
         'La imagen contiene contenido no permitido y no puede subirse.',
       uploadFailed: 'No se pudo subir la imagen. Inténtalo de nuevo.',
       invalidExtension: 'El formato del archivo no está permitido.',
+      invalidImageType:
+        'El tipo de imagen no es válido. Usa PNG, JPG, JPEG, WEBP, GIF u otro formato soportado.',
       poorQuality:
         'La imagen no tiene la calidad suficiente. Usa una de mayor resolución.',
     },
