@@ -4,10 +4,10 @@
   box-sizing: border-box;
 
   &--collections {
-    min-height: 46rem;
+    min-height: 22rem;
 
     @media (min-width: 640px) {
-      min-height: 56rem;
+      min-height: 28rem;
     }
   }
 
@@ -48,12 +48,12 @@
   flex-direction: column;
   flex: 1 0 auto;
 
-  // Dos colecciones esqueleto (~2 × título + carrusel + separación).
+  // Una colección esqueleto (título + carrusel); evita un hueco excesivo en el feed.
   &--collections {
-    min-height: 46rem;
+    min-height: 22rem;
 
     @media (min-width: 640px) {
-      min-height: 56rem;
+      min-height: 28rem;
     }
   }
 
