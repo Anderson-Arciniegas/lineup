@@ -3,6 +3,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import {
   AuthStore,
+  CartStore,
   DiscountTypeEnum,
   ProductPublicService,
   RatesPrivateService,
@@ -37,6 +38,7 @@ describe('ProductDetails (HU-22, HU-29)', () => {
   };
   let dialogService: { open: jest.Mock };
   let toast: { warn: jest.Mock };
+  let cartStore: { addItem: jest.Mock };
   let router: Router;
   let queryParamMap: Map<string, string>;
   let queryParams: Record<string, string>;
@@ -112,6 +114,7 @@ describe('ProductDetails (HU-22, HU-29)', () => {
     };
     dialogService = { open: jest.fn(() => ({ onClose: of(null) })) };
     toast = { warn: jest.fn() };
+    cartStore = { addItem: jest.fn() };
 
     await TestBed.configureTestingModule({
       imports: [ProductDetails, TranslateModule.forRoot()],
@@ -126,6 +129,7 @@ describe('ProductDetails (HU-22, HU-29)', () => {
         { provide: UtilsService, useValue: utilsService },
         { provide: DialogService, useValue: dialogService },
         { provide: ToastService, useValue: toast },
+        { provide: CartStore, useValue: cartStore },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -474,6 +478,68 @@ describe('ProductDetails (HU-22, HU-29)', () => {
       productPublicService.hasLikedProduct.mockClear();
       component.hasLikedProduct();
       expect(productPublicService.hasLikedProduct).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('addToCart (RF44)', () => {
+    it('debe avisar si no hay sesión', () => {
+      authStore.isUserLoggedIn.mockReturnValue(false);
+      initWithProduct(buildProduct({ idCreationBusiness: 10 }));
+      component.addToCart();
+      expect(toast.warn).toHaveBeenCalledWith('errors.unauthorized');
+      expect(cartStore.addItem).not.toHaveBeenCalled();
+    });
+
+    it('no debe agregar si el negocio no tiene WhatsApp', () => {
+      socialMediaService.findByBusiness.mockReturnValue(of([]));
+      initWithProduct(
+        buildProduct({
+          idCreationBusiness: 10,
+          variations: [],
+          skus: [
+            {
+              id: 100,
+              price: 50,
+              idCurrency: 1,
+              quantity: 3,
+              currency: { code: 'USD' },
+              variationOptions: {},
+            },
+          ],
+        }),
+      );
+      expect(component.hasWhatsappConfigured).toBe(false);
+      component.addToCart();
+      expect(cartStore.addItem).not.toHaveBeenCalled();
+    });
+
+    it('debe agregar con SKU resuelto cuando hay sesión y WhatsApp', () => {
+      initWithProduct(
+        buildProduct({
+          idCreationBusiness: 10,
+          variations: [],
+          skus: [
+            {
+              id: 100,
+              price: 50,
+              idCurrency: 1,
+              quantity: 3,
+              currency: { code: 'USD' },
+              variationOptions: {},
+            },
+          ],
+        }),
+      );
+      expect(component.hasWhatsappConfigured).toBe(true);
+      component.addToCart();
+      expect(cartStore.addItem).toHaveBeenCalledWith(
+        expect.objectContaining({
+          businessId: 10,
+          productId: 1,
+          productSkuId: 100,
+          quantity: 1,
+        }),
+      );
     });
   });
 

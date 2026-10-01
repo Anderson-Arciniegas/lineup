@@ -59,6 +59,7 @@ describe('UserLayout', () => {
     expect(component).toBeTruthy();
     expect(component.items.length).toBeGreaterThan(0);
     expect(component.items.some((i) => i.url === '/profile/settings')).toBe(true);
+    expect(component.items.some((i) => i.url === '/profile/carts')).toBe(true);
   });
 
   it('toggleSidebar y closeSidebar', () => {

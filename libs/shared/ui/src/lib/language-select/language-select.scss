@@ -1,0 +1,13 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.language-select {
+  min-width: 4.5rem;
+}
+
+:host ::ng-deep .language-select .p-select-label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}

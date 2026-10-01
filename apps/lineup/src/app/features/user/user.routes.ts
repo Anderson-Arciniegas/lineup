@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AppConfigService } from '@lineup/core';
+import { CartsPage } from './views/carts-page/carts-page';
 import { FavoritesPage } from './views/favorites-page/favorites-page';
 import { MyRatingsPage } from './views/my-ratings-page/my-ratings-page';
 import { ProfilePage } from './views/profile-page/profile-page';
@@ -23,6 +24,10 @@ export const userRoutes: Routes = [
   {
     path: AppConfigService.config.routes.wishlist,
     component: WishlistPage,
+  },
+  {
+    path: AppConfigService.config.routes.carts,
+    component: CartsPage,
   },
   {
     path: AppConfigService.config.routes.myRatings,

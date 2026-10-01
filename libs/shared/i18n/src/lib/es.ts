@@ -2,6 +2,7 @@ export const es = {
   general: {
     lineUp: 'LineUp',
     explore: 'Explorar',
+    language: 'Idioma',
     information: 'Información',
     welcome: 'Bienvenido',
     addCategory: 'Agregar Categoría',
@@ -759,6 +760,26 @@ export const es = {
     welcomeNamed: 'Bienvenido, {{name}}',
     userCreated: 'Usuario creado exitosamente.',
     businessCreated: 'Negocio creado exitosamente.',
+  },
+  cart: {
+    title: 'Carritos',
+    addToCart: 'Agregar al carrito',
+    empty: 'Tu carrito está vacío.',
+    emptyPage: 'Aún no tienes productos en ningún carrito.',
+    goToCarts: 'Ver mis carritos',
+    viewAll: 'Ver todos los carritos',
+    checkout: 'Concretar',
+    deleteCart: 'Eliminar carrito',
+    deleteCartTitle: 'Eliminar carrito',
+    deleteCartConfirm:
+      '¿Seguro que deseas eliminar el carrito de {{business}}?',
+    total: 'Total',
+    itemsCount: '{{count}} artículo(s)',
+    businessFallback: 'Negocio',
+    noWhatsapp: 'Este negocio no tiene WhatsApp configurado.',
+    skuRequired: 'Selecciona una variación disponible antes de agregar.',
+    whatsappIntro:
+      'Hola! vengo de LineUp, y me interesan los siguientes productos:',
   },
   errors: {
     generic: 'Ocurrió un error inesperado. Inténtalo de nuevo.',

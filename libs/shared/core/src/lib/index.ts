@@ -1,6 +1,7 @@
 export * from './config';
 export * from './constants';
 export * from './enums';
+export * from './helpers';
 export * from './interfaces';
 export * from './models';
 export * from './pipes';

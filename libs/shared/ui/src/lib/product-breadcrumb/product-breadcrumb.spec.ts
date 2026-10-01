@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
-import { AuthStore } from '@lineup/core';
+import { AuthStore, LanguageEnum, LanguageService } from '@lineup/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProductBreadcrumb } from './product-breadcrumb';
 
@@ -28,6 +28,18 @@ describe('ProductBreadcrumb', () => {
         provideRouter([]),
         { provide: AuthStore, useValue: authStore },
         { provide: PLATFORM_ID, useValue: 'browser' },
+        {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: signal(LanguageEnum.ES),
+            languages: [
+              { language: 'Español', flag: '', symbol: LanguageEnum.ES },
+              { language: 'English', flag: '', symbol: LanguageEnum.EN },
+            ],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
+          },
+        },
       ],
     })
       .overrideComponent(ProductBreadcrumb, { set: { template: '' } })
@@ -40,8 +52,13 @@ describe('ProductBreadcrumb', () => {
     jest.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     jest.spyOn(location, 'back').mockImplementation(() => undefined);
 
-    component.business = { path: 'mi-tienda', name: 'Tienda' } as import('@lineup/core').BusinessSchema;
-    component.catalog = { path: 'catalogo-1' } as import('@lineup/core').CatalogSchema;
+    component.business = {
+      path: 'mi-tienda',
+      name: 'Tienda',
+    } as import('@lineup/core').BusinessSchema;
+    component.catalog = {
+      path: 'catalogo-1',
+    } as import('@lineup/core').CatalogSchema;
     fixture.detectChanges();
   });
 
@@ -63,7 +80,10 @@ describe('ProductBreadcrumb', () => {
 
   describe('goBack', () => {
     it('debe usar history.back cuando hay historial y no hay supresión', () => {
-      Object.defineProperty(window.history, 'length', { value: 5, configurable: true });
+      Object.defineProperty(window.history, 'length', {
+        value: 5,
+        configurable: true,
+      });
       component.goBack();
       expect(location.back).toHaveBeenCalled();
     });
@@ -71,24 +91,37 @@ describe('ProductBreadcrumb', () => {
     it('debe navegar por path explícito en modo público', () => {
       component.publicMode = true;
       component.path = '/dashboard';
-      Object.defineProperty(window.history, 'length', { value: 1, configurable: true });
+      Object.defineProperty(window.history, 'length', {
+        value: 1,
+        configurable: true,
+      });
       component.goBack();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
 
     it('debe navegar al negocio cuando no hay historial', () => {
-      Object.defineProperty(window.history, 'length', { value: 1, configurable: true });
-      jest.spyOn(router, 'url', 'get').mockReturnValue('/mi-tienda/catalogo-1/producto');
+      Object.defineProperty(window.history, 'length', {
+        value: 1,
+        configurable: true,
+      });
+      jest
+        .spyOn(router, 'url', 'get')
+        .mockReturnValue('/mi-tienda/catalogo-1/producto');
       component.goBack();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/mi-tienda/catalogo-1');
     });
 
     it('debe navegar a / en modo público sin candidatos', () => {
       component.publicMode = true;
-      component.business = { path: 'mi-tienda' } as import('@lineup/core').BusinessSchema;
+      component.business = {
+        path: 'mi-tienda',
+      } as import('@lineup/core').BusinessSchema;
       component.catalog = undefined;
       component.path = undefined;
-      Object.defineProperty(window.history, 'length', { value: 1, configurable: true });
+      Object.defineProperty(window.history, 'length', {
+        value: 1,
+        configurable: true,
+      });
       jest.spyOn(router, 'url', 'get').mockReturnValue('/mi-tienda');
       component.goBack();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/');
@@ -96,7 +129,10 @@ describe('ProductBreadcrumb', () => {
 
     it('debe usar path relativo sin barra inicial', () => {
       component.path = 'dashboard';
-      Object.defineProperty(window.history, 'length', { value: 1, configurable: true });
+      Object.defineProperty(window.history, 'length', {
+        value: 1,
+        configurable: true,
+      });
       jest.spyOn(router, 'url', 'get').mockReturnValue('/otra-ruta');
       component.goBack();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
@@ -105,8 +141,13 @@ describe('ProductBreadcrumb', () => {
     it('debe navegar al catálogo en jerarquía pública con path explícito', () => {
       component.publicMode = true;
       component.path = '/';
-      Object.defineProperty(window.history, 'length', { value: 5, configurable: true });
-      jest.spyOn(router, 'url', 'get').mockReturnValue('/mi-tienda/catalogo-1/p');
+      Object.defineProperty(window.history, 'length', {
+        value: 5,
+        configurable: true,
+      });
+      jest
+        .spyOn(router, 'url', 'get')
+        .mockReturnValue('/mi-tienda/catalogo-1/p');
       component.goBack();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/');
     });
@@ -127,6 +168,15 @@ describe('ProductBreadcrumb SSR', () => {
           },
         },
         { provide: PLATFORM_ID, useValue: 'server' },
+        {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: signal(LanguageEnum.ES),
+            languages: [],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
+          },
+        },
       ],
     })
       .overrideComponent(ProductBreadcrumb, { set: { template: '' } })
@@ -142,5 +192,50 @@ describe('ProductBreadcrumb SSR', () => {
     fix.detectChanges();
     cmp.goBack();
     expect(r.navigateByUrl).toHaveBeenCalled();
+  });
+});
+
+describe('ProductBreadcrumb language select (HU-30)', () => {
+  it('muestra el selector a la izquierda del botón buscar en modo público', async () => {
+    await TestBed.configureTestingModule({
+      imports: [ProductBreadcrumb, TranslateModule.forRoot()],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthStore,
+          useValue: {
+            isUserLoggedIn: jest.fn(() => false),
+            isBusinessLoggedIn: jest.fn(() => false),
+          },
+        },
+        { provide: PLATFORM_ID, useValue: 'browser' },
+        {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: signal(LanguageEnum.ES),
+            languages: [
+              { language: 'Español', flag: '', symbol: LanguageEnum.ES },
+              { language: 'English', flag: '', symbol: LanguageEnum.EN },
+            ],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(ProductBreadcrumb);
+    const component = fixture.componentInstance;
+    component.publicMode = true;
+    component.downloadMode = false;
+    fixture.detectChanges();
+
+    const actions = fixture.nativeElement.querySelector(
+      '.flex.flex-row.items-center.justify-end.gap-3',
+    ) as HTMLElement | null;
+    expect(actions).toBeTruthy();
+    const children = Array.from(actions!.children);
+    expect(children[0].tagName.toLowerCase()).toBe('lib-language-select');
+    expect(children[1].tagName.toLowerCase()).toBe('lib-button');
   });
 });

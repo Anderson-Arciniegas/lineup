@@ -41,7 +41,7 @@ describe('BusinessOnboardingLayout (HU-05)', () => {
   it('debe renderizar la barra de navegación sin toggle de sidebar', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('lib-nav')).toBeTruthy();
-    expect(el.querySelector('[aria-expanded]')).toBeNull();
+    expect(el.querySelector('lib-nav lib-button[aria-expanded]')).toBeNull();
   });
 
   it('debe exponer router-outlet para los pasos del flujo guiado', () => {

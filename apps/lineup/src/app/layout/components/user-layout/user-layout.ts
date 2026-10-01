@@ -65,6 +65,11 @@ export class UserLayout implements OnInit {
         url: '/profile/wishlist',
       },
       {
+        label: 'cart.title',
+        icon: 'pi pi-shopping-cart',
+        url: '/profile/carts',
+      },
+      {
         label: 'general.favorites',
         icon: 'pi pi-shop',
         url: '/profile/favorites',

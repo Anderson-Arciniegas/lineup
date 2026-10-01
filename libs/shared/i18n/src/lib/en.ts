@@ -2,6 +2,7 @@ export const en = {
   general: {
     lineUp: 'LineUp',
     explore: 'Explore',
+    language: 'Language',
     information: 'Information',
     welcome: 'Welcome',
     addCategory: 'Add Category',
@@ -744,6 +745,26 @@ export const en = {
     welcomeNamed: 'Welcome, {{name}}',
     userCreated: 'User created successfully.',
     businessCreated: 'Business created successfully.',
+  },
+  cart: {
+    title: 'Carts',
+    addToCart: 'Add to cart',
+    empty: 'Your cart is empty.',
+    emptyPage: 'You do not have products in any cart yet.',
+    goToCarts: 'View my carts',
+    viewAll: 'View all carts',
+    checkout: 'Checkout',
+    deleteCart: 'Delete cart',
+    deleteCartTitle: 'Delete cart',
+    deleteCartConfirm:
+      'Are you sure you want to delete the cart for {{business}}?',
+    total: 'Total',
+    itemsCount: '{{count}} item(s)',
+    businessFallback: 'Business',
+    noWhatsapp: 'This business does not have WhatsApp configured.',
+    skuRequired: 'Select an available variation before adding.',
+    whatsappIntro:
+      "Hi! I'm coming from LineUp, and I'm interested in the following products:",
   },
   errors: {
     generic: 'An unexpected error occurred. Please try again.',

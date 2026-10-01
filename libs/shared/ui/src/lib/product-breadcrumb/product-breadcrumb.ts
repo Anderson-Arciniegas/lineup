@@ -18,6 +18,7 @@ import {
 import { AuthStore, BusinessSchema, CatalogSchema } from '@lineup/core';
 import { filter } from 'rxjs/operators';
 import { Button } from '../button/button';
+import { LanguageSelect } from '../language-select/language-select';
 
 /** Segmentos de ruta sin query ni hash (p. ej. `/a/b/` → `['a','b']`). */
 function pathSegments(url: string): string[] {
@@ -106,7 +107,7 @@ class ProductBreadcrumbNavTracker {
  */
 @Component({
   selector: 'lib-product-breadcrumb',
-  imports: [CommonModule, Button, RouterLink],
+  imports: [CommonModule, Button, LanguageSelect, RouterLink],
   templateUrl: './product-breadcrumb.html',
   styleUrl: './product-breadcrumb.scss',
 })

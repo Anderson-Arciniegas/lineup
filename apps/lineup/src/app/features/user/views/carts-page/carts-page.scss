@@ -1,0 +1,19 @@
+.carts-page {
+  width: 100%;
+}
+
+.carts-page__card {
+  min-width: 0;
+}
+
+:host ::ng-deep .whatsapp-cta-btn .p-button {
+  background: #25d366;
+  border-color: #25d366;
+  color: #fff;
+}
+
+:host ::ng-deep .whatsapp-cta-btn .p-button:not(:disabled):hover {
+  background: #1ebe57;
+  border-color: #1ebe57;
+  color: #fff;
+}
