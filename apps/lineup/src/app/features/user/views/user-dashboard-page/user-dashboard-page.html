@@ -24,9 +24,9 @@
     <div
       class="w-full max-w-3xl p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 flex flex-col gap-4 items-start"
     >
-      <span class="font-medium">{{
-        'general.userDashboardEmptyFollows' | translate
-      }}</span>
+      <span class="font-medium"
+        >{{ 'general.userDashboardEmptyFollows' | translate }}</span
+      >
       <lib-button
         [label]="'general.userDashboardViewFavorites' | translate"
         color="primary"
@@ -37,9 +37,9 @@
     </div>
     } @else {
     <div
-      class="flex flex-col items-start justify-center w-full px-1 sm:px-4 box-border gap-5"
+      class="flex flex-col items-start justify-center w-full sm:px-4 box-border gap-5"
     >
-      <h2 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+      <h2 class="font-medium text-lg sm:text-xl sm:text-3xl sm:pl-10">
         {{ 'general.userDashboardPromotions' | translate }}
       </h2>
       @if (businessesWithPromotions.length > 0) {
@@ -57,19 +57,19 @@
       </div>
       } @else {
       <div
-        class="w-full ms-5 sm:ms-10 p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
+        class="w-full p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
       >
-        <span class="font-medium">{{
-          'general.userDashboardEmptyDiscounts' | translate
-        }}</span>
+        <span class="font-medium"
+          >{{ 'general.userDashboardEmptyDiscounts' | translate }}</span
+        >
       </div>
       }
     </div>
 
     <div
-      class="flex flex-col items-start justify-center gap-5 w-full px-4 pt-2 box-border"
+      class="flex flex-col items-start justify-center gap-5 w-full sm:px-4 pt-2 box-border"
     >
-      <h2 class="font-medium text-xl sm:text-3xl pl-5 sm:pl-10">
+      <h2 class="font-medium text-lg sm:text-xl sm:text-3xl sm:pl-10">
         {{ 'general.userDashboardRecentProducts' | translate }}
       </h2>
       @if (productsLoading) {
@@ -94,11 +94,11 @@
       </div>
       } @else {
       <div
-        class="w-full ms-5 sm:ms-10 p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
+        class="w-full p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-600"
       >
-        <span class="font-medium">{{
-          'general.userDashboardNoRecentProducts' | translate
-        }}</span>
+        <span class="font-medium"
+          >{{ 'general.userDashboardNoRecentProducts' | translate }}</span
+        >
       </div>
       }
     </div>
