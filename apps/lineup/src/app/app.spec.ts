@@ -2,7 +2,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { AppState, BusinessPrivateService, initialAuthState, UserPublicService } from '@lineup/core';
+import {
+  AppState,
+  BusinessPrivateService,
+  initialAuthState,
+  LanguageService,
+  UserPublicService,
+} from '@lineup/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
   TranslateModule,
@@ -35,7 +41,12 @@ describe('App', () => {
     use: () => mockApolloClient,
   } as unknown as Apollo;
 
+  const languageService = {
+    init: jest.fn(),
+  };
+
   beforeEach(async () => {
+    languageService.init.mockClear();
     await TestBed.configureTestingModule({
       imports: [
         App,
@@ -46,6 +57,7 @@ describe('App', () => {
       providers: [
         { provide: ActivatedRoute, useValue: {} },
         { provide: Apollo, useValue: mockApollo },
+        { provide: LanguageService, useValue: languageService },
         provideMockStore({ initialState }),
         TranslateService,
         TranslateStore,
@@ -58,6 +70,12 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('ngOnInit debe inicializar el idioma vía LanguageService', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect(languageService.init).toHaveBeenCalled();
   });
 
   it('should have router-outlet', () => {
@@ -79,6 +97,7 @@ describe('App', () => {
       providers: [
         { provide: ActivatedRoute, useValue: {} },
         { provide: Apollo, useValue: mockApollo },
+        { provide: LanguageService, useValue: languageService },
         provideMockStore({ initialState }),
         TranslateService,
         TranslateStore,

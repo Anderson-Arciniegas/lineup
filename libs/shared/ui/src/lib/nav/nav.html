@@ -69,7 +69,9 @@
         width="w-11"
       ></lib-button>
     </div>
-    } @if (!logged()) {
+    }
+    <lib-language-select></lib-language-select>
+    @if (!logged()) {
     <lib-button
       class="hidden md:flex"
       [link]="'/login'"

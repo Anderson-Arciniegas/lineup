@@ -2,6 +2,7 @@ export const en = {
   general: {
     lineUp: 'LineUp',
     explore: 'Explore',
+    language: 'Language',
     information: 'Information',
     welcome: 'Welcome',
     addCategory: 'Add Category',

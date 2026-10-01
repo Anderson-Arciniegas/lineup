@@ -26,6 +26,7 @@ import { InputIcon } from 'primeng/inputicon';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { PopoverModule } from 'primeng/popover';
 import { Button } from '../button/button';
+import { LanguageSelect } from '../language-select/language-select';
 import { Notifications } from '../notifications/notifications';
 
 /**
@@ -38,6 +39,7 @@ import { Notifications } from '../notifications/notifications';
   imports: [
     CommonModule,
     Button,
+    LanguageSelect,
     RouterLink,
     DrawerModule,
     TranslateModule,

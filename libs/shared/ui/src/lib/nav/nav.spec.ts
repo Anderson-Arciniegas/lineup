@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import {
   AuthStore,
   BusinessNotificationsPrivateService,
+  LanguageService,
   NotificationsSocketService,
   UserNotificationsPublicService,
 } from '@lineup/core';
@@ -55,6 +56,15 @@ describe('Nav', () => {
         provideRouter([]),
         { provide: PLATFORM_ID, useValue: 'browser' },
         { provide: AuthStore, useValue: authStore },
+        {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: () => 'es',
+            languages: [],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
+          },
+        },
         {
           provide: UserNotificationsPublicService,
           useValue: {
@@ -167,6 +177,15 @@ describe('Nav sin sesión', () => {
           },
         },
         {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: () => 'es',
+            languages: [],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
+          },
+        },
+        {
           provide: UserNotificationsPublicService,
           useValue: {
             ...userNotifications,
@@ -243,6 +262,15 @@ describe('Nav modo negocio', () => {
             isBusinessLoggedIn: jest.fn(() => true),
             user: jest.fn((): null => null),
             business: jest.fn(() => ({ id: 55 })),
+          },
+        },
+        {
+          provide: LanguageService,
+          useValue: {
+            currentLanguage: () => 'es',
+            languages: [],
+            setLanguage: jest.fn(),
+            init: jest.fn(),
           },
         },
         {

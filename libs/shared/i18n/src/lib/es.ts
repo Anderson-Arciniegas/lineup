@@ -2,6 +2,7 @@ export const es = {
   general: {
     lineUp: 'LineUp',
     explore: 'Explorar',
+    language: 'Idioma',
     information: 'Información',
     welcome: 'Bienvenido',
     addCategory: 'Agregar Categoría',

@@ -8,8 +8,12 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BusinessPrivateService, UserPublicService } from '@lineup/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  BusinessPrivateService,
+  LanguageService,
+  UserPublicService,
+} from '@lineup/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { Toast } from 'primeng/toast';
@@ -20,8 +24,9 @@ import { AuthService } from './core/services/auth.service';
 /**
  * Componente raíz de la aplicación.
  *
- * Configura i18n por defecto y, en el navegador, intenta rehidratar la sesión
- * consultando el usuario y el negocio autenticados para sincronizar `AuthService`.
+ * Configura i18n (idioma preferido desde localStorage, default español) y, en el
+ * navegador, intenta rehidratar la sesión consultando el usuario y el negocio
+ * autenticados para sincronizar `AuthService`.
  */
 @Component({
   imports: [
@@ -38,18 +43,16 @@ import { AuthService } from './core/services/auth.service';
 export class App implements OnInit, AfterViewInit, OnDestroy {
   protected title = 'lineup';
 
-  protected translate = inject(TranslateService);
+  private readonly _languageService = inject(LanguageService);
   private platformId: object = inject(PLATFORM_ID);
   private _user = inject(UserPublicService);
   private _auth = inject(AuthService);
   private _business = inject(BusinessPrivateService);
   private _subscription: Subscription = new Subscription();
 
-  /** Registra idiomas disponibles y fija el idioma activo (español por defecto). */
+  /** Restaura el idioma preferido (o español por defecto) vía LanguageService. */
   ngOnInit() {
-    this.translate.addLangs(['es', 'en']);
-    this.translate.setDefaultLang('es');
-    this.translate.use('es');
+    this._languageService.init();
   }
 
   /**

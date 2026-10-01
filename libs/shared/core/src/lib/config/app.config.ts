@@ -40,12 +40,12 @@ export const appRoutes: AppRoutes = {
 export const languagesList: Language[] = [
   {
     language: 'Español',
-    flag: 'assets/images/flags/spanish.svg',
+    flag: '',
     symbol: LanguageEnum.ES,
   },
   {
     language: 'English',
-    flag: 'assets/images/flags/english.svg',
+    flag: '',
     symbol: LanguageEnum.EN,
   },
 ];

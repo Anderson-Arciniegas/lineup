@@ -5,6 +5,7 @@ export * from './notifications-socket.service';
 export * from './encryption.service';
 export * from './graphql.service';
 export * from './gemini';
+export * from './language.service';
 export * from './seo.service';
 export * from './storage.service';
 export * from './toast.service';

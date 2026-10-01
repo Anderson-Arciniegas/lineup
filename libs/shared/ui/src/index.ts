@@ -21,6 +21,7 @@ export * from './lib/draggable-image-list/draggable-image-list';
 export * from './lib/footer/footer';
 export * from './lib/generate-product-description-modal/generate-product-description-modal';
 export * from './lib/image-cropper/image-cropper';
+export * from './lib/language-select/language-select';
 export * from './lib/location-modal/location-modal';
 export * from './lib/nav/nav';
 export * from './lib/notification-item/notification-item';
