@@ -1,0 +1,140 @@
+<p-drawer
+  [(visible)]="visible"
+  position="right"
+  [modal]="true"
+  [dismissible]="true"
+  styleClass="cart-drawer"
+  [style]="{ width: 'min(100vw, 26rem)' }"
+>
+  <ng-template #header>
+    <div class="flex items-center gap-2">
+      <i class="pi pi-shopping-cart text-xl"></i>
+      <span class="font-semibold text-lg">{{ 'cart.title' | translate }}</span>
+    </div>
+  </ng-template>
+
+  @if (cartStore.loading()) {
+  <div class="flex justify-center py-10">
+    <p-progress-spinner
+      strokeWidth="4"
+      [style]="{ width: '3rem', height: '3rem' }"
+    />
+  </div>
+  } @else if (cartStore.nonEmptyCarts().length === 0) {
+  <div class="flex flex-col gap-3 items-start py-6 text-surface-600">
+    <p class="m-0">{{ 'cart.empty' | translate }}</p>
+    <lib-button
+      [label]="'cart.goToCarts' | translate"
+      [link]="'/profile/carts'"
+      type="rounded"
+      variant="outlined"
+      (action)="visible = false"
+    ></lib-button>
+  </div>
+  } @else {
+  <div class="flex flex-col gap-6 pb-4">
+    @for (cart of cartStore.nonEmptyCarts(); track cart.id) {
+    <section class="flex flex-col gap-3 border-b border-surface-200 pb-5">
+      <h3 class="m-0 text-base font-semibold truncate">
+        {{ cart.business?.name || ('cart.businessFallback' | translate) }}
+      </h3>
+
+      <ul class="flex flex-col gap-3 list-none m-0 p-0">
+        @for (item of cart.items; track item.id; let i = $index) {
+        <li class="flex gap-3 items-start">
+          <div
+            class="w-14 h-14 rounded-md overflow-hidden bg-surface-100 shrink-0"
+          >
+            @if (item.product?.productFiles?.[0]?.file; as file) {
+            <img
+              class="w-full h-full object-cover"
+              [src]="file | fileThumbnailUrl: 'xs'"
+              [alt]="item.product?.title || ''"
+            />
+            }
+          </div>
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <span class="text-sm font-medium truncate"
+              >{{ item.product?.title }}</span
+            >
+            @if (variationSummary(item); as variation) {
+            <span class="text-xs text-surface-500 truncate">{{
+              variation
+            }}</span>
+            }
+            <span class="text-xs text-surface-500">
+              {{ item.unitPrice | currency: 'USD' : 'symbol' : '1.0-2' : 'es' }}
+            </span>
+            <div class="flex items-center gap-2 mt-1">
+              <lib-button
+                icon="pi pi-minus"
+                [width]="'w-9'"
+                size="small"
+                variant="outlined"
+                type="rounded"
+                color="secondary"
+                [disabled]="cartStore.mutating()"
+                (action)="decreaseQty(item.id, item.quantity)"
+              ></lib-button>
+              <span class="text-sm font-semibold min-w-6 text-center"
+                >{{ item.quantity }}</span
+              >
+              <lib-button
+                icon="pi pi-plus"
+                [width]="'w-9'"
+                size="small"
+                variant="outlined"
+                type="rounded"
+                color="secondary"
+                [disabled]="cartStore.mutating()"
+                (action)="increaseQty(item.id, item.quantity)"
+              ></lib-button>
+              <lib-button
+                icon="pi pi-trash"
+                [width]="'w-9'"
+                size="small"
+                variant="text"
+                type="rounded"
+                color="danger"
+                [disabled]="cartStore.mutating()"
+                (action)="removeItem(item.id)"
+              ></lib-button>
+            </div>
+          </div>
+        </li>
+        }
+      </ul>
+
+      <div class="flex flex-col items-end gap-0.5 pt-1">
+        <span class="text-sm text-surface-500">{{
+          'cart.total' | translate
+        }}</span>
+        <span class="text-base font-semibold whitespace-nowrap">
+          {{ cart.total | currency: 'USD' : 'symbol' : '1.0-2' : 'es' }}
+        </span>
+      </div>
+
+      <div class="flex flex-wrap gap-2 pt-1">
+        <lib-button
+          class="whatsapp-cta-btn"
+          icon="pi pi-whatsapp"
+          label="cart.checkout"
+          type="rounded"
+          color="success"
+          (action)="checkoutViaWhatsapp(cart)"
+        ></lib-button>
+      </div>
+    </section>
+    }
+
+    <lib-button
+      [label]="'cart.viewAll' | translate"
+      [link]="'/profile/carts'"
+      type="rounded"
+      variant="outlined"
+      color="secondary"
+      (action)="visible = false"
+    ></lib-button>
+  </div>
+  }
+</p-drawer>

@@ -1,0 +1,151 @@
+<section class="carts-page flex flex-col gap-6 py-5 justify-start items-center">
+  <div
+    class="w-11/12 max-w-screen-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-1"
+  >
+    <h2 class="text-2xl font-semibold m-0">{{ 'cart.title' | translate }}</h2>
+  </div>
+
+  <div class="flex flex-col gap-8 w-11/12 max-w-screen-xl">
+    @if (cartStore.loading() && cartStore.nonEmptyCarts().length === 0) {
+    <div class="flex justify-center p-10">
+      <p-progress-spinner
+        strokeWidth="4"
+        [style]="{ width: '100px', height: '100px' }"
+      />
+    </div>
+    } @else if (cartStore.nonEmptyCarts().length === 0) {
+    <div
+      class="p-6 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 w-full"
+    >
+      <span class="font-medium">{{ 'cart.emptyPage' | translate }}</span>
+    </div>
+    } @else {
+    <div class="flex flex-col gap-6 w-full">
+      @for (cart of cartStore.nonEmptyCarts(); track cart.id) {
+      <article
+        class="carts-page__card w-full flex flex-col gap-4 p-4 sm:p-5 rounded-xl border border-gray-200 bg-white shadow-sm"
+      >
+        <header class="min-w-0">
+          @if (businessPath(cart); as path) {
+          <a
+            [routerLink]="path"
+            class="text-lg font-semibold text-primary hover:underline truncate block"
+          >
+            {{ cart.business?.name || ('cart.businessFallback' | translate) }}
+          </a>
+          } @else {
+          <h3 class="text-lg font-semibold m-0 truncate">
+            {{ cart.business?.name || ('cart.businessFallback' | translate) }}
+          </h3>
+          }
+          <p class="text-sm text-gray-500 m-0">
+            {{ 'cart.itemsCount' | translate: { count: cart.itemsCount } }}
+          </p>
+        </header>
+
+        <ul class="flex flex-col gap-3 list-none m-0 p-0">
+          @for (item of cart.items; track item.id) {
+          <li
+            class="flex flex-col sm:flex-row gap-3 sm:items-center py-2 border-b border-gray-100 last:border-0"
+          >
+            <div class="flex gap-3 items-center flex-1 min-w-0">
+              <div
+                class="w-14 h-14 rounded-md overflow-hidden bg-gray-100 shrink-0"
+              >
+                @if (item.product?.productFiles?.[0]?.file; as file) {
+                <img
+                  class="w-full h-full object-cover"
+                  [src]="file | fileThumbnailUrl: 'xs'"
+                  [alt]="item.product?.title || ''"
+                />
+                }
+              </div>
+              <div class="min-w-0 flex flex-col">
+                <span class="font-medium truncate"
+                  >{{ item.product?.title }}</span
+                >
+                @if (variationSummary(item); as variation) {
+                <span class="text-xs text-gray-500 truncate">{{
+                  variation
+                }}</span>
+                }
+                <span class="text-sm text-gray-500">
+                  {{ item.unitPrice | currency: 'USD' : 'symbol' : '1.0-2' :
+                  'es' }} · {{ item.subtotal | currency: 'USD' : 'symbol' :
+                  '1.0-2' : 'es' }}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <lib-button
+                icon="pi pi-minus"
+                [width]="'w-9'"
+                size="small"
+                variant="outlined"
+                type="rounded"
+                color="secondary"
+                [disabled]="cartStore.mutating()"
+                (action)="decreaseQty(item.id, item.quantity)"
+              ></lib-button>
+              <span class="text-sm font-semibold min-w-6 text-center"
+                >{{ item.quantity }}</span
+              >
+              <lib-button
+                icon="pi pi-plus"
+                [width]="'w-9'"
+                size="small"
+                variant="outlined"
+                type="rounded"
+                color="secondary"
+                [disabled]="cartStore.mutating()"
+                (action)="increaseQty(item.id, item.quantity)"
+              ></lib-button>
+              <lib-button
+                icon="pi pi-trash"
+                [width]="'w-9'"
+                size="small"
+                variant="text"
+                type="rounded"
+                color="danger"
+                [disabled]="cartStore.mutating()"
+                (action)="removeItem(item.id)"
+              ></lib-button>
+            </div>
+          </li>
+          }
+        </ul>
+
+        <div class="flex flex-col items-end gap-0.5 pt-1">
+          <span class="text-sm text-gray-500">{{
+            'cart.total' | translate
+          }}</span>
+          <span class="text-lg font-semibold">
+            {{ cart.total | currency: 'USD' : 'symbol' : '1.0-2' : 'es' }}
+          </span>
+        </div>
+
+        <footer class="flex flex-wrap gap-2 pt-1">
+          <lib-button
+            class="whatsapp-cta-btn"
+            icon="pi pi-whatsapp"
+            label="cart.checkout"
+            type="rounded"
+            color="success"
+            (action)="checkoutViaWhatsapp(cart)"
+          ></lib-button>
+          <lib-button
+            icon="pi pi-trash"
+            [label]="'cart.deleteCart' | translate"
+            type="rounded"
+            variant="outlined"
+            color="danger"
+            [disabled]="cartStore.mutating()"
+            (action)="confirmClearCart(cart)"
+          ></lib-button>
+        </footer>
+      </article>
+      }
+    </div>
+    }
+  </div>
+</section>

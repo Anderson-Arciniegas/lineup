@@ -20,6 +20,7 @@ import { Toast } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
+import { CartDrawer } from '../../../../libs/shared/ui/src/lib/cart-drawer/cart-drawer';
 
 /**
  * Componente raíz de la aplicación.
@@ -35,6 +36,7 @@ import { AuthService } from './core/services/auth.service';
     TranslateModule,
     DynamicDialogModule,
     Toast,
+    CartDrawer,
   ],
   selector: 'app-root',
   templateUrl: './app.html',

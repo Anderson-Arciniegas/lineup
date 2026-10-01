@@ -32,6 +32,7 @@ export const appRoutes: AppRoutes = {
   download: 'download',
   favorites: 'favorites',
   wishlist: 'wishlist',
+  carts: 'carts',
   myRatings: 'my-ratings',
   termsAndConditions: 'terminos-y-condiciones',
   privacyPolicy: 'politica-de-privacidad',
@@ -93,6 +94,7 @@ export interface AppRoutes {
   download: string;
   favorites: string;
   wishlist: string;
+  carts: string;
   myRatings: string;
   termsAndConditions: string;
   privacyPolicy: string;

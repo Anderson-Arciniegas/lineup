@@ -99,6 +99,19 @@ body {
   }
 }
 
+/* Cerrar del sidebar de carrito: 44px × 44px. */
+.cart-drawer {
+  .p-drawer-header-actions .p-button,
+  .p-drawer-close-button,
+  button.p-drawer-close-button {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    padding: 0 !important;
+    aspect-ratio: 1 / 1;
+  }
+}
+
 .p-button-icon-only {
   width: var(--p-button-icon-only-width);
   padding-inline-start: 10px !important;

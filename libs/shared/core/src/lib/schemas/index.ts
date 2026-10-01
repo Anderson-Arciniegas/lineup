@@ -4,6 +4,7 @@ export * from './business-hour.schema';
 export * from './business-role.schema';
 export * from './business-visit.schema';
 export * from './business.schema';
+export * from './cart.schema';
 export * from './catalog.schema';
 export * from './coordinate.schema';
 export * from './currency.schema';

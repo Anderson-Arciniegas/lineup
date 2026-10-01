@@ -1,3 +1,16 @@
 :host ::ng-deep .product-details__original-price {
   color: rgb(107 114 128 / 0.75);
 }
+
+/* Verde marca WhatsApp (#25D366) para el CTA de contacto. */
+:host ::ng-deep .product-details__whatsapp-btn .p-button {
+  background: #25d366;
+  border-color: #25d366;
+  color: #fff;
+}
+
+:host ::ng-deep .product-details__whatsapp-btn .p-button:not(:disabled):hover {
+  background: #1ebe57;
+  border-color: #1ebe57;
+  color: #fff;
+}

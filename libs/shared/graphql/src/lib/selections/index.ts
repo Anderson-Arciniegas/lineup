@@ -1,5 +1,6 @@
 export * from './bcv-official-rates.selection';
 export * from './businesses.selection';
+export * from './cart.selection';
 export * from './catalog.selection';
 export * from './currency.selection';
 export * from './discount.selection';

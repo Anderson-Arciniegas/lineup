@@ -3,6 +3,7 @@ export * from './business-private.service';
 export * from './business-notifications-private.service';
 export * from './business-email-verification-private.service';
 export * from './business-api-file-private.service';
+export * from './cart-private.service';
 export * from './locations-private.service';
 export * from './catalog-private.service';
 export * from './product-private.service';

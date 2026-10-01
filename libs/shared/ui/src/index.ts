@@ -6,6 +6,7 @@ export * from './lib/business-hours-modal/business-hours-modal';
 export * from './lib/business-hours-view-modal/business-hours-view-modal';
 export * from './lib/business-locations-modal/business-locations-modal';
 export * from './lib/button/button';
+export * from './lib/cart-drawer/cart-drawer';
 export * from './lib/catalog-card/catalog-card';
 export * from './lib/catalog-carousel-item/catalog-carousel-item';
 export * from './lib/catalog-carousel/catalog-carousel';

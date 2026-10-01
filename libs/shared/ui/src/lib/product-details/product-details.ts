@@ -12,6 +12,7 @@ import {
   BASIC_COLORS,
   BASIC_SIZES,
   BcvOfficialRatesSchema,
+  CartStore,
   CurrencySchema,
   DiscountSchema,
   DiscountSchemaFields,
@@ -82,6 +83,7 @@ export class ProductDetails implements OnChanges {
   private readonly _productPublicService = inject(ProductPublicService);
   private readonly _ratesService = inject(RatesPrivateService);
   private readonly _toast = inject(ToastService);
+  private readonly _cartStore = inject(CartStore);
   private readonly _activatedRoute = inject(ActivatedRoute);
   private readonly _router = inject(Router);
   private readonly _subscription = new Subscription();
@@ -116,6 +118,11 @@ export class ProductDetails implements OnChanges {
    */
   get price(): number | null {
     return this.getEffectivePriceDetails()?.salePrice ?? null;
+  }
+
+  /** True si el negocio tiene teléfono WhatsApp configurado. */
+  get hasWhatsappConfigured(): boolean {
+    return !!this.whatsappPhone?.trim();
   }
 
   /** Precio de lista del SKU sin descuento; se muestra tachado cuando `showDiscountUi` es true. */
@@ -509,10 +516,9 @@ export class ProductDetails implements OnChanges {
           next: (socialNetworkBusinesses) => {
             if (socialNetworkBusinesses.length > 0) {
               this.businessSocialNetworks = socialNetworkBusinesses;
-              const withPhone = this.businessSocialNetworks.find((sn) =>
-                sn.phone?.trim(),
+              this.whatsappPhone = this.resolveWhatsappPhone(
+                socialNetworkBusinesses,
               );
-              this.whatsappPhone = withPhone?.phone?.trim() ?? null;
             } else {
               this.businessSocialNetworks = [];
               this.whatsappPhone = null;
@@ -564,6 +570,36 @@ export class ProductDetails implements OnChanges {
         },
       }),
     );
+  }
+
+  /** Agrega el producto/SKU actual al carrito del negocio (solo usuarios autenticados). */
+  addToCart(): void {
+    if (!this._authStore.isUserLoggedIn()) {
+      this._toast.warn('errors.unauthorized');
+      return;
+    }
+    if (!this.hasWhatsappConfigured || this.price == null) {
+      return;
+    }
+    if (!this.product?.id || !this.product.idCreationBusiness) {
+      return;
+    }
+    const sku = this.getSkuForPricing();
+    if (!sku?.id || sku.price == null) {
+      this._toast.warn('cart.skuRequired');
+      return;
+    }
+    const variationOptions =
+      Object.keys(this.selectedOptionsByVariationTitle).length > 0
+        ? JSON.stringify(this.selectedOptionsByVariationTitle)
+        : undefined;
+    this._cartStore.addItem({
+      businessId: this.product.idCreationBusiness,
+      productId: this.product.id,
+      productSkuId: sku.id,
+      quantity: 1,
+      variationOptions,
+    });
   }
 
   unlikeProduct(): void {
@@ -668,6 +704,22 @@ export class ProductDetails implements OnChanges {
       this.whatsappPhone,
       encodeURIComponent(message),
     );
+  }
+
+  /** Prefiere la red con código WHATSAPP y teléfono; si no, el primer registro con phone. */
+  private resolveWhatsappPhone(
+    networks: SocialNetworkBusinessSchema[],
+  ): string | null {
+    const whatsapp = networks.find(
+      (sn) =>
+        sn.socialNetwork?.code?.toUpperCase() === 'WHATSAPP' &&
+        sn.phone?.trim(),
+    );
+    if (whatsapp?.phone?.trim()) {
+      return whatsapp.phone.trim();
+    }
+    const withPhone = networks.find((sn) => sn.phone?.trim());
+    return withPhone?.phone?.trim() ?? null;
   }
 
   private getRates(): void {

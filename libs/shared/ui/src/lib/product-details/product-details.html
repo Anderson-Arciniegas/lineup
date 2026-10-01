@@ -42,14 +42,23 @@
       </div>
       }
     </div>
-    <div class="flex flex-row gap-3 items-center justify-start">
-      @if(href) {
+    <div class="flex flex-row gap-3 items-center justify-start flex-wrap">
+      @if (hasWhatsappConfigured && price !== null) {
       <lib-button
+        icon="pi pi-shopping-cart"
+        label="cart.addToCart"
+        type="rounded"
+        (action)="addToCart()"
+      ></lib-button>
+      } @if (hasWhatsappConfigured && href) {
+      <lib-button
+        class="product-details__whatsapp-btn"
         icon="pi pi-whatsapp"
-        label="{{'general.contactUs' | translate}}"
+        label="general.contactUs"
         [href]="href"
         [target]="'_blank'"
         type="rounded"
+        color="success"
       ></lib-button>
       }
       <lib-button
