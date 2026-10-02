@@ -2,13 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import {
-  AppState,
-  BusinessPrivateService,
-  initialAuthState,
-  LanguageService,
-  UserPublicService,
-} from '@lineup/core';
+import { AppState, initialAuthState, LanguageService } from '@lineup/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
   TranslateModule,
@@ -87,6 +81,7 @@ describe('App', () => {
 
   it('ngAfterViewInit debe rehidratar sesión en browser', () => {
     TestBed.resetTestingModule();
+    const restoreSession = jest.fn(() => of(true));
     TestBed.configureTestingModule({
       imports: [
         App,
@@ -104,29 +99,13 @@ describe('App', () => {
         MessageService,
         { provide: PLATFORM_ID, useValue: 'browser' },
         {
-          provide: UserPublicService,
-          useValue: { getMe: () => of({ id: 1 }), refreshToken: () => of({}) },
-        },
-        {
-          provide: BusinessPrivateService,
-          useValue: {
-            myBusiness: () => of({ id: 2 }),
-            refreshToken: () => of({}),
-          },
-        },
-        {
           provide: AuthService,
-          useValue: {
-            setUser: jest.fn(),
-            setBusiness: jest.fn(),
-            removeUser: jest.fn(),
-          },
+          useValue: { restoreSession },
         },
       ],
     }).compileComponents();
     const fix = TestBed.createComponent(App);
     fix.detectChanges();
-    expect(TestBed.inject(AuthService).setUser).toHaveBeenCalled();
-    expect(TestBed.inject(AuthService).setBusiness).toHaveBeenCalled();
+    expect(restoreSession).toHaveBeenCalled();
   });
 });

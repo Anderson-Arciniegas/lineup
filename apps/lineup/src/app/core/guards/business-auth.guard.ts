@@ -18,7 +18,7 @@ export const BusinessAuthGuard: CanActivateFn = ():
   const loginUrl = router.createUrlTree([AppConfigService.config.routes.login]);
   const profileUrl = router.createUrlTree([AppConfigService.config.routes.profile]);
 
-  if (auth.userValue) {
+  if (auth.userValue || auth.getSessionType() === 'user') {
     return profileUrl;
   }
   if (auth.businessValue) {

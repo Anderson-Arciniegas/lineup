@@ -29,6 +29,7 @@ describe('BusinessAuthGuard', () => {
           useValue: {
             userValue: { id: 1 },
             businessValue: null,
+            getSessionType: () => 'user',
           },
         },
         { provide: Router, useValue: { createUrlTree } },
@@ -47,6 +48,32 @@ describe('BusinessAuthGuard', () => {
     expect(result).toBeTruthy();
   });
 
+  it('debe redirigir a profile si sessionType es user aunque el store esté vacío', () => {
+    const myBusiness = jest.fn();
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: AuthService,
+          useValue: {
+            userValue: null,
+            businessValue: null,
+            getSessionType: () => 'user',
+          },
+        },
+        { provide: Router, useValue: { createUrlTree } },
+        {
+          provide: BusinessPrivateService,
+          useValue: { myBusiness },
+        },
+      ],
+    });
+
+    expect(runGuard()).toEqual({
+      commands: [AppConfigService.config.routes.profile],
+    });
+    expect(myBusiness).not.toHaveBeenCalled();
+  });
+
   it('debe permitir acceso si business ya está en memoria', () => {
     TestBed.configureTestingModule({
       providers: [
@@ -55,6 +82,7 @@ describe('BusinessAuthGuard', () => {
           useValue: {
             userValue: null,
             businessValue: { id: 2 },
+            getSessionType: () => 'business',
             setBusiness: jest.fn(),
             removeUser: jest.fn(),
           },
@@ -79,6 +107,7 @@ describe('BusinessAuthGuard', () => {
           useValue: {
             userValue: null,
             businessValue: null,
+            getSessionType: () => 'business',
             setBusiness: jest.fn(),
             removeUser,
           },

@@ -14,7 +14,7 @@ import {
   UserSchema,
   UtilsService,
 } from '@lineup/core';
-import { of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
@@ -38,6 +38,10 @@ describe('AuthService', () => {
   let decrypt: jest.Mock;
   let logOutBusiness: jest.Mock;
   let logOutUser: jest.Mock;
+  let getMe: jest.Mock;
+  let myBusiness: jest.Mock;
+  let refreshUserToken: jest.Mock;
+  let refreshBusinessToken: jest.Mock;
   let disconnect: jest.Mock;
 
   beforeEach(() => {
@@ -50,6 +54,10 @@ describe('AuthService', () => {
     decrypt = jest.fn().mockResolvedValue('{"accessToken":"abc"}');
     logOutBusiness = jest.fn(() => of(true));
     logOutUser = jest.fn(() => of(true));
+    getMe = jest.fn(() => of(null));
+    myBusiness = jest.fn(() => of(null));
+    refreshUserToken = jest.fn(() => of({}));
+    refreshBusinessToken = jest.fn(() => of({}));
     disconnect = jest.fn();
     authStore = {
       user: jest.fn(() => null),
@@ -79,11 +87,19 @@ describe('AuthService', () => {
         },
         {
           provide: UserPublicService,
-          useValue: { logOut: logOutUser },
+          useValue: {
+            logOut: logOutUser,
+            getMe,
+            refreshToken: refreshUserToken,
+          },
         },
         {
           provide: BusinessPrivateService,
-          useValue: { logOut: logOutBusiness },
+          useValue: {
+            logOut: logOutBusiness,
+            myBusiness,
+            refreshToken: refreshBusinessToken,
+          },
         },
         {
           provide: NotificationsSocketService,
@@ -268,6 +284,54 @@ describe('AuthService', () => {
       authStore.business.mockReturnValue({ id: 6 });
       expect(service.userValue).toEqual({ id: 5 });
       expect(service.businessValue).toEqual({ id: 6 });
+    });
+  });
+
+  describe('restoreSession', () => {
+    it('no debe consultar APIs si no hay loggedUser', async () => {
+      storageGet.mockReturnValue(null);
+      await expect(firstValueFrom(service.restoreSession())).resolves.toBe(
+        false,
+      );
+      expect(getMe).not.toHaveBeenCalled();
+      expect(myBusiness).not.toHaveBeenCalled();
+    });
+
+    it('debe rehidratar solo sesión business', async () => {
+      storageGet.mockImplementation((key: string) => {
+        if (key === 'loggedUser') return true;
+        if (key === 'sessionType') return 'business';
+        return null;
+      });
+      myBusiness.mockReturnValue(of({ id: 9, name: 'Biz' }));
+
+      await expect(firstValueFrom(service.restoreSession())).resolves.toBe(
+        true,
+      );
+      expect(myBusiness).toHaveBeenCalled();
+      expect(getMe).not.toHaveBeenCalled();
+      expect(authStore.setBusiness).toHaveBeenCalledWith({
+        id: 9,
+        name: 'Biz',
+      });
+    });
+
+    it('debe intentar refresh si myBusiness falla', async () => {
+      storageGet.mockImplementation((key: string) => {
+        if (key === 'loggedUser') return true;
+        if (key === 'sessionType') return 'business';
+        return null;
+      });
+      myBusiness
+        .mockReturnValueOnce(throwError(() => new Error('expired')))
+        .mockReturnValueOnce(of({ id: 11 }));
+      refreshBusinessToken.mockReturnValue(of({ id: 11 }));
+
+      await expect(firstValueFrom(service.restoreSession())).resolves.toBe(
+        true,
+      );
+      expect(refreshBusinessToken).toHaveBeenCalled();
+      expect(authStore.setBusiness).toHaveBeenCalledWith({ id: 11 });
     });
   });
 });

@@ -171,6 +171,12 @@ export const controlPanelRoutes: Routes = [
         path: AppConfigService.config.routes.settings,
         component: BusinessSettingsPage,
       },
+      {
+        // Ruta de panel inexistente: volver al dashboard (no a login ni home).
+        path: '**',
+        redirectTo: '',
+        pathMatch: 'full',
+      },
     ],
   },
 ];

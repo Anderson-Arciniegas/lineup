@@ -1,5 +1,9 @@
 import { Routes } from '@angular/router';
 import { AppConfigService } from '@lineup/core';
+import {
+  UnknownRouteGuard,
+  UnreachableRouteComponent,
+} from '../../core/guards/unknown-route.guard';
 import { BusinessPage } from './views/business-page/business-page';
 import { CatalogDownloadPage } from './views/catalog-download-page/catalog-download-page';
 
@@ -93,7 +97,7 @@ export const businessRoutes: Routes = [
   // },
   {
     path: '**',
-    redirectTo: '/',
-    pathMatch: 'full',
+    canActivate: [UnknownRouteGuard],
+    component: UnreachableRouteComponent,
   },
 ];

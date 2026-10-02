@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
 
 import { AppConfigService } from '@lineup/core';
+import {
+  UnknownRouteGuard,
+  UnreachableRouteComponent,
+} from '../core/guards/unknown-route.guard';
 import { UserAuthGuard } from '../core/guards/user-auth.guard';
 import { UserLayout } from './components/user-layout/user-layout';
 
@@ -67,7 +71,7 @@ export const layoutRoutes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/',
-    pathMatch: 'full',
+    canActivate: [UnknownRouteGuard],
+    component: UnreachableRouteComponent,
   },
 ];

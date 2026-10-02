@@ -16,6 +16,8 @@ import {
   UtilsService,
 } from '@lineup/core';
 import { environment } from '@lineup/envs';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -40,6 +42,97 @@ export class AuthService {
     } else {
       return false;
     }
+  }
+
+  /**
+   * Rehidrata la sesión al arrancar el cliente.
+   *
+   * Solo consulta el API del `sessionType` guardado: llamar a user y business
+   * en paralelo borraba `loggedUser` cuando el API "equivocado" respondía vacío,
+   * dejando las cookies HttpOnly del API intactas y la UI como si no hubiera sesión.
+   */
+  restoreSession(): Observable<boolean> {
+    if (!isPlatformBrowser(this._platformId) || !this.isLoggedIn()) {
+      return of(false);
+    }
+
+    const sessionType = this.getSessionType();
+    if (sessionType === 'business') {
+      return this._restoreBusinessSession();
+    }
+    if (sessionType === 'user') {
+      return this._restoreUserSession();
+    }
+
+    // Flag huérfano sin tipo: no tocar cookies; limpiar solo el estado local.
+    this.removeUser(false);
+    return of(false);
+  }
+
+  private _restoreBusinessSession(): Observable<boolean> {
+    return this._business.myBusiness().pipe(
+      take(1),
+      switchMap((business) => {
+        if (business) {
+          this.setBusiness(business as BusinessSchema);
+          return of(true);
+        }
+        return this._refreshThenLoadBusiness();
+      }),
+      catchError(() => this._refreshThenLoadBusiness()),
+    );
+  }
+
+  private _restoreUserSession(): Observable<boolean> {
+    return this._user.getMe().pipe(
+      take(1),
+      switchMap((user) => {
+        if (user) {
+          this.setUser(user as UserSchema);
+          return of(true);
+        }
+        return this._refreshThenLoadUser();
+      }),
+      catchError(() => this._refreshThenLoadUser()),
+    );
+  }
+
+  private _refreshThenLoadBusiness(): Observable<boolean> {
+    return this._business.refreshToken().pipe(
+      take(1),
+      switchMap(() => this._business.myBusiness().pipe(take(1))),
+      map((business) => {
+        if (business) {
+          this.setBusiness(business as BusinessSchema);
+          return true;
+        }
+        this.removeUser(false);
+        return false;
+      }),
+      catchError(() => {
+        this.removeUser(false);
+        return of(false);
+      }),
+    );
+  }
+
+  private _refreshThenLoadUser(): Observable<boolean> {
+    return this._user.refreshToken().pipe(
+      take(1),
+      switchMap(() => this._user.getMe().pipe(take(1))),
+      map((user) => {
+        if (user) {
+          this.setUser(user as UserSchema);
+          return true;
+        }
+        this.removeUser(false);
+        return false;
+      }),
+      catchError(() => {
+        this.removeUser(false);
+        return of(false);
+      }),
+    );
   }
 
   get userValue() {

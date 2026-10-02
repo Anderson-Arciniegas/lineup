@@ -3,48 +3,36 @@ import {
   ActivatedRouteSnapshot,
   CanActivateChildFn,
   CanActivateFn,
+  Router,
   UrlTree,
 } from '@angular/router';
-import { AppConfigService, UtilsService } from '@lineup/core';
+import { AppConfigService } from '@lineup/core';
 import { AuthService } from '../services';
 
-/** Si ya hay sesión (user o business), redirige al área correspondiente. */
-export const NoAuthGuard: CanActivateFn = async (
-  _route: ActivatedRouteSnapshot,
-): Promise<boolean | UrlTree> => {
-  const utils = inject(UtilsService);
-  const auth = inject(AuthService);
-
+/** Destino cuando ya hay sesión: UrlTree (sin navegar por side-effect). */
+function redirectIfAuthenticated(auth: AuthService, router: Router): true | UrlTree {
   if (!auth.isLoggedIn()) {
     return true;
   }
   const sessionType = auth.getSessionType();
   if (sessionType === 'business') {
-    utils.navigate([AppConfigService.config.routes.dashboard]);
-  } else if (sessionType === 'user') {
-    utils.navigate([AppConfigService.config.routes.profile]);
-  } else {
-    utils.navigate(['/']);
+    return router.createUrlTree([AppConfigService.config.routes.dashboard]);
   }
-  return false;
+  if (sessionType === 'user') {
+    return router.createUrlTree([AppConfigService.config.routes.profile]);
+  }
+  return router.createUrlTree(['/']);
+}
+
+/** Si ya hay sesión (user o business), redirige al área correspondiente. */
+export const NoAuthGuard: CanActivateFn = (
+  _route: ActivatedRouteSnapshot,
+): boolean | UrlTree => {
+  return redirectIfAuthenticated(inject(AuthService), inject(Router));
 };
 
-export const NoAuthGuardChild: CanActivateChildFn = async (
+export const NoAuthGuardChild: CanActivateChildFn = (
   _route: ActivatedRouteSnapshot,
-): Promise<boolean | UrlTree> => {
-  const utils = inject(UtilsService);
-  const auth = inject(AuthService);
-
-  if (!auth.isLoggedIn()) {
-    return true;
-  }
-  const sessionType = auth.getSessionType();
-  if (sessionType === 'business') {
-    utils.navigate([AppConfigService.config.routes.dashboard]);
-  } else if (sessionType === 'user') {
-    utils.navigate([AppConfigService.config.routes.profile]);
-  } else {
-    utils.navigate(['/']);
-  }
-  return false;
+): boolean | UrlTree => {
+  return redirectIfAuthenticated(inject(AuthService), inject(Router));
 };

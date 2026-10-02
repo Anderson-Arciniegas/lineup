@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { AppConfigService, UtilsService } from '@lineup/core';
+import { Router } from '@angular/router';
+import { AppConfigService } from '@lineup/core';
 import { AuthService } from '../services';
 import { NoAuthGuard, NoAuthGuardChild } from './no-auth.guard';
 
@@ -7,25 +8,21 @@ import { NoAuthGuard, NoAuthGuardChild } from './no-auth.guard';
  * En rutas públicas de auth: si ya hay sesión, redirige al área correspondiente.
  */
 describe('NoAuthGuard', () => {
-  let navigate: jest.Mock;
+  let createUrlTree: jest.Mock;
 
   beforeEach(() => {
-    navigate = jest.fn();
+    createUrlTree = jest.fn((commands: unknown[]) => ({ commands } as any));
   });
 
-  async function runNoAuth() {
-    return TestBed.runInInjectionContext(() =>
-      NoAuthGuard({} as any),
-    );
+  function runNoAuth() {
+    return TestBed.runInInjectionContext(() => NoAuthGuard({} as any));
   }
 
-  async function runNoAuthChild() {
-    return TestBed.runInInjectionContext(() =>
-      NoAuthGuardChild({} as any),
-    );
+  function runNoAuthChild() {
+    return TestBed.runInInjectionContext(() => NoAuthGuardChild({} as any));
   }
 
-  it('debe permitir acceso sin sesión', async () => {
+  it('debe permitir acceso sin sesión', () => {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -34,15 +31,15 @@ describe('NoAuthGuard', () => {
             isLoggedIn: () => false,
           },
         },
-        { provide: UtilsService, useValue: { navigate } },
+        { provide: Router, useValue: { createUrlTree } },
       ],
     });
 
-    expect(await runNoAuth()).toBe(true);
-    expect(navigate).not.toHaveBeenCalled();
+    expect(runNoAuth()).toBe(true);
+    expect(createUrlTree).not.toHaveBeenCalled();
   });
 
-  it('debe redirigir al dashboard con sesión business', async () => {
+  it('debe redirigir al dashboard con sesión business', () => {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -52,17 +49,20 @@ describe('NoAuthGuard', () => {
             getSessionType: () => 'business',
           },
         },
-        { provide: UtilsService, useValue: { navigate } },
+        { provide: Router, useValue: { createUrlTree } },
       ],
     });
 
-    expect(await runNoAuth()).toBe(false);
-    expect(navigate).toHaveBeenCalledWith([
+    const result = runNoAuth();
+    expect(createUrlTree).toHaveBeenCalledWith([
       AppConfigService.config.routes.dashboard,
     ]);
+    expect(result).toEqual({
+      commands: [AppConfigService.config.routes.dashboard],
+    });
   });
 
-  it('debe redirigir al profile con sesión user', async () => {
+  it('debe redirigir al profile con sesión user', () => {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -72,27 +72,30 @@ describe('NoAuthGuard', () => {
             getSessionType: () => 'user',
           },
         },
-        { provide: UtilsService, useValue: { navigate } },
+        { provide: Router, useValue: { createUrlTree } },
       ],
     });
 
-    expect(await runNoAuth()).toBe(false);
-    expect(navigate).toHaveBeenCalledWith([
+    const result = runNoAuth();
+    expect(createUrlTree).toHaveBeenCalledWith([
       AppConfigService.config.routes.profile,
     ]);
+    expect(result).toEqual({
+      commands: [AppConfigService.config.routes.profile],
+    });
   });
 
-  it('NoAuthGuardChild debe comportarse igual sin sesión', async () => {
+  it('NoAuthGuardChild debe comportarse igual sin sesión', () => {
     TestBed.configureTestingModule({
       providers: [
         {
           provide: AuthService,
           useValue: { isLoggedIn: () => false },
         },
-        { provide: UtilsService, useValue: { navigate } },
+        { provide: Router, useValue: { createUrlTree } },
       ],
     });
 
-    expect(await runNoAuthChild()).toBe(true);
+    expect(runNoAuthChild()).toBe(true);
   });
 });
