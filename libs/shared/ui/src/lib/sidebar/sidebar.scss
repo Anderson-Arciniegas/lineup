@@ -2,6 +2,7 @@ $item-inset: 8px;
 $icon-slot: 44px;
 
 :host {
+  position: relative;
   display: block;
   width: 100%;
   min-width: 0;
@@ -17,11 +18,38 @@ $icon-slot: 44px;
   width: 100%;
   padding: 1.25rem $item-inset;
   max-height: calc(100vh - 80px);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
   @media screen and (max-width: 639px) {
     max-height: calc(100vh - 72px);
   }
+}
+
+.sidebar-scrollbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sidebar-scrollbar__thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--p-surface-300, #d4d4d8);
 }
 
 .sidebar-item {

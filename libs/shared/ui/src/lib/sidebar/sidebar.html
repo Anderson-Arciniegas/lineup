@@ -1,4 +1,4 @@
-<section class="sidebar-content">
+<section class="sidebar-content" #scrollContainer (scroll)="onScroll()">
   <div class="flex flex-col justify-between gap-2 sm:gap-3 layout">
     <div class="flex flex-col gap-2 layout justify-start">
       @for (item of items.slice(0, items.length - 1); track $index) {
@@ -41,3 +41,12 @@
     </div>
   </div>
 </section>
+@if (hasScrollbar()) {
+<div class="sidebar-scrollbar" aria-hidden="true">
+  <div
+    class="sidebar-scrollbar__thumb"
+    [style.height.px]="thumbHeight()"
+    [style.transform]="'translateY(' + thumbTop() + 'px)'"
+  ></div>
+</div>
+}
