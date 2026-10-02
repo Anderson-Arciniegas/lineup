@@ -816,13 +816,16 @@ export class CreateProductPage implements OnInit {
               summary: this._translate.instant('general.success'),
               detail: this._translate.instant('general.productCreated'),
             });
-            this._utils.navigate([
-              AppConfigService.config.routes.dashboard,
-              AppConfigService.config.routes.catalogs,
-              this.catalog?.path ?? this.catalogPath ?? '',
-              product.id,
-              AppConfigService.config.routes.inventory,
-            ]);
+            this._utils.navigate(
+              [
+                AppConfigService.config.routes.dashboard,
+                AppConfigService.config.routes.catalogs,
+                this.catalog?.path ?? this.catalogPath ?? '',
+                product.id,
+                AppConfigService.config.routes.inventory,
+              ],
+              { queryParams: { optionalStep: '1' } },
+            );
           },
           error: () => {
             this.isSubmitting = false;

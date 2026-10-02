@@ -38,6 +38,23 @@
     border-radius: 50% !important;
   }
 
+  /*
+   * Galería estática cuando todas las fotos caben (sin p-carousel → sin FOUC de PrimeNG).
+   */
+  .product-page-gallery {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .product-page-gallery .product-page-carousel__slide {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
   .product-page-carousel {
     width: 100%;
 
@@ -57,6 +74,20 @@
       box-sizing: border-box;
       min-width: 0;
       padding-inline: 0.25rem;
+      /* Antes de createStyle de PrimeNG; !important para ganar al <style> inyectado tarde. */
+      flex: 1 0 100% !important;
+    }
+  }
+
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .product-page-carousel .p-carousel-item {
+      flex: 1 0 50% !important;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    .product-page-carousel .p-carousel-item {
+      flex: 1 0 33.3333% !important;
     }
   }
 
@@ -117,6 +148,7 @@
     }
   }
 
+  .product-page-gallery .carousel-image-frame,
   .product-page-carousel .carousel-image-frame {
     .p-image,
     p-image {
@@ -154,6 +186,7 @@
   }
 
   @media screen and (max-width: 1023px) {
+    .product-page-gallery .carousel-image-frame img.carousel-image,
     .product-page-carousel .carousel-image-frame img.carousel-image {
       border-width: 12px;
       border-radius: 40px;
@@ -161,6 +194,7 @@
   }
 
   @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .product-page-gallery .carousel-image-frame img.carousel-image,
     .product-page-carousel .carousel-image-frame img.carousel-image {
       border-width: 10px;
       border-radius: 36px;
@@ -168,6 +202,7 @@
   }
 
   @media screen and (max-width: 767px) {
+    .product-page-gallery .carousel-image-frame img.carousel-image,
     .product-page-carousel .carousel-image-frame img.carousel-image {
       border-width: 8px;
       border-radius: 32px;
@@ -175,6 +210,7 @@
   }
 
   @media screen and (max-width: 480px) {
+    .product-page-gallery .carousel-image-frame img.carousel-image,
     .product-page-carousel .carousel-image-frame img.carousel-image {
       border-width: 5px;
       border-radius: 24px;

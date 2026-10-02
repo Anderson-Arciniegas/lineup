@@ -42,8 +42,26 @@
     </div>
     }
     <div [class.light-mode]="brandToneLight" class="card w-10/10">
-      @if (carouselSlides.length) { @for (instanceId of [carouselInstanceKey];
-      track instanceId) {
+      @if (carouselSlides.length) {
+      @if (!carouselNeedsScroller) {
+      <div class="product-page-gallery">
+        @for (pf of carouselSlides; track $index) {
+        <section
+          class="product-page-carousel__slide flex flex-row items-center justify-center p-1 sm:py-3 sm:mx-2 min-w-0"
+        >
+          <div class="carousel-image-frame">
+            <p-image
+              [src]="pf.file | fileThumbnailUrl:'md'"
+              [preview]="true"
+              [appendTo]="'body'"
+              imageClass="carousel-image"
+              [alt]="product.title || ('general.product' | translate)"
+            />
+          </div>
+        </section>
+        }
+      </div>
+      } @else { @for (instanceId of [carouselInstanceKey]; track instanceId) {
       <p-carousel
         styleClass="product-page-carousel"
         [value]="carouselSlides"
@@ -70,7 +88,7 @@
           </section>
         </ng-template>
       </p-carousel>
-      } } @else {
+      } } } @else {
       <section
         class="product-page-carousel__slide flex flex-row items-center justify-center p-1 sm:py-3 sm:mx-2 w-full min-w-0"
       >

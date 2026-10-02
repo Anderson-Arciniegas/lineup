@@ -30,10 +30,22 @@
     [formGroup]="skuProductForm"
     class="w-full flex flex-col items-center justify-start gap-8 px-4 sm:px-10 xl:px-18 rounded-lg border-grey xl:container pb-30"
   >
-    <div class="flex flex-row items-center justify-start w-full">
-      <h2 class="text-3xl font-medium">
-        {{ 'general.updateProductInventory' | translate }}
-      </h2>
+    <div class="flex flex-col items-start justify-start w-full gap-2">
+      <div class="flex flex-row flex-wrap items-baseline justify-start gap-x-3 gap-y-1">
+        <h2 class="text-3xl font-medium">
+          {{ 'general.updateProductInventory' | translate }}
+        </h2>
+        @if (isOptionalStep) {
+        <span class="text-base font-medium text-gray-500">
+          ({{ 'general.optional' | translate }})
+        </span>
+        }
+      </div>
+      @if (isOptionalStep) {
+      <p class="text-sm text-gray-600 max-w-3xl">
+        {{ 'general.inventoryStepOptional' | translate }}
+      </p>
+      }
     </div>
 
     <div class="flex flex-row items-center justify-center w-full gap-4">
@@ -226,7 +238,9 @@
       class="w-full max-w-5xl flex sm:flex-row flex-col item-center justify-between sm:gap-10 gap-4 pt-4"
     >
       <lib-button
-        [label]="'general.cancel' | translate"
+        [label]="
+          (isOptionalStep ? 'general.skipForNow' : 'general.cancel') | translate
+        "
         [width]="'w-40'"
         type="rounded"
         color="secondary"
