@@ -56,6 +56,7 @@ describe('UpdateProductSkuPage', () => {
           useValue: {
             snapshot: {
               params: { business: 'test', idProduct: '1', catalogPath: 'cat' },
+              queryParamMap: { get: () => null },
             },
           },
         },
@@ -99,6 +100,10 @@ describe('UpdateProductSkuPage', () => {
 
   it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('no debe marcar el paso como opcional sin query param', () => {
+    expect(component.isOptionalStep).toBe(false);
   });
 
   /**

@@ -202,6 +202,7 @@ describe('CreateProductPage', () => {
           500,
           expect.any(String),
         ]),
+        { queryParams: { optionalStep: '1' } },
       );
     });
 
@@ -850,13 +851,16 @@ describe('CreateProductPage', () => {
       component.imgCodes = ['img-code-1'];
       component.catalog = { id: 99, path: 'my-cat' } as CatalogSchema;
       component.createProduct();
-      expect(navigate).toHaveBeenCalledWith([
-        'dashboard',
-        'catalogs',
-        'my-cat',
-        600,
-        'inventory',
-      ]);
+      expect(navigate).toHaveBeenCalledWith(
+        [
+          'dashboard',
+          'catalogs',
+          'my-cat',
+          600,
+          'inventory',
+        ],
+        { queryParams: { optionalStep: '1' } },
+      );
     });
   });
 });

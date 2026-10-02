@@ -65,6 +65,23 @@ import { catchError, finalize } from 'rxjs/operators';
   styleUrl: './product-page.scss',
 })
 export class ProductPage implements OnInit, OnDestroy {
+  private readonly _businessService = inject(BusinessPublicService);
+  private readonly _breakpointObserver = inject(BreakpointObserver);
+  private readonly _cdr = inject(ChangeDetectorRef);
+  private readonly _translate = inject(TranslateService);
+  private readonly _authStore = inject(AuthStore);
+  private readonly _utils = inject(UtilsService);
+  private readonly _activatedRoute = inject(ActivatedRoute);
+  private readonly _catalogService = inject(CatalogPrivateService);
+  private readonly _productService = inject(ProductPrivateService);
+  private readonly _productPublicService = inject(ProductPublicService);
+  private readonly _pendingTasks = inject(PendingTasks);
+  private readonly _seoService = inject(SeoService);
+  private readonly _userService = inject(UserPublicService);
+  private readonly _apiError = inject(ApiErrorService);
+
+  private readonly _subscription = new Subscription();
+
   business: BusinessSchema;
   path: string;
   id: number;
@@ -83,8 +100,9 @@ export class ProductPage implements OnInit, OnDestroy {
   /**
    * Slides visibles (Tailwind por defecto): xl/2xl (≥1280px) → 3; lg (1024–1279) → 2; debajo de lg → 1.
    * Sin `responsiveOptions` para que PrimeNG regenere CSS vía `@Input` al redimensionar.
+   * Se inicializa en el viewport actual para evitar el FOUC del default fijo (antes = 2).
    */
-  carouselNumVisible = 2;
+  carouselNumVisible = this._carouselNumVisibleForViewport();
   /** Al cambiar, destruye y recrea `p-carousel` (evita transform/clones desincronizados al cruzar breakpoints). */
   carouselInstanceKey = 0;
   myBusiness = false;
@@ -96,23 +114,6 @@ export class ProductPage implements OnInit, OnDestroy {
 
   private static readonly _TAG_RELATED_MAX = 4;
   private static readonly _TAG_RELATED_FETCH = 4;
-
-  private readonly _businessService = inject(BusinessPublicService);
-  private readonly _breakpointObserver = inject(BreakpointObserver);
-  private readonly _cdr = inject(ChangeDetectorRef);
-  private readonly _translate = inject(TranslateService);
-  private readonly _authStore = inject(AuthStore);
-  private readonly _utils = inject(UtilsService);
-  private readonly _activatedRoute = inject(ActivatedRoute);
-  private readonly _catalogService = inject(CatalogPrivateService);
-  private readonly _productService = inject(ProductPrivateService);
-  private readonly _productPublicService = inject(ProductPublicService);
-  private readonly _pendingTasks = inject(PendingTasks);
-  private readonly _seoService = inject(SeoService);
-  private readonly _userService = inject(UserPublicService);
-  private readonly _apiError = inject(ApiErrorService);
-
-  private readonly _subscription = new Subscription();
 
   /**
    * Observa breakpoints para el carrusel de imágenes, lee `business` e `idProduct` de la ruta
@@ -161,9 +162,6 @@ export class ProductPage implements OnInit, OnDestroy {
         .subscribe({
           next: (product) => {
             this.product = product;
-            if (product.productFiles?.length) {
-              this.carouselInstanceKey += 1;
-            }
             if (!this.myBusiness) {
               this.visitProduct();
             }
@@ -228,23 +226,39 @@ export class ProductPage implements OnInit, OnDestroy {
   }
 
   /**
+   * Columnas del viewport. Si hay menos fotos, no usamos p-carousel (ver `carouselNeedsScroller`).
+   */
+  get carouselEffectiveNumVisible(): number {
+    const count = this._carouselSlideCount();
+    if (count <= 0) {
+      return this.carouselNumVisible;
+    }
+    return Math.min(this.carouselNumVisible, count);
+  }
+
+  /**
+   * Solo montar PrimeNG carousel cuando haga falta scroll.
+   * Si caben todas las fotos, una fila flex estática evita el FOUC de createStyle/clones.
+   */
+  get carouselNeedsScroller(): boolean {
+    return this._carouselSlideCount() > this.carouselNumVisible;
+  }
+
+  /**
    * PrimeNG activa circular si `length >= numVisible`: con 1 foto y 1 visible entran clones y autoplay rotos.
    * Solo circular cuando haya más ítems que cupo en pantalla.
    */
   get carouselCircular(): boolean {
-    return this._carouselSlideCount() > this.carouselNumVisible;
+    return this.carouselNeedsScroller;
   }
 
   /** Sin autoplay si una sola imagen o si todas caben a la vez. */
   get carouselAutoplayInterval(): number {
-    const n = this._carouselSlideCount();
-    if (n <= 1) return 0;
-    if (n <= this.carouselNumVisible) return 0;
-    return 8000;
+    return this.carouselNeedsScroller ? 8000 : 0;
   }
 
   get carouselShowNavigators(): boolean {
-    return this._carouselSlideCount() > this.carouselNumVisible;
+    return this.carouselNeedsScroller;
   }
 
   private _carouselSlideCount(): number {
@@ -260,8 +274,19 @@ export class ProductPage implements OnInit, OnDestroy {
     return files.filter((pf) => !!getFileThumbnailUrl(pf.file, 'md')?.trim());
   }
 
-  /** Mapea media queries CDK a número de slides visibles del carousel PrimeNG. */
+  /** Mapea el ancho del viewport a columnas del carrusel/galería. */
   private _carouselNumVisibleForViewport(): number {
+    const width =
+      typeof window !== 'undefined' ? window.innerWidth : undefined;
+    if (width != null) {
+      if (width >= 1280) {
+        return 3;
+      }
+      if (width >= 1024) {
+        return 2;
+      }
+      return 1;
+    }
     if (this._breakpointObserver.isMatched('(min-width: 1280px)')) {
       return 3;
     }

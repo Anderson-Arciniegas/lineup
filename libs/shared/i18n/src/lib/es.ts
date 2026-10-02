@@ -195,6 +195,10 @@ export const es = {
     variation: 'Variación',
     sku: 'SKU',
     updateProductInventory: 'Actualizar inventario de producto',
+    inventoryStepOptional:
+      'Este paso es opcional. Puedes definir precio y stock ahora, o hacerlo más tarde desde el panel del producto.',
+    skipForNow: 'Omitir',
+    optional: 'Opcional',
     currency: 'Moneda',
     stock: 'Existencias',
     generalValues: 'Valores generales',
@@ -664,6 +668,8 @@ export const es = {
     title: 'Verifica tu correo',
     description:
       'Ingresa el código de verificación que enviamos a tu correo electrónico',
+    spamHint:
+      'Si no lo ves en la bandeja de entrada, revisa la carpeta de spam o correo no deseado.',
     codeLabel: 'Código de verificación',
     resendCode: 'Reenviar código',
     verificationFailed:

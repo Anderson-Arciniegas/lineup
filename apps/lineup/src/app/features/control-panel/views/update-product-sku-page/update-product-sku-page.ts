@@ -84,6 +84,8 @@ export class UpdateProductSkuPage implements OnInit, OnDestroy {
   catalogPath: string | undefined;
   attempt = false;
   isSubmitting = false;
+  /** Tras crear el producto: el inventario se ofrece como paso omitible. */
+  isOptionalStep = false;
   loadErrorKey: string | null = null;
   minValueError = getMinValueFieldError;
   image: string | undefined;
@@ -179,6 +181,8 @@ export class UpdateProductSkuPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.idProduct = this._activatedRoute.snapshot.params['idProduct'];
     this.catalogPath = this._activatedRoute.snapshot.params['catalogPath'];
+    this.isOptionalStep =
+      this._activatedRoute.snapshot.queryParamMap.get('optionalStep') === '1';
 
     if (this.idProduct) {
       this.loadProductAndCurrencies();

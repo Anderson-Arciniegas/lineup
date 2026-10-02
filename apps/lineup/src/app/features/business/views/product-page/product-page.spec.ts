@@ -151,6 +151,47 @@ describe('ProductPage', () => {
     });
   });
 
+  describe('carouselEffectiveNumVisible', () => {
+    it('debe igualar el viewport si no hay slides', () => {
+      component.carouselNumVisible = 3;
+      expect(component.carouselEffectiveNumVisible).toBe(3);
+      expect(component.carouselNeedsScroller).toBe(false);
+    });
+
+    it('no debe usar carrusel si caben todas las fotos', () => {
+      component.carouselNumVisible = 3;
+      component.product = {
+        ...product,
+        productFiles: [
+          { file: { url: 'https://cdn.test/a.jpg' } },
+          { file: { url: 'https://cdn.test/b.jpg' } },
+        ],
+      } as typeof component.product;
+      expect(component.carouselEffectiveNumVisible).toBe(2);
+      expect(component.carouselNeedsScroller).toBe(false);
+      expect(component.carouselCircular).toBe(false);
+      expect(component.carouselShowNavigators).toBe(false);
+      expect(component.carouselAutoplayInterval).toBe(0);
+    });
+
+    it('debe usar carrusel cuando hay fotos de sobra', () => {
+      component.carouselNumVisible = 2;
+      component.product = {
+        ...product,
+        productFiles: [
+          { file: { url: 'https://cdn.test/a.jpg' } },
+          { file: { url: 'https://cdn.test/b.jpg' } },
+          { file: { url: 'https://cdn.test/c.jpg' } },
+        ],
+      } as typeof component.product;
+      expect(component.carouselEffectiveNumVisible).toBe(2);
+      expect(component.carouselNeedsScroller).toBe(true);
+      expect(component.carouselCircular).toBe(true);
+      expect(component.carouselShowNavigators).toBe(true);
+      expect(component.carouselAutoplayInterval).toBe(8000);
+    });
+  });
+
   describe('carouselSlides', () => {
     it('debe devolver vacío sin productFiles', () => {
       expect(component.carouselSlides).toEqual([]);

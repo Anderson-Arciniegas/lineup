@@ -192,6 +192,10 @@ export const en = {
     variation: 'Variation',
     sku: 'SKU',
     updateProductInventory: 'Update product inventory',
+    inventoryStepOptional:
+      'This step is optional. You can set price and stock now, or do it later from the product panel.',
+    skipForNow: 'Skip',
+    optional: 'Optional',
     currency: 'Currency',
     stock: 'Stock',
     generalValues: 'General values',
@@ -651,7 +655,10 @@ export const en = {
   },
   verificationCodeModal: {
     title: 'Verify your email',
-    description: 'Enter the verification code we sent to your email',
+    description:
+      'Enter the verification code we sent to your email',
+    spamHint:
+      'If you do not see it in your inbox, check your spam or junk folder.',
     codeLabel: 'Verification code',
     resendCode: 'Resend code',
     verificationFailed:
