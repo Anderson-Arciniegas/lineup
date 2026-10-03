@@ -1,204 +1,613 @@
-<section
-  class="flex flex-col lg:flex-row gap-10 lg:gap-0 items-center justify-center h-100vh-calc p-5 md:p-15"
->
-  <div class="flex flex-col items-center justify-start w-10/10 lg:w-5/10 gap-6">
+<!-- ================================================================ -->
+<!-- HERO SECTION                                                     -->
+<!-- ================================================================ -->
+<section class="relative overflow-hidden w-full bg-white">
+  <div
+    class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-10 sm:pt-16 lg:pt-20 pb-16 lg:pb-24 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8"
+  >
+    <!-- Left Hero Copy -->
+    <div class="flex flex-col items-start gap-6 max-w-2xl w-full">
+      <!-- Eyebrow Pill -->
+      <div
+        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EBEBED] shadow-xs"
+      >
+        <span class="w-2 h-2 rounded-full bg-[#0BC5EA] animate-pulse"></span>
+        <span
+          class="text-[11px] font-mono tracking-wider text-[#5C5C63] uppercase font-medium"
+        >
+          CATÁLOGOS VIRTUALES · VENEZUELA
+        </span>
+      </div>
+
+      <!-- Main Headline -->
+      <div class="flex flex-col gap-1">
+        <h1
+          class="text-4xl sm:text-5xl lg:text-[54px] font-medium tracking-tight text-[#0B0B0C] leading-[1.12]"
+        >
+          {{ 'landingPage.yourSpaceToBuildA' | translate }}<br />
+          <span class="font-bold text-[#0B0B0C]">
+            {{ 'landingPage.digitalShowroom' | translate }}
+          </span>
+        </h1>
+      </div>
+
+      <!-- Subtitle -->
+      <p class="text-base sm:text-lg text-[#5C5C63] font-normal leading-relaxed max-w-xl">
+        {{ 'landingPage.theFutureOfDisplayWhereYourBrandShinesWithoutLimits' | translate }}.
+        Crea tu catálogo, conecta con clientes y vende desde un solo lugar.
+      </p>
+
+      <!-- CTA Buttons Row -->
+      <div class="flex flex-wrap items-center gap-3 pt-2 w-full sm:w-auto">
+        <a
+          routerLink="/register"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#0B0B0C] text-white text-[15px] font-medium hover:bg-[#202024] active:scale-[0.98] transition-all duration-200 shadow-sm"
+        >
+          <span>{{ 'landingPage.join' | translate }}</span>
+          <i class="pi pi-arrow-right text-xs"></i>
+        </a>
+
+        <a
+          routerLink="/"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-white border border-[#EBEBED] text-[#0B0B0C] text-[15px] font-medium hover:bg-[#F7F7F8] active:scale-[0.98] transition-all duration-200 shadow-xs"
+        >
+          <i class="pi pi-objects-column text-[#0B0B0C] text-sm"></i>
+          <span>Ver catálogos</span>
+        </a>
+      </div>
+
+      <!-- Trust Rating -->
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <div class="flex items-center gap-1 text-[#0B0B0C]">
+          <i class="pi pi-star-fill text-xs"></i>
+          <i class="pi pi-star-fill text-xs"></i>
+          <i class="pi pi-star-fill text-xs"></i>
+          <i class="pi pi-star-fill text-xs"></i>
+          <i class="pi pi-star-fill text-xs"></i>
+        </div>
+        <span class="text-xs text-[#74747C] font-normal">
+          4.9 · +250 negocios ya exhiben sus catálogos en LineUp
+        </span>
+      </div>
+    </div>
+
+    <!-- Right Hero Visual (Phone Mockup + Floating Badges) -->
+    <div class="relative w-full max-w-[470px] h-[580px] flex items-center justify-center select-none">
+      <!-- Radial Glow Background -->
+      <div
+        class="absolute inset-0 m-auto w-[420px] h-[420px] rounded-full pointer-events-none opacity-80"
+        style="background: radial-gradient(circle, rgba(214, 245, 253, 0.85) 0%, rgba(255, 255, 255, 0) 70%);"
+      ></div>
+
+      <!-- Live Floating Badge (Top Left) -->
+      <div
+        class="absolute left-2 sm:left-4 top-4 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#EBEBED] shadow-lg animate-bounce"
+        style="animation-duration: 3s;"
+      >
+        <span class="w-2 h-2 rounded-full bg-[#0BC5EA] animate-ping"></span>
+        <span class="text-[11px] font-medium text-[#5C5C63]">En vivo</span>
+      </div>
+
+      <!-- Floating Product Badge (Left overlapping phone) -->
+      <div
+        class="absolute -left-2 sm:-left-6 top-28 z-20 bg-white rounded-2xl p-2.5 border border-[#EBEBED] shadow-xl flex items-center gap-3 w-52 hover:scale-105 transition-transform duration-200"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1697028459353-8570916a59d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA5ODU2MTN8&ixlib=rb-4.1.0&q=80&w=200"
+          alt="Air Zoom Red"
+          class="w-11 h-11 rounded-xl object-cover"
+        />
+        <div class="flex flex-col min-w-0">
+          <span class="text-xs font-semibold text-[#0B0B0C] truncate">Air Zoom Red</span>
+          <span class="text-[11px] text-[#74747C]">Nuevo · $21,00</span>
+        </div>
+      </div>
+
+      <!-- Floating Stats Badge (Right overlapping phone) -->
+      <div
+        class="absolute -right-2 sm:-right-4 bottom-20 z-20 bg-white rounded-2xl p-2.5 border border-[#EBEBED] shadow-xl flex items-center gap-3 w-38 hover:scale-105 transition-transform duration-200"
+      >
+        <div
+          class="w-9 h-9 rounded-xl bg-[#E8FAFE] text-[#0BC5EA] flex items-center justify-center shrink-0"
+        >
+          <i class="pi pi-arrow-up-right font-bold text-sm"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-base font-bold text-[#0B0B0C] leading-none">+128%</span>
+          <span class="text-[10px] text-[#74747C]">visitas</span>
+        </div>
+      </div>
+
+      <!-- Phone Frame -->
+      <div
+        class="relative z-10 w-[280px] h-[550px] bg-[#0B0B0C] rounded-[46px] p-2.5 shadow-[0_20px_50px_rgba(16,17,20,0.18)] border-4 border-[#18181B] flex flex-col"
+      >
+        <!-- Phone Screen -->
+        <div
+          class="w-full h-full bg-white rounded-[38px] p-3 flex flex-col justify-between overflow-hidden shadow-inner"
+        >
+          <!-- Phone Status Bar -->
+          <div class="flex items-center justify-between px-2 pt-1">
+            <span class="text-[10px] font-semibold text-[#0B0B0C]">9:41</span>
+            <div class="flex items-center gap-1 text-[#0B0B0C] text-[10px]">
+              <i class="pi pi-wifi text-[9px]"></i>
+              <i class="pi pi-bolt text-[9px]"></i>
+            </div>
+          </div>
+
+          <!-- Phone App Bar -->
+          <div class="flex items-center justify-between px-1 pt-1.5">
+            <div class="flex items-center gap-1">
+              <span class="text-xs font-semibold text-[#0B0B0C] tracking-tight">LineUp</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0BC5EA]"></span>
+            </div>
+            <i class="pi pi-search text-[#5C5C63] text-xs"></i>
+          </div>
+
+          <!-- Phone Search Bar -->
+          <div
+            class="bg-[#F7F7F8] rounded-xl px-2.5 py-1.5 flex items-center gap-2 text-[#74747C] text-[10px] mt-1"
+          >
+            <i class="pi pi-search text-[10px]"></i>
+            <span>Buscar productos</span>
+          </div>
+
+          <!-- Phone Category Chips -->
+          <div class="flex items-center gap-1.5 py-1">
+            <button
+              type="button"
+              (click)="setActiveChip('todos')"
+              [class]="
+                activeChip === 'todos'
+                  ? 'bg-[#0B0B0C] text-white text-[9px] px-2.5 py-1 rounded-full font-medium transition-colors'
+                  : 'bg-white border border-[#EBEBED] text-[#5C5C63] text-[9px] px-2.5 py-1 rounded-full font-medium hover:bg-[#F7F7F8] transition-colors'
+              "
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              (click)="setActiveChip('moda')"
+              [class]="
+                activeChip === 'moda'
+                  ? 'bg-[#0B0B0C] text-white text-[9px] px-2.5 py-1 rounded-full font-medium transition-colors'
+                  : 'bg-white border border-[#EBEBED] text-[#5C5C63] text-[9px] px-2.5 py-1 rounded-full font-medium hover:bg-[#F7F7F8] transition-colors'
+              "
+            >
+              Moda
+            </button>
+            <button
+              type="button"
+              (click)="setActiveChip('gaming')"
+              [class]="
+                activeChip === 'gaming'
+                  ? 'bg-[#0B0B0C] text-white text-[9px] px-2.5 py-1 rounded-full font-medium transition-colors'
+                  : 'bg-white border border-[#EBEBED] text-[#5C5C63] text-[9px] px-2.5 py-1 rounded-full font-medium hover:bg-[#F7F7F8] transition-colors'
+              "
+            >
+              Gaming
+            </button>
+          </div>
+
+          <!-- Phone Product Grid (2x2) -->
+          <div class="grid grid-cols-2 gap-2 my-auto">
+            <!-- Product 1: Sneaker Red -->
+            <div class="bg-[#F7F7F8] rounded-xl p-1.5 flex flex-col gap-1 group cursor-pointer">
+              <img
+                src="https://images.unsplash.com/photo-1697028459334-c547562e9e31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA5ODU2MTN8&ixlib=rb-4.1.0&q=80&w=200"
+                alt="Sneaker Red"
+                class="w-full h-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
+              />
+              <span class="text-[9px] font-semibold text-[#0B0B0C] truncate">Sneaker Red</span>
+              <span class="text-[9px] text-[#74747C] font-mono leading-none">$21</span>
+            </div>
+
+            <!-- Product 2: DualSense -->
+            <div class="bg-[#F7F7F8] rounded-xl p-1.5 flex flex-col gap-1 group cursor-pointer">
+              <img
+                src="https://images.unsplash.com/photo-1554046862-054dbd07c8c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA5ODU3MTh8&ixlib=rb-4.1.0&q=80&w=200"
+                alt="DualSense"
+                class="w-full h-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
+              />
+              <span class="text-[9px] font-semibold text-[#0B0B0C] truncate">DualSense</span>
+              <span class="text-[9px] text-[#74747C] font-mono leading-none">$45</span>
+            </div>
+
+            <!-- Product 3: Runner White -->
+            <div class="bg-[#F7F7F8] rounded-xl p-1.5 flex flex-col gap-1 group cursor-pointer">
+              <img
+                src="https://images.unsplash.com/photo-1645784127380-77aeb81be500?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA5ODU3MTd8&ixlib=rb-4.1.0&q=80&w=200"
+                alt="Runner White"
+                class="w-full h-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
+              />
+              <span class="text-[9px] font-semibold text-[#0B0B0C] truncate">Runner White</span>
+              <span class="text-[9px] text-[#74747C] font-mono leading-none">$32</span>
+            </div>
+
+            <!-- Product 4: Headset Pro -->
+            <div class="bg-[#F7F7F8] rounded-xl p-1.5 flex flex-col gap-1 group cursor-pointer">
+              <img
+                src="https://images.unsplash.com/photo-1628329567705-f8f7150c3cff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA5ODU2MTN8&ixlib=rb-4.1.0&q=80&w=200"
+                alt="Headset Pro"
+                class="w-full h-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
+              />
+              <span class="text-[9px] font-semibold text-[#0B0B0C] truncate">Headset Pro</span>
+              <span class="text-[9px] text-[#74747C] font-mono leading-none">$58</span>
+            </div>
+          </div>
+
+          <!-- Phone Bottom Navigation -->
+          <div class="flex items-center justify-around pt-2 pb-0.5 border-t border-[#EBEBED]/60">
+            <i class="pi pi-home text-[#74747C] text-xs"></i>
+            <div
+              class="w-5 h-5 rounded-full bg-[#E8FAFE] text-[#0BC5EA] flex items-center justify-center"
+            >
+              <i class="pi pi-plus text-[10px] font-bold"></i>
+            </div>
+            <i class="pi pi-user text-[#74747C] text-xs"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- ABOUT SECTION (SOBRE NOSOTROS)                                   -->
+<!-- ================================================================ -->
+<section class="w-full bg-white border-t border-[#EBEBED]">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-28 flex flex-col items-center gap-12">
+    <!-- Section Header -->
+    <div class="flex flex-col items-center text-center gap-5 max-w-[720px] mx-auto">
+      <span class="text-xs font-mono tracking-widest text-[#74747C] uppercase font-medium">
+        {{ 'landingPage.aboutUs' | translate }}
+      </span>
+
+      <h2
+        class="text-3xl sm:text-4xl lg:text-[44px] font-medium text-[#0B0B0C] leading-tight tracking-tight text-center"
+      >
+        El destino donde las marcas<br class="hidden sm:inline" />
+        y las personas se encuentran
+      </h2>
+
+      <p class="text-base sm:text-lg text-[#5C5C63] font-normal leading-relaxed text-center">
+        {{ 'landingPage.aboutUsDescription' | translate }}
+      </p>
+    </div>
+
+    <!-- Quote Block -->
+    <div class="border-l-2 border-[#0BC5EA] pl-6 py-2 my-1 flex flex-col gap-2 max-w-[760px] w-full mx-auto">
+      <p class="text-xl sm:text-2xl text-[#0B0B0C] font-normal italic leading-snug">
+        “{{ 'landingPage.exploreConnectAndShopSimplifyingYourExperience' | translate }}”
+      </p>
+      <span class="text-xs font-mono tracking-wider text-[#74747C] uppercase font-medium">
+        EQUIPO LINEUP
+      </span>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="flex justify-center w-full">
+      <a
+        routerLink="/"
+        class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#0B0B0C] text-white text-[15px] font-medium hover:bg-[#202024] active:scale-[0.98] transition-all duration-200 shadow-sm"
+      >
+        <i class="pi pi-compass text-sm"></i>
+        <span>{{ 'landingPage.explore' | translate }}</span>
+      </a>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2 w-full max-w-5xl mx-auto">
+      <!-- Stat 1 -->
+      <div
+        class="bg-white rounded-2xl p-6 sm:p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-1 hover:border-[#0BC5EA]/40 transition-colors"
+      >
+        <span class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0B0B0C]">250+</span>
+        <span class="text-sm text-[#74747C]">Negocios activos</span>
+      </div>
+
+      <!-- Stat 2 -->
+      <div
+        class="bg-white rounded-2xl p-6 sm:p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-1 hover:border-[#0BC5EA]/40 transition-colors"
+      >
+        <span class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0B0B0C]">1.2K</span>
+        <span class="text-sm text-[#74747C]">Catálogos publicados</span>
+      </div>
+
+      <!-- Stat 3 -->
+      <div
+        class="bg-white rounded-2xl p-6 sm:p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-1 hover:border-[#0BC5EA]/40 transition-colors"
+      >
+        <span class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0B0B0C]">24/7</span>
+        <span class="text-sm text-[#74747C]">Contacto directo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- SERVICES SECTION                                                 -->
+<!-- ================================================================ -->
+<section class="w-full bg-[#F7F7F8] py-16 sm:py-20 lg:py-28 border-y border-[#EBEBED]">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex flex-col items-center gap-16">
+    <!-- Section Head -->
+    <div class="flex flex-col items-center text-center gap-5 max-w-[620px] mx-auto">
+      <span class="text-xs font-mono tracking-widest text-[#74747C] uppercase font-medium">
+        {{ 'landingPage.ourServices' | translate }}
+      </span>
+
+      <h2
+        class="text-3xl sm:text-4xl lg:text-[44px] font-medium text-[#0B0B0C] leading-tight tracking-tight text-center"
+      >
+        Todo lo que necesitas<br class="hidden sm:inline" />
+        para exhibir y vender
+      </h2>
+
+      <p class="text-base sm:text-lg text-[#5C5C63] font-normal leading-relaxed text-center">
+        Herramientas simples y potentes, pensadas tanto para negocios que quieren mostrarse como
+        para personas que buscan descubrir.
+      </p>
+    </div>
+
+    <!-- Para empresas -->
+    <div class="flex flex-col gap-6 w-full">
+      <div class="flex items-center gap-4">
+        <h3 class="text-xl sm:text-2xl font-semibold text-[#0B0B0C] shrink-0">
+          {{ 'landingPage.forCompanies' | translate }}
+        </h3>
+        <div class="h-px bg-[#EBEBED] w-full"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Card 1 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-objects-column text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">01</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.createYourDigitalCatalog' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.digitalCatalogDescription' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-users text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">02</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.connectWithPotentialClients' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.potentialClientsDescription' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-chart-line text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">03</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.boostYourSales' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.boostYourSalesDescription' | translate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Para usuarios -->
+    <div class="flex flex-col gap-6 w-full">
+      <div class="flex items-center gap-4">
+        <h3 class="text-xl sm:text-2xl font-semibold text-[#0B0B0C] shrink-0">
+          {{ 'landingPage.forUsers' | translate }}
+        </h3>
+        <div class="h-px bg-[#EBEBED] w-full"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Card 1 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-shop text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">01</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.discoverBusiness' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.discoverBusinessDescription' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-eye text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">02</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.exploreCatalogs' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.exploreCatalogsDescription' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="bg-white rounded-2xl p-7 border border-[#EBEBED] shadow-xs flex flex-col gap-6 hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex items-center justify-between">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#0B0B0C] text-white flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-comments text-sm"></i>
+            </div>
+            <span class="text-xs font-mono text-[#74747C]">03</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="text-lg font-semibold text-[#0B0B0C]">
+              {{ 'landingPage.connectDirectly' | translate }}
+            </h4>
+            <p class="text-sm text-[#5C5C63] leading-relaxed">
+              {{ 'landingPage.connectDirectlyDescription' | translate }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- QUOTE BAND (SHOWROOM DIGITAL)                                    -->
+<!-- ================================================================ -->
+<section class="w-full bg-white py-16 sm:py-20 lg:py-28">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 lg:px-12 flex flex-col items-center text-center gap-6">
+    <span class="text-xs font-mono tracking-widest text-[#74747C] uppercase font-medium">
+      SHOWROOM DIGITAL
+    </span>
+
     <h2
-      class="text-center text-4xl lg:text-5xl font-medium leading-12 sm:leading:14 lg:leading-18"
+      class="text-3xl sm:text-4xl lg:text-[48px] font-medium tracking-tight text-[#0B0B0C] leading-tight max-w-4xl text-center"
     >
-      {{'landingPage.yourSpaceToBuildA' | translate}}<br />
-      <span class="font-bold text-4xl sm:text-5xl lg:text-6xl"
-        >{{'landingPage.digitalShowroom' | translate}}</span
-      >
+      “{{ 'landingPage.withLineUpYouCanCreateYourDigitalShowroom' | translate }}”
     </h2>
-    <h4 class="text-xl text-center">
-      {{'landingPage.theFutureOfDisplayWhereYourBrandShinesWithoutLimits' |
-      translate}}
-    </h4>
-    <div class="w-8/10 flex flex-row items-center justify-center mt-5">
-      <lib-button
-        label="{{'landingPage.join' | translate}}"
-        [type]="'rounded'"
-        [link]="'/register'"
-        [width]="'w-60'"
-      ></lib-button>
-    </div>
-  </div>
-  <div class="w-10/10 sm:w-8/10 md:w-6/10 lg:w-4/10 xl:w-3/10 max-w-lg">
-    <img src="assets/images/home-image.png" alt="" />
-  </div>
-</section>
-<section
-  class="flex flex-row items-center justify-center bg-primary-50 p-5 md:p-15"
->
-  <div
-    class="flex flex-col items-center justify-center gap-10 w-9/10 sm:w-8/10 lg:w-6/10"
-  >
-    <h3 class="text-center text-4xl font-semibold">
-      {{'landingPage.aboutUs' | translate}}
-    </h3>
 
-    <p class="text-lg md:text-2xl text-left md:text-justify">
-      {{'landingPage.aboutUsDescription' | translate}}.
+    <p class="text-base sm:text-lg text-[#5C5C63] max-w-xl font-normal leading-relaxed text-center">
+      Crea tu catálogo en minutos, compártelo con el mundo y deja que tus clientes lleguen a ti.
     </p>
 
-    <p class="italic text-2xl md:text-3xl text-primary-300 text-center">
-      <q
-        >{{'landingPage.exploreConnectAndShopSimplifyingYourExperience' |
-        translate}}</q
+    <div class="flex flex-wrap justify-center items-center gap-3 pt-3">
+      <a
+        routerLink="/register"
+        class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#0B0B0C] text-white text-[15px] font-medium hover:bg-[#202024] active:scale-[0.98] transition-all duration-200 shadow-sm"
       >
-    </p>
+        <span>{{ 'landingPage.join' | translate }}</span>
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
 
-    <div class="w-8/10 flex flex-row items-center justify-center mt-5">
-      <lib-button
-        label="{{'landingPage.explore' | translate}}"
-        [type]="'rounded'"
-        [width]="'w-60'"
-        [link]="'/'"
-      ></lib-button>
+      <a
+        routerLink="/"
+        class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-white border border-[#EBEBED] text-[#0B0B0C] text-[15px] font-medium hover:bg-[#F7F7F8] active:scale-[0.98] transition-all duration-200 shadow-xs"
+      >
+        <i class="pi pi-objects-column text-[#0B0B0C] text-sm"></i>
+        <span>Explorar negocios</span>
+      </a>
     </div>
   </div>
 </section>
-<section class="flex flex-row items-start justify-center p-5 lg:p-15">
-  <div
-    class="flex flex-col items-center justify-start gap-10 w-9/10 sm:w-8/10 xl:w-6/10"
-  >
-    <h3 class="text-center text-4xl font-semibold">
-      {{'landingPage.ourServices' | translate}}
-    </h3>
 
-    <div class="flex flex-col items-start justify-center gap-8">
-      <div class="flex flex-col items-start justify-center gap-6">
-        <h4 class="text-3xl font-medium">
-          {{'landingPage.forCompanies' | translate}}
-        </h4>
-        <div
-          class="flex flex-col lg:flex-row items-center justify-center gap-6 pt-10 sm:pt-0"
+<!-- ================================================================ -->
+<!-- CONTACT SECTION                                                  -->
+<!-- ================================================================ -->
+<section class="w-full bg-[#F7F7F8] py-16 sm:py-20 lg:py-28 border-t border-[#EBEBED]">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 lg:px-12">
+    <div
+      class="bg-white rounded-3xl p-8 sm:p-14 lg:p-16 border border-[#EBEBED] shadow-xs flex flex-col items-center text-center gap-6"
+    >
+      <span class="text-xs font-mono tracking-widest text-[#74747C] uppercase font-medium">
+        CONTACTO
+      </span>
+
+      <h2
+        class="text-3xl sm:text-4xl font-medium tracking-tight text-[#0B0B0C] leading-tight text-center"
+      >
+        {{ 'landingPage.contactUs' | translate }}
+      </h2>
+
+      <p class="text-base sm:text-lg text-[#5C5C63] leading-relaxed max-w-xl text-center">
+        {{ 'landingPage.contactUsDescription' | translate }}
+      </p>
+
+      <div class="flex flex-wrap justify-center items-center gap-3 pt-2">
+        <a
+          [href]="gmailComposeUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#0B0B0C] text-white text-[15px] font-medium hover:bg-[#202024] active:scale-[0.98] transition-all duration-200 shadow-sm"
         >
-          <div class="flex flex-col items-start justify-start lg:pl-5 gap-5">
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-objects-column" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.createYourDigitalCatalog' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.digitalCatalogDescription' | translate}}
-                </p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-users" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.connectWithPotentialClients' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.potentialClientsDescription' | translate}}
-                </p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-chart-line" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.boostYourSales' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.boostYourSalesDescription' | translate}}
-                </p>
-              </div>
-            </div>
+          <i class="pi pi-envelope text-sm"></i>
+          <span>lineup&#64;lineup.com.ve</span>
+        </a>
+
+        <a
+          [href]="gmailComposeUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-white border border-[#EBEBED] text-[#0B0B0C] text-[15px] font-medium hover:bg-[#F7F7F8] active:scale-[0.98] transition-all duration-200 shadow-xs"
+        >
+          <i class="pi pi-calendar text-sm text-[#0B0B0C]"></i>
+          <span>Agendar una demo</span>
+        </a>
+      </div>
+
+      <div class="w-full border-t border-[#EBEBED] pt-8 mt-2">
+        <div class="flex flex-wrap justify-center items-center gap-6 sm:gap-10 text-xs sm:text-sm text-[#5C5C63]">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-clock text-[#74747C]"></i>
+            <span>Respuesta en menos de 24h</span>
           </div>
-          <!-- <img class="services-image" src="https://picsum.photos/200" alt="" /> -->
+
+          <div class="flex items-center gap-2">
+            <i class="pi pi-comment text-[#74747C]"></i>
+            <span>Soporte en español</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <i class="pi pi-map-marker text-[#74747C]"></i>
+            <span>Venezuela · 100% remoto</span>
+          </div>
         </div>
       </div>
-      <div class="flex flex-col items-start justify-center gap-6">
-        <h4 class="text-3xl font-medium">
-          {{'landingPage.forUsers' | translate}}
-        </h4>
-        <div
-          class="flex flex-col lg:flex-row items-center justify-center gap-6 pt-10 sm:pt-0"
-        >
-          <div class="flex flex-col items-start justify-start pl-5 gap-5">
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-shop" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.discoverBusiness' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.discoverBusinessDescription' | translate}}
-                </p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-eye" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.exploreCatalogs' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.exploreCatalogsDescription' | translate}}
-                </p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col sm:flex-row items-center justify-start gap-6"
-            >
-              <i class="pi pi-whatsapp" style="font-size: 2.5rem"></i>
-              <div class="flex flex-col items-start justify-center gap-2">
-                <h5 class="text-xl font-medium">
-                  {{'landingPage.connectDirectly' | translate}}
-                </h5>
-                <p class="font-medium">
-                  {{'landingPage.connectDirectlyDescription' | translate}}
-                </p>
-              </div>
-            </div>
-          </div>
-          <!-- <img class="services-image" src="https://picsum.photos/200" alt="" /> -->
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section
-  class="flex flex-row items-start justify-center bg-primary-50 p-5 md:p-15 mb-20"
->
-  <div class="flex flex-col items-center justify-start gap-10 w-8/10 lg:w-6/10">
-    <p class="italic text-3xl md:text-5xl text-primary-300 text-center">
-      <q
-        >{{'landingPage.withLineUpYouCanCreateYourDigitalShowroom' |
-        translate}}</q
-      >
-    </p>
-
-    <h3 class="text-center text-4xl font-semibold mt-10 md:mt-20">
-      {{'landingPage.contactUs' | translate}}
-    </h3>
-
-    <p class="text-lg md:text-2xl text-left md:text-justif">
-      {{'landingPage.contactUsDescription' | translate}}
-    </p>
-
-    <div class="w-8/10 flex flex-row items-center justify-center mt-5">
-      <lib-button
-        label="lineup@lineup.com.ve"
-        [type]="'rounded'"
-        [width]="'w-60'"
-        [href]="'https://mail.google.com/mail/?view=cm&fs=1&to=lineup@lineup.com.ve'"
-        [target]="'_blank'"
-      ></lib-button>
     </div>
   </div>
 </section>

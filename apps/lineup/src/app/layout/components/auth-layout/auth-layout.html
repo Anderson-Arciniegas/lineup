@@ -1,16 +1,88 @@
-<section class="min-h-screen bg-primary-50">
-  <nav class="nav flex flex-row justify-between py-3 px-5 sm:px-10">
-    <div class="flex flex-row items-center justify-center">
-      <lib-button
-        [icon]="'pi pi-arrow-left'"
-        [width]="'w-13'"
-        [variant]="'text'"
-        [size]="'large'"
-        [fontSize]="'text-2xl'"
-        [type]="'rounded'"
-        (action)="goBack()"
-      ></lib-button>
+<div class="min-h-screen w-full bg-white flex flex-col lg:flex-row font-sans antialiased text-[#0B0B0C]">
+  <!-- Left Side: Form Views (Login, Account Type, Register User, Register Business) -->
+  <main class="flex-1 min-w-0 flex flex-col lg:mr-[420px] xl:mr-[480px] 2xl:mr-[560px]">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Right Side: Brand Panel (Fixed at top-0 right-0 h-screen) -->
+  <aside
+    class="hidden lg:flex w-[420px] xl:w-[480px] 2xl:w-[560px] fixed top-0 right-0 h-screen overflow-hidden bg-[#F7F7F8] border-l border-[#EBEBED] p-6 xl:p-8 2xl:p-10 flex-col justify-between select-none z-10"
+  >
+    <!-- Background Radial Cyan Glow (strictly clipped inside aside) -->
+    <div
+      class="w-[450px] h-[450px] rounded-full bg-[radial-gradient(circle,#D6F5FD_0%,rgba(247,247,248,0)_70%)] absolute -top-20 -right-20 pointer-events-none"
+    ></div>
+
+    <!-- Top Eyebrow -->
+    <div class="relative z-10 shrink-0">
+      <span class="text-[10px] xl:text-[11px] font-semibold tracking-widest text-[#74747C] uppercase font-mono">
+        PLATAFORMA DE CATÁLOGOS DIGITALES
+      </span>
     </div>
-  </nav>
-  <router-outlet></router-outlet>
-</section>
+
+    <!-- Main Content -->
+    <div class="relative z-10 flex flex-col gap-4 xl:gap-5 my-auto py-2">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-2xl xl:text-3xl font-medium text-[#0B0B0C] leading-tight">
+          Tu Showroom digital te está esperando
+        </h2>
+        <p class="text-xs xl:text-sm text-[#5C5C63] leading-relaxed">
+          Todo tu negocio en un solo lugar, listo para mostrar y vender.
+        </p>
+      </div>
+
+      <!-- Features List -->
+      <div class="flex flex-col gap-2.5 mt-1">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white border border-[#EBEBED] shadow-xs flex items-center justify-center shrink-0">
+            <i class="pi pi-objects-column text-[#0B0B0C] text-xs"></i>
+          </div>
+          <span class="text-xs xl:text-sm font-medium text-[#5C5C63]">
+            Gestiona tu catálogo en tiempo real
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white border border-[#EBEBED] shadow-xs flex items-center justify-center shrink-0">
+            <i class="pi pi-comments text-[#0B0B0C] text-xs"></i>
+          </div>
+          <span class="text-xs xl:text-sm font-medium text-[#5C5C63]">
+            Responde consultas desde un solo lugar
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white border border-[#EBEBED] shadow-xs flex items-center justify-center shrink-0">
+            <i class="pi pi-chart-line text-[#0B0B0C] text-xs"></i>
+          </div>
+          <span class="text-xs xl:text-sm font-medium text-[#5C5C63]">
+            Mide el interés de tus clientes
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Testimonial Card -->
+    <div class="relative z-10 bg-white rounded-xl border border-[#EBEBED] p-4 xl:p-5 shadow-xs flex flex-col gap-2.5 shrink-0">
+      <div class="flex items-center gap-1 text-[#0B0B0C]">
+        <i class="pi pi-star-fill text-[10px]"></i>
+        <i class="pi pi-star-fill text-[10px]"></i>
+        <i class="pi pi-star-fill text-[10px]"></i>
+        <i class="pi pi-star-fill text-[10px]"></i>
+        <i class="pi pi-star-fill text-[10px]"></i>
+      </div>
+      <p class="text-xs xl:text-sm text-[#0B0B0C] leading-relaxed">
+        “Encuentro todo lo que busco sin perder tiempo. Ahora pido presupuestos por chat.”
+      </p>
+      <div class="flex items-center gap-2.5 pt-0.5">
+        <div class="w-7 h-7 rounded-full bg-[#0B0B0C] text-white flex items-center justify-center text-[10px] font-semibold shrink-0">
+          MC
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold text-[#0B0B0C]">María Contreras</span>
+          <span class="text-[10px] text-[#74747C]">Compradora · Caracas</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>

@@ -25,6 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // import gsap from 'gsap';
 // import ScrollTrigger from 'gsap/ScrollTrigger';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   AppConfigService,
   BusinessSchema,
@@ -71,6 +72,7 @@ interface CarouselBreakpointConfig {
     FormsModule,
     SearchBar,
     SkeletonModule,
+    RouterLink,
   ],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',

@@ -70,6 +70,8 @@ export const es = {
     changeEmail: 'Cambiar correo',
     signIn: 'Iniciar sesión',
     featuredBusinesses: 'Negocios destacados',
+    topRated: 'Los mejor valorados',
+    mostVisited: 'Los más visitados',
     featuredCatalogs: 'Catálogos destacados',
     featuredProducts: 'Productos destacados',
     userProfile: 'Perfil de usuario',

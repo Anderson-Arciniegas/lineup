@@ -1,196 +1,118 @@
-@if(product) {
+@if (product) {
 <a
   [routerLink]="url"
   [attr.id]="cardFlipId"
-  class="bg-primary-50 product-card shadow-lg flex flex-col content-between justify-between cursor-pointer"
+  class="group block bg-white border border-[#EBEBED] hover:border-[#0B0B0C] rounded-[24px] p-3 shadow-[0px_1px_2px_#10111408] hover:shadow-md transition-all duration-200 cursor-pointer select-none text-left"
   [class.product-card--pdf-export]="pdfExportAttempt"
   [ngClass]="[width, height]"
 >
-  <div class="product-card__media" [ngClass]="[width, height]">
-    @if (hasProductImage) {
-    <img
-      class="product-image product-card__image"
-      (load)="imageLoaded = true"
-      [class.product-card__image--pending]="!imageLoaded"
-      [ngClass]="[width, height]"
-      [src]="image"
-      alt=""
-      [attr.fetchpriority]="imageFetchPriority ? 'high' : null"
-      decoding="async"
-    />
-
-    @if (!imageLoaded) {
-    <div class="product-card__spinner" aria-hidden="true">
-      <p-progress-spinner
-        strokeWidth="8"
-        fill="transparent"
-        animationDuration=".5s"
-        [style]="{ width: '50px', height: '50px' }"
+  <div class="w-full h-full flex flex-col justify-between">
+    <!-- Media / Photo -->
+    <div class="relative w-full aspect-[261/280] rounded-[18px] overflow-hidden bg-[#F7F7F8] shrink-0">
+      @if (hasProductImage) {
+      <img
+        class="product-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        (load)="imageLoaded = true"
+        [class.opacity-0]="!imageLoaded"
+        [src]="image"
+        alt=""
+        [attr.fetchpriority]="imageFetchPriority ? 'high' : null"
+        decoding="async"
       />
-    </div>
-    }
-    } @else {
-    <div
-      class="product-card__placeholder flex items-center justify-center"
-      [ngClass]="[width, height]"
-      aria-hidden="true"
-    >
-      <i class="pi pi-image text-4xl text-gray-300"></i>
-    </div>
-    }
-  </div>
 
-  <div [ngClass]="[width]" class="buttons-container">
-    <div
-      class="button-content flex flex-row w-full rounded-full justify-between gap-3"
-    >
-      @if (!dashboardMode && !pdfExportAttempt) {
-      <div
-        tabindex="-1"
-        (click)="$event.preventDefault(); $event.stopPropagation()"
-        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
-      >
-        <lib-button
-          class="card-like-button"
-          ariaLabel="general.likes"
-          [icon]="hasLiked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-          [width]="'w-11'"
-          [type]="'rounded'"
-          (action)="hasLiked ? unlikeProduct() : likeProduct()"
-        ></lib-button>
+      @if (!imageLoaded) {
+      <div class="absolute inset-0 flex items-center justify-center bg-[#F7F7F8]" aria-hidden="true">
+        <p-progress-spinner
+          strokeWidth="6"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '40px', height: '40px' }"
+        />
       </div>
-      } @if (price && currency) {
+      }
+      } @else {
       <div
-        class="flex flex-col justify-center items-center w-auto"
-        [class.ps-4]="pdfExportAttempt"
+        class="w-full h-full flex items-center justify-center bg-[#F7F7F8]"
+        aria-hidden="true"
       >
-        @if(originalPrice > price) {
-        <h2 class="text-gray-200 text-xs text-center font-medium line-through">
-          {{(originalPrice | currency: currency?.code : 'symbol' : '1.0-2' :
-          'es')}}
-        </h2>
-        }
-        <h2 class="text-white text-sm text-center font-semibold">
-          {{(price | currency: currency?.code : 'symbol' : '1.0-2' : 'es')}}
-        </h2>
+        <i class="pi pi-image text-4xl text-[#74747C]/40"></i>
       </div>
       }
 
-      <div
-        class="w-11 h-11"
-        tabindex="-1"
-        (click)="$event.preventDefault(); $event.stopPropagation()"
-        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+      <!-- Favorite Button (Top-Right) -->
+      @if (!dashboardMode && !pdfExportAttempt) {
+      <button
+        type="button"
+        class="absolute top-2.5 right-2.5 w-[38px] h-[38px] rounded-full bg-white/90 backdrop-blur-xs border border-[#EBEBED] shadow-[0px_1px_2px_#10111408] hover:bg-white flex items-center justify-center transition-all cursor-pointer z-10"
+        (click)="$event.preventDefault(); $event.stopPropagation(); hasLiked ? unlikeProduct() : likeProduct()"
+        aria-label="Favorito"
       >
-        <span
-          tabindex="0"
-          [pTooltip]="product?.business?.name"
-          tooltipPosition="top"
-          (click)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
-          (keydown.enter)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
-          (keydown.space)="$event.preventDefault(); $event.stopPropagation(); navigateToBusiness()"
-        >
-          <img
-            class="business-image"
-            width="44"
-            height="44"
-            [src]="businessImage"
-            alt=""
-          />
-        </span>
+        <i
+          [class]="hasLiked ? 'pi pi-heart-fill text-red-500 text-sm' : 'pi pi-heart text-[#0B0B0C] text-sm'"
+        ></i>
+      </button>
+      }
+
+      <!-- Discount Badge (Top-Left) -->
+      @if (price && originalPrice && originalPrice > price) {
+      <div
+        class="absolute top-2.5 left-2.5 rounded-full bg-[#0B0B0C] text-white px-2.5 py-1 text-[11px] font-semibold z-10 shadow-xs"
+      >
+        -{{ (1 - price / originalPrice) * 100 | number:'1.0-0' }}%
+      </div>
+      }
+
+      <!-- Out of Stock Badge -->
+      @if (outOfStock) {
+      <div
+        class="absolute bottom-2.5 left-2.5 rounded-full bg-[#0B0B0C]/85 backdrop-blur-xs px-2.5 py-1 text-[11px] text-white font-medium z-10"
+      >
+        {{ 'general.outOfStockSimple' | translate }}
+      </div>
+      }
+
+      <!-- Dots Carousel Indicator (Pencil) -->
+      <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 pointer-events-none z-10">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B0B0C]/80"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B0B0C]/20"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B0B0C]/20"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0B0B0C]/20"></span>
       </div>
     </div>
-  </div>
-  @if (outOfStock) {
-  <div class="note-container flex flex-row justify-center items-center">
-    <div
-      class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
-    >
-      <span class="text-sm text-center font-medium"
-        >{{'general.outOfStockSimple' | translate}}</span
-      >
-    </div>
-  </div>
-  }
 
-  <div [ngClass]="[width]" class="flip-box">
-    @if (pdfExportAttempt) {
-    <!-- PDF: sin 3D (html2canvas no soporta backface-visibility); muestra solo el título -->
-    <div
-      class="pdf-title-face h-12 rounded-full py-1 px-3 flex flex-row items-center"
-    >
-      <h2
-        class="text-white text-sm font-semibold w-full product-name"
-        [ngClass]="'max-' + [width]"
+    <!-- Info / Details -->
+    <div class="flex flex-col gap-2.5 pt-3 w-full">
+      <h3
+        class="text-[15px] sm:text-base font-semibold text-[#0B0B0C] truncate group-hover:text-black transition-colors"
+        [title]="product?.title || 'Product Title'"
       >
-        {{product?.title || 'Product Title'}}
-      </h2>
-    </div>
-    } @else {
-    <!-- Normal: flip 3D hover con GSAP -->
-    <div class="flip-inner h-12">
-      <div
-        class="front info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
-      >
-        <h2
-          class="text-white text-sm font-medium w-full product-name"
-          [ngClass]="'max-' + [width]"
-        >
-          {{product?.title || 'Product Title'}}
-        </h2>
-        <i class="pi pi-angle-right text-white"></i>
-      </div>
+        {{ product?.title || 'Product Title' }}
+      </h3>
 
-      <div
-        class="back info-translucid h-12 rounded-full py-1 px-3 flex flex-row justify-between items-center"
-      >
-        <div
-          class="flex flex-row justify-center items-center w-full text-white gap-2"
-        >
-          <i class="pi pi-star-fill"></i>
-          <span class="text-sm font-medium text-center"
-            >{{product?.ratingAverage | number:'1.0-1':'es'}}</span
-          >
+      <div class="flex items-center justify-between gap-2 h-10">
+        <!-- Price Badge -->
+        @if (price !== null && price !== undefined && price > 0) {
+        <div class="rounded-full bg-[#F7F7F8] py-2 px-3.5 flex items-center gap-1.5 shrink-0">
+          @if (originalPrice && originalPrice > price) {
+          <span class="text-xs text-[#74747C] line-through">
+            {{ (originalPrice | currency: currency?.code : 'symbol' : '1.0-2' : 'es') }}
+          </span>
+          }
+          <span class="text-[14px] sm:text-[15px] font-semibold text-[#0B0B0C]">
+            {{ (price | currency: currency?.code : 'symbol' : '1.0-2' : 'es') }}
+          </span>
+        </div>
+        }
+
+        <!-- Rating Badge -->
+        <div class="rounded-full bg-[#F7F7F8] py-2 px-3.5 flex items-center gap-1.5 shrink-0 ml-auto">
+          <i class="pi pi-star-fill text-[#0B0B0C] text-[12px] sm:text-[13px]"></i>
+          <span class="text-xs sm:text-sm font-semibold text-[#0B0B0C]">
+            {{ product?.ratingAverage ? (product?.ratingAverage | number:'1.0-1':'es') : '0' }}
+          </span>
         </div>
       </div>
     </div>
-    }
   </div>
 </a>
 }
-<!-- <div
-[ngClass]="[width]"
-class="flex flex-col justify-between items-center product-info h-full px-4 pt-1 pb-2"
->
-<div class="w-full flex flex-col justify-start items-center gap-1">
-  <div class="flex flex-row justify-center items-center w-full">
-    <h2
-      class="text-xs font-medium text-center text-primary-700 business-name"
-      [ngClass]="[width]"
-    >
-      {{product?.business?.name || 'Business Name'}}
-    </h2>
-  </div>
-  <div class="flex flex-row justify-center items-center w-full">
-    <h2 class="text-sm font-semibold w-full max-h-10 product-title">
-      {{setTitle(product?.title) || 'Product Title'}}
-    </h2>
-  </div>
-  <div class="flex flex-row justify-start items-center w-full gap-2">
-    <i class="pi pi-star-fill" style="font-size: 1rem"></i>
-    <span class="text-md font-medium text-center text-primary-700">
-      4.8
-    </span>
-  </div>
-</div>
-<div class="flex flex-row justify-start items-center w-full">
-  @if (product?.price) {
-  <h2 class="text-xl text-center font-semibold">
-    {{(product?.price | currency: product?.currency?.code : 'symbol' :
-    '1.0-2' : 'es')}}
-  </h2>
-  }
-</div>
-</div> -->

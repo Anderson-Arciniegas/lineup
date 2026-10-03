@@ -1,231 +1,265 @@
-<section
-  class="login flex flex-col gap-5 sm:gap-8 items-center justify-center px-0 lg:px-5 w-10/10"
->
-  <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
-    <img
-      src="assets/images/lineup.png"
-      alt="Lineup logo"
-      width="571"
-      height="505"
-      class="h-30 w-auto object-contain cursor-pointer"
-    />
-  </a>
-
-  <form
-    [formGroup]="registerUserForm"
-    (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-8 items-center justify-start w-10/10 md:w-8/10 max-w-xl p-10 bg-white radius shadow-lg mb-15"
-  >
-    <h4 class="text-center text-2xl lg:text-3xl font-medium">
-      {{'general.userRegister' | translate}}
-    </h4>
-
-    <div
-      class="w-10/10 max-w-xs flex flex-col items-center justify-center gap-2 relative min-h-10"
-      [attr.aria-busy]="attemptGoogle"
+<section class="flex flex-col justify-between min-h-screen p-4 sm:p-6 lg:py-6 lg:px-10 w-full max-w-[720px] mx-auto">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-20 bg-white/95 backdrop-blur-xs flex items-center justify-between w-full py-2 mb-2 shrink-0">
+    <a
+      routerLink="/register"
+      class="w-[42px] h-[42px] rounded-full border border-[#EBEBED] bg-white shadow-[0px_1px_2px_#10111408] hover:border-[#0B0B0C] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer text-[#0B0B0C] shrink-0"
+      aria-label="Volver"
     >
+      <i class="pi pi-arrow-left text-sm"></i>
+    </a>
+
+    <div class="flex items-center gap-1.5 text-[13px] shrink-0">
+      <span class="text-[#74747C]">¿Ya tienes una cuenta?</span>
+      <a
+        routerLink="/login"
+        class="text-[#0B0B0C] font-medium hover:underline cursor-pointer"
+      >
+        Iniciar sesión
+      </a>
+    </div>
+  </header>
+
+  <!-- Form Body -->
+  <div class="w-full max-w-[420px] mx-auto my-auto flex flex-col gap-3.5 py-1">
+    <!-- Progress & Eyebrow -->
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-1.5">
+          <div class="w-8 h-1 rounded-full bg-[#0B0B0C]"></div>
+          <div class="w-8 h-1 rounded-full bg-[#0B0B0C]"></div>
+        </div>
+        <span class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+          PASO 2 DE 2
+        </span>
+      </div>
+
+      <span class="text-[10px] font-semibold tracking-widest text-[#74747C] uppercase font-mono mt-0.5">
+        CUENTA DE USUARIO
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-medium text-[#0B0B0C] leading-tight">
+        Crea tu cuenta
+      </h1>
+      <p class="text-sm text-[#5C5C63] leading-relaxed">
+        Solo necesitas tus datos básicos para empezar a explorar catálogos.
+      </p>
+    </div>
+
+    <!-- Google Sign-Up -->
+    <div class="w-full flex flex-col items-center justify-center relative min-h-[44px]">
       <div
         #googleBtn
-        class="google-signin-btn"
+        class="google-signin-btn w-full flex justify-center"
         [class.pointer-events-none]="attempt || attemptGoogle"
         [class.opacity-50]="attempt || attemptGoogle"
       ></div>
       @if (attemptGoogle) {
-      <div
-        class="absolute inset-0 flex items-center justify-center bg-white/80"
-      >
+      <div class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl z-10">
         <p-progress-spinner
           strokeWidth="4"
           ariaLabel="loading"
-          [style]="{ width: '40px', height: '40px' }"
+          [style]="{ width: '32px', height: '32px' }"
         />
       </div>
       }
     </div>
-    <div class="flex flex-col gap-4 items-center justify-start w-full">
-      <div
-        class="w-10/10 flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6"
-      >
-        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
-          <p-floatlabel class="w-10/10">
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 w-full">
+      <div class="h-px bg-[#EBEBED] flex-1"></div>
+      <span class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+        O CONTINÚA CON TU CORREO
+      </span>
+      <div class="h-px bg-[#EBEBED] flex-1"></div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="registerUserForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3.5 w-full">
+      <!-- Row: First Name & Last Name -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <!-- First Name -->
+        <div class="flex flex-col gap-1 w-full">
+          <label for="firstName" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+            NOMBRE
+          </label>
+          <div class="relative flex items-center w-full">
+            <i class="pi pi-user absolute left-3.5 text-[#74747C] text-sm pointer-events-none"></i>
             <input
               pInputText
-              class="w-10/10 font-medium"
-              formControlName="firstName"
               id="firstName"
-              [pSize]="'small'"
+              formControlName="firstName"
+              placeholder="Tu nombre"
               autocomplete="given-name"
+              class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
             />
-            <label for="firstName" class="font-medium"
-              >{{'general.firstName' | translate}}</label
-            >
-          </p-floatlabel>
-          <small
-            class="text-red-500 text-xs block w-full h-8 leading-tight"
-            role="alert"
-          >
-            @if (requiredError(firstNameControl); as err) { {{ err.key |
-            translate: err.params }} }
+          </div>
+          @if (firstNameControl?.touched && requiredError(firstNameControl); as err) {
+          <small class="text-red-500 text-xs block leading-tight" role="alert">
+            {{ err.key | translate: err.params }}
           </small>
+          }
         </div>
-        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
-          <p-floatlabel class="w-10/10">
+
+        <!-- Last Name -->
+        <div class="flex flex-col gap-1 w-full">
+          <label for="lastName" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+            APELLIDO
+          </label>
+          <div class="relative flex items-center w-full">
+            <i class="pi pi-user absolute left-3.5 text-[#74747C] text-sm pointer-events-none"></i>
             <input
               pInputText
-              class="w-10/10 font-medium"
-              formControlName="lastName"
               id="lastName"
-              [pSize]="'small'"
+              formControlName="lastName"
+              placeholder="Tu apellido"
               autocomplete="family-name"
+              class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
             />
-            <label for="lastName" class="font-medium"
-              >{{'general.lastName' | translate}}</label
-            >
-          </p-floatlabel>
-          <small
-            class="text-red-500 text-xs block w-full h-8 leading-tight"
-            role="alert"
-          >
-            @if (requiredError(lastNameControl); as err) { {{ err.key |
-            translate: err.params }} }
+          </div>
+          @if (lastNameControl?.touched && requiredError(lastNameControl); as err) {
+          <small class="text-red-500 text-xs block leading-tight" role="alert">
+            {{ err.key | translate: err.params }}
           </small>
+          }
         </div>
       </div>
 
-      <div class="w-10/10 flex flex-col items-start">
-        <p-floatlabel class="w-10/10">
+      <!-- Email -->
+      <div class="flex flex-col gap-1 w-full">
+        <label for="email" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+          CORREO ELECTRÓNICO
+        </label>
+        <div class="relative flex items-center w-full">
+          <i class="pi pi-envelope absolute left-3.5 text-[#74747C] text-sm pointer-events-none"></i>
           <input
             pInputText
-            class="w-10/10 font-medium"
-            formControlName="email"
             id="email"
             type="email"
-            [pSize]="'small'"
+            formControlName="email"
+            placeholder="tu@correo.com"
             autocomplete="email"
+            class="w-full pl-10 pr-3 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
           />
-          <label for="email" class="font-medium"
-            >{{'general.email' | translate}}</label
-          >
-        </p-floatlabel>
-        <small
-          class="text-red-500 text-xs block w-full h-8 leading-tight"
-          role="alert"
-        >
-          @if (emailError(emailControl); as err) { {{ err.key | translate:
-          err.params }} }
+        </div>
+        @if (emailControl?.touched && emailError(emailControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
         </small>
+        }
       </div>
 
-      <div
-        class="w-10/10 flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6"
+      <!-- Password -->
+      <div class="flex flex-col gap-1 w-full">
+        <label for="password" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+          CONTRASEÑA
+        </label>
+        <div class="relative flex items-center w-full">
+          <i class="pi pi-lock absolute left-3.5 text-[#74747C] text-sm pointer-events-none z-10"></i>
+          <p-password
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            inputId="password"
+            autocomplete="new-password"
+            [fluid]="true"
+            placeholder="••••••••••••"
+            styleClass="w-full"
+            inputStyleClass="w-full pl-10 pr-10 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
+          />
+        </div>
+        @if (passwordControl?.touched && passwordError(passwordControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="flex flex-col gap-1 w-full">
+        <label for="confirmPassword" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+          CONFIRMAR CONTRASEÑA
+        </label>
+        <div class="relative flex items-center w-full">
+          <i class="pi pi-lock absolute left-3.5 text-[#74747C] text-sm pointer-events-none z-10"></i>
+          <p-password
+            formControlName="confirmPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            inputId="confirmPassword"
+            autocomplete="new-password"
+            [fluid]="true"
+            placeholder="••••••••••••"
+            styleClass="w-full"
+            inputStyleClass="w-full pl-10 pr-10 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
+          />
+        </div>
+        @if (confirmPasswordControl?.touched && passwordError(confirmPasswordControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
+
+      <!-- Terms Checkbox -->
+      <div class="flex flex-col gap-1 pt-1">
+        <div class="flex items-start gap-2.5">
+          <input
+            type="checkbox"
+            id="acceptTermsUser"
+            formControlName="acceptTerms"
+            class="mt-1 w-4 h-4 rounded border-gray-300 text-[#0B0B0C] focus:ring-[#0B0B0C] cursor-pointer shrink-0"
+          />
+          <label for="acceptTermsUser" class="text-xs text-[#5C5C63] leading-snug cursor-pointer select-none">
+            <span>{{ 'auth.acceptTermsIntro' | translate }} </span>
+            <a
+              [routerLink]="termsPath"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[#0B0B0C] underline font-medium"
+              (click)="$event.stopPropagation()"
+              >{{ 'auth.termsLink' | translate }}</a
+            >
+            <span> {{ 'auth.acceptTermsAnd' | translate }} </span>
+            <a
+              [routerLink]="privacyPath"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[#0B0B0C] underline font-medium"
+              (click)="$event.stopPropagation()"
+              >{{ 'auth.privacyLink' | translate }}</a
+            >.
+          </label>
+        </div>
+        @if (acceptTermsControl?.touched && requiredError(acceptTermsControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="attempt || attemptGoogle"
+        class="w-full mt-2 h-12 bg-[#0B0B0C] hover:bg-black text-white font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:scale-[1.01]"
       >
-        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
-          <p-floatlabel class="w-10/10">
-            <p-password
-              [feedback]="false"
-              class="w-10/10 font-medium"
-              formControlName="password"
-              [fluid]="true"
-              [size]="'small'"
-              [toggleMask]="true"
-              inputId="password"
-              autocomplete="new-password"
-            />
-            <label for="password" class="font-medium"
-              >{{'general.password' | translate}}</label
-            >
-          </p-floatlabel>
-          <small
-            class="text-red-500 text-xs block w-full h-11 leading-tight"
-            role="alert"
-          >
-            @if (passwordError(passwordControl); as err) { {{ err.key |
-            translate: err.params }} }
-          </small>
-        </div>
-        <div class="w-10/10 sm:w-5/10 flex flex-col items-start">
-          <p-floatlabel class="w-10/10">
-            <p-password
-              [feedback]="false"
-              class="w-10/10 font-medium"
-              formControlName="confirmPassword"
-              [fluid]="true"
-              [size]="'small'"
-              [toggleMask]="true"
-              inputId="confirmPassword"
-              autocomplete="new-password"
-            />
-            <label for="confirmPassword" class="font-medium"
-              >{{'general.confirmPassword' | translate}}</label
-            >
-          </p-floatlabel>
-          <small
-            class="text-red-500 text-xs block w-full h-11 leading-tight"
-            role="alert"
-          >
-            @if (passwordError(confirmPasswordControl); as err) { {{ err.key |
-            translate: err.params }} }
-          </small>
-        </div>
-      </div>
+        @if (attempt) {
+        <p-progress-spinner
+          strokeWidth="4"
+          ariaLabel="loading"
+          [style]="{ width: '20px', height: '20px' }"
+        />
+        } @else {
+        <span>Crear cuenta</span>
+        <i class="pi pi-arrow-right text-xs"></i>
+        }
+      </button>
+    </form>
 
-      <div class="w-full flex flex-col items-center justify-center mt-3 gap-5">
-        <div class="w-10/10 flex flex-col items-start text-xs text-primary-800">
-          <div class="flex flex-row items-center gap-3">
-            <input
-              type="checkbox"
-              id="acceptTermsUser"
-              formControlName="acceptTerms"
-              class="shrink-0 accent-primary-600"
-            />
-            <label for="acceptTermsUser" class="leading-snug cursor-pointer">
-              <span>{{ 'auth.acceptTermsIntro' | translate }}</span>
-              <a
-                [routerLink]="termsPath"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-primary-600 underline font-medium"
-                (click)="$event.stopPropagation()"
-                >{{ 'auth.termsLink' | translate }}</a
-              >
-              <span> {{ 'auth.acceptTermsAnd' | translate }} </span>
-              <a
-                [routerLink]="privacyPath"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-primary-600 underline font-medium"
-                (click)="$event.stopPropagation()"
-                >{{ 'auth.privacyLink' | translate }}</a
-              >.
-            </label>
-          </div>
-          <small
-            class="text-red-500 text-xs block w-full h-4 leading-tight"
-            role="alert"
-          >
-            @if (requiredError(acceptTermsControl); as err) { {{ err.key |
-            translate: err.params }} }
-          </small>
-        </div>
-        <lib-button
-          label="{{'general.register' | translate}}"
-          [type]="'rounded'"
-          [size]="'small'"
-          [buttonType]="'submit'"
-          [width]="'w-60'"
-          [disabled]="attempt"
-          [loading]="attempt"
-        ></lib-button>
-
-        <lib-button
-          label="{{'general.login' | translate}}"
-          [link]="'/login'"
-          [type]="'rounded'"
-          [color]="'secondary'"
-          [size]="'small'"
-          [width]="'w-60'"
-        ></lib-button>
-      </div>
+    <!-- Trust Indicator -->
+    <div class="flex items-center justify-center gap-2 text-xs text-[#74747C] pt-2">
+      <i class="pi pi-shield text-sm"></i>
+      <span>Tus datos están protegidos. Nunca compartimos tu información.</span>
     </div>
-  </form>
+  </div>
 </section>

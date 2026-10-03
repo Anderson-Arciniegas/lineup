@@ -1,30 +1,64 @@
 <a
   [routerLink]="catalog ? (dashboardMode ? (catalog.path) : ('/' + catalog.business?.path + '/' + catalog.path)) : ('/business-1/catalog-1')"
+  class="group block bg-white border border-[#EBEBED] hover:border-[#0B0B0C] rounded-[24px] p-3 shadow-[0px_1px_2px_#10111408] hover:shadow-md transition-all duration-200 cursor-pointer select-none text-left"
   [ngClass]="[width, height]"
 >
-  <div
-    class="catalog-card p-2 shadow cursor-pointer flex flex-col items-center justify-end bg-primary-50 w-full h-full"
-  >
-    <div
-      class="catalog-data-content flex flex-row items-center justify-between gap-3 font-medium w-10/10 text-xs"
-    >
-      <div
-        class="catalog-data-left flex flex-row items-center justify-start gap-2 w-fit px-3 py-2 rounded-full"
-      >
-        <i class="pi pi-th-large" style="font-size: 0.8rem"></i>
-        <span class="font-semibold"
-          >{{catalog ? (catalog.productsCount > 99 ? '99+' :
-          catalog.productsCount) : '0'}}</span
-        >
-      </div>
+  <div class="w-full h-full flex flex-col justify-between">
+    <!-- Media -->
+    <div class="relative w-full aspect-[261/260] rounded-[18px] overflow-hidden bg-[#F7F7F8] shrink-0">
+      @if (catalog?.image) {
+      <img
+        alt="{{ catalog.title }}"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 block sm:hidden"
+        [src]="catalog.image | fileThumbnailUrl:'xs'"
+      />
+      <img
+        alt="{{ catalog.title }}"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 hidden sm:block"
+        [src]="catalog.image | fileThumbnailUrl:'sm'"
+      />
+      } @else {
+      <img
+        alt="{{ catalog?.title ?? 'catalog' }}"
+        (load)="imageLoaded = true"
+        [hidden]="!imageLoaded"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        [src]="image"
+      />
+      }
 
+      @if (!imageLoaded) {
+      <div class="absolute inset-0 flex items-center justify-center bg-[#F7F7F8]">
+        <p-progress-spinner
+          strokeWidth="6"
+          fill="transparent"
+          animationDuration=".5s"
+          [style]="{ width: '40px', height: '40px' }"
+        />
+      </div>
+      }
+
+      <!-- Discount Tag (Top-Left) -->
+      @if (discount) {
+      <div class="absolute top-2.5 left-2.5 rounded-full bg-white/95 backdrop-blur-xs border border-[#EBEBED] shadow-xs px-2.5 py-1 text-[11px] font-semibold text-[#0B0B0C] z-10">
+        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
+          {{discount.value}}% {{'general.discount' | translate}}
+        } @else {
+          {{discount.value}} {{discount.currency?.code | currencySymbol}} {{'general.discount' | translate}}
+        }
+      </div>
+      }
+
+      <!-- Edit Mode Action -->
       @if (editMode) {
-      <div
-        class="catalog-data-right flex flex-row items-center justify-end w-fit"
-      >
+      <div class="absolute top-2.5 right-2.5 z-10">
         <lib-button
           [icon]="'pi pi-pencil'"
-          [width]="'w-11'"
+          [width]="'w-9 h-9'"
           [color]="'secondary'"
           [type]="'rounded'"
           (action)="editMode = !editMode"
@@ -32,71 +66,19 @@
       </div>
       }
     </div>
-    <div class="h-full image-container">
-      @if (catalog?.image) {
-      <img
-        alt="Card"
-        (load)="imageLoaded = true"
-        [hidden]="!imageLoaded"
-        class="image h-full w-full block sm:hidden"
-        [src]="catalog.image | fileThumbnailUrl:'xs'"
-      />
-      <img
-        alt="Card"
-        (load)="imageLoaded = true"
-        [hidden]="!imageLoaded"
-        class="image h-full w-full hidden sm:block"
-        [src]="catalog.image | fileThumbnailUrl:'sm'"
-      />
-      } @else {
-      <img
-        alt="Card"
-        (load)="imageLoaded = true"
-        [hidden]="!imageLoaded"
-        class="image h-full w-full"
-        [src]="image"
-      />
-      }
-      <div
-        [hidden]="imageLoaded"
-        class="h-full w-full flex flex-row items-center justify-center"
-      >
-        <p-progress-spinner
-          strokeWidth="8"
-          fill="transparent"
-          animationDuration=".5s"
-          [style]="{ width: '50px', height: '50px' }"
-        />
-      </div>
-    </div>
-    @if (discount) {
-    <div class="note-container flex flex-row justify-center items-center">
-      <div
-        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
-      >
-        @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
-        <span class="text-sm text-center font-medium">
-          {{discount.value}}% {{'general.discount' | translate}}
+
+    <!-- Info -->
+    <div class="pt-3 px-1 flex items-center justify-between gap-2">
+      <span class="text-[15px] font-medium text-[#0B0B0C] truncate group-hover:text-black">
+        {{ catalog?.title || 'Catalog Title' }}
+      </span>
+
+      <!-- Count Badge -->
+      <div class="rounded-full bg-[#F7F7F8] py-1 px-2.5 flex items-center gap-1.5 shrink-0">
+        <i class="pi pi-objects-column text-[11px] text-[#74747C]"></i>
+        <span class="text-xs font-semibold text-[#0B0B0C]">
+          {{ catalog ? (catalog.productsCount > 99 ? '99+' : catalog.productsCount) : '0' }}
         </span>
-        } @else {
-        <span class="text-sm text-center font-medium">
-          {{discount.value}} {{discount.currency?.code | currencySymbol}}
-          {{'general.discount' | translate}}
-        </span>
-        }
-      </div>
-    </div>
-    }
-    <div
-      class="w-full flex flex-row items-center justify-between title-content"
-    >
-      <div class="flex flex-row items-center justify-start pl-2 w-9/10">
-        <span class="font-medium text-sm catalog-title w-full"
-          >{{catalog?.title || 'Catalog Title'}}</span
-        >
-      </div>
-      <div class="flex items-center justify-center">
-        <i class="pi pi-angle-right text-xl"></i>
       </div>
     </div>
   </div>

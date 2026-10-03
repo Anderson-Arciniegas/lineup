@@ -1,142 +1,151 @@
-<footer
-  class="w-full bg-primary-50 border-t border-primary-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.06)]"
->
-  <div
-    class="container mx-auto flex flex-col gap-10 py-10 px-5 lg:px-9 lg:flex-row lg:items-start lg:justify-between xl:gap-12"
-  >
-    <div class="flex flex-col gap-4 items-start max-w-xs xl:max-w-md">
-      <a routerLink="/" class="flex flex-row items-center gap-3">
-        <img
-          src="assets/images/lineup.png"
-          alt="Lineup logo"
-          width="571"
-          height="505"
-          class="footer-logo object-contain cursor-pointer"
-        />
-      </a>
-      <p class="text-sm leading-relaxed text-primary-700">
-        {{ 'footer.tagline' | translate }}
-      </p>
+<footer class="w-full bg-white border-t border-[#EBEBED]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 pt-14 pb-8 flex flex-col gap-10">
+    <!-- Top Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 items-start">
+      <!-- Brand Col (spans 2 cols on lg) -->
+      <div class="lg:col-span-2 flex flex-col gap-4 max-w-sm">
+        <a routerLink="/" class="flex items-center gap-1.5 w-fit">
+          <span class="text-xl sm:text-2xl font-bold tracking-tight text-[#0B0B0C]">LineUp</span>
+          <span class="w-2 h-2 rounded-full bg-[#0BC5EA]"></span>
+        </a>
+        <p class="text-sm text-[#5C5C63] leading-relaxed">
+          {{ 'footer.tagline' | translate }}
+        </p>
+        <!-- Social Icons -->
+        <div class="flex items-center gap-2 pt-1">
+          <a
+            [href]="anderGitHubUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 rounded-full border border-[#EBEBED] hover:border-[#0B0B0C] flex items-center justify-center text-[#5C5C63] hover:text-[#0B0B0C] transition-colors shadow-xs"
+            aria-label="GitHub"
+          >
+            <i class="pi pi-github text-sm"></i>
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 rounded-full border border-[#EBEBED] hover:border-[#0B0B0C] flex items-center justify-center text-[#5C5C63] hover:text-[#0B0B0C] transition-colors shadow-xs"
+            aria-label="LinkedIn"
+          >
+            <i class="pi pi-linkedin text-sm"></i>
+          </a>
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 rounded-full border border-[#EBEBED] hover:border-[#0B0B0C] flex items-center justify-center text-[#5C5C63] hover:text-[#0B0B0C] transition-colors shadow-xs"
+            aria-label="Instagram"
+          >
+            <i class="pi pi-instagram text-sm"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navigation Col -->
+      <div class="flex flex-col gap-3.5">
+        <span class="text-xs font-mono tracking-wider uppercase text-[#74747C] font-medium">
+          {{ 'footer.navigation' | translate }}
+        </span>
+        <nav
+          class="flex flex-col gap-2.5 text-sm text-[#5C5C63]"
+          [attr.aria-label]="'footer.navigation' | translate"
+        >
+          <a routerLink="/" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'general.explore' | translate }}
+          </a>
+          <a [routerLink]="infoPath" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'general.information' | translate }}
+          </a>
+          @if (!logged()) {
+          <a routerLink="/login" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'general.signIn' | translate }}
+          </a>
+          } @else if (!businessMode()) {
+          <a routerLink="/profile" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'general.profile' | translate }}
+          </a>
+          } @else if (businessMode()) {
+          <a routerLink="/dashboard" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'general.dashboard' | translate }}
+          </a>
+          }
+        </nav>
+      </div>
+
+      <!-- Legal Col -->
+      <div class="flex flex-col gap-3.5">
+        <span class="text-xs font-mono tracking-wider uppercase text-[#74747C] font-medium">
+          {{ 'footer.legal' | translate }}
+        </span>
+        <nav
+          class="flex flex-col gap-2.5 text-sm text-[#5C5C63]"
+          [attr.aria-label]="'footer.legal' | translate"
+        >
+          <a [routerLink]="termsPath" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'footer.terms' | translate }}
+          </a>
+          <a [routerLink]="privacyPath" class="hover:text-[#0B0B0C] transition-colors">
+            {{ 'footer.privacy' | translate }}
+          </a>
+        </nav>
+      </div>
+
+      <!-- Contact Col -->
+      <div class="flex flex-col gap-3.5">
+        <span class="text-xs font-mono tracking-wider uppercase text-[#74747C] font-medium">
+          {{ 'footer.contact' | translate }}
+        </span>
+        <p class="text-sm text-[#5C5C63] leading-relaxed">
+          {{ 'footer.contactHint' | translate }}
+        </p>
+        <a
+          [href]="gmailComposeUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBED] bg-white text-[#0B0B0C] text-xs sm:text-sm font-medium hover:bg-[#F7F7F8] hover:border-[#0B0B0C] transition-all shadow-xs w-fit"
+        >
+          <i class="pi pi-envelope text-xs"></i>
+          <span>lineup&#64;lineup.com.ve</span>
+        </a>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-3">
-      <span class="font-semibold text-primary-800 tracking-wide">
-        {{ 'footer.navigation' | translate }}
-      </span>
-      <nav
-        class="flex flex-col gap-1 items-start"
-        [attr.aria-label]="'footer.navigation' | translate"
-      >
-        <lib-button
-          [link]="'/'"
-          variant="text"
-          color="secondary"
-          [label]="'general.explore'"
-        ></lib-button>
-        <lib-button
-          [link]="infoPath"
-          variant="text"
-          color="secondary"
-          [label]="'general.information'"
-        ></lib-button>
-        @if(!logged()) {
-        <lib-button
-          [link]="'/login'"
-          variant="text"
-          color="secondary"
-          [label]="'general.login'"
-        ></lib-button>
-        } @else if (!businessMode()) {
-        <lib-button
-          [link]="'/profile'"
-          variant="text"
-          color="secondary"
-          [label]="'general.profile'"
-        ></lib-button>
-        } @else if (businessMode()) {
-        <lib-button
-          [link]="'/dashboard'"
-          variant="text"
-          color="secondary"
-          [label]="'general.dashboard'"
-        ></lib-button>
-        }
-      </nav>
-    </div>
+    <!-- Divider -->
+    <div class="border-t border-[#EBEBED]"></div>
 
-    <div class="flex flex-col gap-3">
-      <span class="font-semibold text-primary-800 tracking-wide">
-        {{ 'footer.legal' | translate }}
-      </span>
-      <nav
-        class="flex flex-col gap-1 items-start"
-        [attr.aria-label]="'footer.legal' | translate"
-      >
-        <lib-button
-          [link]="termsPath"
-          variant="text"
-          color="secondary"
-          [label]="'footer.terms'"
-        ></lib-button>
-        <lib-button
-          [link]="privacyPath"
-          variant="text"
-          color="secondary"
-          [label]="'footer.privacy'"
-        ></lib-button>
-      </nav>
-    </div>
-
-    <div class="flex flex-col gap-3">
-      <span class="font-semibold text-primary-800 tracking-wide">
-        {{ 'footer.contact' | translate }}
-      </span>
-      <p class="text-sm text-primary-700 max-w-xs">
-        {{ 'footer.contactHint' | translate }}
-      </p>
-      <lib-button
-        [label]="'footer.contactButton'"
-        [type]="'rounded'"
-        color="secondary"
-        icon="pi pi-envelope"
-        [href]="gmailComposeUrl"
-        [target]="'_blank'"
-        width="w-full sm:w-auto"
-      ></lib-button>
-    </div>
-  </div>
-
-  <div
-    class="flex flex-col justify-start items-start gap-4 container mx-auto px-5 lg:px-9"
-  >
-    <span class="text-sm font-semibold text-primary-800 tracking-wide">
-      {{ 'footer.createdBy' | translate }}
-    </span>
+    <!-- Bottom Row (Authors & Copyright) -->
     <div
-      class="flex flex-col sm:flex-row items-start justify-start sm:gap-8 gap-4"
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#74747C]"
     >
-      <a
-        [href]="anderGitHubUrl"
-        target="_blank"
-        class="flex flex-row items-center justify-start gap-2"
-      >
-        <i class="pi pi-github text-2xl text-primary-600"></i>
-        <span class="text-sm text-primary-600">Anderson Arciniegas</span>
-      </a>
-      <a
-        [href]="omarGitHubUrl"
-        target="_blank"
-        class="flex flex-row items-center justify-start gap-2"
-      >
-        <i class="pi pi-github text-2xl text-primary-600"></i>
-        <span class="text-sm text-primary-600">Omar Gonzalez</span>
-      </a>
-    </div>
-  </div>
+      <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+        <span class="font-mono tracking-wider uppercase font-medium">
+          {{ 'footer.createdBy' | translate }}
+        </span>
+        <a
+          [href]="anderGitHubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-[#5C5C63] hover:text-[#0B0B0C] transition-colors"
+        >
+          <i class="pi pi-github text-sm"></i>
+          <span>Anderson Arciniegas</span>
+        </a>
+        <a
+          [href]="omarGitHubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-[#5C5C63] hover:text-[#0B0B0C] transition-colors"
+        >
+          <i class="pi pi-github text-sm"></i>
+          <span>Omar Gonzalez</span>
+        </a>
+      </div>
 
-  <div
-    class="border-t border-primary-100 py-8 px-3 md:px-4 lg:px-9 text-center text-xs text-primary-600"
-  >
-    {{ 'footer.copyright' | translate: { year: currentYear } }}
+      <div class="text-[#74747C]">
+        {{ 'footer.copyright' | translate: { year: currentYear } }}
+      </div>
+    </div>
   </div>
 </footer>

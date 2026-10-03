@@ -137,7 +137,7 @@ export class GoogleAuthService {
           size: options.size ?? 'large',
           text: options.text ?? 'signin_with',
           shape: 'circle',
-          width: 240,
+          width: 360,
         });
       });
   }

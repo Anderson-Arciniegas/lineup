@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -69,12 +69,17 @@ export class LoginPage implements OnInit, OnDestroy, AfterViewInit {
   private readonly _googleAuth = inject(GoogleAuthService);
   private readonly _toast = inject(ToastService);
   private readonly _apiError = inject(ApiErrorService);
+  private readonly _location = inject(Location);
   @Inject(PLATFORM_ID) private _platform: any;
 
   private _subscription: Subscription = new Subscription();
 
   emailError = getEmailFieldError;
   passwordError = getPasswordFieldError;
+
+  goBack(): void {
+    this._location.back();
+  }
 
   get emailControl() {
     return this.loginForm.get('email');

@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import {
   AuthStore,
   BusinessNotificationsPrivateService,
@@ -38,9 +38,9 @@ import { Notifications } from '../notifications/notifications';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     Button,
     LanguageSelect,
-    RouterLink,
     DrawerModule,
     TranslateModule,
     OverlayBadgeModule,

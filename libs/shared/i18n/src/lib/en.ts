@@ -68,6 +68,8 @@ export const en = {
     changeEmail: 'Change email',
     signIn: 'Sign In',
     featuredBusinesses: 'Featured businesses',
+    topRated: 'Top rated',
+    mostVisited: 'Most visited',
     featuredCatalogs: 'Featured catalogs',
     featuredProducts: 'Featured products',
     userProfile: 'User profile',

@@ -1,13 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Button } from "@lineup/ui";
+import { RouterModule } from '@angular/router';
+import { Button } from '@lineup/ui';
 import { TranslateModule } from '@ngx-translate/core';
 
-/** Landing de marketing / presentación del producto con CTA hacia registro o exploración. */
+/**
+ * Landing informativa / presentación de producto con diseño fiel a Pencil Frame 0.
+ */
 @Component({
   selector: 'app-landing-page',
-  imports: [CommonModule, Button, TranslateModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule, Button, TranslateModule],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
 })
-export class LandingPage {}
+export class LandingPage {
+  readonly gmailComposeUrl =
+    'https://mail.google.com/mail/?view=cm&fs=1&to=lineup@lineup.com.ve';
+  
+  activeChip = 'todos';
+
+  setActiveChip(chip: string): void {
+    this.activeChip = chip;
+  }
+}

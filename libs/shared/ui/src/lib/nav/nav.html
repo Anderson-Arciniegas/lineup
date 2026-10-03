@@ -1,15 +1,14 @@
 <nav
-  class="nav flex flex-row justify-between py-3 ps-2 pe-3 md:pe-4 lg:pe-9 bg-primary-50 shadow h-18 sm:h-20"
-  [class.lg:ps-9]="!showSidebarToggle"
+  class="sticky top-0 z-50 w-full bg-white border-b border-[#EBEBED] h-[78px] flex items-center justify-between px-4 sm:px-8 lg:px-14 shadow-[0_1px_2px_rgba(16,17,20,0.04),0_8px_24px_rgba(16,17,20,0.05)]"
+  [class.lg:ps-14]="!showSidebarToggle"
 >
-  <div class="flex flex-row items-center gap-1 sm:gap-5">
+  <!-- Left Side: Toggle (if in sidebar layouts) & Logo -->
+  <div class="flex items-center gap-3 sm:gap-4">
     @if (showSidebarToggle) {
-    <lib-button
-      [icon]="'pi pi-bars'"
-      [variant]="'text'"
-      [type]="'rounded'"
-      [size]="'large'"
-      width="w-13"
+    <button
+      type="button"
+      (click)="emitSidebarToggle()"
+      class="w-10 h-10 rounded-full border border-[#EBEBED] flex items-center justify-center text-[#0B0B0C] hover:bg-[#F7F7F8] transition-colors cursor-pointer"
       [attr.aria-expanded]="sidebarOpen"
       [attr.aria-label]="
         (sidebarOpen
@@ -17,83 +16,103 @@
           : 'layout.sidebar.expandMenu'
         ) | translate
       "
-      (action)="emitSidebarToggle()"
-    ></lib-button>
+    >
+      <i class="pi pi-bars text-sm"></i>
+    </button>
     }
-    <a [routerLink]="['/']" class="flex flex-row items-center gap-3">
-      <img
-        src="assets/images/lineup.png"
-        alt="Lineup logo"
-        width="571"
-        height="505"
-        class="h-14 w-auto object-contain cursor-pointer"
-      />
+
+    <!-- Logo: LineUp with Accent Dot (Pencil design) -->
+    <a [routerLink]="['/']" class="flex items-center gap-1.5 cursor-pointer select-none group">
+      <span class="text-xl sm:text-[22px] font-bold tracking-tight text-[#0B0B0C]">LineUp</span>
+      <span class="w-1.5 h-1.5 rounded-full bg-[#0BC5EA] group-hover:scale-125 transition-transform"></span>
     </a>
   </div>
 
-  <div class="flex flex-row items-center justify-end gap-2 sm:gap-4">
-    <div class="hidden md:flex flex-row gap-1 items-center justify-center">
-      <lib-button
-        [link]="'/'"
-        variant="text"
-        color="secondary"
-        [label]="'general.explore' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/info'"
-        variant="text"
-        color="secondary"
-        [label]="'general.information' | translate"
-      ></lib-button>
+  <!-- Right Side: Links, Language, Login, and Join CTA -->
+  <div class="flex items-center gap-2 sm:gap-3">
+    <!-- Desktop Navigation Links -->
+    <div class="hidden md:flex items-center gap-1">
+      <a
+        [routerLink]="['/']"
+        routerLinkActive="text-[#0B0B0C] font-semibold bg-[#F7F7F8]"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="px-3.5 py-2 rounded-full text-sm text-[#5C5C63] hover:text-[#0B0B0C] hover:bg-[#F7F7F8] transition-colors"
+      >
+        {{ 'general.explore' | translate }}
+      </a>
+      <a
+        [routerLink]="['/info']"
+        routerLinkActive="text-[#0B0B0C] font-semibold bg-[#F7F7F8]"
+        class="px-3.5 py-2 rounded-full text-sm text-[#5C5C63] hover:text-[#0B0B0C] hover:bg-[#F7F7F8] transition-colors"
+      >
+        {{ 'general.information' | translate }}
+      </a>
     </div>
+
+    <!-- Mobile Navigation Icons (when sidebar toggle is false) -->
     @if (!showSidebarToggle) {
-    <div class="flex md:hidden gap-2 flex-row items-center justify-center">
-      <lib-button
-        class="flex"
-        [link]="'/'"
-        [type]="'rounded'"
-        color="secondary"
-        [fontSize]="'text-2xl'"
-        variant="text"
-        icon="pi pi-search"
-        width="w-11"
-      ></lib-button>
-      <lib-button
-        class="flex"
-        [link]="'/info'"
-        [type]="'rounded'"
-        [fontSize]="'text-2xl'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-info-circle"
-        width="w-11"
-      ></lib-button>
+    <div class="flex md:hidden items-center gap-1">
+      <a
+        [routerLink]="['/']"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-[#5C5C63] hover:text-[#0B0B0C] hover:bg-[#F7F7F8] transition-colors"
+        aria-label="Explorar"
+      >
+        <i class="pi pi-search text-base"></i>
+      </a>
+      <a
+        [routerLink]="['/info']"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-[#5C5C63] hover:text-[#0B0B0C] hover:bg-[#F7F7F8] transition-colors"
+        aria-label="Información"
+      >
+        <i class="pi pi-info-circle text-base"></i>
+      </a>
     </div>
     }
-    <lib-language-select></lib-language-select>
-    @if (!logged()) {
-    <lib-button
-      class="hidden md:flex"
-      [link]="'/login'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-user"
-      [label]="'general.signIn' | translate"
-    ></lib-button>
-    <lib-button
-      class="flex md:hidden"
-      [link]="'/login'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-user"
-      width="w-11"
-      variant="text"
-      [fontSize]="'text-2xl'"
-    ></lib-button>
-    }@else if (!businessMode()) {
 
+    <!-- Vertical Divider -->
+    <div class="hidden md:block w-px h-5 bg-[#EBEBED]"></div>
+
+    <!-- Language Selector -->
+    <lib-language-select></lib-language-select>
+
+    <!-- Unauthenticated: Login & Join CTA -->
+    @if (!logged()) {
+    <a
+      [routerLink]="['/login']"
+      class="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBED] text-[#0B0B0C] text-sm font-medium hover:border-[#0B0B0C] hover:bg-[#F7F7F8] transition-all shadow-xs"
+    >
+      <i class="pi pi-user text-xs"></i>
+      <span>{{ 'general.signIn' | translate }}</span>
+    </a>
+
+    <a
+      [routerLink]="['/register']"
+      class="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#0B0B0C] text-white text-sm font-medium hover:bg-[#202024] active:scale-[0.98] transition-all shadow-xs"
+    >
+      <span>{{ 'landingPage.join' | translate }}</span>
+    </a>
+
+    <!-- Mobile Buttons -->
+    <div class="flex sm:hidden items-center gap-1.5">
+      <a
+        [routerLink]="['/login']"
+        class="w-9 h-9 rounded-full border border-[#EBEBED] flex items-center justify-center text-[#0B0B0C]"
+        aria-label="Iniciar sesión"
+      >
+        <i class="pi pi-user text-sm"></i>
+      </a>
+      <a
+        [routerLink]="['/register']"
+        class="px-3.5 py-1.5 rounded-full bg-[#0B0B0C] text-white text-xs font-medium"
+      >
+        {{ 'landingPage.join' | translate }}
+      </a>
+    </div>
+
+    <!-- Authenticated User -->
+    } @else if (!businessMode()) {
     <div
-      class="flex items-center justify-center cursor-pointer w-12 h-12"
+      class="flex items-center justify-center cursor-pointer w-10 h-10 rounded-full hover:bg-[#F7F7F8] transition-colors"
       role="button"
       tabindex="0"
       [attr.aria-label]="'notifications.title' | translate"
@@ -105,34 +124,22 @@
         [value]="pendingNotificationsCount()"
         [badgeDisabled]="pendingNotificationsCount() === 0"
       >
-        <i class="pi pi-bell" style="font-size: 1.5rem; cursor: pointer"></i>
+        <i class="pi pi-bell text-lg text-[#0B0B0C] cursor-pointer"></i>
       </p-overlay-badge>
     </div>
-    <lib-button
-      class="hidden md:flex"
-      [link]="'/profile'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-user"
-      width="w-30"
-      [label]="'general.profile' | translate"
-    ></lib-button>
 
-    <lib-button
-      class="flex md:hidden"
-      [link]="'/profile'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-user"
-      variant="text"
-      width="w-11"
-      [fontSize]="'text-2xl'"
-    ></lib-button>
+    <a
+      [routerLink]="['/profile']"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBED] text-[#0B0B0C] text-sm font-medium hover:border-[#0B0B0C] hover:bg-[#F7F7F8] transition-all shadow-xs"
+    >
+      <i class="pi pi-user text-xs"></i>
+      <span class="hidden md:inline">{{ 'general.profile' | translate }}</span>
+    </a>
 
-    }@else if (businessMode()) {
-
+    <!-- Authenticated Business -->
+    } @else if (businessMode()) {
     <div
-      class="flex items-center justify-center cursor-pointer w-11 h-11 rounded-full hover:bg-primary-200"
+      class="flex items-center justify-center cursor-pointer w-10 h-10 rounded-full hover:bg-[#F7F7F8] transition-colors"
       role="button"
       tabindex="0"
       [attr.aria-label]="'notifications.title' | translate"
@@ -144,108 +151,22 @@
         [value]="pendingNotificationsCount()"
         [badgeDisabled]="pendingNotificationsCount() === 0"
       >
-        <i class="pi pi-bell" style="font-size: 1.5rem; cursor: pointer"></i>
+        <i class="pi pi-bell text-lg text-[#0B0B0C] cursor-pointer"></i>
       </p-overlay-badge>
     </div>
-    <lib-button
-      class="hidden md:flex"
-      [link]="'/dashboard'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-home"
-      [label]="'general.dashboard' | translate"
-    ></lib-button>
-    <lib-button
-      class="flex md:hidden"
-      [link]="'/dashboard'"
-      [type]="'rounded'"
-      color="secondary"
-      icon="pi pi-home"
-      [fontSize]="'text-2xl'"
-      width="w-11"
-    ></lib-button>
+
+    <a
+      [routerLink]="['/dashboard']"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBED] text-[#0B0B0C] text-sm font-medium hover:border-[#0B0B0C] hover:bg-[#F7F7F8] transition-all shadow-xs"
+    >
+      <i class="pi pi-home text-xs"></i>
+      <span class="hidden md:inline">{{ 'general.dashboard' | translate }}</span>
+    </a>
     }
   </div>
 </nav>
-<!--
-<p-drawer [(visible)]="visible" header="Lineup">
-  @if(!logged()){
-  <div class="flex flex-col items-center justify-end gap-5">
-    <div class="flex flex-col gap-4 items-start justify-center w-full">
-      <lib-button
-        [link]="'/login'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-user"
-        [width]="'w-full'"
-        [label]="'general.signIn' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-globe"
-        [width]="'w-full'"
-        [label]="'general.explore' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/info'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-info-circle"
-        [width]="'w-full'"
-        [label]="'general.information' | translate"
-      ></lib-button>
-    </div>
-  </div>
-  }@else if (logged() && !businessMode()) {
-  <div class="flex flex-col items-center justify-end gap-5">
-    <div class="flex flex-col gap-8 items-center justify-center">
-      <lib-button
-        [link]="'/'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-globe"
-        [width]="'w-full'"
-        [label]="'general.explore' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/info'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        icon="pi pi-info-circle"
-        [width]="'w-full'"
-        [label]="'general.information' | translate"
-      ></lib-button>
-      <lib-button
-        [link]="'/user/favorites'"
-        [type]="'rounded'"
-        variant="text"
-        color="secondary"
-        [icon]="'pi pi-heart'"
-        [width]="'w-full'"
-        [label]="'general.favorites' | translate"
-      ></lib-button>
-    </div>
-    <div>
-      <lib-button
-        [icon]="'pi pi-user'"
-        [link]="'/user'"
-        [type]="'rounded'"
-        [size]="'large'"
-        variant="text"
-        width="w-13"
-      ></lib-button>
-    </div>
-  </div>
-  }
-</p-drawer> -->
 
+<!-- Popovers for Notifications -->
 <p-popover
   #userNotificationsPopover
   (onShow)="userNotificationsPanel.refresh()"

@@ -1,116 +1,152 @@
-<section
-  class="login flex flex-col gap-5 sm:gap-8 items-center justify-center p-0 lg:p-5 w-10/10"
->
-  <a [routerLink]="['/']" class="text-center text-4xl lg:text-5xl font-medium">
-    <img
-      src="assets/images/lineup.png"
-      alt="Lineup logo"
-      width="571"
-      height="505"
-      class="h-30 w-auto object-contain cursor-pointer"
-    />
-  </a>
-
-  <form
-    [formGroup]="loginForm"
-    (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-5 items-center justify-start w-10/10 md:w-5/10 max-w-md p-10 bg-primary-50 radius shadow-lg mb-15"
-  >
-    <h4 class="text-center text-2xl lg:text-3xl font-medium">
-      {{'general.login' | translate}}
-    </h4>
-
-    <div
-      class="w-8/10 flex flex-col items-center justify-center mb-3 relative min-h-10"
-      [attr.aria-busy]="attemptGoogle"
+<section class="flex flex-col justify-between min-h-screen p-4 sm:p-6 lg:py-6 lg:px-10 w-full max-w-[720px] mx-auto">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-20 bg-white/95 backdrop-blur-xs flex items-center justify-between w-full py-2 mb-2 shrink-0">
+    <button
+      type="button"
+      (click)="goBack()"
+      class="w-[42px] h-[42px] rounded-full border border-[#EBEBED] bg-white shadow-[0px_1px_2px_#10111408] hover:border-[#0B0B0C] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer text-[#0B0B0C] shrink-0"
+      aria-label="Volver"
     >
+      <i class="pi pi-arrow-left text-sm"></i>
+    </button>
+
+    <div class="flex items-center gap-1.5 text-[13px] shrink-0">
+      <span class="text-[#74747C]">¿No tienes cuenta?</span>
+      <a
+        routerLink="/register"
+        class="text-[#0B0B0C] font-medium hover:underline cursor-pointer"
+      >
+        Crear cuenta
+      </a>
+    </div>
+  </header>
+
+  <!-- Form Content -->
+  <div class="w-full max-w-[400px] mx-auto my-auto flex flex-col gap-3.5 py-1">
+    <!-- Header / Brand -->
+    <div class="flex flex-col gap-1.5 items-center text-center">
+      <a routerLink="/" class="inline-flex items-center gap-1.5 mb-0.5">
+        <span class="text-2xl font-bold tracking-tight text-[#0B0B0C]">LineUp</span>
+        <span class="w-2 h-2 rounded-full bg-[#0BC5EA] inline-block"></span>
+      </a>
+      <span class="text-[10px] font-semibold tracking-widest text-[#74747C] uppercase font-mono">
+        BIENVENIDO DE NUEVO
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-medium text-[#0B0B0C] leading-tight">
+        Iniciar sesión
+      </h1>
+      <p class="text-xs sm:text-sm text-[#5C5C63] leading-normal sm:leading-relaxed max-w-[340px]">
+        Accede para gestionar tu catálogo, tus productos y las consultas de tus clientes.
+      </p>
+    </div>
+
+    <!-- Google Button -->
+    <div class="w-full flex justify-center items-center relative min-h-[40px]">
       <div
         #googleBtn
-        class="google-signin-btn"
+        class="google-signin-btn w-full flex justify-center items-center"
         [class.pointer-events-none]="attempt || attemptGoogle"
         [class.opacity-50]="attempt || attemptGoogle"
       ></div>
       @if (attemptGoogle) {
-      <div
-        class="absolute inset-0 flex items-center justify-center bg-primary-50/80"
-      >
+      <div class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl z-10">
         <p-progress-spinner
           strokeWidth="4"
           ariaLabel="loading"
-          [style]="{ width: '40px', height: '40px' }"
+          [style]="{ width: '30px', height: '30px' }"
         />
       </div>
       }
     </div>
 
-    <div class="w-10/10 max-w-xs flex flex-col items-start mt-2">
-      <p-floatlabel class="w-10/10">
-        <input
-          pInputText
-          class="w-10/10 font-medium"
-          formControlName="email"
-          id="email"
-          type="email"
-          [pSize]="'small'"
-          autocomplete="username"
-        />
-        <label for="email" class="font-medium"
-          >{{'general.email' | translate}}</label
-        >
-      </p-floatlabel>
-      <small
-        class="text-red-500 text-xs block w-full h-8 leading-tight"
-        role="alert"
-      >
-        @if (emailError(emailControl); as err) { {{ err.key | translate:
-        err.params }} }
-      </small>
+    <!-- Divider -->
+    <div class="flex items-center gap-3 w-full my-0.5">
+      <div class="h-px bg-[#EBEBED] flex-1"></div>
+      <span class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+        O CONTINÚA CON TU CORREO
+      </span>
+      <div class="h-px bg-[#EBEBED] flex-1"></div>
     </div>
 
-    <div class="w-10/10 max-w-xs flex flex-col items-start">
-      <p-floatlabel class="w-10/10">
-        <p-password
-          [feedback]="false"
-          class="w-10/10 font-medium"
-          formControlName="password"
-          [fluid]="true"
-          [size]="'small'"
-          [toggleMask]="true"
-          inputId="password"
-          autocomplete="current-password"
-        />
-        <label for="password" class="font-medium"
-          >{{'general.password' | translate}}</label
-        >
-      </p-floatlabel>
-      <small
-        class="text-red-500 text-xs block w-full h-11 leading-tight"
-        role="alert"
-      >
-        @if (passwordError(passwordControl); as err) { {{ err.key | translate:
-        err.params }} }
-      </small>
-    </div>
+    <!-- Classic Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3.5 w-full">
+      <!-- Email -->
+      <div class="flex flex-col gap-1 w-full">
+        <label for="email" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+          CORREO ELECTRÓNICO
+        </label>
+        <div class="relative flex items-center w-full">
+          <i class="pi pi-envelope absolute left-4 text-[#74747C] text-sm pointer-events-none"></i>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="tu@correo.com"
+            autocomplete="username"
+            class="w-full pl-11 pr-4 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
+          />
+        </div>
+        @if (emailControl?.touched && emailError(emailControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
 
-    <div class="w-8/10 flex flex-col items-center justify-center gap-5">
-      <lib-button
-        label="{{'general.enter' | translate}}"
-        [type]="'rounded'"
-        [size]="'small'"
-        [width]="'w-60'"
-        [buttonType]="'submit'"
+      <!-- Password -->
+      <div class="flex flex-col gap-1 w-full">
+        <div class="flex items-center justify-between">
+          <label for="password" class="text-[10px] font-semibold tracking-wider text-[#74747C] uppercase font-mono">
+            CONTRASEÑA
+          </label>
+        </div>
+        <div class="relative flex items-center w-full">
+          <i class="pi pi-lock absolute left-4 text-[#74747C] text-sm pointer-events-none z-10"></i>
+          <p-password
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            inputId="password"
+            autocomplete="current-password"
+            [fluid]="true"
+            placeholder="••••••••••••"
+            styleClass="w-full"
+            inputStyleClass="w-full pl-11 pr-10 py-2.5 bg-white border border-[#EBEBED] hover:border-gray-400 focus:border-[#0B0B0C] focus:ring-1 focus:ring-[#0B0B0C] rounded-xl text-sm font-medium text-[#0B0B0C] placeholder:text-[#74747C] transition-all outline-none"
+          />
+        </div>
+        @if (passwordControl?.touched && passwordError(passwordControl); as err) {
+        <small class="text-red-500 text-xs block leading-tight" role="alert">
+          {{ err.key | translate: err.params }}
+        </small>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
         [disabled]="attempt || attemptGoogle"
-        [loading]="attempt || attemptGoogle"
-      ></lib-button>
+        class="w-full mt-1.5 h-11 bg-[#0B0B0C] hover:bg-black text-white font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:scale-[1.01]"
+      >
+        @if (attempt || attemptGoogle) {
+        <p-progress-spinner
+          strokeWidth="4"
+          ariaLabel="loading"
+          [style]="{ width: '20px', height: '20px' }"
+        />
+        } @else {
+        <span>Entrar</span>
+        <i class="pi pi-arrow-right text-xs"></i>
+        }
+      </button>
+    </form>
+  </div>
 
-      <lib-button
-        label="{{'general.register' | translate}}"
-        [link]="'/register'"
-        [type]="'rounded'"
-        [color]="'secondary'"
-        [size]="'small'"
-        [width]="'w-60'"
-      ></lib-button>
-    </div>
-  </form>
+  <!-- Bottom Legal -->
+  <footer class="w-full max-w-[400px] mx-auto text-center text-xs text-[#74747C] pt-2 pb-1 shrink-0">
+    Al continuar aceptas nuestros
+    <a routerLink="/info/terminos-y-condiciones" class="text-[#0B0B0C] underline font-medium">Términos y condiciones</a>
+    y la
+    <a routerLink="/info/politica-de-privacidad" class="text-[#0B0B0C] underline font-medium">Política de privacidad</a>.
+  </footer>
 </section>

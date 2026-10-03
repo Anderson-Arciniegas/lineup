@@ -1,97 +1,64 @@
-<a [routerLink]="'/' + business?.path" [ngClass]="[width, height]">
-  <div
-    class="business-card p-2 shadow cursor-pointer flex flex-col justify-end items-center bg-primary-50 w-full h-full"
-  >
-    <!-- <div
-      class="business-data-content flex flex-row items-center justify-between gap-3 text-white font-medium w-10/10 text-xs"
-    >
-      @if (!favoritesMode) {
-      <div
-        class="business-data-left hidden sm:flex flex-row items-center justify-start gap-1 w-fit px-2 py-2"
-      >
-        <i class="pi pi-user" style="font-size: 0.8rem"></i>
-        <span class="font-semibold"
-          >{{ formatFollowers(business?.followers ?? 0) }}</span
-        >
-      </div>
-      }
-    </div> -->
-
-    <!-- @if (outOfStock) {
-      <div class="note-container flex flex-row justify-center items-center">
-        <div
-          class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
-        >
-          <span class="text-sm text-center font-medium"
-            >{{'general.outOfStockSimple' | translate}}</span
-          >
-        </div>
-      </div>
-      } -->
-
-    <div class="h-full w-full image-container">
+<a
+  [routerLink]="'/' + business?.path"
+  class="group block bg-white border border-[#EBEBED] hover:border-[#0B0B0C] rounded-[24px] p-3 shadow-[0px_1px_2px_#10111408] hover:shadow-md transition-all duration-200 cursor-pointer select-none text-left"
+  [ngClass]="[width, height]"
+>
+  <div class="w-full h-full flex flex-col justify-between">
+    <!-- Media -->
+    <div class="relative w-full aspect-[261/260] rounded-[18px] overflow-hidden bg-[#F7F7F8] shrink-0">
       @if (business?.image) {
       <img
-        alt="Card"
+        alt="{{ business.name }}"
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
-        class="image h-full w-full block sm:hidden"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 block sm:hidden"
         [src]="business.image | fileThumbnailUrl:'xs'"
       />
       <img
-        alt="Card"
+        alt="{{ business.name }}"
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
-        class="image h-full w-full hidden sm:block"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 hidden sm:block"
         [src]="business.image | fileThumbnailUrl:'sm'"
       />
       } @else {
       <img
-        alt="Card"
+        alt="{{ business?.name ?? 'business' }}"
         (load)="imageLoaded = true"
         [hidden]="!imageLoaded"
-        class="image h-full w-full"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         [src]="image"
       />
       }
-      <div
-        [hidden]="imageLoaded"
-        class="h-full w-full flex flex-row items-center justify-center"
-        [ngClass]="[width, height]"
-      >
+
+      @if (!imageLoaded) {
+      <div class="absolute inset-0 flex items-center justify-center bg-[#F7F7F8]">
         <p-progress-spinner
-          strokeWidth="8"
+          strokeWidth="6"
           fill="transparent"
           animationDuration=".5s"
-          [style]="{ width: '50px', height: '50px' }"
+          [style]="{ width: '40px', height: '40px' }"
         />
       </div>
-    </div>
+      }
 
-    @if (discount) {
-    <div class="note-container flex flex-row justify-center items-center">
-      <div
-        class="bg-primary-100 rounded-full h-7 flex flex-row justify-center items-center shadow-md px-3"
-      >
+      @if (discount) {
+      <div class="absolute top-2.5 left-2.5 rounded-full bg-white/95 backdrop-blur-xs border border-[#EBEBED] shadow-xs px-2.5 py-1 text-[11px] font-semibold text-[#0B0B0C] z-10">
         @if(discount.discountType === DiscountTypeEnum.PERCENTAGE) {
-        <span class="text-sm text-center font-medium">
           {{discount.value}}% {{'general.discount' | translate}}
-        </span>
         } @else {
-        <span class="text-sm text-center font-medium">
-          {{discount.value}} {{discount.currency?.code | currencySymbol}}
-          {{'general.discount' | translate}}
-        </span>
+          {{discount.value}} {{discount.currency?.code | currencySymbol}} {{'general.discount' | translate}}
         }
       </div>
+      }
     </div>
-    }
-    <div class="pt-2 w-full">
-      <p
-        class="text-center font-medium text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden"
-      >
+
+    <!-- Info -->
+    <div class="pt-3 px-1 flex items-center justify-between gap-2">
+      <span class="text-[15px] font-medium text-[#0B0B0C] truncate group-hover:text-black">
         {{ business?.name ?? 'business name' }}
-      </p>
+      </span>
+      <i class="pi pi-arrow-up-right text-sm text-[#74747C] group-hover:text-[#0B0B0C] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"></i>
     </div>
   </div>
 </a>

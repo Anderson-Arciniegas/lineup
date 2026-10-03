@@ -1,42 +1,30 @@
 <div class="w-full flex flex-row items-center justify-center search-container">
   <div
-    class="search flex flex-row items-center justify-center bg-primary-50 gap-2 lg:gap-5 px-4"
-    [class.sm:px-4]="small"
-    [class.sm:px-8]="!small"
+    class="search flex flex-row items-center justify-between bg-white border border-[#EBEBED] rounded-full shadow-[0_4px_24px_rgba(16,17,20,0.08),0_1px_2px_rgba(16,17,20,0.04)] gap-3 pl-5 pr-2 h-[58px] max-w-[640px] w-full transition-all"
     [class.small]="small"
   >
-    <p-iconfield class="w-full max-width">
-      <p-inputicon class="pi pi-search" />
+    <div class="flex items-center gap-3 flex-1 min-w-0">
+      <i class="pi pi-search text-[#74747C] text-base shrink-0"></i>
       <input
         type="text"
-        class="w-full search-input font-medium"
-        pInputText
+        class="w-full bg-transparent border-none outline-none text-[#0B0B0C] placeholder-[#74747C] text-[15px] font-normal"
         [(ngModel)]="searchQuery"
         placeholder="{{'general.search' | translate}}"
         (keydown.enter)="onSearchSubmit()"
       />
-    </p-iconfield>
-    <lib-button
-      class="hidden sm:flex"
-      icon="pi pi-search"
-      ariaLabel="general.search"
-      type="rounded"
-      (action)="onSearchSubmit()"
-      width="w-11"
+    </div>
+
+    <button
+      type="button"
+      (click)="onSearchSubmit()"
+      class="w-[42px] h-[42px] rounded-full bg-[#0B0B0C] hover:bg-black text-white flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-xs"
+      [attr.aria-label]="'general.search' | translate"
     >
-    </lib-button>
-    <lib-button
-      class="flex sm:hidden"
-      icon="pi pi-search"
-      ariaLabel="general.search"
-      type="rounded"
-      [size]="'small'"
-      (action)="onSearchSubmit()"
-    >
-    </lib-button>
+      <i class="pi pi-search text-sm"></i>
+    </button>
   </div>
   <div
-    class="search-ghost flex items-center justify-center gap-2 sm:gap-5 px-3 sm:px-8"
+    class="search-ghost"
     [class.small]="small"
   ></div>
 </div>

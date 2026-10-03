@@ -1,13 +1,104 @@
 :host {
   display: inline-flex;
   align-items: center;
+  position: relative;
 }
 
-.language-select {
-  min-width: 4.5rem;
-}
+:host ::ng-deep {
+  .language-select.p-select {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 14px;
+    background-color: #ffffff;
+    border: 1px solid #ebebed;
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(16, 17, 20, 0.04);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    min-width: 0;
 
-:host ::ng-deep .language-select .p-select-label {
-  font-weight: 600;
-  letter-spacing: 0.02em;
+    &:hover {
+      border-color: #0b0b0c;
+      background-color: #f7f7f8;
+    }
+
+    &:focus-within,
+    &.p-focus {
+      border-color: #0b0b0c;
+      box-shadow: 0 0 0 2px rgba(11, 11, 12, 0.06);
+      background-color: #ffffff;
+    }
+
+    .p-select-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #0b0b0c;
+      padding: 0;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .p-select-dropdown {
+      width: auto;
+      color: #5c5c63;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .p-icon,
+      i,
+      svg {
+        width: 13px;
+        height: 13px;
+        font-size: 11px;
+      }
+    }
+  }
+
+  .p-select-overlay {
+    background: #ffffff !important;
+    border: 1px solid #ebebed !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px -4px rgba(16, 17, 20, 0.12),
+      0 4px 12px -2px rgba(16, 17, 20, 0.06) !important;
+    padding: 6px !important;
+    min-width: 86px !important;
+    margin-top: 4px;
+    overflow: hidden !important;
+
+    .p-select-list {
+      padding: 0 !important;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .p-select-option {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: #0b0b0c !important;
+      border-radius: 8px !important;
+      padding: 7px 12px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease !important;
+
+      &:hover {
+        background-color: #f7f7f8 !important;
+        color: #0b0b0c !important;
+      }
+
+      &.p-select-option-selected,
+      &[aria-selected='true'] {
+        background-color: #0b0b0c !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+    }
+  }
 }

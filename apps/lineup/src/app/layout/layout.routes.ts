@@ -17,6 +17,11 @@ export const layoutRoutes: Routes = [
       ),
   },
   {
+    path: 'information',
+    redirectTo: AppConfigService.config.routes.info,
+    pathMatch: 'full',
+  },
+  {
     path: AppConfigService.config.routes.login,
     loadChildren: () =>
       import('../features/auth/auth-login.routes').then(

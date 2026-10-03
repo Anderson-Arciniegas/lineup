@@ -1,178 +1,20 @@
-.product-card {
-  border-radius: var(--border-radius);
-  position: relative;
-  overflow: hidden;
+:host {
+  display: block;
 }
 
-/**
- * PDF: el .flip-inner completo ya no se renderiza (se sustituye por .pdf-title-face),
- * pero dejamos el override por si acaso queda algún inline style de GSAP.
- */
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .product-card--pdf-export .flip-inner {
   transform: none !important;
   transition: none !important;
 }
 
-.pdf-title-face {
-  background: rgba(52, 52, 52, 0.6);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-}
-
-// .info-translucid{
-//     background: rgba(52, 52, 52, 0.7);
-//     border: 1px solid var(--p-primary-800);
-//     overflow: hidden;
-
-// }
-
-a {
-  display: block;
-}
-
-.button-content {
-  box-sizing: border-box;
-  width: 100%;
-  background: rgba(52, 52, 52, 0.6);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-}
-
-.flip-box {
-  position: absolute;
-  box-sizing: border-box;
-
-  width: 100%;
-  padding: 10px;
-  bottom: 0px;
-}
-
-.buttons-container {
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px;
-  top: 0px;
-}
-
-.note-container {
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  bottom: 65px;
-}
-
-.product-card__media {
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.product-card__image {
-  display: block;
-}
-
-.product-card__image--pending {
-  opacity: 0;
-}
-
-.product-card__spinner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.product-card__placeholder {
-  width: 100%;
-  height: 100%;
-  background: var(--p-surface-100, #f4f4f5);
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
-}
-
-.product-image {
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
-  width: 100%;
-  height: 100%;
-  object-fit: scale-down;
-  filter: brightness(1) contrast(1.1) saturate(1.2);
-  box-shadow: 2px 4px 30px rgba(0, 0, 0, 0.1);
-}
-
 .flip-inner {
   width: 100%;
   position: relative;
-  transform-style: preserve-3d;
 }
 
-.front,
-.back {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  backface-visibility: hidden;
-  background: rgba(52, 52, 52, 0.6);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-}
-
-.back {
-  transform: rotateX(180deg);
-}
-
-.business-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-}
-
-.product-info {
-  background: var(--p-primary-100);
-  border-radius: var(--border-radius);
-}
-
-.business-image {
-  height: 44px;
-  width: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-::ng-deep .card-like-button {
-  .p-button {
-    background: rgba(52, 52, 52, 0.4);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: var(--white) !important;
-
-    &:hover {
-      background-color: rgba(52, 52, 52, 0.6);
-    }
-  }
-}
