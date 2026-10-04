@@ -41,7 +41,7 @@ export interface CreateProductInput {
   idCatalog: number;
   images: ProductImageInput[];
   isPrimary: boolean;
-  subtitle: string;
+  subtitle?: string;
   title: string;
   variations?: CreateProductVariationInput[];
 }

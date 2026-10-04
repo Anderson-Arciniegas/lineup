@@ -754,10 +754,11 @@ export class CreateProductPage implements OnInit {
         })),
       }));
 
+      const subtitle = this._utils.normalizeSpaces(raw.subtitle ?? '');
       const data: UpdateProductInput = {
         id: this.product.id,
         title: this._utils.normalizeSpaces(raw.title ?? ''),
-        subtitle: this._utils.normalizeSpaces(raw.subtitle ?? ''),
+        ...(subtitle ? { subtitle } : {}),
         description: raw.description,
         idCatalog,
         images,
@@ -795,9 +796,10 @@ export class CreateProductPage implements OnInit {
         }),
       );
     } else {
+      const subtitle = this._utils.normalizeSpaces(raw.subtitle ?? '');
       const data: CreateProductInput = {
         title: this._utils.normalizeSpaces(raw.title ?? ''),
-        subtitle: this._utils.normalizeSpaces(raw.subtitle ?? ''),
+        ...(subtitle ? { subtitle } : {}),
         description: raw.description,
         idCatalog,
         images,
