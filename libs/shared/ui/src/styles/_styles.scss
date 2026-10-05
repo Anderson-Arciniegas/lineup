@@ -92,6 +92,11 @@ body {
   z-index: 9999 !important;
 }
 
+/* Vertical page scroll over horizontal carousels (PrimeNG preventDefault on touchmove). */
+.p-carousel-viewport {
+  touch-action: pan-y pinch-zoom;
+}
+
 .p-dialog-header-actions {
   .p-button {
     width: 40px !important;

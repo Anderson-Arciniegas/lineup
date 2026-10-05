@@ -16,6 +16,7 @@ import { Toast } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
+import { CarouselTouchService } from './core/services/carousel-touch.service';
 import { NativeShellService } from './core/services/native-shell.service';
 import { CartDrawer } from '../../../../libs/shared/ui/src/lib/cart-drawer/cart-drawer';
 
@@ -44,6 +45,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
   private readonly _languageService = inject(LanguageService);
   private platformId: object = inject(PLATFORM_ID);
   private _auth = inject(AuthService);
+  private readonly _carouselTouch = inject(CarouselTouchService);
   private readonly _nativeShell = inject(NativeShellService);
   private _subscription: Subscription = new Subscription();
 
@@ -62,12 +64,14 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
     this._subscription.add(
       this._auth.restoreSession().pipe(take(1)).subscribe(),
     );
+    this._carouselTouch.attach();
     void this._nativeShell.attachBackButton();
   }
 
   /** Libera suscripciones para evitar fugas de memoria al destruir el root. */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+    this._carouselTouch.detach();
     void this._nativeShell.detachBackButton();
   }
 }
