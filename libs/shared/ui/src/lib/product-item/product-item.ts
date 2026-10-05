@@ -28,10 +28,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MenuModule } from 'primeng/menu';
-import { PopoverModule } from 'primeng/popover';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Subscription, take } from 'rxjs';
-import { Button } from '../button/button';
 import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
 
 /**
@@ -42,13 +40,11 @@ import { ConfirmationModal } from '../confirmation-modal/confirmation-modal';
   selector: 'lib-product-item',
   imports: [
     CommonModule,
-    Button,
     CardModule,
     ButtonModule,
     FileThumbnailUrlPipe,
     RouterLink,
     ProgressSpinnerModule,
-    PopoverModule,
     MenuModule,
   ],
   templateUrl: './product-item.html',

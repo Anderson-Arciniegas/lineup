@@ -85,17 +85,27 @@
     }
   </div>
 
-  <div class="flex flex-row justify-center items-center col-span-1">
-    <lib-button
-      (click)="$event.stopPropagation(); $event.preventDefault();"
-      (keydown.enter)="$event.stopPropagation(); $event.preventDefault();"
-      (keydown.space)="$event.stopPropagation(); $event.preventDefault();"
-      tabindex="0"
-      [icon]="'pi pi-ellipsis-v'"
-      [width]="'w-11'"
-      [type]="'rounded'"
-      (action)="menu.toggle($event)"
-    ></lib-button>
+  <div
+    tabindex="0"
+    class="flex flex-row justify-center items-center col-span-1"
+    (click)="$event.stopPropagation(); $event.preventDefault()"
+    (keydown.enter)="$event.stopPropagation(); $event.preventDefault()"
+    (keydown.space)="$event.stopPropagation(); $event.preventDefault()"
+  >
+    <p-button
+      class="inline-block w-11"
+      type="button"
+      icon="pi pi-ellipsis-v"
+      [rounded]="true"
+      [style]="{ width: '2.75rem' }"
+      (onClick)="menu.toggle($event)"
+    />
   </div>
 </section>
-<p-menu [model]="items" [popup]="true" #menu />
+<p-menu
+  #menu
+  [model]="items"
+  [popup]="true"
+  appendTo="body"
+  styleClass="product-item-menu"
+/>
