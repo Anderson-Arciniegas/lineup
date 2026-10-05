@@ -1,30 +1,29 @@
-<div class="flex flex-row items-center justify-between gap-3 sm:gap-5 h-14">
-  <div class="flex flex-row items-center justify-start gap-3">
-    @if (!downloadMode) {
-    <div class="flex flex-row items-center justify-start">
-      <div class="flex flex-row items-center justify-center">
-        <lib-button
-          [icon]="'pi pi-arrow-left'"
-          [width]="'w-13'"
-          [color]="'secondary'"
-          [variant]="useLightText ? null : 'text'"
-          [size]="'large'"
-          [type]="'rounded'"
-          (action)="goBack()"
-        ></lib-button>
-      </div>
-    </div>
-    } @if (publicMode && !hiddenBusiness) {
-    <div
-      [ngClass]="
-        downloadMode
-          ? 'flex flex-row items-center justify-start gap-3'
-          : 'hidden sm:flex flex-row items-center justify-start gap-3'
-      "
-    >
+<div
+  class="product-breadcrumb"
+  [class.product-breadcrumb--download]="downloadMode"
+>
+  @if (!downloadMode) {
+  <div class="product-breadcrumb__back flex items-center justify-start">
+    <lib-button
+      [icon]="'pi pi-arrow-left'"
+      [width]="'w-13'"
+      [color]="'secondary'"
+      [variant]="useLightText ? null : 'text'"
+      [size]="'large'"
+      [type]="'rounded'"
+      (action)="goBack()"
+    ></lib-button>
+  </div>
+  }
+
+  @if (publicMode && !hiddenBusiness) {
+  <nav
+    class="product-breadcrumb__trail flex flex-row flex-wrap items-center justify-start gap-2 sm:gap-3 min-w-0"
+    aria-label="Breadcrumb"
+  >
       @if (business) {
       <a
-        class="flex flex-row items-center justify-center gap-3"
+        class="flex flex-row items-center justify-start gap-2 sm:gap-3 min-w-0"
         [routerLink]="['/', business.path]"
         [state]="catalog ? { lineupPublicBack: '/' } : undefined"
       >
@@ -39,7 +38,7 @@
         </div>
         <h3
           [class.text-white]="useLightText"
-          class="text-sm md:text-base font-medium"
+          class="text-sm md:text-base font-medium truncate"
         >
           {{ business.name }}
         </h3>
@@ -57,23 +56,24 @@
       </div>
 
       <a
-        class="flex flex-row items-center justify-center gap-3"
+        class="flex flex-row items-center justify-start gap-3 min-w-0"
         [routerLink]="['/', business.path, catalog.path]"
       >
         <h3
           [class.text-white]="useLightText"
-          class="text-sm md:text-base font-medium"
+          class="text-sm md:text-base font-medium truncate"
         >
           {{ catalog.title }}
         </h3>
       </a>
       } }
-    </div>
-    }
-  </div>
+  </nav>
+  }
 
   @if (publicMode && !downloadMode) {
-  <div class="flex flex-row items-center justify-end gap-3">
+  <div
+    class="product-breadcrumb__actions flex flex-row items-center justify-end gap-3"
+  >
     <lib-language-select></lib-language-select>
     <lib-button
       class="flex"
