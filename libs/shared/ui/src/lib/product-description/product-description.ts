@@ -20,6 +20,8 @@ import { RateModal } from '../rate-modal/rate-modal';
 })
 export class ProductDescription implements OnInit {
   @Input() product: ProductSchema;
+  /** Tipografía clara cuando el bloque vive sobre un fondo de marca oscuro. */
+  @Input() useLightText = false;
   tags = ['New', 'NFL', 'Shirt', 'Futbol Americano', 'Ravens', 'Nike'];
   description: SafeHtml;
   private readonly _dialogService = inject(DialogService);

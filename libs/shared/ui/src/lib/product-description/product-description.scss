@@ -53,3 +53,26 @@
     text-align: justify;
   }
 }
+
+:host ::ng-deep .product-description--light-text {
+  .product-description__rating {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .product-description__content {
+    color: rgba(255, 255, 255, 0.92);
+
+    /*
+     * Quill y las descripciones generadas pueden traer `color` inline en
+     * nodos anidados. El !important garantiza contraste en toda la jerarquía.
+     */
+    &,
+    * {
+      color: rgba(255, 255, 255, 0.92) !important;
+    }
+
+    a {
+      text-decoration: underline;
+    }
+  }
+}

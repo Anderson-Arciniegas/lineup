@@ -7,6 +7,8 @@ import {
   OnDestroy,
   OnInit,
   PendingTasks,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -36,11 +38,12 @@ import {
 } from '@lineup/ui';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Carousel } from 'primeng/carousel';
-import { ImageModule } from 'primeng/image';
+import { Image, ImageModule } from 'primeng/image';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { SkeletonModule } from 'primeng/skeleton';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { ImagePreviewBackService } from '../../../../core/services/image-preview-back.service';
 
 /**
  * Ficha pública de producto: galería responsive, datos enriquecidos, SEO,
@@ -65,6 +68,8 @@ import { catchError, finalize } from 'rxjs/operators';
   styleUrl: './product-page.scss',
 })
 export class ProductPage implements OnInit, OnDestroy {
+  @ViewChildren(Image) private readonly _imagePreviews!: QueryList<Image>;
+
   private readonly _businessService = inject(BusinessPublicService);
   private readonly _breakpointObserver = inject(BreakpointObserver);
   private readonly _cdr = inject(ChangeDetectorRef);
@@ -79,6 +84,7 @@ export class ProductPage implements OnInit, OnDestroy {
   private readonly _seoService = inject(SeoService);
   private readonly _userService = inject(UserPublicService);
   private readonly _apiError = inject(ApiErrorService);
+  private readonly _imagePreviewBack = inject(ImagePreviewBackService);
 
   private readonly _subscription = new Subscription();
 
@@ -203,7 +209,30 @@ export class ProductPage implements OnInit, OnDestroy {
 
   /** Cancela suscripciones (breakpoint observer y peticiones). */
   ngOnDestroy(): void {
+    this._imagePreviewBack.closeForNavigation();
     this._subscription.unsubscribe();
+  }
+
+  /** Engancha el preview de imagen al historial / botón atrás. */
+  onImagePreviewShow(): void {
+    this._imagePreviewBack.onPreviewShow(() => this._closeOpenImagePreview());
+  }
+
+  /** Libera la entrada de historial del preview al cerrar desde la UI. */
+  onImagePreviewHide(): void {
+    this._imagePreviewBack.onPreviewHide();
+  }
+
+  private _closeOpenImagePreview(): void {
+    const open = this._imagePreviews?.find((img) => img.previewVisible);
+    open?.closePreview();
+    if (!open) {
+      (
+        document.querySelector(
+          '.p-image-mask .p-image-close-button',
+        ) as HTMLButtonElement | null
+      )?.click();
+    }
   }
 
   /** Prioridad: `catalog.hexColor` → `business.hexColor`. */

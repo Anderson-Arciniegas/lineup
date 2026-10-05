@@ -57,6 +57,8 @@ import { ShareModal } from '../share-modal/share-modal';
 })
 export class ProductDetails implements OnChanges {
   @Input() product: ProductSchema;
+  /** Tipografía clara cuando el bloque vive sobre un fondo de marca oscuro. */
+  @Input() useLightText = false;
   businessSocialNetworks: SocialNetworkBusinessSchema[] = [];
   /**
    * Estado local de la selección del usuario para cada variación.

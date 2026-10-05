@@ -76,4 +76,12 @@ describe('ProductDescription', () => {
     component.ngOnInit();
     expect(component.tags).toEqual([]);
   });
+
+  it('aplica clase de tipografía clara cuando useLightText', () => {
+    component.useLightText = true;
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector('.product-description--light-text'),
+    ).toBeTruthy();
+  });
 });

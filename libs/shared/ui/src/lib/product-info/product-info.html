@@ -1,11 +1,17 @@
 <div
   class="w-full flex flex-col-reverse xl:flex-row items-start justify-center px-3 sm:px-8 md:px-12 lg:px-10 2xl:px-16 gap-2 lg:gap-0"
+  [class.product-info--light-text]="useLightText"
 >
   <lib-product-description
     [product]="product"
+    [useLightText]="useLightText"
     class="w-full xl:w-3/5 flex flex-col items-start justify-between px-5 gap-2"
   >
   </lib-product-description>
-  <lib-product-details [product]="product" class="w-full xl:w-2/5">
+  <lib-product-details
+    [product]="product"
+    [useLightText]="useLightText"
+    class="w-full xl:w-2/5"
+  >
   </lib-product-details>
 </div>

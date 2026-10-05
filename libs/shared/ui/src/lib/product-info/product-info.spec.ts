@@ -46,4 +46,11 @@ describe('ProductInfo', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('propaga useLightText a la plantilla', () => {
+    component.useLightText = true;
+    fixture.detectChanges();
+    const root = fixture.nativeElement.querySelector('.product-info--light-text');
+    expect(root).toBeTruthy();
+  });
 });

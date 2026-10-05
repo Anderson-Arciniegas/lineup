@@ -1,4 +1,7 @@
-<div class="w-full flex flex-col items-start justify-between gap-4">
+<div
+  class="w-full flex flex-col items-start justify-between gap-4"
+  [class.product-details--light-text]="useLightText"
+>
   <div class="w-full flex flex-col items-start justify-start gap-4 sm:gap-5">
     <div
       class="flex flex-col items-end gap-2 min-h-9"
@@ -26,15 +29,15 @@
       }
       <div class="flex flex-row justify-start items-end gap-2">
         <span
-          class="font-semibold text-2xl sm:text-3xl"
-          [class.text-primary]="showDiscountUi"
+          class="product-details__sale-price font-semibold text-2xl sm:text-3xl"
+          [class.text-primary]="showDiscountUi && !useLightText"
           >{{ price | currency: currency?.code : 'symbol' : '1.0-2' : 'es' }}
         </span>
         @if (equivalentBsSalePrice !== null &&
         product?.business?.isBsEquivalentPriceEnabled && currency?.code !== 'BS'
         ) {
         <span
-          class="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 whitespace-nowrap"
+          class="product-details__bs-price text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 whitespace-nowrap"
           >≈ {{ equivalentBsSalePrice | currency: 'BS' : 'symbol' : '1.0-2' :
           'es' }}</span
         >
@@ -102,7 +105,9 @@
       } @if (skuAvailabilityMessage) {
       <div class="w-full flex items-center gap-2 pt-2">
         <i class="pi pi-box"></i>
-        <span class="text-sm text-gray-600">{{ skuAvailabilityMessage }}</span>
+        <span class="product-details__sku-msg text-sm text-gray-600">{{
+          skuAvailabilityMessage
+        }}</span>
       </div>
       }
     </div>

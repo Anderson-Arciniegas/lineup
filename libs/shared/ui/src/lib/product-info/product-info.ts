@@ -21,4 +21,6 @@ import { ProductDetails } from '../product-details/product-details';
 })
 export class ProductInfo {
   @Input() product: ProductSchema;
+  /** Tipografía clara cuando el bloque vive sobre un fondo de marca oscuro. */
+  @Input() useLightText = false;
 }
