@@ -1,10 +1,10 @@
-<div class="w-full min-h-screen flex flex-col">
+<div class="w-full h-dvh max-h-dvh overflow-hidden flex flex-col">
   <lib-nav
     [showSidebarToggle]="true"
     [sidebarOpen]="sidebarOpen()"
     (sidebarToggle)="toggleSidebar()"
   ></lib-nav>
-  <section class="layout-main h-100vh-calc w-full min-w-0">
+  <section class="layout-main w-full min-w-0 min-h-0 flex-1">
     @if (sidebarOpen()) {
     <div
       class="sidebar-backdrop"

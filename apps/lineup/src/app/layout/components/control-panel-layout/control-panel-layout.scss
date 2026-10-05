@@ -1,7 +1,15 @@
 $rail-width: 60px;
 
-.layout-main__content {
+.layout-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
+}
+
+:host .layout-main__content.page {
+  min-height: 0;
+  height: 100%;
   padding-left: $rail-width;
 }
 
