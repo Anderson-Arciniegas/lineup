@@ -193,4 +193,19 @@ body {
   .h-100vh-calc {
     height: calc(100vh - 72px);
   }
+
+
+  /* Ancla el toast al viewport y anula el ancho fijo del tema (~25rem). */
+  .p-toast {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    box-sizing: border-box;
+  }
+
+  .p-toast .p-toast-message {
+    max-width: 100%;
+    word-break: break-word;
+  }
 }
