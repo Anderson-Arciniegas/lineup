@@ -1,3 +1,16 @@
 :host {
   display: block;
 }
+
+.notifications__mark-all {
+  flex-shrink: 0;
+}
+
+.notifications__mark-all--icon {
+  ::ng-deep .p-button {
+    min-width: 2.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+}

@@ -19,6 +19,17 @@
     </div>
     @if (hasUnread()) {
     <lib-button
+      class="notifications__mark-all notifications__mark-all--icon sm:hidden"
+      variant="text"
+      color="primary"
+      size="small"
+      icon="pi pi-check-circle"
+      [ariaLabel]="'notifications.markAllRead' | translate"
+      [loading]="markAllLoading"
+      (action)="markAllRead()"
+    />
+    <lib-button
+      class="notifications__mark-all notifications__mark-all--label hidden sm:inline-block"
       variant="text"
       color="primary"
       size="small"
