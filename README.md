@@ -63,11 +63,22 @@ npx nx serve lineup --configuration=development --host=0.0.0.0 --port=4200
 
 La app `lineup` usa un **proxy HTTP** definido en `libs/shared/environments/proxy.conf.json` para redirigir rutas `/api/*` al backend en desarrollo. Los endpoints GraphQL y archivos también se configuran desde la librería `@lineup/envs` (`libs/shared/environments`).
 
-App **mobile**:
+App **mobile** (placeholder Ionic, no es el binario nativo):
 
 ```sh
 npx nx serve mobile
 ```
+
+## App nativa (Capacitor)
+
+El APK y el proyecto iOS cargan el build de navegador de `lineup` (`dist/apps/lineup/browser`). Las pantallas, rutas y estilos son los de la web. `apps/mobile` no se empaqueta.
+
+```sh
+npm run build:mobile:lineup
+npm run cap:sync:android
+```
+
+En Windows se sincroniza Android. Compilar iOS requiere macOS.
 
 ## Build
 

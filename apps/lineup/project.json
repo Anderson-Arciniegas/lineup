@@ -58,6 +58,31 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "mobile": {
+          "server": false,
+          "ssr": false,
+          "prerender": false,
+          "outputMode": "static",
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/lineup/src/app/shell-target.ts",
+              "with": "apps/lineup/src/app/shell-target.mobile.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1.65mb",
+              "maximumError": "1.7mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "5kb",
+              "maximumError": "8kb"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"

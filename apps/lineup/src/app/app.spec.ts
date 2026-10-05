@@ -1,3 +1,16 @@
+jest.mock('@capacitor/core', () => ({
+  Capacitor: {
+    isNativePlatform: () => false,
+  },
+}));
+
+jest.mock('@capacitor/app', () => ({
+  App: {
+    addListener: jest.fn().mockResolvedValue({ remove: jest.fn() }),
+    exitApp: jest.fn(),
+  },
+}));
+
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';

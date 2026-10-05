@@ -8,6 +8,8 @@
     "clear:angular-cache": "nx reset && node -e \"require('fs').rmSync('.angular', {recursive: true, force: true})\"",
     "preview:lineup": "nx run lineup:build:production && nx run lineup:serve-static --configuration=production",
     "build:ssr:lineup": "nx run lineup:build:production",
+    "build:mobile:lineup": "nx run lineup:build:mobile",
+    "cap:sync:android": "npx cap sync android",
     "start:ssr:lineup": "node dist/apps/lineup/server/server.mjs",
     "test:all": "nx affected -t lint test build e2e"
   },
@@ -26,6 +28,7 @@
     "@angular/ssr": "20.1.3",
     "@apollo/client": "4.0.7",
     "@capacitor/android": "^7.4.3",
+    "@capacitor/app": "^7.1.2",
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
     "@capacitor/ios": "^7.4.3",

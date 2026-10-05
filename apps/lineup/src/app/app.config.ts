@@ -38,6 +38,7 @@ import {
 } from 'primeng/dynamicdialog';
 import { appRoutes } from './app.routes';
 import { createGlobalErrorLink, globalErrorInterceptor } from './core';
+import { isNativeShellBuild } from './shell-target';
 
 registerLocaleData(localeEs, 'es');
 registerLocaleData(localeEs, 'es-ES');
@@ -92,7 +93,7 @@ export const appConfig: ApplicationConfig = {
       provide: IMAGE_LOADER,
       useValue: (config: ImageLoaderConfig) => config.src,
     },
-    provideClientHydration(withEventReplay()),
+    ...(isNativeShellBuild ? [] : [provideClientHydration(withEventReplay())]),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({
       eventCoalescing: true,

@@ -16,6 +16,7 @@ import { Toast } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
+import { NativeShellService } from './core/services/native-shell.service';
 import { CartDrawer } from '../../../../libs/shared/ui/src/lib/cart-drawer/cart-drawer';
 
 /**
@@ -43,6 +44,7 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
   private readonly _languageService = inject(LanguageService);
   private platformId: object = inject(PLATFORM_ID);
   private _auth = inject(AuthService);
+  private readonly _nativeShell = inject(NativeShellService);
   private _subscription: Subscription = new Subscription();
 
   /** Restaura el idioma preferido (o español por defecto) vía LanguageService. */
@@ -57,11 +59,15 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    this._subscription.add(this._auth.restoreSession().pipe(take(1)).subscribe());
+    this._subscription.add(
+      this._auth.restoreSession().pipe(take(1)).subscribe(),
+    );
+    void this._nativeShell.attachBackButton();
   }
 
   /** Libera suscripciones para evitar fugas de memoria al destruir el root. */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+    void this._nativeShell.detachBackButton();
   }
 }
