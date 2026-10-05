@@ -38,6 +38,8 @@ export class CatalogCard implements OnInit {
   @Input() height = 'h-96';
   @Input() editMode: boolean;
   @Input() catalog: CatalogSchema;
+  /** Path explícito del negocio cuando el catálogo resumido no incluye `business`. */
+  @Input() businessPath?: string | null;
   @Input() dashboardMode: boolean;
   image: string;
   imageLoaded: boolean;
@@ -55,6 +57,20 @@ export class CatalogCard implements OnInit {
   discount: DiscountSchema;
   DiscountTypeEnum = DiscountTypeEnum;
   DiscountScopeEnum = DiscountScopeEnum;
+
+  /** Ruta segura: nunca genera segmentos literales `null` o `undefined`. */
+  get catalogRoute(): string {
+    const catalogPath = this.catalog?.path?.trim();
+    if (!catalogPath) {
+      return '/';
+    }
+    if (this.dashboardMode) {
+      return catalogPath;
+    }
+    const businessPath =
+      this.businessPath?.trim() || this.catalog.business?.path?.trim();
+    return businessPath ? `/${businessPath}/${catalogPath}` : '/';
+  }
 
   /** Asigna imagen aleatoria si el catálogo no tiene `image` y busca descuento con alcance `CATALOG`. */
   ngOnInit(): void {

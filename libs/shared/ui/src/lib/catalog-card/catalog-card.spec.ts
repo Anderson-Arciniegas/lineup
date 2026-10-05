@@ -88,4 +88,18 @@ describe('CatalogCard', () => {
     expect(component.width).toBe('w-full');
     expect(component.editMode).toBe(true);
   });
+
+  it('debe usar businessPath cuando el catálogo resumido no incluye negocio', () => {
+    component.catalog = catalogWithImage;
+    component.businessPath = 'mi-negocio';
+
+    expect(component.catalogRoute).toBe('/mi-negocio/cat-1');
+  });
+
+  it('no debe generar rutas con negocio null', () => {
+    component.catalog = catalogWithImage;
+    component.businessPath = null;
+
+    expect(component.catalogRoute).toBe('/');
+  });
 });

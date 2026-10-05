@@ -36,7 +36,6 @@ export const businessBasicSelection = `{
   isBsEquivalentPriceEnabled
   hexColor
   image ${fileSelection}
-  path
 }`;
 
 /**
